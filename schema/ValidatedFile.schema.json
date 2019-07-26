@@ -1,0 +1,14 @@
+{
+	"id": "ValidatedFile",
+	"type": "object",
+	"properties": {
+	  "path" : { "$ref": "FilePath.schema.json" },
+	  "validation": { "$ref": "Validation.schema.json" },
+	  "data": { "$ref": "Data.schama.json" }
+	},
+	"additionalProperties": false,
+	"required": [
+    "path",
+    "data"
+	]
+}

@@ -1,0 +1,11 @@
+{
+	"id": "Data",
+	"type": "object",
+	"properties": {
+	  "placeholder" : { "type": "boolean" }
+	},
+	"additionalProperties": false,
+	"required": [
+    "placeholder"
+	]
+}

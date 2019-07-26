@@ -1,0 +1,17 @@
+{
+	"id": "Validation",
+	"type": "object",
+	"properties": {
+		"valid" : { "type": "boolean"	},
+		"error" : { "$ref": "Messages.schema.json" },
+		"warning" : { "$ref": "Messages.schema.json" },
+		"message" : { "$ref": "Messages.schema.json" },
+	},
+	"additionalProperties": false,
+	"required": [
+    "valid",
+    "error",
+    "warning",
+    "message"
+	]
+}

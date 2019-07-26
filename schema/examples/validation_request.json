@@ -1,0 +1,20 @@
+{
+  "pjnz": {
+    "path": "path/to/file"
+  },
+  "shape": {
+    "path": "path/to/file"
+  },
+  "population": {
+    "path": null
+  },
+  "survey": {
+    "path": null
+  },
+  "programme": {
+    "path": null
+  },
+  "anc": {
+    "path": null
+  }
+}

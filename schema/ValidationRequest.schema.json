@@ -1,0 +1,21 @@
+{
+	"id": "ValidationRequest",
+	"type": "object",
+	"properties": {
+		"pjnz" : { "$ref": "File.schema.json" },
+		"shape" : { "$ref": "File.schema.json" },
+		"population" : { "$ref": "File.schema.json" },
+		"survey" : { "$ref": "File.schema.json" },
+		"programme" : { "$ref": "File.schema.json" },
+		"anc" : { "$ref": "File.schema.json" }
+	},
+	"additionalProperties": false,
+	"required": [
+    "pjnz",
+    "shape",
+    "population",
+    "survey",
+    "programme",
+    "anc"
+	]
+}

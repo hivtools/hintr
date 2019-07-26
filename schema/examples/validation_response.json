@@ -1,0 +1,47 @@
+{
+  "pjnz": {
+    "path": "path/to/file",
+    "validation": {
+      "valid": true,
+      "error": null,
+      "warning": null,
+      "message": null,
+    },
+    "data": {
+      "placeholder": true
+    }
+  },
+  "shape": {
+    "path": "path/to/file",
+    "validation": {
+      "valid": true,
+      "error": "REGION_MISMATCH",
+      "warning": null,
+      "message": null,
+    },
+    "data": {
+      "placeholder": true
+    }
+  },
+  "population": {
+    "path": "path/to/file",
+    "validation": {
+      "valid": true,
+      "error": "REGION_MISMATCH",
+      "warning": null,
+      "message": null,
+    },
+    "data": {
+      "placeholder": true
+    }
+  },
+  "survey": {
+    "path": null,
+  },
+  "programme": {
+    "path": null,
+  },
+  "anc": {
+    "path": null,
+  }
+}

@@ -1,0 +1,11 @@
+{
+	"id": "File",
+	"type": "object",
+	"properties": {
+	  "path" : { "$ref": "FilePath.schema.json" }
+	},
+	"additionalProperties": false,
+	"required": [
+    "path"
+	]
+}
