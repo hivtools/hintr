@@ -1,0 +1,13 @@
+{
+	"id": "Error",
+	"type": "object",
+	"properties": {
+	  "pjnz" : { "type": "array" },
+	  "shape" : { "type": "array" },
+	  "population" : { "type": "array" },
+	  "survey" : { "type": "array" },
+	  "programme" : { "type": "array" },
+	  "anc" : { "type": "array" }
+	},
+	"additionalProperties": false
+}

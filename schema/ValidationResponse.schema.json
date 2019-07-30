@@ -2,12 +2,12 @@
 	"id": "ValidationResponse",
 	"type": "object",
 	"properties": {
-		"pjnz" : { "$ref": "ValidatedFile.schema.json" },
-		"shape" : { "$ref": "ValidatedFile.schema.json" },
-		"population" : { "$ref": "ValidatedFile.schema.json" },
-		"survey" : { "$ref": "ValidatedFile.schema.json" },
-		"programme" : { "$ref": "ValidatedFile.schema.json" },
-		"anc" : { "$ref": "ValidatedFile.schema.json" }
+		"pjnz" : { "$ref": "Data.schema.json" },
+		"shape" : { "$ref": "Data.schema.json" },
+		"population" : { "$ref": "Data.schema.json" },
+		"survey" : { "$ref": "Data.schema.json" },
+		"programme" : { "$ref": "Data.schema.json" },
+		"anc" : { "$ref": "Data.schema.json" }
 	},
 	"additionalProperties": false,
 	"required": [

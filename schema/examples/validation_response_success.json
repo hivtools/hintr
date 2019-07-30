@@ -1,0 +1,18 @@
+{ 
+  "status" : "success",
+  "errors": {},
+  "data" : {
+    "pjnz": {
+      "placeholder" : true
+    },
+    "shape": {
+      "placeholder": true
+    },
+    "population": {
+      "placeholder": true
+    },
+    "survey": null,
+    "programme": null,
+    "anc": null
+  }
+}

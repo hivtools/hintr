@@ -4,8 +4,5 @@
 	"properties": {
 	  "placeholder" : { "type": "boolean" }
 	},
-	"additionalProperties": false,
-	"required": [
-    "placeholder"
-	]
+	"additionalProperties": false
 }
