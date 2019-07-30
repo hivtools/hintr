@@ -1,0 +1,10 @@
+{ 
+  "status" : "success",
+  "errors": {},
+  "data" : {
+    "processId": "someURI",
+    "complete": false,
+    "progress": 43,
+    "timeRemaining": 3452
+  }
+}

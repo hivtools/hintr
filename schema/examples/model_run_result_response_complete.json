@@ -1,0 +1,22 @@
+{ 
+  "status" : "success",
+  "errors": {},
+  "data" : {
+    "processId": "someURI",
+    "complete": true,
+    "result": {
+    	"plhiv": {
+        "placeholder": true
+    	},
+    	"prevalence": {
+        "placeholder": true
+    	},
+    	"art": {
+        "placeholder": true
+    	},
+    	"incidence": {
+        "placeholder": true
+    	}
+    }
+  }
+}
