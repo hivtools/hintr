@@ -1,0 +1,13 @@
+{
+	"id": "ModelRunInputData",
+	"type": "object",
+	"properties": {
+		"programme": { "type": "bool" },
+    "anc": { "type": "bool" },
+	},
+	"additionalProperties": false,
+	"required": [
+    "programme",
+    "anc"
+	]
+}
