@@ -12,6 +12,10 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
+Imports:
+    specio
+Remotes:
+    mrc-ide/specio
 Suggests: 
     testthat (>= 2.1.0),
     covr
