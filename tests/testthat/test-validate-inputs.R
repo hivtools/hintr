@@ -1,8 +1,9 @@
 context("validate-inputs")
 
-test_that("inputs can be validated and return data", {
+test_that("baseline inputs can be validated and return data", {
   pjnz <- system.file("testdata", "Botswana2018.PJNZ", package = "hintr")
-  expect_true(validate_inputs(pjnz, NULL, NULL, NULL, NULL, NULL))
+  ## TODO: Expand validation to include other input files
+  expect_equal(do_validate_baseline(pjnz, NULL, NULL), "Botswana")
 })
 
 test_that("country can be read from PJNZ file", {

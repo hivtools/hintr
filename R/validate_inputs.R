@@ -1,8 +1,5 @@
-validate_inputs <- function(pjnz, shape, population, programme, survey, anc) {
-  if (!is.null(pjnz)) {
-    country <- read_country(pjnz)
-  }
-  TRUE
+do_validate_baseline <- function(pjnz, shape, population) {
+  read_country(pjnz)
 }
 
 read_country <- function(pjnz) {
