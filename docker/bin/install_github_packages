@@ -1,0 +1,14 @@
+#!/usr/bin/env Rscript
+'Usage:
+install_github_packages <package>...' -> usage
+opts <- docopt::docopt(usage)
+
+packages <- opts$package
+
+install.packages("devtools")
+devtools::install_github(packages)
+
+msg <- setdiff(packages, .packages(TRUE))
+if (length(msg) > 0L) {
+  stop("Failed to install: ", paste(msg, collapse = ", "))
+}
