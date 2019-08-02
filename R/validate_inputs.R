@@ -1,6 +1,11 @@
-do_validate_baseline <- function(pjnz, shape, population) {
-  read_country(pjnz)
+do_validate_pjnz <- function(pjnz) {
+  country <- read_country(pjnz)
+  if (country == "GBR") {
+    stop("Invalid country")
+  }
+  country
 }
+
 
 read_country <- function(pjnz) {
   ## TODO: Add function to specio to just extract metadata from the PJN and

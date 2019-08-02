@@ -1,21 +1,17 @@
 api <- function() {
   pr <- plumber::plumber$new()
-  pr$handle("POST", "/validate", endpoint_validate_baseline)
+  pr$handle("POST", "/validate", endpoint_validate_pjnz)
   pr
 }
 
-endpoint_validate_baseline <- function(req, pjnz, shape, population) {
+endpoint_validate_pjnz <- function(req, pjnz) {
   validate_json_schema(req, "ValidateBaselineRequest")
   res <- with_success(
-    do_validate_baseline(pjnz, shape, population))
+    do_validate_pjnz(pjnz))
   if (res$success) {
     res$value <- scalar(res$value)
   } else {
-    ## I'm expecting that we need to provide a way for do_validate_baseline to
-    ## return some classification of the 'type' of error as well as the message
-    ## Which then need to be put into the correct structure by this bit of code
-    res$errors <- list(error = "INVALID_BASELINE",
-                       message = res$error)
+    res$errors <- hintr_errors(list("INVALID_PJNZ" = res$message))
   }
   hintr_response(res, "ValidateBaselineResponse")
 }
@@ -35,13 +31,20 @@ hintr_response <- function(value, schema) {
   ret
 }
 
+hintr_errors <- function(errors) {
+  lapply(names(errors), function(x)
+    list(error = scalar(x), detail = scalar(errors[[x]])))
+}
+
 with_success <- function(expr) {
   tryCatch(
     list(success = TRUE,
          value = force(expr)),
     error = function(e) {
       list(success = FALSE,
-           error = e$message)
+           message = e$message,
+           error = e,
+           type = class(e)[[1]])
     }
   )
 }
