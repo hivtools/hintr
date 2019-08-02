@@ -18,5 +18,6 @@ Imports:
     specio,
     withr
 Suggests: 
-    testthat (>= 2.1.0),
-    covr
+    covr,
+    mockery,
+    testthat (>= 2.1.0)
