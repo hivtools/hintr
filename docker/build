@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
 set -e
-HERE=$(realpath $(dirname $0)/..)
-docker build -t hintr-demo:latest -f docker/Dockerfile $HERE
+HERE=$(dirname $0)
+. $HERE/common
+
+docker build --pull \
+       -t $TAG_SHA \
+       -t $TAG_BRANCH \
+       -f docker/Dockerfile \
+       .

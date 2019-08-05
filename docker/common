@@ -1,0 +1,19 @@
+## -*-sh-*-
+PACKAGE_ROOT=$(realpath $HERE/..)
+PACKAGE_NAME=hintr
+PACKAGE_ORG=mrcide
+
+GIT_SHA=$(git -C "$PACKAGE_ROOT" rev-parse --short=7 HEAD)
+
+if [ "$TRAVIS" = "true" ]; then
+    GIT_BRANCH=$TRAVIS_BRANCH
+else
+    GIT_BRANCH=$(git -C "$PACKAGE_ROOT" symbolic-ref --short HEAD)
+fi
+
+if [ $GIT_BRANCH == "master" ]; then
+   GIT_BRANCH="latest"
+fi
+
+TAG_SHA="${PACKAGE_ORG}/${PACKAGE_NAME}:${GIT_SHA}"
+TAG_BRANCH="${PACKAGE_ORG}/${PACKAGE_NAME}:${GIT_BRANCH}"
