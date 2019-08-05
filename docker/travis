@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -e
+HERE=$(dirname $0)
+
+$HERE/build
+
+# NOTE: This requires secrets that can be obtained from the vimc vault
+# from
+#
+#   vault read secret/vimc-robot/dockerhub
+#
+# and added to travis here:
+#
+#   https://travis-ci.org/imperialebola2018/ebola-orderly/settings
+if [ "$TRAVIS_PULL_REQUEST" = "true" ]; then
+    echo "Skipping push as this is a pull request"
+    exit 0
+fi
+
+if [ ! -z $DOCKER_PASSWORD ]; then
+    echo $DOCKER_PASSWORD | \
+        docker login -u $DOCKER_USERNAME --password-stdin
+    $HERE/push
+fi
