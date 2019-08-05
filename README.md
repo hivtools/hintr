@@ -25,6 +25,6 @@ curl http://localhost:8888
 
 Validate input data:
 ```
-curl -X POST -h 'Content-Type: application/json' \
+curl -X POST -H 'Content-Type: application/json' \
      --data @example/payload.json http://localhost:8888/validate
 ```
