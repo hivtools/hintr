@@ -22,4 +22,6 @@ RUN install_github_packages \
 COPY . /src
 RUN R CMD INSTALL /src
 
+EXPOSE 8888
+
 ENTRYPOINT ["/src/inst/entrypoint.R"]

@@ -1,6 +1,8 @@
 api <- function() {
   pr <- plumber::plumber$new()
   pr$handle("POST", "/validate", endpoint_validate_pjnz)
+  pr$handle("GET", "/", api_root)
+  pr$run(host = "0.0.0.0", port = 8888)
   pr
 }
 
@@ -47,4 +49,8 @@ with_success <- function(expr) {
            type = class(e)[[1]])
     }
   )
+}
+
+api_root <- function() {
+  jsonlite::unbox("Welcome to hintr")
 }

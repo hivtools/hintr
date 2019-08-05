@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -e
+HERE=$(realpath $(dirname $0)/..)
+docker build -t hintr-demo:latest -f docker/Dockerfile $HERE
