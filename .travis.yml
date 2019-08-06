@@ -2,6 +2,8 @@
 
 language: R
 sudo: false
+before_script:
+  - ./docker/travis
 cache: packages
 r_packages:
   - covr

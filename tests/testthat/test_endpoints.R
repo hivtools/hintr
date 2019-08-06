@@ -78,3 +78,14 @@ test_that("hintr errors correctly formats errors", {
   expect_s3_class(errors[[2]]$error, "scalar")
   expect_null(errors[[2]]$detail)
 })
+
+test_that("hintr API can be tested", {
+  expect_s3_class(api_root(), "scalar")
+})
+
+test_that("plumber api can be built", {
+  api <- api_build()
+  expect_s3_class(api, "plumber")
+  expect_length(api$routes, 2)
+  expect_equal(names(api$routes), c("validate", ""))
+})

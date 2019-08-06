@@ -9,3 +9,26 @@
 R API for Naomi app
 
 App to show district level estimates of HIV indicators
+
+## Running in docker
+
+Docker images are built on travis, if on master branch run via:
+```
+docker run --rm -d -p 8888:8888 --name hintr mrcide/hintr:latest
+```
+
+Test that container is working by using:
+```
+curl http://localhost:8888
+```
+
+Validate input data:
+```
+curl -X POST -H 'Content-Type: application/json' \
+     --data @example/payload.json http://localhost:8888/validate
+```
+
+Docker container can be cleaned up using
+```
+docker rm -f hintr
+```
