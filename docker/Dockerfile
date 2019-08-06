@@ -13,10 +13,11 @@ RUN install_packages --repo=https://mrc-ide.github.io/drat \
         jsonlite \
         plumber \
         ps \
+        remotes \
         rrq \
         testthat
 
-RUN install_remotes \
+RUN install_remote \
         mrc-ide/specio
 
 COPY . /src
