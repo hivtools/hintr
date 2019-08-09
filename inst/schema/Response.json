@@ -10,7 +10,7 @@
         },
         "data": {
           "oneOf": [
-            {"$ref": "ValidationResponse.schema.json"},
+            {"$ref": "ValidatePjnzResponse.schema.json"},
             {"$ref": "InitialiseModelRunResponse.schema.json"}
             {"$ref": "ModelRunResultResponse.schema.json"}
           ]

@@ -1,0 +1,13 @@
+{
+	"id": "ValidationRequest",
+	"type": "object",
+	"properties": {
+		"type" : { "$ref": "InputType.schema.json" },
+		"path" : { "$ref": "File.schema.json" },
+	},
+	"additionalProperties": false,
+	"required": [
+		"type",
+		"path"
+	]
+}
