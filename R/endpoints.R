@@ -1,6 +1,6 @@
 api_build <- function() {
   pr <- plumber::plumber$new()
-  pr$handle("POST", "/validate", endpoint_validate_pjnz)
+  pr$handle("POST", "/validate", endpoint_validate_input)
   pr$handle("GET", "/", api_root)
   pr
 }
@@ -13,16 +13,18 @@ api <- function() {
   api_run(api_build()) # nocov
 }
 
-endpoint_validate_pjnz <- function(req, pjnz) {
-  validate_json_schema(req, "ValidateBaselineRequest")
+endpoint_validate_input <- function(req, type, path) {
+  validate_json_schema(req, "ValidateInputRequest")
+  validate_func <- switch(type,
+    pjnz = do_validate_pjnz)
   res <- with_success(
-    do_validate_pjnz(pjnz))
+    validate_func(path))
   if (res$success) {
     res$value <- scalar(res$value)
   } else {
-    res$errors <- hintr_errors(list("INVALID_PJNZ" = res$message))
+    res$errors <- hintr_errors(list("INVALID_FILE" = res$message))
   }
-  hintr_response(res, "ValidateBaselineResponse")
+  hintr_response(res, "ValidateInputResponse")
 }
 
 hintr_response <- function(value, schema) {

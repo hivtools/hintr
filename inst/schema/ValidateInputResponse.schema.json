@@ -1,8 +1,8 @@
 {
-	"id": "ValidatePjnzResponse",
+	"id": "ValidateInputResponse",
 	"type": "object",
 	"properties": {
-		"country" : { 
+		"country" : {
 			"type": "string"
 		 },
 	},

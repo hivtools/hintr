@@ -20,3 +20,9 @@ build_validate_request <- function(pjnz) {
     )
   )
 }
+
+validate_test_that <- function(desc, code) {
+  withr::with_envvar(list(VALIDATE_JSON_SCHEMAS = "true"), {
+    testthat::test_that(desc, code)
+  })
+}
