@@ -1,7 +1,7 @@
 { 
   "status" : "failure",
   "errors": [
-    {"MISMATCH_COUNTRY_ERROR": "extra message"}
+    {"INVALID_PJNZ": "extra message"}
   ],
   "data": null 
 }

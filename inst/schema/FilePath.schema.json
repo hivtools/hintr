@@ -1,4 +1,4 @@
 {
 	"id": "FilePath",
-	"type": "string, null"
+	"type": ["string", "null"]
 }

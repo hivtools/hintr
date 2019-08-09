@@ -1,12 +1,16 @@
-validate_json_schema <- function(data, schema) {
+validate_json_schema <- function(json, schema) {
   if (validate_schemas()) {
-    ## Get schema as file path
-    ## TODO: Use jsonvalidate once referenced files are supported
-    valid <- TRUE
+    valid <- validate(json, schema)
   } else {
     valid <- TRUE
   }
   valid
+}
+
+validate <- function(json, schema) {
+  schema <- system.file("schema", paste0(schema, ".schema.json"),
+                        package = "hintr")
+  jsonvalidate::json_validate(json, schema, engine = "ajv")
 }
 
 validate_schemas <- function() {
