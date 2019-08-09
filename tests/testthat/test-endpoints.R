@@ -19,6 +19,20 @@ test_that("endpoint_validate_baseline correctly validates data", {
   })
 })
 
+test_that("endpoint_validate_pjnz validates the input and response", {
+  pjnz <- system.file("testdata", "Botswana2018.PJNZ", package = "hintr")
+  mock_validate_json_schema <- mockery::mock(TRUE, cycle = TRUE)
+  with_mock("hintr:::validate_json_schema" = mock_validate_json_schema, {
+    ret <- endpoint_validate_pjnz("request", pjnz)
+  })
+
+  mockery::expect_called(mock_validate_json_schema, 2)
+  mockery::expect_args(mock_validate_json_schema, 1, "request",
+                       "ValidatePjnzRequest")
+  mockery::expect_args(mock_validate_json_schema, 2, ret,
+                       "ValidatePjnzResponse")
+})
+
 test_that("hintr_response correctly prepares response", {
   value <- list(
     success = TRUE,
@@ -89,3 +103,4 @@ test_that("plumber api can be built", {
   expect_length(api$routes, 2)
   expect_equal(names(api$routes), c("validate", ""))
 })
+
