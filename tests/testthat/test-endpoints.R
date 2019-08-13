@@ -2,20 +2,20 @@ context("endpoints")
 
 validate_test_that("endpoint_validate_input correctly validates data", {
   pjnz <- system.file("testdata", "Botswana2018.PJNZ", package = "hintr")
-  req <- '{"type": "pjnz", "'
-  response <- endpoint_validate_input("request", pjnz)
+  req <- '{"type": "pjnz", "path": "path/to/file"}'
+  response <- endpoint_validate_input(req, "pjnz", pjnz)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
   expect_equal(response$data, "Botswana")
 
   mock_read_country <- mockery::mock("GBR")
   with_mock("hintr:::read_country" = mock_read_country, {
-    response <- endpoint_validate_input("request", pjnz)
+    response <- endpoint_validate_input(req, "pjnz", pjnz)
     response <- jsonlite::parse_json(response)
     expect_equal(response$status, "failure")
     response$errors
     expect_length(response$errors, 1)
-    expect_equal(response$errors[[1]]$error, "INVALID_PJNZ")
+    expect_equal(response$errors[[1]]$error, "INVALID_FILE")
     expect_equal(response$errors[[1]]$detail, "Invalid country")
   })
 })
