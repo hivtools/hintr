@@ -1,6 +1,6 @@
 context("endpoints")
 
-validate_test_that("endpoint_validate_input correctly validates data", {
+test_that("endpoint_validate_input correctly validates data", {
   pjnz <- system.file("testdata", "Botswana2018.PJNZ", package = "hintr")
   req <- '{"type": "pjnz", "path": "path/to/file"}'
   response <- endpoint_validate_input(req, "pjnz", pjnz)
