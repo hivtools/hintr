@@ -10,12 +10,10 @@
 #' @return True if JSON adheres to schema.
 #' @keywords internal
 validate_json_schema <- function(json, schema) {
-  if (validate_schemas()) {
-    valid <- validate(json, schema)
-  } else {
-    valid <- TRUE
+  if (!validate_schemas()) {
+    return(TRUE)
   }
-  valid
+  validate(json, schema)
 }
 
 validate <- function(json, schema) {
