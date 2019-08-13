@@ -1,13 +1,24 @@
 context("validate-json")
 
-test_that("schema can be validated", {
+test_that("schema validation can be turned off", {
   withr::with_envvar(list(VALIDATE_JSON_SCHEMAS = "true"), {
     expect_true(validate_schemas())
-    expect_true(validate_json_schema("data", "schema"))
+    expect_true(validate_json_schema('"path/to/file"', "FilePath"))
   })
 
   withr::with_envvar(list(VALIDATE_JSON_SCHEMAS = ""), {
     expect_false(validate_schemas())
     expect_true(validate_json_schema("data", "schema"))
   })
+})
+
+test_that("validate locates schema and does validation with referenced files", {
+  test_json <- '{"type": "pjnz", "path": "path/to/file"}'
+  expect_true(validate(test_json, "ValidateInputRequest"))
+
+  test_json <- '{"type": "notvalid", "path": "path/to/file"}'
+  expect_false(validate(test_json, "ValidateInputRequest"))
+
+  test_json <- '{"type": "pjnz"}'
+  expect_false(validate(test_json, "ValidateInputRequest"))
 })

@@ -1,0 +1,7 @@
+{ 
+  "status" : "failure",
+  "errors": [
+    {"INVALID_PJNZ": "extra message"}
+  ],
+  "data": null 
+}

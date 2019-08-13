@@ -1,0 +1,12 @@
+{
+	"type": "object",
+	"properties": {
+		"country" : {
+			"type": "string"
+		 },
+	},
+	"additionalProperties": false,
+	"required": [
+		"country"
+	]
+}

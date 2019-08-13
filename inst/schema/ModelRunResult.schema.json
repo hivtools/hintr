@@ -1,5 +1,4 @@
 {
-	"id": "ModelRunResult",
 	"type": "object",
 	"properties": {
 	  "plhiv" : { "$ref": "Data.schema.json" },

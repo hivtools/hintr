@@ -1,12 +1,25 @@
-validate_json_schema <- function(data, schema) {
-  if (validate_schemas()) {
-    ## Get schema as file path
-    ## TODO: Use jsonvalidate once referenced files are supported
-    valid <- TRUE
-  } else {
-    valid <- TRUE
+#' Validate string of JSON against specified schema.
+#'
+#' This check will only be done if environmental variable VALIDATE_JSON_SCHEMAS
+#' is set to true. If VALIDATE_JSON_SCHEMAS is not true then this always
+#' returns TRUE.
+#'
+#' @param json The JSON to validate.
+#' @param schema Name of the schema to validate against.
+#'
+#' @return True if JSON adheres to schema.
+#' @keywords internal
+validate_json_schema <- function(json, schema) {
+  if (!validate_schemas()) {
+    return(TRUE)
   }
-  valid
+  validate(json, schema)
+}
+
+validate <- function(json, schema) {
+  schema <- system_file("schema", paste0(schema, ".schema.json"),
+                        package = "hintr")
+  jsonvalidate::json_validate(json, schema, engine = "ajv")
 }
 
 validate_schemas <- function() {

@@ -1,5 +1,4 @@
 {
-	"id": "Data",
 	"type": "object",
 	"properties": {
 	  "placeholder" : { "type": "boolean" }

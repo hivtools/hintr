@@ -1,5 +1,4 @@
 {
-  "id": "Response", 
   "type": "object",
   "definitions": {
     "success": {
@@ -10,7 +9,7 @@
         },
         "data": {
           "oneOf": [
-            {"$ref": "ValidationResponse.schema.json"},
+            {"$ref": "ValidateInputResponse.schema.json"},
             {"$ref": "InitialiseModelRunResponse.schema.json"}
             {"$ref": "ModelRunResultResponse.schema.json"}
           ]

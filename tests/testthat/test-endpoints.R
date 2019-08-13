@@ -1,22 +1,37 @@
 context("endpoints")
 
-test_that("endpoint_validate_baseline correctly validates data", {
+test_that("endpoint_validate_input correctly validates data", {
   pjnz <- system.file("testdata", "Botswana2018.PJNZ", package = "hintr")
-  response <- endpoint_validate_pjnz("request", pjnz)
+  req <- '{"type": "pjnz", "path": "path/to/file"}'
+  response <- endpoint_validate_input(req, "pjnz", pjnz)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
   expect_equal(response$data, "Botswana")
 
   mock_read_country <- mockery::mock("GBR")
   with_mock("hintr:::read_country" = mock_read_country, {
-    response <- endpoint_validate_pjnz("request", pjnz)
+    response <- endpoint_validate_input(req, "pjnz", pjnz)
     response <- jsonlite::parse_json(response)
     expect_equal(response$status, "failure")
     response$errors
     expect_length(response$errors, 1)
-    expect_equal(response$errors[[1]]$error, "INVALID_PJNZ")
+    expect_equal(response$errors[[1]]$error, "INVALID_FILE")
     expect_equal(response$errors[[1]]$detail, "Invalid country")
   })
+})
+
+test_that("endpoint_validate_input validates the input and response", {
+  pjnz <- system.file("testdata", "Botswana2018.PJNZ", package = "hintr")
+  mock_validate_json_schema <- mockery::mock(TRUE, cycle = TRUE)
+  with_mock("hintr:::validate_json_schema" = mock_validate_json_schema, {
+    ret <- endpoint_validate_input("request", pjnz)
+  })
+
+  mockery::expect_called(mock_validate_json_schema, 2)
+  mockery::expect_args(mock_validate_json_schema, 1, "request",
+                       "ValidateInputRequest")
+  mockery::expect_args(mock_validate_json_schema, 2, ret,
+                       "ValidateInputResponse")
 })
 
 test_that("hintr_response correctly prepares response", {
@@ -25,7 +40,7 @@ test_that("hintr_response correctly prepares response", {
     value = scalar("Passed")
   )
   expected_response <- '{"status":"success","errors":{},"data":"Passed"}'
-  response <- hintr_response(value, "Test Schema")
+  response <- hintr_response(value, "ValidateInputResponse")
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
   expect_equal(response$data, "Passed")
@@ -37,7 +52,7 @@ test_that("hintr_response correctly prepares response", {
                   list(error = "OTHER_ERROR",
                        detail = "Second example"))
   )
-  response <- hintr_response(value, "Test Schema")
+  response <- hintr_response(value, "ValidateInputResponse")
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "failure")
   expect_length(response$errors, 2)
@@ -89,3 +104,4 @@ test_that("plumber api can be built", {
   expect_length(api$routes, 2)
   expect_equal(names(api$routes), c("validate", ""))
 })
+

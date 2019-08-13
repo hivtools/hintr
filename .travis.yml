@@ -2,12 +2,19 @@
 
 language: R
 sudo: false
+addons:
+  apt:
+    packages:
+      - libv8-dev
 before_script:
   - ./docker/travis
 cache: packages
+env:
+  - VALIDATE_JSON_SCHEMAS=true
 r_packages:
   - covr
 r_github_packages:
   - mrc-ide/specio
+  - ropensci/jsonvalidate@i20
 after_success:
   - Rscript -e 'covr::codecov(quiet = FALSE)'

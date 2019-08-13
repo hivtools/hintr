@@ -1,11 +1,10 @@
 {
-	"id": "File",
 	"type": "object",
 	"properties": {
-	  "path" : { "$ref": "FilePath.schema.json" }
+	  "processId" : { "$ref": "URI.schema.json" }
 	},
 	"additionalProperties": false,
 	"required": [
-    "path"
+    "processId"
 	]
 }

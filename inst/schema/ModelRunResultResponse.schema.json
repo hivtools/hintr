@@ -1,5 +1,4 @@
 {
-	"id": "ModelRunResultResponse",
 	"type": "object",
 	"definitions": {
 		"incomplete": {
