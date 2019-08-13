@@ -1,5 +1,4 @@
 {
-	"id": "Error",
 	"type": "object",
 	"properties": {
 	  "pjnz" : { "type": "array" },

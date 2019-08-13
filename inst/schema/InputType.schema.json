@@ -1,5 +1,4 @@
 {
-	"id": "InputType",
 	"type": "string",
 	"enum": ["pjnz", "shape", "population", "survey", "programme", "anc"]
 }

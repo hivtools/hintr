@@ -1,5 +1,4 @@
 {
-	"id": "InitialiseModelRunRequest",
 	"type": "object",
 	"properties": {
 		"pjnz" : { "$ref": "File.schema.json" },

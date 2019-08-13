@@ -1,5 +1,4 @@
 {
-	"id": "ModelRunInputData",
 	"type": "object",
 	"properties": {
 		"programme": { "type": "bool" },

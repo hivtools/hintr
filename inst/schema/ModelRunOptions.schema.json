@@ -1,5 +1,4 @@
 {
-	"id": "ModelRunOptions",
 	"type": "object",
 	"properties": {
 		"max_iterations": { "type": "number" },

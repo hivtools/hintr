@@ -1,5 +1,4 @@
 {
-	"id": "InitialiseModelRunResponse",
 	"type": "object",
 	"properties": {
 		"processId" : { "$ref": "URI.schema.json" }

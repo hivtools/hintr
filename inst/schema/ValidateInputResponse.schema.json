@@ -1,5 +1,4 @@
 {
-	"id": "ValidateInputResponse",
 	"type": "object",
 	"properties": {
 		"country" : {

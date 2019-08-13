@@ -1,5 +1,4 @@
 {
-  "id": "Response",
   "type": "object",
   "definitions": {
     "success": {

@@ -1,5 +1,4 @@
 {
-	"id": "ModelRunResultRequest",
 	"type": "object",
 	"properties": {
 	  "processId" : { "$ref": "URI.schema.json" }
