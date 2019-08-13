@@ -2,6 +2,10 @@
 
 language: R
 sudo: false
+addons:
+  apt:
+    packages:
+      - libv8-dev
 before_script:
   - ./docker/travis
 cache: packages
