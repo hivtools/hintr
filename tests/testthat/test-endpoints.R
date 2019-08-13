@@ -40,7 +40,7 @@ test_that("hintr_response correctly prepares response", {
     value = scalar("Passed")
   )
   expected_response <- '{"status":"success","errors":{},"data":"Passed"}'
-  response <- hintr_response(value, "Test Schema")
+  response <- hintr_response(value, "ValidateInputResponse")
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
   expect_equal(response$data, "Passed")
@@ -52,7 +52,7 @@ test_that("hintr_response correctly prepares response", {
                   list(error = "OTHER_ERROR",
                        detail = "Second example"))
   )
-  response <- hintr_response(value, "Test Schema")
+  response <- hintr_response(value, "ValidateInputResponse")
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "failure")
   expect_length(response$errors, 2)
