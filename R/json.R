@@ -19,7 +19,7 @@ validate_json_schema <- function(json, schema) {
 }
 
 validate <- function(json, schema) {
-  schema <- system.file("schema", paste0(schema, ".schema.json"),
+  schema <- system_file("schema", paste0(schema, ".schema.json"),
                         package = "hintr")
   jsonvalidate::json_validate(json, schema, engine = "ajv")
 }
