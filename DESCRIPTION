@@ -16,7 +16,7 @@ Imports:
     jsonlite,
     plumber,
     specio
-Suggests:   
+Suggests:
     covr,
     jsonvalidate,
     mockery,
