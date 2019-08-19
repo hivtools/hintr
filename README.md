@@ -14,7 +14,7 @@ App to show district level estimates of HIV indicators
 
 Docker images are built on travis, if on master branch run via:
 ```
-docker run --rm -d --network=host --name modelapi_redis redis
+docker run --rm -d --network=host --name hintr_redis redis
 docker run --rm -d --network=host --name hintr mrcide/hintr:latest
 ```
 
