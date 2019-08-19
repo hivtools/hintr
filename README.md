@@ -14,7 +14,8 @@ App to show district level estimates of HIV indicators
 
 Docker images are built on travis, if on master branch run via:
 ```
-docker run --rm -d -p 8888:8888 --name hintr mrcide/hintr:latest
+docker run --rm -d --network=host --name modelapi_redis redis
+docker run --rm -d --network=host --name hintr mrcide/hintr:latest
 ```
 
 Test that container is working by using:
@@ -26,6 +27,7 @@ Validate input data:
 ```
 curl -X POST -H 'Content-Type: application/json' \
      --data @example/payload.json http://localhost:8888/validate
+#> ["{\"status\":\"success\",\"errors\":{},\"data\":\"Botswana\"}"]
 ```
 
 Docker container can be cleaned up using
