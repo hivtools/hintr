@@ -13,13 +13,10 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
 Imports:
-    context,
     jsonlite,
     plumber,
-    redux,
-    rrq,
     specio
-Suggests: 
+Suggests:   
     covr,
     jsonvalidate,
     mockery,
