@@ -1,7 +1,4 @@
 run_model <- function(parameters) {
-  if (!is.null(parameters$sleep)) {
-    message("sleeping...")
-    Sys.sleep(parameters$sleep)
-  }
+  Sys.sleep(10)
   2
 }

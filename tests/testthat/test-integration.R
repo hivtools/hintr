@@ -8,6 +8,7 @@ test_that("queue can be setup and run end-to-end", {
       if (model_queue_status(id)$status %in% c("COMPLETE", "ERROR")) {
         break
       }
+      sleep(1)
     }
     result <- model_queue_result(id)
     expect_equal(result, 2)
