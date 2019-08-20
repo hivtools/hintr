@@ -10,6 +10,7 @@ addons:
       - libv8-dev
 before_script:
   - ./docker/travis
+  - ./docker/build_test_containers
 cache: packages
 env:
   - VALIDATE_JSON_SCHEMAS=true

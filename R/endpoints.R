@@ -1,9 +1,12 @@
 api_build <- function(path = tempfile(), workers = 2) {
   model_queue_start(tempfile(), workers)
   pr <- plumber::plumber$new()
-  pr$handle("POST", "/validate", endpoint_validate_input)
-  pr$handle("POST", "/run_model", endpoint_run_model)
-  pr$handle("POST", "/run_status", endpoint_run_status)
+  pr$handle("POST", "/validate", endpoint_validate_input,
+            serializer = plumber::serializer_content_type("application/json"))
+  pr$handle("POST", "/run_model", endpoint_run_model,
+            serializer = plumber::serializer_content_type("application/json"))
+  pr$handle("POST", "/run_status", endpoint_run_status,
+            serializer = plumber::serializer_content_type("application/json"))
   pr$handle("GET", "/", api_root)
   pr
 }
@@ -26,18 +29,19 @@ api <- function() {
 #'
 #' @return Validates JSON response with data and incidcation of success.
 #' @keywords internal
-endpoint_validate_input <- function(req, type, path) {
-  validate_json_schema(req, "ValidateInputRequest")
+endpoint_validate_input <- function(req, res, type, path) {
+  validate_json_schema(req$postBody, "ValidateInputRequest")
   validate_func <- switch(type,
     pjnz = do_validate_pjnz)
-  res <- with_success(
+  response <- with_success(
     validate_func(path))
-  if (res$success) {
-    res$value <- list(country = scalar(res$value))
+  if (response$success) {
+    response$value <- list(country = scalar(response$value))
   } else {
-    res$errors <- hintr_errors(list("INVALID_FILE" = res$message))
+    response$errors <- hintr_errors(list("INVALID_FILE" = response$message))
+    res$status <- 400
   }
-  hintr_response(res)
+  hintr_response(response)
 }
 
 endpoint_run_model <- function(req, inputs, options) {

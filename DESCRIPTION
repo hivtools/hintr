@@ -24,5 +24,6 @@ Suggests:
     covr,
     jsonvalidate,
     mockery,
+    R6,
     testthat (>= 2.1.0),
     withr

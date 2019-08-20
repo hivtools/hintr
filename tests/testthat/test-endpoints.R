@@ -2,21 +2,25 @@ context("endpoints")
 
 test_that("endpoint_validate_input correctly validates data", {
   pjnz <- system.file("testdata", "Botswana2018.PJNZ", package = "hintr")
-  req <- '{"type": "pjnz", "path": "path/to/file"}'
-  response <- endpoint_validate_input(req, "pjnz", pjnz)
+  req <- list(postBody = '{"type": "pjnz", "path": "path/to/file"}')
+  res <- MockPlumberResponse$new()
+  response <- endpoint_validate_input(req, res, "pjnz", pjnz)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
   expect_equal(response$data, list(country = "Botswana"))
+  expect_equal(res$status, 200)
 
   mock_read_country <- mockery::mock("GBR")
   with_mock("hintr:::read_country" = mock_read_country, {
-    response <- endpoint_validate_input(req, "pjnz", pjnz)
+    res <- MockPlumberResponse$new()
+    response <- endpoint_validate_input(req, res, "pjnz", pjnz)
     response <- jsonlite::parse_json(response)
     expect_equal(response$status, "failure")
     response$errors
     expect_length(response$errors, 1)
     expect_equal(response$errors[[1]]$error, "INVALID_FILE")
     expect_equal(response$errors[[1]]$detail, "Invalid country")
+    expect_equal(res$status, 400)
   })
 })
 
@@ -24,7 +28,8 @@ test_that("endpoint_validate_input validates the input and response", {
   pjnz <- system.file("testdata", "Botswana2018.PJNZ", package = "hintr")
   mock_validate_json_schema <- mockery::mock(TRUE, cycle = TRUE)
   with_mock("hintr:::validate_json_schema" = mock_validate_json_schema, {
-    ret <- endpoint_validate_input("request", pjnz)
+    ret <- endpoint_validate_input(list(postBody = "request"),
+                                   MockPlumberResponse$new(), "pjnz", pjnz)
   })
 
   mockery::expect_called(mock_validate_json_schema, 2)
