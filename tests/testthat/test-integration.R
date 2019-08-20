@@ -1,6 +1,7 @@
 context("integration")
 
 test_that("queue can be setup and run end-to-end", {
+  test_redis_available()
   local({
     rrq <- model_queue_start(tempfile())
     id <- model_queue_submit(list(sleep = 0.0))
