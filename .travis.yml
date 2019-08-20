@@ -14,7 +14,9 @@ env:
 r_packages:
   - covr
 r_github_packages:
+  - mrc-ide/context
   - mrc-ide/specio
+  - mrc-ide/rrq
   - ropensci/jsonvalidate@i20
 after_success:
   - Rscript -e 'covr::codecov(quiet = FALSE)'
