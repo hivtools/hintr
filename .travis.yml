@@ -5,6 +5,8 @@ sudo: false
 addons:
   apt:
     packages:
+      - libhiredis-dev
+      - redis-server
       - libv8-dev
 before_script:
   - ./docker/travis
