@@ -5,16 +5,18 @@ sudo: false
 addons:
   apt:
     packages:
+      - libhiredis-dev
+      - redis-server
       - libv8-dev
 before_script:
   - ./docker/travis
+  - ./docker/build_test_containers
 cache: packages
 env:
   - VALIDATE_JSON_SCHEMAS=true
 r_packages:
   - covr
 r_github_packages:
-  - mrc-ide/specio
   - ropensci/jsonvalidate@i20
 after_success:
   - Rscript -e 'covr::codecov(quiet = FALSE)'

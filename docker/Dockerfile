@@ -15,10 +15,8 @@ RUN install_packages --repo=https://mrc-ide.github.io/drat \
         ps \
         remotes \
         rrq \
+        specio \
         testthat
-
-RUN install_remote \
-        mrc-ide/specio
 
 COPY . /src
 RUN R CMD INSTALL /src
