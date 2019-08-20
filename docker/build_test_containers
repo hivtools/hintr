@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -e
+
+# Initialise docker containers required for running integration tests
+docker run --rm -d --network=host --name hintr_redis redis
+docker run --rm -d --network=host --name hintr mrcide/hintr:latest
