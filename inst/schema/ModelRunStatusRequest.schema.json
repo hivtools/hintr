@@ -1,10 +1,10 @@
 {
 	"type": "object",
 	"properties": {
-	  "processId" : { "$ref": "URI.schema.json" }
+	  "job_id" : { "$ref": "URI.schema.json" }
 	},
 	"additionalProperties": false,
 	"required": [
-    "processId"
+    "job_id"
 	]
 }

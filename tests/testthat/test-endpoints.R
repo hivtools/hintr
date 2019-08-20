@@ -57,7 +57,7 @@ test_that("endpoint model run queues a model run", {
       anc = FALSE
     )
   )
-  req <- '
+  req <- list(postBody = '
   {
     "inputs": {
       "pjnz": "path/to/file",
@@ -75,7 +75,7 @@ test_that("endpoint model run queues a model run", {
         "anc": false
       }
     }
-  }'
+  }')
 
   ## Create a queue and workers
   model_queue_start(tempfile())
@@ -89,6 +89,50 @@ test_that("endpoint model run queues a model run", {
   expect_equal(response$status, "success")
   expect_true("job_id" %in% names(response$data))
   expect_equal(res$status, 200)
+})
+
+test_that("endpoint_run_status correctly returns response", {
+  mock_response <- function(success, status) {
+    list(success = success,
+         value = list(
+          status = status
+         ))
+  }
+  mock_with_success <- mockery::mock(mock_response(TRUE, "COMPLETE"),
+                                     mock_response(TRUE, "RUNNING"),
+                                    mock_response(FALSE, ""))
+  mock_model_queue_result <- function(job_id) {
+    2
+  }
+  req <- list(postBody = '{"job_id":"123"}')
+  res <- MockPlumberResponse$new()
+  with_mock("hintr:::with_success" = mock_with_success,
+            "hintr:::model_queue_result" = mock_model_queue_result, {
+    response <- endpoint_run_status(req, res, "123")
+    response <- jsonlite::parse_json(response)
+    expect_equal(response$status, "success")
+    expect_equal(response$data$job_id, "123")
+    expect_true(response$data$complete)
+    expect_equal(response$data$result, 2)
+    expect_equal(res$status, 200)
+
+    response <- endpoint_run_status(req, res, "123")
+    response <- jsonlite::parse_json(response)
+    expect_equal(response$status, "success")
+    expect_equal(response$data$job_id, "123")
+    expect_false(response$data$complete)
+    expect_null(response$data$result)
+    expect_equal(response$data$progress, "50%")
+    expect_equal(response$data$timeRemaining, "10s")
+    expect_equal(res$status, 200)
+
+    response <- endpoint_run_status(req, res, "123")
+    response <- jsonlite::parse_json(response)
+    expect_equal(res$status, 400)
+    expect_equal(response$status, "failure")
+    expect_equal(response$errors[[1]]$error, "FAILED_TO_CHECK_STATUS")
+    expect_equal(response$errors[[1]]$detail, "")
+  })
 })
 
 test_that("hintr_response correctly prepares response", {
@@ -146,7 +190,7 @@ test_that("hintr errors correctly formats errors", {
   expect_s3_class(errors[[1]]$detail, "scalar")
   expect_equal(as.character(errors[[2]]$error), "KEY2")
   expect_s3_class(errors[[2]]$error, "scalar")
-  expect_null(errors[[2]]$detail)
+  expect_equal(errors[[2]]$detail, scalar(""))
 })
 
 test_that("hintr API can be tested", {

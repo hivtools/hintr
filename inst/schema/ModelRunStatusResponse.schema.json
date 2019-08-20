@@ -3,16 +3,16 @@
 	"definitions": {
 		"incomplete": {
 			"properties": {
-				"processId" : { "$ref": "URI.schema.json" },
+				"job_id" : { "$ref": "URI.schema.json" },
 				"complete": {
-          "const": true
+          "const": false
         },
-				"progress": { "type": "int" },
-				"timeRemaining": { "type": "int" }
+				"progress": { "type": "string" },
+				"timeRemaining": { "type": "string" }
 			},
 			"additionalProperties": false,
 			"required": [
-		    "processId",
+		    "job_id",
 		    "complete",
 		    "progress",
 		    "timeRemaining"
@@ -20,15 +20,15 @@
 	  },
 	  "complete": {
 			"properties": {
-				"processId" : { "$ref": "URI.schema.json" },
+				"job_id" : { "$ref": "URI.schema.json" },
 				"complete": {
           "const": true
         },
-        "result": { "$ref": "ModelRunResult.schema.json" }
+        "result": { "type": "integer" }
 			},
 			"additionalProperties": false,
 			"required": [
-		    "processId",
+		    "job_id",
 		    "complete",
 		    "result"
 			]

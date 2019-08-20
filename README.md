@@ -27,7 +27,30 @@ Validate input data:
 ```
 curl -X POST -H 'Content-Type: application/json' \
      --data @example/docker_payload.json http://localhost:8888/validate
-#> ["{\"status\":\"success\",\"errors\":{},\"data\":\"Botswana\"}"]
+#> {\"status\":\"success\",\"errors\":{},\"data\":\"Botswana\"}
+```
+
+Queue a model run:
+```
+curl -X POST -H 'Content-Type: application/json' \
+     --data @example/docker_model_run_payload.json http://localhost:8888/run_model
+#> {"status":"success","errors":{},"data":{"job_id":"e5bdf08b6938ee68ab2c4ee3838c5a05"}}
+```
+
+Query model run status:
+```
+curl -X POST -H 'Content-Type: application/json' \
+     --data '{"job_id": "e5bdf08b6938ee68ab2c4ee3838c5a05"}' http://localhost:8888/run_status
+```
+
+Result before completion:
+```
+#> {"status":"success","errors":{},"data":{"job_id":"74ebd6eed130e8123048eff45fa0176c","complete":false,"progress":"50%","timeRemaining":"10s"}}
+```
+
+Result after completion:
+```
+#> {"status":"success","errors":{},"data":{"job_id":"c3308621bf1007c6d9f2f164e13beac0","complete":true,"result":2}}
 ```
 
 Docker container can be cleaned up using

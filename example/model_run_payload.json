@@ -1,0 +1,18 @@
+{
+  "inputs": {
+    "pjnz": "inst/testdata/Botswana2018.PJNZ",
+    "shape": "path/to/file",
+    "population": "path/to/file",
+    "survey": "path/to/file",
+    "programme": "path/to/file",
+    "anc": "path/to/file"
+  },
+  "options": {
+    "max_iterations" : 250,
+    "no_of_simulations": 3000,
+    "input_data": {
+      "programme": true,
+      "anc": false
+    }
+  }
+}

@@ -18,9 +18,6 @@
 run_model <- function(data, parameters) {
   ## TODO: Recover serialised data in redis from the supplied paths where
   ## possible and call the model with data and parameters and return result
-  if (!is.null(parameters$sleep)) {
-    message("sleeping...")
-    Sys.sleep(parameters$sleep)
-  }
+  Sys.sleep(10)
   2
 }

@@ -46,7 +46,7 @@ endpoint_validate_input <- function(req, res, type, path) {
 }
 
 endpoint_run_model <- function(req, res, inputs, options) {
-  validate_json_schema(req, "InitialiseModelRunRequest")
+  validate_json_schema(req$postBody, "InitialiseModelRunRequest")
   response <- with_success(
     model_queue_submit(inputs, options))
   if (response$success) {
@@ -59,16 +59,58 @@ endpoint_run_model <- function(req, res, inputs, options) {
 }
 
 endpoint_run_status <- function(req, res, job_id) {
-  validate_json_schema(req, "ModelRunStatusRequest")
+  validate_json_schema(req$postBody, "ModelRunStatusRequest")
   response <- with_success(
-    model_run_status(job_id))
-  if (response$success) {
-    response$value <- list(job_id = scalar(response$value))
-  } else {
-    response$errors <- hintr_errors(list("FAILED_TO_QUEUE" = response$message))
+    model_queue_status(job_id))
+  prepare_error_response <- function(job_id) {
     res$status <- 400
+    response <- list(
+      success = FALSE,
+      errors = hintr_errors(list("FAILED_TO_CHECK_STATUS" = response$message))
+    )
   }
+  if (!is.null(response$value$status)) {
+    response_func <- switch(
+      response$value$status,
+      "COMPLETE" = prepare_complete_response,
+      "RUNNING" = prepare_running_response,
+      prepare_error_response
+    )
+  } else {
+    response_func <- prepare_error_response
+  }
+  response <- response_func(job_id)
   hintr_response(response)
+}
+
+prepare_complete_response <- function(job_id) {
+  response <- list(
+    success = TRUE,
+    value = list(
+      job_id = scalar(job_id),
+      complete = scalar(TRUE),
+      result = scalar(model_queue_result(job_id)))
+  )
+  response
+}
+
+prepare_running_response <- function(job_id) {
+  response <- list(
+    success = TRUE,
+    value = list(
+      job_id = scalar(job_id),
+      complete = scalar(FALSE),
+      progress = scalar("50%"),
+      timeRemaining = scalar("10s")
+    )
+  )
+  response
+}
+
+prepare_error_response <- function(job_id, response) {
+  res$errors <- hintr_errors(list("FAILED_TO_QUEUE" = response$message))
+  res$status <- 400
+  res
 }
 
 #' Format a hintr response.
@@ -96,8 +138,14 @@ hintr_response <- function(value) {
 }
 
 hintr_errors <- function(errors) {
-  lapply(names(errors), function(x)
-    list(error = scalar(x), detail = scalar(errors[[x]])))
+  lapply(names(errors), function(x) {
+    message <- errors[[x]]
+    if (is.null(message)) {
+      message <- ""
+    }
+    list(error = scalar(x),
+         detail = scalar(message))
+  })
 }
 
 with_success <- function(expr) {
