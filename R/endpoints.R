@@ -24,18 +24,19 @@ api <- function() {
 #'
 #' @return Validates JSON response with data and incidcation of success.
 #' @keywords internal
-endpoint_validate_input <- function(req, type, path) {
-      validate_json_schema(req$postBody, "ValidateInputRequest")
+endpoint_validate_input <- function(req, res, type, path) {
+  validate_json_schema(req$postBody, "ValidateInputRequest")
   validate_func <- switch(type,
     pjnz = do_validate_pjnz)
-  res <- with_success(
+  response <- with_success(
     validate_func(path))
-  if (res$success) {
-    res$value <- scalar(res$value)
+  if (response$success) {
+    response$value <- scalar(response$value)
   } else {
-    res$errors <- hintr_errors(list("INVALID_FILE" = res$message))
+    response$errors <- hintr_errors(list("INVALID_FILE" = response$message))
+    res$status <- 400
   }
-  hintr_response(res, "ValidateInputResponse")
+  hintr_response(response, "ValidateInputResponse")
 }
 
 #' Format a hintr response.
