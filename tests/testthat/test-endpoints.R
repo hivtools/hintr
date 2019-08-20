@@ -80,11 +80,15 @@ test_that("endpoint model run queues a model run", {
   ## Create a queue and workers
   model_queue_start(tempfile())
 
+  ## Create mock response
+  res <- MockPlumberResponse$new()
+
   ## Call the endpoint
-  response <- endpoint_run_model(req, inputs, parameters)
+  response <- endpoint_run_model(req, res, inputs, parameters)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
   expect_true("job_id" %in% names(response$data))
+  expect_equal(res$status, 200)
 })
 
 test_that("hintr_response correctly prepares response", {

@@ -44,28 +44,30 @@ endpoint_validate_input <- function(req, res, type, path) {
   hintr_response(response)
 }
 
-endpoint_run_model <- function(req, inputs, options) {
+endpoint_run_model <- function(req, res, inputs, options) {
   validate_json_schema(req, "InitialiseModelRunRequest")
-  res <- with_success(
+  response <- with_success(
     model_queue_submit(inputs, options))
-  if (res$success) {
-    res$value <- list(job_id = scalar(res$value))
+  if (response$success) {
+    response$value <- list(job_id = scalar(response$value))
   } else {
-    res$errors <- hintr_errors(list("FAILED_TO_QUEUE" = res$message))
+    response$errors <- hintr_errors(list("FAILED_TO_QUEUE" = response$message))
+    res$status <- 400
   }
-  hintr_response(res)
+  hintr_response(response)
 }
 
-endpoint_run_status <- function(req, job_id) {
+endpoint_run_status <- function(req, res, job_id) {
   validate_json_schema(req, "ModelRunStatusRequest")
-  res <- with_success(
+  response <- with_success(
     model_run_status(job_id))
-  if (res$success) {
-    res$value <- list(job_id = scalar(res$value))
+  if (response$success) {
+    response$value <- list(job_id = scalar(response$value))
   } else {
-    res$errors <- hintr_errors(list("FAILED_TO_QUEUE" = res$message))
+    response$errors <- hintr_errors(list("FAILED_TO_QUEUE" = response$message))
+    res$status <- 400
   }
-  hintr_response(res)
+  hintr_response(response)
 }
 
 #' Format a hintr response.
