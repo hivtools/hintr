@@ -16,6 +16,7 @@ r_packages:
 r_github_packages:
   - mrc-ide/context
   - mrc-ide/specio
+  - mrc-ide/queuer
   - mrc-ide/rrq
   - ropensci/jsonvalidate@i20
 after_success:
