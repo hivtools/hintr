@@ -20,3 +20,8 @@ build_validate_request <- function(pjnz) {
     )
   )
 }
+
+MockPlumberResponse <- R6::R6Class("PlumberResponse", list(
+  body = NULL,
+  status = 200
+))
