@@ -3,6 +3,7 @@ api_build <- function(path = tempfile(), workers = 2) {
   pr <- plumber::plumber$new()
   pr$handle("POST", "/validate", endpoint_validate_input)
   pr$handle("POST", "/run_model", endpoint_run_model)
+  pr$handle("POST", "/run_status", endpoint_run_status)
   pr$handle("GET", "/", api_root)
   pr
 }
@@ -43,6 +44,18 @@ endpoint_run_model <- function(req, inputs, options) {
   validate_json_schema(req, "InitialiseModelRunRequest")
   res <- with_success(
     model_queue_submit(inputs, options))
+  if (res$success) {
+    res$value <- list(job_id = scalar(res$value))
+  } else {
+    res$errors <- hintr_errors(list("FAILED_TO_QUEUE" = res$message))
+  }
+  hintr_response(res)
+}
+
+endpoint_run_status <- function(req, job_id) {
+  validate_json_schema(req, "ModelRunStatusRequest")
+  res <- with_success(
+    model_run_status(job_id))
   if (res$success) {
     res$value <- list(job_id = scalar(res$value))
   } else {
