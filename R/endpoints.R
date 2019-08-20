@@ -17,7 +17,8 @@ api <- function() {
 #' Validate an input file and return an indication of success and
 #' if successful return the data required by UI.
 #'
-#' @param req The request as JSON.
+#' @param req The request as PlumberRequest object.
+#' @param res The response as a PlumberResponse object.
 #' @param type The type of file to validate: pjnz, shape, population, ANC,
 #' survey or programme.
 #' @param path Path to the file to validate.

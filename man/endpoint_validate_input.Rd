@@ -5,10 +5,12 @@
 \title{Validate an input file and return an indication of success and
 if successful return the data required by UI.}
 \usage{
-endpoint_validate_input(req, type, path)
+endpoint_validate_input(req, res, type, path)
 }
 \arguments{
-\item{req}{The request as JSON.}
+\item{req}{The request as PlumberRequest object.}
+
+\item{res}{The response as a PlumberResponse object.}
 
 \item{type}{The type of file to validate: pjnz, shape, population, ANC,
 survey or programme.}
