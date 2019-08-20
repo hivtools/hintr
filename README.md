@@ -25,7 +25,7 @@ curl http://localhost:8888
 Validate input data:
 ```
 curl -X POST -H 'Content-Type: application/json' \
-     --data @example/payload.json http://localhost:8888/validate
+     --data @example/docker_payload.json http://localhost:8888/validate
 ```
 
 Docker container can be cleaned up using

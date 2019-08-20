@@ -1,6 +1,7 @@
 api_build <- function() {
   pr <- plumber::plumber$new()
-  pr$handle("POST", "/validate", endpoint_validate_input)
+      pr$handle("POST", "/validate", endpoint_validate_input,
+            serializer = plumber::serializer_content_type("application/json"))
   pr$handle("GET", "/", api_root)
   pr
 }
@@ -24,7 +25,7 @@ api <- function() {
 #' @return Validates JSON response with data and incidcation of success.
 #' @keywords internal
 endpoint_validate_input <- function(req, type, path) {
-  validate_json_schema(req, "ValidateInputRequest")
+      validate_json_schema(req$postBody, "ValidateInputRequest")
   validate_func <- switch(type,
     pjnz = do_validate_pjnz)
   res <- with_success(
