@@ -1,14 +1,7 @@
 { 
   "status" : "failure",
-  "errors": {
-    "pjnz": null,
-    "shape": null,
-    "population": null,
-    "survey": [
-      "INCOMPLETE_DATA"
-    ],
-    "programme": null,
-    "anc": null
-  },
+  "errors": [
+    {"FAILED_TO_QUEUE": "additional context"}
+  ],
   "data": null 
 }

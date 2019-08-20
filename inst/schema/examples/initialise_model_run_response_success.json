@@ -2,6 +2,6 @@
   "status" : "success",
   "errors": {},
   "data": {
-    "processId": "someURI"
+    "job_id": "someURI"
   } 
 }

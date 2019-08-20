@@ -4,13 +4,11 @@
 \alias{hintr_response}
 \title{Format a hintr response.}
 \usage{
-hintr_response(value, schema)
+hintr_response(value)
 }
 \arguments{
 \item{value}{List containing an indication of success, any errors and the
 value to return.}
-
-\item{schema}{The schema to validate the response against}
 }
 \value{
 Formatted hintr response.

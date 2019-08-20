@@ -1,6 +1,8 @@
-api_build <- function() {
+api_build <- function(path = tempfile(), workers = 2) {
+  model_queue_start(tempfile(), workers)
   pr <- plumber::plumber$new()
   pr$handle("POST", "/validate", endpoint_validate_input)
+  pr$handle("POST", "/run_model", endpoint_run_model)
   pr$handle("GET", "/", api_root)
   pr
 }
@@ -30,11 +32,23 @@ endpoint_validate_input <- function(req, type, path) {
   res <- with_success(
     validate_func(path))
   if (res$success) {
-    res$value <- scalar(res$value)
+    res$value <- list(country = scalar(res$value))
   } else {
     res$errors <- hintr_errors(list("INVALID_FILE" = res$message))
   }
-  hintr_response(res, "ValidateInputResponse")
+  hintr_response(res)
+}
+
+endpoint_run_model <- function(req, inputs, options) {
+  validate_json_schema(req, "InitialiseModelRunRequest")
+  res <- with_success(
+    model_queue_submit(inputs, options))
+  if (res$success) {
+    res$value <- list(job_id = scalar(res$value))
+  } else {
+    res$errors <- hintr_errors(list("FAILED_TO_QUEUE" = res$message))
+  }
+  hintr_response(res)
 }
 
 #' Format a hintr response.
@@ -43,11 +57,10 @@ endpoint_validate_input <- function(req, type, path) {
 #'
 #' @param value List containing an indication of success, any errors and the
 #' value to return.
-#' @param schema The schema to validate the response against
 #'
 #' @return Formatted hintr response.
 #' @keywords internal
-hintr_response <- function(value, schema) {
+hintr_response <- function(value) {
   if (value$success) {
     status <- "success"
   } else {
@@ -58,7 +71,7 @@ hintr_response <- function(value, schema) {
     "errors" = value$errors,
     "data" = value$value
   ))
-  validate_json_schema(ret, schema)
+  validate_json_schema(ret, "Response")
   ret
 }
 

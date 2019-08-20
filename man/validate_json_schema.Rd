@@ -12,7 +12,7 @@ validate_json_schema(json, schema)
 \item{schema}{Name of the schema to validate against.}
 }
 \value{
-True if JSON adheres to schema.
+Throw an error if doesn't adhere to schema.
 }
 \description{
 This check will only be done if environmental variable VALIDATE_JSON_SCHEMAS

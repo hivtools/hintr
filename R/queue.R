@@ -24,8 +24,8 @@ model_queue_start <- function(root, workers = 2, name = "hintr",
   invisible(global_queue$queue)
 }
 
-model_queue_submit <- function(data, queue = global_queue$queue) {
-  queue$enqueue_(quote(hintr:::run_model(data)))
+model_queue_submit <- function(data, parameters, queue = global_queue$queue) {
+  queue$enqueue_(quote(hintr:::run_model(data, parameters)))
 }
 
 

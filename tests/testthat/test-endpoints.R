@@ -6,7 +6,7 @@ test_that("endpoint_validate_input correctly validates data", {
   response <- endpoint_validate_input(req, "pjnz", pjnz)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
-  expect_equal(response$data, "Botswana")
+  expect_equal(response$data, list(country = "Botswana"))
 
   mock_read_country <- mockery::mock("GBR")
   with_mock("hintr:::read_country" = mock_read_country, {
@@ -31,39 +31,85 @@ test_that("endpoint_validate_input validates the input and response", {
   mockery::expect_args(mock_validate_json_schema, 1, "request",
                        "ValidateInputRequest")
   mockery::expect_args(mock_validate_json_schema, 2, ret,
-                       "ValidateInputResponse")
+                       "Response")
+})
+
+test_that("endpoint model run queues a model run", {
+  ## Create request data
+  inputs <- list(
+    pjnz = "path/tp/pjnz",
+    shape = "path",
+    population = "path",
+    survey = "path",
+    programme = "path",
+    anc = "path"
+  )
+  parameters <- list(
+    max_iterations = 250,
+    no_of_simulations = 3000,
+    input_data = list(
+      programme = TRUE,
+      anc = FALSE
+    )
+  )
+  req <- '
+  {
+    "inputs": {
+      "pjnz": "path/to/file",
+      "shape": "path/to/file",
+      "population": "path/to/file",
+      "survey": "path/to/file",
+      "programme": "path/to/file",
+      "anc": "path/to/file"
+    },
+    "options": {
+      "max_iterations" : 250,
+      "no_of_simulations": 3000,
+      "input_data": {
+        "programme": true,
+        "anc": false
+      }
+    }
+  }'
+
+  ## Create a queue and workers
+  model_queue_start(tempfile())
+
+  ## Call the endpoint
+  response <- endpoint_run_model(req, inputs, parameters)
+  response <- jsonlite::parse_json(response)
+  expect_equal(response$status, "success")
+  expect_true("job_id" %in% names(response$data))
 })
 
 test_that("hintr_response correctly prepares response", {
   value <- list(
     success = TRUE,
-    value = scalar("Passed")
+    value = list(country = scalar("test"))
   )
-  expected_response <- '{"status":"success","errors":{},"data":"Passed"}'
-  response <- hintr_response(value, "ValidateInputResponse")
+  expected_response <-
+    '{"status":"success","errors":{},"data":{"country":"test"}}'
+  response <- hintr_response(value)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
-  expect_equal(response$data, "Passed")
+  expect_equal(names(response$data), "country")
+  expect_equal(response$data$country, "test")
 
   value <- list(
     success = FALSE,
-    errors = list(list(error = "INVALID_PJNZ",
-                       detail = "Example error"),
-                  list(error = "OTHER_ERROR",
-                       detail = "Second example"))
+    errors = list(list(error = scalar("INVALID_PJNZ"),
+                       detail = scalar("Example error")),
+                  list(error = scalar("OTHER_ERROR"),
+                       detail = scalar("Second example")))
   )
-  response <- hintr_response(value, "ValidateInputResponse")
+  response <- hintr_response(value)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "failure")
   expect_length(response$errors, 2)
-  expect_length(response$errors[[1]]$error, 1)
-  expect_equal(response$errors[[1]]$error[[1]], "INVALID_PJNZ")
-  expect_length(response$errors[[1]]$detail, 1)
-  expect_equal(response$errors[[1]]$detail[[1]], "Example error")
-  expect_length(response$errors[[2]]$error, 1)
-  expect_equal(response$errors[[2]]$error[[1]], "OTHER_ERROR")
-  expect_length(response$errors[[2]]$detail, 1)
-  expect_equal(response$errors[[2]]$detail[[1]], "Second example")
+  expect_equal(response$errors[[1]]$error, "INVALID_PJNZ")
+  expect_equal(response$errors[[1]]$detail, "Example error")
+  expect_equal(response$errors[[2]]$error, "OTHER_ERROR")
+  expect_equal(response$errors[[2]]$detail, "Second example")
 
 })
 
@@ -101,7 +147,7 @@ test_that("hintr API can be tested", {
 test_that("plumber api can be built", {
   api <- api_build()
   expect_s3_class(api, "plumber")
-  expect_length(api$routes, 2)
-  expect_equal(names(api$routes), c("validate", ""))
+  expect_length(api$routes, 3)
+  expect_equal(names(api$routes), c("validate", "run_model", ""))
 })
 
