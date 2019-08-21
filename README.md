@@ -15,7 +15,8 @@ App to show district level estimates of HIV indicators
 Docker images are built on travis, if on master branch run via:
 ```
 docker run --rm -d --network=host --name hintr_redis redis
-docker run --rm -d --network=host --name hintr mrcide/hintr:latest
+docker run --rm -d --network=host --mount type=volume,src=upload_volume,dst=/uploads \
+  --name hintr mrcide/hintr:latest
 ```
 
 Test that container is working by using:
@@ -56,6 +57,17 @@ Result after completion:
 Docker container can be cleaned up using
 ```
 docker rm -f hintr
+```
+
+### Input data
+
+Input data should be written to the shared `upload_volume`. When requesting validation pass the absolute path to the file in the request JSON e.g.
+
+```
+{
+  "type": "pjnz",
+  "path": "/uploads/Botswana.pjnz"
+}
 ```
 
 ## Validating JSON against schema
