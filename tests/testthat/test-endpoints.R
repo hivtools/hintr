@@ -36,7 +36,7 @@ test_that("endpoint_validate_input validates the input and response", {
   mockery::expect_args(mock_validate_json_schema, 1, "request",
                        "ValidateInputRequest")
   mockery::expect_args(mock_validate_json_schema, 2, ret,
-                       "ValidateInputResponse")
+                       "Response")
 })
 
 test_that("hintr_response correctly prepares response", {
@@ -52,10 +52,10 @@ test_that("hintr_response correctly prepares response", {
 
   value <- list(
     success = FALSE,
-    errors = list(list(error = "INVALID_PJNZ",
-                       detail = "Example error"),
-                  list(error = "OTHER_ERROR",
-                       detail = "Second example"))
+    errors = list(list(error = scalar("INVALID_PJNZ"),
+                       detail = scalar("Example error")),
+                  list(error = scalar("OTHER_ERROR"),
+                       detail = scalar("Second example")))
   )
   response <- hintr_response(value)
   response <- jsonlite::parse_json(response)
