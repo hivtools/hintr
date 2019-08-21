@@ -37,7 +37,7 @@ endpoint_validate_input <- function(req, res, type, path) {
   response <- with_success(
     validate_func(path))
   if (response$success) {
-    response$value <- list(country = scalar(response$value))
+    response$value <- scalar(response$value)
   } else {
     response$errors <- hintr_errors(list("INVALID_FILE" = response$message))
     res$status <- 400

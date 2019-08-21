@@ -7,7 +7,7 @@ test_that("endpoint_validate_input correctly validates data", {
   response <- endpoint_validate_input(req, res, "pjnz", pjnz)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
-  expect_equal(response$data, list(country = "Botswana"))
+  expect_equal(response$data, "Botswana")
   expect_equal(res$status, 200)
 
   mock_read_country <- mockery::mock("GBR")
@@ -138,14 +138,13 @@ test_that("endpoint_run_status correctly returns response", {
 test_that("hintr_response correctly prepares response", {
   value <- list(
     success = TRUE,
-    value = list(country = scalar("test"))
+    value = scalar("Passed")
   )
   expected_response <- '{"status":"success","errors":{},"data":"Passed"}'
   response <- hintr_response(value)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
-  expect_equal(names(response$data), "country")
-  expect_equal(response$data$country, "test")
+  expect_equal(response$data, "Passed")
 
   value <- list(
     success = FALSE,
