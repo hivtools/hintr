@@ -102,7 +102,7 @@ test_that("endpoint_run_status correctly returns response", {
                                      mock_response(TRUE, "RUNNING"),
                                     mock_response(FALSE, ""))
   mock_model_queue_result <- function(job_id) {
-    2
+    data.frame(x = c(1, 2, 3), y = c(3, 4, 5))
   }
   req <- list(postBody = '{"job_id":"123"}')
   res <- MockPlumberResponse$new()
@@ -113,7 +113,7 @@ test_that("endpoint_run_status correctly returns response", {
     expect_equal(response$status, "success")
     expect_equal(response$data$job_id, "123")
     expect_true(response$data$complete)
-    expect_equal(response$data$result, 2)
+    expect_false(is.null(response$data$result))
     expect_equal(res$status, 200)
 
     response <- endpoint_run_status(req, res, "123")
