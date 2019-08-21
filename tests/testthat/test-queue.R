@@ -45,7 +45,9 @@ test_that("queue works as intended", {
 
   ## Result can be retrieved after task has completed
   res <- model_queue_result(job_id)
-  expect_equal(res, 2)
+  expect_s3_class(res, "data.frame")
+  expect_equal(names(res), c("area_id", "sex", "agegr_id", "indicator",
+                             "time", "mean", "se", "median", "lower", "upper"))
   expect_length(queue$task_list(), 1)
 
   ## task can be cleaned up

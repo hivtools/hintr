@@ -12,6 +12,9 @@ test_that("queue can be setup and run end-to-end", {
       Sys.sleep(1)
     }
     result <- model_queue_result(id)
-    expect_equal(result, 2)
+    expect_s3_class(result, "data.frame")
+    expect_equal(names(result),
+                 c("area_id", "sex", "agegr_id", "indicator",
+                   "time", "mean", "se", "median", "lower", "upper"))
   })
 })
