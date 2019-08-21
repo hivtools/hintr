@@ -11,9 +11,13 @@
 #' @keywords internal
 validate_json_schema <- function(json, schema) {
   if (!validate_schemas()) {
-    return(TRUE)
+    return(invisible(TRUE))
   }
-  validate(json, schema)
+  valid <- validate(json, schema)
+  if (!valid) {
+    stop(sprintf("JSON \n%s\n does not adhere to schema %s.", json, schema))
+  }
+  invisible(valid)
 }
 
 validate <- function(json, schema) {
