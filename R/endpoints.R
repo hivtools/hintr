@@ -113,7 +113,7 @@ prepare_error_response <- function(job_id, response) {
   res
 }
 
-#' Format a hintr response.
+#' Format a hintr response and validate against schema.
 #'
 #' Returns the status, any errors occured and the data if successful.
 #'

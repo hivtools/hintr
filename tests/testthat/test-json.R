@@ -17,8 +17,8 @@ test_that("validate locates schema and does validation with referenced files", {
   expect_true(validate(test_json, "ValidateInputRequest"))
 
   test_json <- '{"type": "notvalid", "path": "path/to/file"}'
-  expect_false(validate(test_json, "ValidateInputRequest"))
+  expect_error(validate(test_json, "ValidateInputRequest"))
 
   test_json <- '{"type": "pjnz"}'
-  expect_false(validate(test_json, "ValidateInputRequest"))
+  expect_error(validate(test_json, "ValidateInputRequest"))
 })

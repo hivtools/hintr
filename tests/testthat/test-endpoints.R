@@ -140,8 +140,7 @@ test_that("hintr_response correctly prepares response", {
     success = TRUE,
     value = list(country = scalar("test"))
   )
-  expected_response <-
-    '{"status":"success","errors":{},"data":{"country":"test"}}'
+  expected_response <- '{"status":"success","errors":{},"data":"Passed"}'
   response <- hintr_response(value)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")

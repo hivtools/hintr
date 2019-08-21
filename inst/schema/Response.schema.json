@@ -39,7 +39,7 @@
       },
       "additionalProperties": false,
       "required": ["status", "errors", "data" ]
-    },
+    }
   },
 
   "oneOf": [

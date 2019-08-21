@@ -2,7 +2,7 @@
 % Please edit documentation in R/endpoints.R
 \name{hintr_response}
 \alias{hintr_response}
-\title{Format a hintr response.}
+\title{Format a hintr response and validate against schema.}
 \usage{
 hintr_response(value)
 }
