@@ -19,7 +19,7 @@ run_model <- function(data, parameters) {
   ## TODO: Recover serialised data in redis from the supplied paths where
   ## possible and call the model with data and parameters and return result
   Sys.sleep(10)
-  data <- read.csv(
+  data <- utils::read.csv(
     system.file("testdata", "malawi_outputs.csv", package = "hintr"),
     header = TRUE, stringsAsFactors = FALSE)
   round_data(data)
