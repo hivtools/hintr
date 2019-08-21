@@ -14,16 +14,13 @@ validate_json_schema <- function(json, schema) {
     return(invisible(TRUE))
   }
   valid <- validate(json, schema)
-  if (!valid) {
-    stop(sprintf("JSON \n%s\n does not adhere to schema %s.", json, schema))
-  }
   invisible(valid)
 }
 
 validate <- function(json, schema) {
   schema <- system_file("schema", paste0(schema, ".schema.json"),
                         package = "hintr")
-  jsonvalidate::json_validate(json, schema, engine = "ajv")
+  jsonvalidate::json_validate(json, schema, engine = "ajv", error = TRUE)
 }
 
 validate_schemas <- function() {
