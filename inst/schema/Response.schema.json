@@ -29,10 +29,10 @@
           "const": "failure"
         },
         "data": {
-          "type": "null"
+          "type": "object"
         },
         "errors": {
-          "type": "object",
+          "type": "array",
           "minItems": 1,
           "items": { "$ref": "Error.schema.json" }
         }
