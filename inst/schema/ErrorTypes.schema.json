@@ -1,4 +1,4 @@
 {
-	"type": "string",
-	"enum": ["INVALID_FILE", "FAILED_TO_QUEUE", "INVALID_PJNZ", "OTHER_ERROR", "FAILED_TO_CHECK_STATUS"]
+  "type": "string",
+  "enum": ["INVALID_FILE", "FAILED_TO_QUEUE", "INVALID_PJNZ", "OTHER_ERROR", "FAILED_TO_CHECK_STATUS"]
 }

@@ -1,46 +1,46 @@
 {
-	"type": "object",
-	"definitions": {
-		"incomplete": {
-			"properties": {
-				"job_id" : { "$ref": "URI.schema.json" },
-				"complete": {
-          "const": false
-        },
-				"progress": { "type": "string" },
-				"timeRemaining": { "type": "string" }
-			},
-			"additionalProperties": false,
-			"required": [
-		    "job_id",
-		    "complete",
-		    "progress",
-		    "timeRemaining"
-			]
-	  },
-	  "complete": {
-			"properties": {
-				"job_id" : { "$ref": "URI.schema.json" },
-				"complete": {
-          "const": true
-        },
-        "result": { 
-          "type": "array",
-          "minItems": 1,
-          "items": { "type": "object" }
-        }
-			},
-			"additionalProperties": false,
-			"required": [
-		    "job_id",
-		    "complete",
-		    "result"
-			]
-	  }
+  "type": "object",
+  "definitions": {
+    "incomplete": {
+      "properties": {
+        "job_id" : { "$ref": "URI.schema.json" },
+        "complete": {
+      "const": false
+    },
+        "progress": { "type": "string" },
+        "timeRemaining": { "type": "string" }
+      },
+      "additionalProperties": false,
+      "required": [
+      "job_id",
+      "complete",
+      "progress",
+      "timeRemaining"
+      ]
+    },
+    "complete": {
+      "properties": {
+        "job_id" : { "$ref": "URI.schema.json" },
+        "complete": {
+      "const": true
+    },
+    "result": { 
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "object" }
+    }
+      },
+      "additionalProperties": false,
+      "required": [
+      "job_id",
+      "complete",
+      "result"
+      ]
+    }
   },
 
   "oneOf": [
-    {"$ref": "#/definitions/incomplete"},
-    {"$ref": "#/definitions/complete"}
+  {"$ref": "#/definitions/incomplete"},
+  {"$ref": "#/definitions/complete"}
   ]
 }

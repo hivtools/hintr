@@ -1,10 +1,10 @@
 {
-	"type": "object",
-	"properties": {
-	  "job_id" : { "$ref": "URI.schema.json" }
-	},
-	"additionalProperties": false,
-	"required": [
+  "type": "object",
+  "properties": {
+    "job_id" : { "$ref": "URI.schema.json" }
+  },
+  "additionalProperties": false,
+  "required": [
     "job_id"
-	]
+  ]
 }

@@ -1,12 +1,12 @@
 {
-	"type": "object",
-	"properties": {
-		"inputs": { "$ref": "ModelInputs.schema.json" },
-		"options": { "$ref": "ModelRunOptions.schema.json" }
-	},
-	"additionalProperties": false,
-	"required": [
+  "type": "object",
+  "properties": {
+    "inputs": { "$ref": "ModelInputs.schema.json" },
+    "options": { "$ref": "ModelRunOptions.schema.json" }
+  },
+  "additionalProperties": false,
+  "required": [
     "inputs",
     "options"
-	]
+  ]
 }

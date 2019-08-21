@@ -1,12 +1,12 @@
 {
-	"type": "object",
-	"properties": {
-		"programme": { "type": "boolean" },
+  "type": "object",
+  "properties": {
+    "programme": { "type": "boolean" },
     "anc": { "type": "boolean" }
-	},
-	"additionalProperties": false,
-	"required": [
+  },
+  "additionalProperties": false,
+  "required": [
     "programme",
     "anc"
-	]
+  ]
 }
