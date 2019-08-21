@@ -89,7 +89,7 @@ prepare_complete_response <- function(job_id) {
     value = list(
       job_id = scalar(job_id),
       complete = scalar(TRUE),
-      result = scalar(model_queue_result(job_id)))
+      result = model_queue_result(job_id))
   )
   response
 }

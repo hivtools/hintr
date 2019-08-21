@@ -19,5 +19,20 @@ run_model <- function(data, parameters) {
   ## TODO: Recover serialised data in redis from the supplied paths where
   ## possible and call the model with data and parameters and return result
   Sys.sleep(10)
-  2
+  data <- read.csv(
+    system.file("testdata", "malawi_outputs.csv", package = "hintr"),
+    header = TRUE, stringsAsFactors = FALSE)
+  round_data(data)
+}
+
+round_data <- function(data) {
+  numeric <- c("population", "plhiv", "num_art_reside", "num_art_facility",
+               "infections")
+  proportion <- c("prevalence", "art_coverage", "incidence")
+  round_df <- function(df) {
+    nums <- vapply(df, is.numeric, FUN.VALUE = logical(1))
+    df[, nums] <- round(df[, nums], digits = 3)
+    df
+  }
+  round_df(data)
 }

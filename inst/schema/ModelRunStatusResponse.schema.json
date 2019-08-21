@@ -24,7 +24,11 @@
 				"complete": {
           "const": true
         },
-        "result": { "type": "integer" }
+        "result": { 
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "object" }
+        }
 			},
 			"additionalProperties": false,
 			"required": [
