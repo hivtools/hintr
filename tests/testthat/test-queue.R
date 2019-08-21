@@ -22,7 +22,7 @@ test_that("queue works as intended", {
   expect_length(queue$task_list(), 0)
 
   ## jobs can be pushed to queue
-  job_id <- model_queue_submit(list())
+  job_id <- model_queue_submit(list(), list())
   expect_length(queue$task_list(), 1)
 
   ## status can be retireved
