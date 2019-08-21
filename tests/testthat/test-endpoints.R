@@ -40,6 +40,7 @@ test_that("endpoint_validate_input validates the input and response", {
 })
 
 test_that("endpoint model run queues a model run", {
+  test_redis_available()
   ## Create request data
   inputs <- list(
     pjnz = "path/tp/pjnz",
@@ -92,6 +93,7 @@ test_that("endpoint model run queues a model run", {
 })
 
 test_that("endpoint_run_status correctly returns response", {
+  test_redis_available()
   mock_response <- function(success, status) {
     list(success = success,
          value = list(
@@ -196,6 +198,7 @@ test_that("hintr API can be tested", {
 })
 
 test_that("plumber api can be built", {
+  test_redis_available()
   api <- api_build()
   expect_s3_class(api, "plumber")
   expect_length(api$routes, 4)

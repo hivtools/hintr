@@ -29,7 +29,10 @@ MockPlumberResponse <- R6::R6Class("PlumberResponse", list(
 test_redis_available <- function() {
   available <- redux::redis_available()
   if (!available) {
-    testthat::skip("Skipping test as redis is not available")
+    testthat::skip(
+"Skipping test as redis is not available, start redis in docker using
+docker run --rm -d --network=host --name hintr_redis redis
+to enable test.")
   }
   invisible(available)
 }
