@@ -92,6 +92,60 @@ test_that("endpoint model run queues a model run", {
   expect_equal(res$status, 200)
 })
 
+test_that("endpoint_run_model returns error if queueing fails", {
+  ## Create request data
+  inputs <- list(
+    pjnz = "path/tp/pjnz",
+    shape = "path",
+    population = "path",
+    survey = "path",
+    programme = "path",
+    anc = "path"
+  )
+  parameters <- list(
+    max_iterations = 250,
+    no_of_simulations = 3000,
+    input_data = list(
+      programme = TRUE,
+      anc = FALSE
+    )
+  )
+  req <- list(postBody = '
+  {
+    "inputs": {
+      "pjnz": "path/to/file",
+      "shape": "path/to/file",
+      "population": "path/to/file",
+      "survey": "path/to/file",
+      "programme": "path/to/file",
+      "anc": "path/to/file"
+    },
+    "options": {
+      "max_iterations" : 250,
+      "no_of_simulations": 3000,
+      "input_data": {
+        "programme": true,
+        "anc": false
+      }
+    }
+  }')
+
+  ## Create mocks
+  res <- MockPlumberResponse$new()
+  mock_model_queue_submit <- mockery::mock(stop("Failed to queue"))
+
+  ## Call the endpoint
+  with_mock("hintr:::model_queue_submit" = mock_model_queue_submit, {
+    response <- endpoint_run_model(req, res, inputs, parameters)
+  })
+  response <- jsonlite::parse_json(response)
+  expect_equal(response$status, "failure")
+  expect_length(response$errors, 1)
+  expect_equal(response$errors[[1]]$error, "FAILED_TO_QUEUE")
+  expect_equal(response$errors[[1]]$detail, "Failed to queue")
+  expect_equal(res$status, 400)
+})
+
 test_that("endpoint_run_status correctly returns response", {
   test_redis_available()
   mock_response <- function(success, status) {
