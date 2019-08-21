@@ -38,12 +38,12 @@ docker rm -f hintr
 
 ### Input data
 
-Input data should be written to `/uploads` directory in the docker container, then when requesting validation pass the absolute path to the file in the request JSON e.g.
+Input data should be written to the shared `upload_volume`. When requesting validation pass the absolute path to the file in the request JSON e.g.
 
 ```
 {
   "type": "pjnz",
-  "path": "uploads/Botswana.pjnz"
+  "path": "/uploads/Botswana.pjnz"
 }
 ```
 
