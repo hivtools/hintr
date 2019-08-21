@@ -24,12 +24,12 @@ curl http://localhost:8888
 ```
 
 Validate input data:
-```
+``` 
 curl -X POST -H 'Content-Type: application/json' \
      --data @example/docker_payload.json http://localhost:8888/validate
-#> ["{\"status\":\"success\",\"errors\":{},\"data\":\"Botswana\"}"]
+#> {\"status\":\"success\",\"errors\":{},\"data\":\"Botswana\"}
 ```
-
+  
 Docker container can be cleaned up using
 ```
 docker rm -f hintr
