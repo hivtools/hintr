@@ -7,8 +7,8 @@
 				"complete": {
           "const": true
         },
-				"progress": { "type": "int" },
-				"timeRemaining": { "type": "int" }
+				"progress": { "type": "integer" },
+				"timeRemaining": { "type": "integer" }
 			},
 			"additionalProperties": false,
 			"required": [
@@ -20,7 +20,7 @@
 	  },
 	  "complete": {
 			"properties": {
-				"processId" : { "$ref": "URI.schema.json" },
+				"processId": { "$ref": "URI.schema.json" },
 				"complete": {
           "const": true
         },
