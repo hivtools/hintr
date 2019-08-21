@@ -28,7 +28,6 @@ model_queue_submit <- function(data, parameters, queue = global_queue$queue) {
   queue$enqueue_(quote(hintr:::run_model(data, parameters)))
 }
 
-
 model_queue_status <- function(id, queue = global_queue$queue) {
   status <- unname(queue$task_status(id))
   done <- c("ERROR", "COMPLETE")
@@ -55,7 +54,6 @@ model_queue_remove <- function(id, queue = global_queue$queue) {
   queue$task_delete(id)
 }
 
-
 ## Not part of the api exposed functions, used in tests
 model_queue_stop <- function(queue = global_queue$queue) {
   global <- identical(queue, global_queue$queue)
@@ -65,12 +63,10 @@ model_queue_stop <- function(queue = global_queue$queue) {
   }
 }
 
-
 model_queue_finalize <- function(queue) {
   message("Stopping workers")
   queue$worker_stop()
 }
-
 
 ## Support for queue building
 context_init <- function(root, name = "hintr") {

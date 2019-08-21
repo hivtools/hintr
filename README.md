@@ -61,3 +61,11 @@ docker rm -f hintr
 ## Validating JSON against schema
 
 To turn on validation of requests and responses you need to set the environmental variable VALIDATE_JSON_SCHEMAS to true. You can do that by writing to a `.Renviron` file, on linux `echo -e "VALIDATE_JSON_SCHEMAS=true" >> .Renviron`.
+
+
+## Running tests which use redis
+
+To run tests including those which rely on a redis instance being available you need to start a redis docker container
+```
+docker run --rm -d --network=host --name hintr_redis redis
+```
