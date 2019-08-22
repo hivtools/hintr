@@ -4,9 +4,11 @@
     "filename": { "$ref": "FileName.schema.json" },
     "data": {
       "oneOf": [
-            {"$ref": "PjnzResponseData.schema.json"},
-            {"$ref": "ShapefileResponseData.schema.json"}
-          ]
+        {"$ref": "PjnzResponseData.schema.json"},
+        {"$ref": "ShapefileResponseData.schema.json"}
+      ]
     }
-  }
+  },
+  "additionalProperties": false,
+  "required": [ "filename", "data" ]
 }

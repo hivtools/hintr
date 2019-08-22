@@ -7,7 +7,8 @@ test_that("endpoint_validate_input correctly validates data", {
   response <- endpoint_validate_input(req, res, "pjnz", pjnz)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
-  expect_equal(response$data, "Botswana")
+  expect_equal(response$data$filename, "Botswana2018.PJNZ")
+  expect_equal(response$data$data$country, "Botswana")
   expect_equal(res$status, 200)
 
   mock_read_country <- mockery::mock("GBR")
@@ -32,27 +33,31 @@ test_that("endpoint_validate_input validates the input and response", {
                                    MockPlumberResponse$new(), "pjnz", pjnz)
   })
 
-  mockery::expect_called(mock_validate_json_schema, 3)
+  mockery::expect_called(mock_validate_json_schema, 4)
   mockery::expect_args(mock_validate_json_schema, 1, "request",
                        "ValidateInputRequest")
-  mockery::expect_args(mock_validate_json_schema, 2, ret,
-                       "Response")
   mockery::expect_args(mock_validate_json_schema, 3, ret,
+                       "Response")
+  mockery::expect_args(mock_validate_json_schema, 4, ret,
                        "ValidateInputResponse", "data")
 })
 
 test_that("hintr_response correctly prepares response", {
   value <- list(
     success = TRUE,
-    value = scalar("Passed")
+    value = list(
+      filename = scalar("file.pjnz"),
+      data = list(country = scalar("Botswana"))
+    )
   )
   expected_response <- '{"status":"success","errors":{},"data":"Passed"}'
   ## NOTE: using a schema here that will work for now at least, but if
   ## that gets stricter it won't!
-  response <- hintr_response(value, "URI")
+  response <- hintr_response(value, "ValidateInputResponse")
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
-  expect_equal(response$data, "Passed")
+  expect_equal(response$data$filename, "file.pjnz")
+  expect_equal(response$data$data$country, "Botswana")
 
   value <- list(
     success = FALSE,
@@ -79,7 +84,11 @@ test_that("hintr_response distinguishes incorrect data schema", {
   ## This is a correct value for the ValidateInputResponse schema
   value <- list(
     success = TRUE,
-    value = scalar("Botswana"))
+    value = list(filename = scalar("test.pjnz"),
+                 data = list(
+                   country = scalar("Botswana"))
+                 )
+    )
 
   expect_error(
     hintr_response(value, "ValidateInputResponse"),
@@ -128,3 +137,24 @@ test_that("plumber api can be built", {
   expect_equal(names(api$routes), c("validate", ""))
 })
 
+test_that("format_response_data correctly formats data and validates it", {
+  mock_validate <- mockery::mock(TRUE)
+  with_mock("hintr:::validate_json_schema" = mock_validate, {
+    response <- input_response(list(country = scalar("Botswana")),
+                               "/path/to/file.pjnz",
+                               "pjnz")
+  })
+  expect_equal(response$data$country, scalar("Botswana"))
+  expect_equal(response$filename, scalar("file.pjnz"))
+  mockery::expect_called(mock_validate, 1)
+  args <- mockery::mock_args(mock_validate)[[1]]
+  expected_data <- list(
+    "filename" = "file.pjnz",
+    "data" = list(
+      "country" = "Botswana"
+    )
+  )
+  expect_equal(jsonlite::fromJSON(args[[1]]), expected_data)
+  expect_equal(args[[2]], "PjnzResponseData")
+  expect_equal(args[[3]], "data")
+})

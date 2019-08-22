@@ -3,7 +3,7 @@ do_validate_pjnz <- function(pjnz) {
   if (country == "GBR") {
     stop("Invalid country")
   }
-  country
+  list(country = scalar(country))
 }
 
 
