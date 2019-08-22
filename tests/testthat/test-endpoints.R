@@ -32,11 +32,13 @@ test_that("endpoint_validate_input validates the input and response", {
                                    MockPlumberResponse$new(), "pjnz", pjnz)
   })
 
-  mockery::expect_called(mock_validate_json_schema, 2)
+  mockery::expect_called(mock_validate_json_schema, 3)
   mockery::expect_args(mock_validate_json_schema, 1, "request",
                        "ValidateInputRequest")
   mockery::expect_args(mock_validate_json_schema, 2, ret,
                        "Response")
+  mockery::expect_args(mock_validate_json_schema, 3, ret,
+                       "ValidateInputResponse", "data")
 })
 
 test_that("hintr_response correctly prepares response", {
@@ -45,7 +47,9 @@ test_that("hintr_response correctly prepares response", {
     value = scalar("Passed")
   )
   expected_response <- '{"status":"success","errors":{},"data":"Passed"}'
-  response <- hintr_response(value)
+  ## NOTE: using a schema here that will work for now at least, but if
+  ## that gets stricter it won't!
+  response <- hintr_response(value, "URI")
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
   expect_equal(response$data, "Passed")
@@ -57,7 +61,7 @@ test_that("hintr_response correctly prepares response", {
                   list(error = scalar("OTHER_ERROR"),
                        detail = scalar("Second example")))
   )
-  response <- hintr_response(value)
+  response <- hintr_response(value, "ValidateInputRequest")
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "failure")
   expect_length(response$errors, 2)
@@ -69,8 +73,22 @@ test_that("hintr_response correctly prepares response", {
   expect_equal(response$errors[[2]]$error[[1]], "OTHER_ERROR")
   expect_length(response$errors[[2]]$detail, 1)
   expect_equal(response$errors[[2]]$detail[[1]], "Second example")
-
 })
+
+test_that("hintr_response distinguishes incorrect data schema", {
+  ## This is a correct value for the ValidateInputResponse schema
+  value <- list(
+    success = TRUE,
+    value = scalar("Botswana"))
+
+  expect_error(
+    hintr_response(value, "ValidateInputResponse"),
+    NA)
+  expect_error(
+    hintr_response(value, "ModelRunResultResponse"),
+    class = "validation_error")
+})
+
 
 test_that("with_success correctly builds success message", {
   expr <- "Passed validation"
