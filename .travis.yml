@@ -8,6 +8,7 @@ addons:
       - libhiredis-dev
       - redis-server
       - libv8-dev
+      - libjq-dev
 before_script:
   - ./docker/travis
   - ./docker/build_test_containers

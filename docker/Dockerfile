@@ -4,6 +4,7 @@ RUN apt-get update && apt-get -y install \
         libcurl4-openssl-dev \
         libhiredis-dev \
         libssl-dev \
+        libjq-dev \
         libxml2-dev \
         zlib1g-dev
 
