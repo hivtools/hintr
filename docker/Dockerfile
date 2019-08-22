@@ -8,6 +8,7 @@ RUN apt-get update && apt-get -y install \
         libudunits2-dev \
         libprotobuf-dev \
         libxml2-dev \
+        protobuf-compiler \
         zlib1g-dev
 
 COPY docker/bin /usr/local/bin/

@@ -11,6 +11,7 @@ addons:
       - libjq-dev
       - libudunits2-dev
       - libprotobuf-dev
+      - protobuf-compiler
 before_script:
   - ./docker/travis
   - ./docker/build_test_containers
