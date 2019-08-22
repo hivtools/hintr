@@ -5,6 +5,7 @@ RUN apt-get update && apt-get -y install \
         libhiredis-dev \
         libssl-dev \
         libjq-dev \
+        libudunits2-dev \
         libxml2-dev \
         zlib1g-dev
 
