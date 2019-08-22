@@ -39,6 +39,10 @@ test_that("endpoint_validate_input validates the input and response", {
                        "Response")
 })
 
+test_that("endpoint_validate_input can validate shape file", {
+  ##TODO: impl
+})
+
 test_that("hintr_response correctly prepares response", {
   value <- list(
     success = TRUE,
