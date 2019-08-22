@@ -1,12 +1,12 @@
 {
-	"type": "object",
-	"properties": {
-		"type" : { "$ref": "InputType.schema.json" },
-		"path" : { "$ref": "FilePath.schema.json" }
-	},
-	"additionalProperties": false,
-	"required": [
-		"type",
-		"path"
-	]
+  "type": "object",
+  "properties": {
+    "type" : { "$ref": "InputType.schema.json" },
+    "path" : { "$ref": "FilePath.schema.json" }
+  },
+  "additionalProperties": false,
+  "required": [
+    "type",
+    "path"
+  ]
 }

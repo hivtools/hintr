@@ -1,10 +1,12 @@
 {
   "type": "object",
   "properties": {
-    "processId" : { "$ref": "URI.schema.json" }
+    "country": {
+      "type": "string"
+    }
   },
   "additionalProperties": false,
   "required": [
-    "processId"
+    "country"
   ]
 }

@@ -1,14 +1,14 @@
 {
-	"type": "object",
-	"properties": {
-		"max_iterations": { "type": "number" },
+  "type": "object",
+  "properties": {
+    "max_iterations": { "type": "number" },
     "no_of_simulations": { "type": "number" },
     "input_data": { "$ref": "ModelRunInputData.schema.json" }
-	},
-	"additionalProperties": false,
-	"required": [
+  },
+  "additionalProperties": false,
+  "required": [
     "max_iterations",
     "no_of_simulations",
     "input_data"
-	]
+  ]
 }

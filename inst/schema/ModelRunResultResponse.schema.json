@@ -1,38 +1,38 @@
 {
-	"type": "object",
-	"definitions": {
-		"incomplete": {
-			"properties": {
-				"processId" : { "$ref": "URI.schema.json" },
-				"complete": {
+  "type": "object",
+  "definitions": {
+    "incomplete": {
+      "properties": {
+        "processId" : { "$ref": "URI.schema.json" },
+        "complete": {
           "const": true
         },
-				"progress": { "type": "integer" },
-				"timeRemaining": { "type": "integer" }
-			},
-			"additionalProperties": false,
-			"required": [
-		    "processId",
-		    "complete",
-		    "progress",
-		    "timeRemaining"
-			]
-	  },
-	  "complete": {
-			"properties": {
-				"processId": { "$ref": "URI.schema.json" },
-				"complete": {
+        "progress": { "type": "integer" },
+        "timeRemaining": { "type": "integer" }
+      },
+      "additionalProperties": false,
+      "required": [
+        "processId",
+        "complete",
+        "progress",
+        "timeRemaining"
+      ]
+    },
+    "complete": {
+      "properties": {
+        "processId": { "$ref": "URI.schema.json" },
+        "complete": {
           "const": true
         },
         "result": { "$ref": "ModelRunResult.schema.json" }
-			},
-			"additionalProperties": false,
-			"required": [
-		    "processId",
-		    "complete",
-		    "result"
-			]
-	  }
+      },
+      "additionalProperties": false,
+      "required": [
+        "processId",
+        "complete",
+        "result"
+      ]
+    }
   },
 
   "oneOf": [

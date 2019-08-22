@@ -1,16 +1,16 @@
 {
-	"type": "object",
-	"properties": {
-		"pjnz" : { "$ref": "FilePath.schema.json" },
-		"shape" : { "$ref": "FilePath.schema.json" },
-		"population" : { "$ref": "FilePath.schema.json" },
-		"survey" : { "$ref": "FilePath.schema.json" },
-		"programme" : { "$ref": "FilePath.schema.json" },
-		"anc" : { "$ref": "FilePath.schema.json" },
-		"options": { "$ref": "ModelRunOptions.schema.json" }
-	},
-	"additionalProperties": false,
-	"required": [
+  "type": "object",
+  "properties": {
+    "pjnz" : { "$ref": "FilePath.schema.json" },
+    "shape" : { "$ref": "FilePath.schema.json" },
+    "population" : { "$ref": "FilePath.schema.json" },
+    "survey" : { "$ref": "FilePath.schema.json" },
+    "programme" : { "$ref": "FilePath.schema.json" },
+    "anc" : { "$ref": "FilePath.schema.json" },
+    "options": { "$ref": "ModelRunOptions.schema.json" }
+  },
+  "additionalProperties": false,
+  "required": [
     "pjnz",
     "shape",
     "population",
@@ -18,5 +18,5 @@
     "programme",
     "anc",
     "options"
-	]
+  ]
 }
