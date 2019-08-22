@@ -15,6 +15,7 @@ RUN apt-get update && apt-get -y install \
 COPY docker/bin /usr/local/bin/
 
 RUN install_packages --repo=https://mrc-ide.github.io/drat \
+        geojsonio \
         jsonlite \
         plumber \
         ps \
