@@ -16,3 +16,32 @@ test_that("country can be read from PJNZ file", {
   expect_equal(read_country(pjnz), "Botswana")
 })
 
+test_that("assert fails if more than once country in json", {
+  shape <- system.file("testdata", "malawi.geojson", package = "hintr")
+  json <- geojsonio::geojson_read(shape, method = "local")
+  expect_true(assert_single_country(json))
+
+  ## Change a country for purpose of testing
+  json$features[[1]]$properties$iso3 <- "AGO"
+  expect_error(assert_single_country(json),
+    "Shape file contains regions for more than one country. Got countries AGO, MWI.")
+})
+
+test_that("assert fails if a feature is missing an area id", {
+  shape <- system.file("testdata", "malawi.geojson", package = "hintr")
+  json <- geojsonio::geojson_read(shape, method = "local")
+  expect_true(assert_area_id_exists(json))
+
+  ## Remove an ID for testing
+  json$features[[1]]$properties$area_id <- NULL
+  expect_error(assert_area_id_exists(json),
+    "Shape file does not contain an area ID for each region. Missing ID for 1 feature.")
+})
+
+test_that("do_validate_shape validates shape and returns geojson as list", {
+  shape <- system.file("testdata", "malawi.geojson", package = "hintr")
+  json <- do_validate_shape(shape)
+  expect_type(json, "list")
+  expect_equal(names(json), c("type", "name", "crs", "features"))
+  expect_equal(length(json$features), 502)
+})

@@ -1,3 +1,15 @@
 {
-  "type": "string"
+  "title": "Geo JSON object",
+  "description": "Schema for a Geo JSON object",
+  "type": "object",
+  "required": [ "type", "features" ],
+  "properties": {
+    "type": { "const": "FeatureCollection" },
+    "crs": { "type": "object" },
+    "name": { "tyep": "string" },
+    "features": {
+      "type": "array",
+      "items": { "type": "object" }
+    }
+  }
 }

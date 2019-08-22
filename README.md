@@ -24,11 +24,17 @@ Test that container is working by using:
 curl http://localhost:8888
 ```
 
-Validate input data:
+Validate PJNZ:
 ``` 
 curl -X POST -H 'Content-Type: application/json' \
      --data @example/docker_payload.json http://localhost:8888/validate
 #> {\"status\":\"success\",\"errors\":{},\"data\":\"Botswana\"}
+```
+
+Validate shape file and return serialised data:
+``` 
+curl -X POST -H 'Content-Type: application/json' \
+     --data @example/docker_validate_shape_payload.json http://localhost:8888/validate
 ```
   
 Docker container can be cleaned up using

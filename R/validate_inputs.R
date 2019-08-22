@@ -13,3 +13,49 @@ read_country <- function(pjnz) {
   hiv_params <- specio::read_hivproj_param(pjnz)
   hiv_params$country
 }
+
+
+#' Validate shape file and return geojson for plotting.
+#'
+#' This checks that the geojson is for a single country and that each
+#' feature has an area id associated with it.
+#'
+#' @param shape Path to input shape file.
+#'
+#' @return An error if invalid or the geojson if valid.
+#' @keywords internal
+do_validate_shape <- function(shape) {
+  json <- geojsonio::geojson_read(shape, method = "local")
+  assert_single_country(json)
+  assert_area_id_exists(json)
+  json
+}
+
+assert_single_country <- function(json) {
+  country <- vapply(json$features, function(x) {
+    x$properties$iso3
+  }, character(1))
+  if (length(unique(country)) != 1) {
+    stop(sprintf(
+      "Shape file contains regions for more than one country. Got countries %s.",
+      toString(unique(country))))
+  }
+  invisible(TRUE)
+}
+
+assert_area_id_exists <- function(json) {
+  contains_id <- vapply(json$features, function(x) {
+    !is_empty(x$properties$area_id)
+  }, logical(1))
+  if (!all(contains_id)) {
+    missing_count <- sum(!contains_id)
+    stop(
+      sprintf(
+        "Shape file does not contain an area ID for each region. Missing ID for %s %s.",
+        missing_count,
+        ngettext(missing_count, "feature", "features")
+      )
+    )
+  }
+  invisible(TRUE)
+}
