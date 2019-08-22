@@ -6,6 +6,7 @@ RUN apt-get update && apt-get -y install \
         libssl-dev \
         libjq-dev \
         libudunits2-dev \
+        libprotobuf-dev \
         libxml2-dev \
         zlib1g-dev
 
