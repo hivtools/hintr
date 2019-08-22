@@ -1,6 +1,7 @@
 api_build <- function() {
   pr <- plumber::plumber$new()
-  pr$handle("POST", "/validate", endpoint_validate_input)
+  pr$handle("POST", "/validate", endpoint_validate_input,
+            serializer = plumber::serializer_content_type("application/json"))
   pr$handle("GET", "/", api_root)
   pr
 }
@@ -16,34 +17,35 @@ api <- function() {
 #' Validate an input file and return an indication of success and
 #' if successful return the data required by UI.
 #'
-#' @param req The request as JSON.
+#' @param req The request as PlumberRequest object.
+#' @param res The response as a PlumberResponse object.
 #' @param type The type of file to validate: pjnz, shape, population, ANC,
 #' survey or programme.
 #' @param path Path to the file to validate.
 #'
 #' @return Validates JSON response with data and incidcation of success.
 #' @keywords internal
-endpoint_validate_input <- function(req, type, path) {
-  validate_json_schema(req, "ValidateInputRequest")
+endpoint_validate_input <- function(req, res, type, path) {
+  validate_json_schema(req$postBody, "ValidateInputRequest")
   validate_func <- switch(type,
     pjnz = do_validate_pjnz)
-  res <- with_success(
+  response <- with_success(
     validate_func(path))
-  if (res$success) {
-    res$value <- scalar(res$value)
+  if (response$success) {
+    response$value <- scalar(response$value)
   } else {
-    res$errors <- hintr_errors(list("INVALID_FILE" = res$message))
+    response$errors <- hintr_errors(list("INVALID_FILE" = response$message))
+    res$status <- 400
   }
-  hintr_response(res, "ValidateInputResponse")
+  hintr_response(response, "ValidateInputResponse")
 }
 
-#' Format a hintr response.
+#' Format a hintr response and validate against schema.
 #'
 #' Returns the status, any errors occured and the data if successful.
 #'
 #' @param value List containing an indication of success, any errors and the
 #' value to return.
-#' @param schema The schema to validate the response against
 #'
 #' @return Formatted hintr response.
 #' @keywords internal
@@ -56,9 +58,11 @@ hintr_response <- function(value, schema) {
   ret <- jsonlite::toJSON(list(
     "status" = scalar(status),
     "errors" = value$errors,
-    "data" = value$value
-  ))
-  validate_json_schema(ret, schema)
+    "data" = value$value))
+  validate_json_schema(ret, "Response")
+  if (value$success) {
+    validate_json_schema(ret, schema, query = "data")
+  }
   ret
 }
 

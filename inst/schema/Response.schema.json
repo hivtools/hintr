@@ -10,7 +10,7 @@
         "data": {
           "oneOf": [
             {"$ref": "ValidateInputResponse.schema.json"},
-            {"$ref": "InitialiseModelRunResponse.schema.json"}
+            {"$ref": "InitialiseModelRunResponse.schema.json"},
             {"$ref": "ModelRunResultResponse.schema.json"}
           ]
         },
@@ -29,17 +29,17 @@
           "const": "failure"
         },
         "data": {
-          "type": "null"
+          "type": "object"
         },
         "errors": {
-          "type": "object",
+          "type": "array",
           "minItems": 1,
           "items": { "$ref": "Error.schema.json" }
         }
       },
       "additionalProperties": false,
       "required": ["status", "errors", "data" ]
-    },
+    }
   },
 
   "oneOf": [

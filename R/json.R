@@ -9,17 +9,19 @@
 #'
 #' @return True if JSON adheres to schema.
 #' @keywords internal
-validate_json_schema <- function(json, schema) {
+validate_json_schema <- function(json, schema, query = NULL) {
   if (!validate_schemas()) {
-    return(TRUE)
+    return(invisible(TRUE))
   }
-  validate(json, schema)
+  valid <- validate(json, schema, query)
+  invisible(valid)
 }
 
-validate <- function(json, schema) {
+validate <- function(json, schema, query = NULL) {
   schema <- system_file("schema", paste0(schema, ".schema.json"),
                         package = "hintr")
-  jsonvalidate::json_validate(json, schema, engine = "ajv")
+  jsonvalidate::json_validate(json, schema, engine = "ajv",
+                              query = query, error = TRUE)
 }
 
 validate_schemas <- function() {

@@ -25,12 +25,12 @@ curl http://localhost:8888
 ```
 
 Validate input data:
-```
+``` 
 curl -X POST -H 'Content-Type: application/json' \
-     --data @example/payload.json http://localhost:8888/validate
-#> ["{\"status\":\"success\",\"errors\":{},\"data\":\"Botswana\"}"]
+     --data @example/docker_payload.json http://localhost:8888/validate
+#> {\"status\":\"success\",\"errors\":{},\"data\":\"Botswana\"}
 ```
-
+  
 Docker container can be cleaned up using
 ```
 docker rm -f hintr
@@ -50,3 +50,11 @@ Input data should be written to the shared `upload_volume`. When requesting vali
 ## Validating JSON against schema
 
 To turn on validation of requests and responses you need to set the environmental variable VALIDATE_JSON_SCHEMAS to true. You can do that by writing to a `.Renviron` file, on linux `echo -e "VALIDATE_JSON_SCHEMAS=true" >> .Renviron`.
+
+
+## Running tests which use redis
+
+To run tests including those which rely on a redis instance being available you need to start a redis docker container
+```
+docker run --rm -d --network=host --name hintr_redis redis
+```
