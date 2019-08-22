@@ -4,7 +4,7 @@
 \alias{validate_json_schema}
 \title{Validate string of JSON against specified schema.}
 \usage{
-validate_json_schema(json, schema)
+validate_json_schema(json, schema, query = NULL)
 }
 \arguments{
 \item{json}{The JSON to validate.}
