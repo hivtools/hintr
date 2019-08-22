@@ -32,11 +32,13 @@ test_that("endpoint_validate_input validates the input and response", {
                                    MockPlumberResponse$new(), "pjnz", pjnz)
   })
 
-  mockery::expect_called(mock_validate_json_schema, 2)
+  mockery::expect_called(mock_validate_json_schema, 3)
   mockery::expect_args(mock_validate_json_schema, 1, "request",
                        "ValidateInputRequest")
   mockery::expect_args(mock_validate_json_schema, 2, ret,
                        "Response")
+  mockery::expect_args(mock_validate_json_schema, 3, ret,
+                       "ValidateInputResponse", "data")
 })
 
 test_that("hintr_response correctly prepares response", {
