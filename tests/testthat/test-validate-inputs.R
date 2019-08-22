@@ -45,3 +45,17 @@ test_that("do_validate_shape validates shape and returns geojson as list", {
   expect_equal(names(json), c("type", "name", "crs", "features"))
   expect_equal(length(json$features), 502)
 })
+
+test_that("do_validate_population validates population file", {
+  population <- system.file("testdata", "population.csv", package = "hintr")
+  pop <- do_validate_population(population)
+  ## No actual data to return but has been validated
+  expect_null(pop)
+})
+
+test_that("assert_column_names checks column names are as expected", {
+  expect_true(assert_column_names(c("col1", "col2"), c("col1", "col2")))
+  expect_error(assert_column_names(c("col1"), c("col1", "col2")),
+               "Data missing column col2")
+  expect_true(assert_column_names(c("col1", "col2"), c("col1")))
+})

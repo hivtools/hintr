@@ -7,6 +7,11 @@ system_file <- function(...) {
   })
 }
 
+read_csv <- function(...) {
+  read.csv(..., stringsAsFactors = FALSE)
+}
+
 is_empty <- function(x) {
   is.null(x) || is.na(x) || length(x) == 0 || trimws(x) == ""
 }
+

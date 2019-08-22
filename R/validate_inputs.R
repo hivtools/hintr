@@ -59,3 +59,31 @@ assert_area_id_exists <- function(json) {
   }
   invisible(TRUE)
 }
+
+#' Validate population file.
+#'
+#' Check that population file can be read.
+#'
+#' @param shape Path to input population file.
+#'
+#' @return An error if invalid.
+#' @keywords internal
+do_validate_population <- function(population) {
+  population <- read_csv(population, header = TRUE)
+  ## Perhaps this kind of assertion should just be checked by json schema?
+  assert_column_names(
+    colnames(population),
+    c("iso3", "area_id", "time", "sex", "age_group_id", "source", "population"))
+  NULL
+}
+
+assert_column_names <- function(names, expected_names) {
+  missing <- setdiff(expected_names, names)
+  if (length(missing) > 0) {
+    missing <- setdiff(expected_names, names)
+    stop(sprintf("Data missing %s %s",
+                 ngettext(length(missing), "column", "columns"),
+                 paste(setdiff(expected_names, names), collapse = ", ")))
+  }
+  invisible(TRUE)
+}

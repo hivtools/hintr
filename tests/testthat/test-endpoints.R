@@ -59,6 +59,22 @@ test_that("endpoint_validate_input support shape file", {
   expect_equal(res$status, 200)
 })
 
+test_that("endpoint_validate_input support population file", {
+  population <- system.file("testdata", "population.csv", package = "hintr")
+  res <- MockPlumberResponse$new()
+  response <- endpoint_validate_input(
+    list(postBody = '{"type":"population","path":"path/to/file"}'),
+    res,
+    "population",
+    population)
+  response <- jsonlite::parse_json(response)
+
+  expect_equal(response$status, "success")
+  expect_equal(response$data$filename, "population.csv")
+  expect_null(response$data$data)
+  expect_equal(res$status, 200)
+})
+
 test_that("hintr_response correctly prepares response", {
   value <- list(
     success = TRUE,

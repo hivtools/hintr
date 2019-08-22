@@ -5,7 +5,8 @@
     "data": {
       "oneOf": [
         {"$ref": "PjnzResponseData.schema.json"},
-        {"$ref": "ShapeResponseData.schema.json"}
+        {"$ref": "ShapeResponseData.schema.json"},
+        {"$ref": "PopulationResponseData.schema.json"}
       ]
     }
   },
