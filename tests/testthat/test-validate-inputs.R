@@ -29,7 +29,7 @@ test_that("regions can be retrieved from geojson", {
 
 test_that("do_validate_shape returns json and stores region list in redis", {
   test_redis_available()
-  ## refresh the store for any other tests
+  ## ensure clean store
   refresh_store()
   shape <- system.file("testdata", "malawi.geojson", package = "hintr")
   json <- do_validate_shape(shape)

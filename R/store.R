@@ -1,6 +1,6 @@
 global_store <- new.env(parent = emptyenv())
 
-store_start <- function(root, name = "hintr", global = TRUE) {
+store_start <- function(global = TRUE) {
   if (!global || is.null(global_store$store)) {
     message("connecting to redis at ", redux::redis_config()$url)
     con <- redux::hiredis()
@@ -18,10 +18,11 @@ store_set <- function(key, data) {
 }
 
 refresh_store <- function() {
-  if(!is.null(global_store$store)) {
-    global_store$store$destroy()
+  if(!is.null(global_store$store) && length(global_store$store$list()) > 0) {
+    global_store$store$clear()
+  } else {
+    store_start()
   }
-  store_start()
 }
 
 store_get <- function(key) {
