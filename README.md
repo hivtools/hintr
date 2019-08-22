@@ -28,7 +28,7 @@ Validate PJNZ:
 ``` 
 curl -X POST -H 'Content-Type: application/json' \
      --data @example/docker_payload.json http://localhost:8888/validate
-#> {\"status\":\"success\",\"errors\":{},\"data\":\"Botswana\"}
+#> {"status":"success","errors":{},"data":{"filename":"Botswana2018.PJNZ","data":{"country":"Botswana"}}}
 ```
 
 Validate shape file and return serialised data:

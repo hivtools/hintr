@@ -1,5 +1,10 @@
 system_file <- function(...) {
-  system.file(..., mustWork = TRUE)
+  tryCatch({
+    system.file(..., mustWork = TRUE)
+  }, error = function(e) {
+    stop(sprintf("Failed to locate file from args\n%s",
+                 paste(list(...), collapse = " ")))
+  })
 }
 
 is_empty <- function(x) {

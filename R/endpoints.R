@@ -38,13 +38,15 @@ endpoint_validate_input <- function(req, res, type, path) {
     response$errors <- hintr_errors(list("INVALID_FILE" = response$message))
     res$status <- 400
   }
-  hintr_response(response, "ValidateInputResponse")
+  auto_unbox <- type == "shape"
+  hintr_response(response, "ValidateInputResponse", auto_unbox = auto_unbox)
 }
 
 
 input_response <- function(data, path, type) {
   ret <- list(filename = scalar(basename(path)), data = data)
-  validate_json_schema(jsonlite::toJSON(ret), get_input_response_schema(type), "data")
+  validate_json_schema(jsonlite::toJSON(ret, auto_unbox = TRUE),
+                       get_input_response_schema(type), "data")
   ret
 }
 
@@ -57,7 +59,7 @@ input_response <- function(data, path, type) {
 #'
 #' @return Formatted hintr response.
 #' @keywords internal
-hintr_response <- function(value, schema) {
+hintr_response <- function(value, schema, auto_unbox = FALSE) {
   if (value$success) {
     status <- "success"
   } else {
@@ -66,7 +68,8 @@ hintr_response <- function(value, schema) {
   ret <- jsonlite::toJSON(list(
     "status" = scalar(status),
     "errors" = value$errors,
-    "data" = value$value))
+    "data" = value$value),
+    auto_unbox = auto_unbox)
   validate_json_schema(ret, "Response")
   if (value$success) {
     validate_json_schema(ret, schema, query = "data")

@@ -42,6 +42,23 @@ test_that("endpoint_validate_input validates the input and response", {
                        "ValidateInputResponse", "data")
 })
 
+test_that("endpoint_validate_input support shape file", {
+  shape <- system.file("testdata", "malawi.geojson", package = "hintr")
+  res <- MockPlumberResponse$new()
+  response <- endpoint_validate_input(
+    list(postBody = '{"type":"shape","path":"path/to/file"}'),
+    res,
+    "shape",
+    shape)
+  response <- jsonlite::parse_json(response)
+
+  expect_equal(response$status, "success")
+  expect_equal(response$data$filename, "malawi.geojson")
+  expect_equal(names(response$data$data), c("type", "name", "crs", "features"))
+  expect_equal(length(response$data$data$features), 502)
+  expect_equal(res$status, 200)
+})
+
 test_that("hintr_response correctly prepares response", {
   value <- list(
     success = TRUE,
@@ -84,10 +101,11 @@ test_that("hintr_response distinguishes incorrect data schema", {
   ## This is a correct value for the ValidateInputResponse schema
   value <- list(
     success = TRUE,
-    value = list(filename = scalar("test.pjnz"),
-                 data = list(
-                   country = scalar("Botswana"))
-                 )
+    value = list(
+      filename = scalar("test.pjnz"),
+      data = list(
+        country = scalar("Botswana"))
+      )
     )
 
   expect_error(
