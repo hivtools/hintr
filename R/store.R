@@ -23,6 +23,7 @@ refresh_store <- function() {
   } else {
     store_start()
   }
+  global_store$store
 }
 
 store_get <- function(key) {
