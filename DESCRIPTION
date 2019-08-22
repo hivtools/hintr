@@ -20,7 +20,8 @@ Imports:
     plumber,
     redux,
     rrq,
-    specio
+    specio,
+    storr
 Suggests:
     covr,
     jsonvalidate,
