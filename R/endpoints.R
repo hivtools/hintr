@@ -28,7 +28,8 @@ api <- function() {
 endpoint_validate_input <- function(req, res, type, path) {
   validate_json_schema(req$postBody, "ValidateInputRequest")
   validate_func <- switch(type,
-    pjnz = do_validate_pjnz)
+    pjnz = do_validate_pjnz,
+    shape = do_validate_shape)
   response <- with_success(
     validate_func(path))
   if (response$success) {

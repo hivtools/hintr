@@ -13,13 +13,19 @@ store_start <- function(root, name = "hintr", global = TRUE) {
   invisible(global_store$store)
 }
 
-store_data <- function(key, data) {
+store_set <- function(key, data) {
   global_store$store$set(key, data)
 }
 
 refresh_store <- function() {
-  global_store$store$destroy()
+  if(!is.null(global_store$store)) {
+    global_store$store$destroy()
+  }
   store_start()
+}
+
+store_get <- function(key) {
+  global_store$store$get(key)
 }
 
 #' Convert a set of names to a key appropriate for storing in redis.
