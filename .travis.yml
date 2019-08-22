@@ -5,6 +5,7 @@ sudo: false
 addons:
   apt:
     packages:
+      - libgdal-dev
       - libhiredis-dev
       - redis-server
       - libv8-dev
