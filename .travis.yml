@@ -17,6 +17,6 @@ env:
 r_packages:
   - covr
 r_github_packages:
-  - ropensci/jsonvalidate@i20
+  - ropensci/jsonvalidate@i25
 after_success:
   - Rscript -e 'covr::codecov(quiet = FALSE)'

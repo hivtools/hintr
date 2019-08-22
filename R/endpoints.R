@@ -37,7 +37,7 @@ endpoint_validate_input <- function(req, res, type, path) {
     response$errors <- hintr_errors(list("INVALID_FILE" = response$message))
     res$status <- 400
   }
-  hintr_response(response)
+  hintr_response(response, "ValidateInputResponse")
 }
 
 #' Format a hintr response and validate against schema.
@@ -49,7 +49,7 @@ endpoint_validate_input <- function(req, res, type, path) {
 #'
 #' @return Formatted hintr response.
 #' @keywords internal
-hintr_response <- function(value) {
+hintr_response <- function(value, schema) {
   if (value$success) {
     status <- "success"
   } else {
@@ -58,9 +58,11 @@ hintr_response <- function(value) {
   ret <- jsonlite::toJSON(list(
     "status" = scalar(status),
     "errors" = value$errors,
-    "data" = value$value
-  ))
+    "data" = value$value))
   validate_json_schema(ret, "Response")
+  if (value$success) {
+    validate_json_schema(ret, schema, query = "data")
+  }
   ret
 }
 
