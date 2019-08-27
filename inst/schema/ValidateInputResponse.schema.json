@@ -1,14 +1,52 @@
 {
-  "type": "object",
-  "properties": {
-    "filename": { "$ref": "FileName.schema.json" },
-    "data": {
-      "oneOf": [
-        {"$ref": "PjnzResponseData.schema.json"},
-        {"$ref": "ShapefileResponseData.schema.json"}
+  "definitions": {
+    "input_response": {
+      "properties": {
+        "filename": { "$ref": "FileName.schema.json" },
+        "type": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "required": [ "filename", "type", "data" ]
+    },
+
+    "pjnz_response": {
+      "allOf": [
+        { "$ref": "#/definitions/input_response" },
+        { "properties": 
+          {
+            "filename": {},
+            "type": { 
+              "const": "pjnz"
+            },
+            "data": { "$ref": "PjnzResponseData.schema.json" }
+          }
+        }
+      ]
+    },
+
+    "shape_response": {
+      "allOf": [
+        { "$ref": "#/definitions/input_response" },
+        { "properties": 
+          {
+            "type": { 
+              "const": "shape"
+            },
+            "data": { "$ref": "ShapefileResponseData.schema.json" }
+          }
+        }
       ]
     }
   },
-  "additionalProperties": false,
-  "required": [ "filename", "data" ]
+
+  "oneOf": [
+    {"$ref": "#/definitions/pjnz_response"},
+    {"$ref": "#/definitions/shape_response"}
+  ]
 }
+

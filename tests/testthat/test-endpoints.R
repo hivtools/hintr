@@ -47,6 +47,7 @@ test_that("hintr_response correctly prepares response", {
     success = TRUE,
     value = list(
       filename = scalar("file.pjnz"),
+      type = scalar("pjnz"),
       data = list(country = scalar("Botswana"))
     )
   )
@@ -85,6 +86,7 @@ test_that("hintr_response distinguishes incorrect data schema", {
   value <- list(
     success = TRUE,
     value = list(filename = scalar("test.pjnz"),
+                 type = scalar("pjnz"),
                  data = list(
                    country = scalar("Botswana"))
                  )
@@ -150,6 +152,7 @@ test_that("format_response_data correctly formats data and validates it", {
   args <- mockery::mock_args(mock_validate)[[1]]
   expected_data <- list(
     "filename" = "file.pjnz",
+    "type" = "pjnz",
     "data" = list(
       "country" = "Botswana"
     )
