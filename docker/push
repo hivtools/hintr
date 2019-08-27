@@ -4,3 +4,8 @@ HERE=$(dirname $0)
 . $HERE/common
 docker push $TAG_SHA
 docker push $TAG_BRANCH
+
+if [ $GIT_BRANCH == "master" ]; then
+   TAG_LATEST="${PACKAGE_ORG}/${PACKAGE_NAME}:latest"
+   docker push $TAG_LATEST
+fi
