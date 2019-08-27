@@ -25,9 +25,7 @@
               "enum": [ "pjnz" ]
             },
             "data": { "$ref": "PjnzResponseData.schema.json" }
-          },
-          "additionalProperties": false,
-          "required": [ "filename", "type", "data" ]
+          }
         }
       ]
     },
@@ -42,9 +40,7 @@
               "enum": [ "shape" ]
             },
             "data": { "$ref": "ShapefileResponseData.schema.json" }
-          },
-          "additionalProperties": false,
-          "required": [ "filename", "type", "data" ]
+          }
         }
       ]
     }
