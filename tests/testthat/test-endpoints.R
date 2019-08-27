@@ -59,7 +59,7 @@ test_that("endpoint_validate_input support shape file", {
   expect_equal(res$status, 200)
 })
 
-test_that("endpoint_validate_input support population file", {
+test_that("endpoint_validate_input supports population file", {
   population <- system.file("testdata", "population.csv", package = "hintr")
   res <- MockPlumberResponse$new()
   response <- endpoint_validate_input(
@@ -71,7 +71,7 @@ test_that("endpoint_validate_input support population file", {
 
   expect_equal(response$status, "success")
   expect_equal(response$data$filename, "population.csv")
-  expect_null(response$data$data)
+  expect_length(response$data$data, 0)
   expect_equal(res$status, 200)
 })
 

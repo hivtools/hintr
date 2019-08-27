@@ -8,7 +8,7 @@ system_file <- function(...) {
 }
 
 read_csv <- function(...) {
-  read.csv(..., stringsAsFactors = FALSE)
+  utils::read.csv(..., stringsAsFactors = FALSE)
 }
 
 is_empty <- function(x) {
