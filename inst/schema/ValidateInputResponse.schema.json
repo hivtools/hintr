@@ -21,7 +21,8 @@
         { "properties": {
             "filename": {},
             "type": { 
-              "const": "pjnz"
+              "type": "string",
+              "enum": [ "pjnz" ]
             },
             "data": { "$ref": "PjnzResponseData.schema.json" }
           },
@@ -37,7 +38,8 @@
         { "properties": {
             "filename": {},
             "type": { 
-              "const": "shape"
+              "type": "string",
+              "enum": [ "shape" ]
             },
             "data": { "$ref": "ShapefileResponseData.schema.json" }
           },
