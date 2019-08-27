@@ -1,6 +1,6 @@
 {
   "title": "Geo JSON object",
-  "description": "Schema for a Geo JSON object",
+  "description": "TODO: Validate against a URL e.g. https://geojson.org/schema/FeatureCollection.json",
   "type": "object",
   "required": [ "type", "features" ],
   "properties": {
