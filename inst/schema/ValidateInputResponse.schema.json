@@ -1,4 +1,5 @@
 {
+  "$schema": "http://json-schema.org/draft-04/schema#",
   "definitions": {
     "input_response": {
       "properties": {
@@ -17,14 +18,15 @@
     "pjnz_response": {
       "allOf": [
         { "$ref": "#/definitions/input_response" },
-        { "properties": 
-          {
+        { "properties": {
             "filename": {},
             "type": { 
               "const": "pjnz"
             },
             "data": { "$ref": "PjnzResponseData.schema.json" }
-          }
+          },
+          "additionalProperties": false,
+          "required": [ "filename", "type", "data" ]
         }
       ]
     },
@@ -32,13 +34,15 @@
     "shape_response": {
       "allOf": [
         { "$ref": "#/definitions/input_response" },
-        { "properties": 
-          {
+        { "properties": {
+            "filename": {},
             "type": { 
               "const": "shape"
             },
             "data": { "$ref": "ShapefileResponseData.schema.json" }
-          }
+          },
+          "additionalProperties": false,
+          "required": [ "filename", "type", "data" ]
         }
       ]
     }
