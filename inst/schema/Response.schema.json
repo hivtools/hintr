@@ -6,7 +6,8 @@
       "type": "object",
       "properties": {
         "status": {
-          "const": "success"
+          "type": "string",
+          "enum": ["success"]
         },
         "data": {
           "oneOf": [
@@ -27,7 +28,8 @@
       "type": "object",
       "properties": {
         "status": {
-          "const": "failure"
+          "type": "string",
+          "enum": ["failure"]
         },
         "data": {
           "type": "object"
