@@ -176,3 +176,33 @@ test_that("format_response_data correctly formats data and validates it", {
   expect_equal(args[[2]], "PjnzResponseData")
   expect_equal(args[[3]], "data")
 })
+
+test_that("hintr json serializer supports splicing in json objects", {
+  serializer <- serializer_json_hintr()
+  req <- '{"test":"example request"}'
+  res <- MockPlumberResponse$new()
+  errorHandler <- function(req, res, e) {
+    e$message
+  }
+
+  test <- '{"example_json":123}'
+  response <- serializer(test, req, res, errorHandler)
+  expect_equal(response$header, "Content-Type: application/json")
+  expect_match(response$body, '["{\\"example_json\\":123}"]', fixed = TRUE)
+
+  ## Declaring test as a json object
+  response <- serializer(json_verbatim(test), req, res, errorHandler)
+  expect_equal(response$header, "Content-Type: application/json")
+  expect_match(response$body, test, fixed = TRUE)
+
+  ## With a list
+  test_list <- list(example_json = scalar(123))
+  response <- serializer(test_list, req, res, errorHandler)
+  expect_equal(response$header, "Content-Type: application/json")
+  expect_match(response$body, test, fixed = TRUE)
+
+  ## With error handling
+  ## When trying to convert a value to JSON which throws an error
+  response <- serializer(stop("Throw error"), req, res, errorHandler)
+  expect_equal(response, "Throw error")
+})
