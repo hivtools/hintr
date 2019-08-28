@@ -25,10 +25,19 @@ read_country <- function(pjnz) {
 #' @return An error if invalid or the geojson if valid.
 #' @keywords internal
 do_validate_shape <- function(shape) {
+  # In general, we're going to be reading something other than geojson
+  # most likely - something like a shapefile.  That's good news
+  # because these are super slow to read in (~3s for the sample file
+  # and it's only 2.5MB large).  A caching layer will help, but this
+  # is going to lock things up enough we might need to do it
+  # asynchronously.
   json <- geojsonio::geojson_read(shape, method = "local")
   assert_single_country(json)
   assert_area_id_exists(json)
-  json
+  # Then we have to *reread* the file now that we know that it is
+  # valid, but but this is not too slow, especially as the file is now
+  # in cache (but still ~1/20s)
+  json_verbatim(read_string(shape))
 }
 
 assert_single_country <- function(json) {

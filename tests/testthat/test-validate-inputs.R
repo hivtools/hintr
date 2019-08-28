@@ -41,7 +41,5 @@ test_that("assert fails if a feature is missing an area id", {
 test_that("do_validate_shape validates shape and returns geojson as list", {
   shape <- system.file("testdata", "malawi.geojson", package = "hintr")
   json <- do_validate_shape(shape)
-  expect_type(json, "list")
-  expect_equal(names(json), c("type", "name", "crs", "features"))
-  expect_equal(length(json$features), 502)
+  expect_type(json, "json")
 })
