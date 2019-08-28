@@ -161,3 +161,31 @@ test_that("format_response_data correctly formats data and validates it", {
   expect_equal(args[[2]], "PjnzResponseData")
   expect_equal(args[[3]], "data")
 })
+
+test_that("Schemas are draft-04", {
+  meta <- readLines("http://json-schema.org/draft-04/schema")
+  path <- system.file("schema", package = "hintr", mustWork = TRUE)
+  files <- dir(path, full.names = TRUE, pattern = "\\.schema\\.json$")
+  for (f in files) {
+    expect_true(jsonvalidate::json_validate(f, meta), label = f)
+  }
+})
+
+test_that("Schemas do not use const", {
+  path <- system.file("schema", package = "hintr", mustWork = TRUE)
+  files <- dir(path, full.names = TRUE, pattern = "\\.schema\\.json$")
+
+  check1 <- function(x) {
+    if ("const" %in% names(x)) {
+      stop("Schema uses 'const' property and is not supported in draft-04")
+    }
+    if (is.recursive(x)) {
+      lapply(x, check1)
+    }
+  }
+
+  files <- dir(path, full.names = TRUE, pattern = "\\.schema\\.json$")
+  for (f in files) {
+    expect_error(check1(jsonlite::fromJSON(f)), NA, label = f)
+  }
+})
