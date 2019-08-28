@@ -43,7 +43,9 @@ endpoint_validate_input <- function(req, res, type, path) {
 
 
 input_response <- function(data, path, type) {
-  ret <- list(filename = scalar(basename(path)), data = data)
+  ret <- list(filename = scalar(basename(path)),
+              type = scalar(type),
+              data = data)
   validate_json_schema(to_json(ret), get_input_response_schema(type), "data")
   ret
 }
