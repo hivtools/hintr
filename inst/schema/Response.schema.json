@@ -1,14 +1,16 @@
 {
+  "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "definitions": {
     "success": {
       "type": "object",
       "properties": {
         "status": {
-          "const": "success"
+          "type": "string",
+          "enum": ["success"]
         },
         "data": {
-          "anyOf": [
+          "oneOf": [
             {"$ref": "ValidateInputResponse.schema.json"},
             {"$ref": "InitialiseModelRunResponse.schema.json"},
             {"$ref": "ModelRunResultResponse.schema.json"}
@@ -26,7 +28,8 @@
       "type": "object",
       "properties": {
         "status": {
-          "const": "failure"
+          "type": "string",
+          "enum": ["failure"]
         },
         "data": {
           "type": "object"

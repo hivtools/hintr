@@ -54,7 +54,7 @@ test_that("endpoint_validate_input support shape file", {
 
   expect_equal(response$status, "success")
   expect_equal(response$data$filename, "malawi.geojson")
-  expect_equal(names(response$data$data), c("type", "name", "crs", "features"))
+  expect_equal(names(response$data$data), c("type", "features"))
   expect_equal(length(response$data$data$features), 502)
   expect_equal(res$status, 200)
 })
@@ -80,6 +80,7 @@ test_that("hintr_response correctly prepares response", {
     success = TRUE,
     value = list(
       filename = scalar("file.pjnz"),
+      type = scalar("pjnz"),
       data = list(country = scalar("Botswana"))
     )
   )
@@ -119,6 +120,7 @@ test_that("hintr_response distinguishes incorrect data schema", {
     success = TRUE,
     value = list(
       filename = scalar("test.pjnz"),
+      type = scalar("pjnz"),
       data = list(
         country = scalar("Botswana"))
       )
@@ -184,6 +186,7 @@ test_that("format_response_data correctly formats data and validates it", {
   args <- mockery::mock_args(mock_validate)[[1]]
   expected_data <- list(
     "filename" = "file.pjnz",
+    "type" = "pjnz",
     "data" = list(
       "country" = "Botswana"
     )
@@ -191,4 +194,62 @@ test_that("format_response_data correctly formats data and validates it", {
   expect_equal(jsonlite::fromJSON(args[[1]]), expected_data)
   expect_equal(args[[2]], "PjnzResponseData")
   expect_equal(args[[3]], "data")
+})
+
+test_that("hintr json serializer supports splicing in json objects", {
+  serializer <- serializer_json_hintr()
+  req <- '{"test":"example request"}'
+  res <- MockPlumberResponse$new()
+  errorHandler <- function(req, res, e) {
+    e$message
+  }
+
+  test <- '{"example_json":123}'
+  response <- serializer(test, req, res, errorHandler)
+  expect_equal(response$header, "Content-Type: application/json")
+  expect_match(response$body, '["{\\"example_json\\":123}"]', fixed = TRUE)
+
+  ## Declaring test as a json object
+  response <- serializer(json_verbatim(test), req, res, errorHandler)
+  expect_equal(response$header, "Content-Type: application/json")
+  expect_match(response$body, test, fixed = TRUE)
+
+  ## With a list
+  test_list <- list(example_json = scalar(123))
+  response <- serializer(test_list, req, res, errorHandler)
+  expect_equal(response$header, "Content-Type: application/json")
+  expect_match(response$body, test, fixed = TRUE)
+
+  ## With error handling
+  ## When trying to convert a value to JSON which throws an error
+  response <- serializer(stop("Throw error"), req, res, errorHandler)
+  expect_equal(response, "Throw error")
+})
+
+test_that("Schemas are draft-04", {
+  meta <- readLines("http://json-schema.org/draft-04/schema")
+  path <- system.file("schema", package = "hintr", mustWork = TRUE)
+  files <- dir(path, full.names = TRUE, pattern = "\\.schema\\.json$")
+  for (f in files) {
+    expect_true(jsonvalidate::json_validate(f, meta), label = f)
+  }
+})
+
+test_that("Schemas do not use const", {
+  path <- system.file("schema", package = "hintr", mustWork = TRUE)
+  files <- dir(path, full.names = TRUE, pattern = "\\.schema\\.json$")
+
+  check1 <- function(x) {
+    if ("const" %in% names(x)) {
+      stop("Schema uses 'const' property and is not supported in draft-04")
+    }
+    if (is.recursive(x)) {
+      lapply(x, check1)
+    }
+  }
+
+  files <- dir(path, full.names = TRUE, pattern = "\\.schema\\.json$")
+  for (f in files) {
+    expect_error(check1(jsonlite::fromJSON(f)), NA, label = f)
+  }
 })

@@ -1,11 +1,13 @@
 {
+  "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "definitions": {
     "incomplete": {
       "properties": {
         "processId" : { "$ref": "URI.schema.json" },
         "complete": {
-          "const": true
+          "type": "string",
+          "enum": [false]
         },
         "progress": { "type": "integer" },
         "timeRemaining": { "type": "integer" }
@@ -22,7 +24,8 @@
       "properties": {
         "processId": { "$ref": "URI.schema.json" },
         "complete": {
-          "const": true
+          "type": "string",
+          "enum": [true]
         },
         "result": { "$ref": "ModelRunResult.schema.json" }
       },

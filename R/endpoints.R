@@ -1,7 +1,7 @@
 api_build <- function() {
   pr <- plumber::plumber$new()
   pr$handle("POST", "/validate", endpoint_validate_input,
-            serializer = plumber::serializer_content_type("application/json"))
+            serializer = serializer_json_hintr)
   pr$handle("GET", "/", api_root)
   pr
 }
@@ -39,15 +39,15 @@ endpoint_validate_input <- function(req, res, type, path) {
     response$errors <- hintr_errors(list("INVALID_FILE" = response$message))
     res$status <- 400
   }
-  auto_unbox <- type == "shape"
-  hintr_response(response, "ValidateInputResponse", auto_unbox = auto_unbox)
+  hintr_response(response, "ValidateInputResponse")
 }
 
 
 input_response <- function(data, path, type) {
-  ret <- list(filename = scalar(basename(path)), data = data)
-  validate_json_schema(jsonlite::toJSON(ret, auto_unbox = TRUE),
-                       get_input_response_schema(type), "data")
+  ret <- list(filename = scalar(basename(path)),
+              type = scalar(type),
+              data = data)
+  validate_json_schema(to_json(ret), get_input_response_schema(type), "data")
   ret
 }
 
@@ -60,17 +60,16 @@ input_response <- function(data, path, type) {
 #'
 #' @return Formatted hintr response.
 #' @keywords internal
-hintr_response <- function(value, schema, auto_unbox = FALSE) {
+hintr_response <- function(value, schema) {
   if (value$success) {
     status <- "success"
   } else {
     status <- "failure"
   }
-  ret <- jsonlite::toJSON(list(
-    "status" = scalar(status),
-    "errors" = value$errors,
-    "data" = value$value),
-    auto_unbox = auto_unbox)
+  ret <- to_json(list(
+    status = scalar(status),
+    errors = value$errors,
+    data = value$value))
   validate_json_schema(ret, "Response")
   if (value$success) {
     validate_json_schema(ret, schema, query = "data")
@@ -97,5 +96,38 @@ with_success <- function(expr) {
 }
 
 api_root <- function() {
-  jsonlite::unbox("Welcome to hintr")
+  scalar("Welcome to hintr")
+}
+
+# This serialiser allows us to splice in objects with a class "json"
+# into list structures, without converting these structures into
+# strings.  So if we have
+#
+#   list(a = scalar("foo"), b = json_verbatim('{"x": 1, "y": 2}'))
+#
+# We'll end up with the json string
+#
+#   {"a": "foo", "b": {"x": 1, "y": 2}}
+#
+# This is a suitable drop-in replacement for all responses as it is
+# otherwise compatible with the default 'json' serialiser.
+serializer_json_hintr <- function() {
+  function(val, req, res, errorHandler) {
+    tryCatch({
+      res$setHeader("Content-Type", "application/json")
+      res$body <- to_json(val)
+      return(res$toResponse())
+    }, error = function(e) {
+      errorHandler(req, res, e)
+    })
+  }
+}
+
+json_verbatim <- function(x) {
+  class(x) <- "json"
+  x
+}
+
+to_json <- function(x) {
+  jsonlite::toJSON(x, json_verbatim = TRUE)
 }

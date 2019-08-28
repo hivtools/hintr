@@ -4,10 +4,11 @@ RUN apt-get update && apt-get -y install \
         libcurl4-openssl-dev \
         libgdal-dev \
         libhiredis-dev \
-        libssl-dev \
         libjq-dev \
-        libudunits2-dev \
         libprotobuf-dev \
+        libssl-dev \
+        libudunits2-dev \
+        libv8-dev \
         libxml2-dev \
         protobuf-compiler \
         zlib1g-dev

@@ -1,12 +1,13 @@
 {
-    "type": "object",
-    "properties": {
-        "programme": { "type": "bool" },
-        "anc": { "type": "bool" }
-    },
-    "additionalProperties": false,
-    "required": [
-        "programme",
-        "anc"
-    ]
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "programme": { "type": "boolean" },
+    "anc": { "type": "boolean" }
+  },
+  "additionalProperties": false,
+  "required": [
+    "programme",
+    "anc"
+  ]
 }

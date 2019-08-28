@@ -15,3 +15,6 @@ is_empty <- function(x) {
   is.null(x) || is.na(x) || length(x) == 0 || trimws(x) == ""
 }
 
+read_string <- function(path) {
+  paste(readLines(path, warn = FALSE, encoding = "UTF-8"), collapse = "\n")
+}
