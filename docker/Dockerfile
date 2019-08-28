@@ -2,14 +2,21 @@ FROM rocker/r-ver:3.6.0
 
 RUN apt-get update && apt-get -y install \
         libcurl4-openssl-dev \
+        libgdal-dev \
         libhiredis-dev \
+        libjq-dev \
+        libprotobuf-dev \
         libssl-dev \
+        libudunits2-dev \
+        libv8-dev \
         libxml2-dev \
+        protobuf-compiler \
         zlib1g-dev
 
 COPY docker/bin /usr/local/bin/
 
 RUN install_packages --repo=https://mrc-ide.github.io/drat \
+        geojsonio \
         jsonlite \
         plumber \
         ps \

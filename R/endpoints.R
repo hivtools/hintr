@@ -1,7 +1,7 @@
 api_build <- function() {
   pr <- plumber::plumber$new()
   pr$handle("POST", "/validate", endpoint_validate_input,
-            serializer = plumber::serializer_content_type("application/json"))
+            serializer = serializer_json_hintr)
   pr$handle("GET", "/", api_root)
   pr
 }
@@ -28,7 +28,8 @@ api <- function() {
 endpoint_validate_input <- function(req, res, type, path) {
   validate_json_schema(req$postBody, "ValidateInputRequest")
   validate_func <- switch(type,
-    pjnz = do_validate_pjnz)
+    pjnz = do_validate_pjnz,
+    shape = do_validate_shape)
   response <- with_success(
     validate_func(path))
   if (response$success) {
@@ -45,7 +46,7 @@ input_response <- function(data, path, type) {
   ret <- list(filename = scalar(basename(path)),
               type = scalar(type),
               data = data)
-  validate_json_schema(jsonlite::toJSON(ret), get_input_response_schema(type), "data")
+  validate_json_schema(to_json(ret), get_input_response_schema(type), "data")
   ret
 }
 
@@ -64,10 +65,10 @@ hintr_response <- function(value, schema) {
   } else {
     status <- "failure"
   }
-  ret <- jsonlite::toJSON(list(
-    "status" = scalar(status),
-    "errors" = value$errors,
-    "data" = value$value))
+  ret <- to_json(list(
+    status = scalar(status),
+    errors = value$errors,
+    data = value$value))
   validate_json_schema(ret, "Response")
   if (value$success) {
     validate_json_schema(ret, schema, query = "data")
@@ -94,5 +95,38 @@ with_success <- function(expr) {
 }
 
 api_root <- function() {
-  jsonlite::unbox("Welcome to hintr")
+  scalar("Welcome to hintr")
+}
+
+# This serialiser allows us to splice in objects with a class "json"
+# into list structures, without converting these structures into
+# strings.  So if we have
+#
+#   list(a = scalar("foo"), b = json_verbatim('{"x": 1, "y": 2}'))
+#
+# We'll end up with the json string
+#
+#   {"a": "foo", "b": {"x": 1, "y": 2}}
+#
+# This is a suitable drop-in replacement for all responses as it is
+# otherwise compatible with the default 'json' serialiser.
+serializer_json_hintr <- function() {
+  function(val, req, res, errorHandler) {
+    tryCatch({
+      res$setHeader("Content-Type", "application/json")
+      res$body <- to_json(val)
+      return(res$toResponse())
+    }, error = function(e) {
+      errorHandler(req, res, e)
+    })
+  }
+}
+
+json_verbatim <- function(x) {
+  class(x) <- "json"
+  x
+}
+
+to_json <- function(x) {
+  jsonlite::toJSON(x, json_verbatim = TRUE)
 }

@@ -5,9 +5,14 @@ sudo: false
 addons:
   apt:
     packages:
+      - libgdal-dev
       - libhiredis-dev
-      - redis-server
+      - libjq-dev
+      - libprotobuf-dev
+      - libudunits2-dev
       - libv8-dev
+      - protobuf-compiler
+      - redis-server
 before_script:
   - ./docker/travis
   - ./docker/build_test_containers

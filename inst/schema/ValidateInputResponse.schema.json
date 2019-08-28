@@ -21,7 +21,7 @@
           "type": "string",
           "enum": [ "shape" ]
         },
-        "data": { "$ref": "ShapefileResponseData.schema.json" }
+        "data": { "$ref": "ShapeResponseData.schema.json" }
       },
       "additionalProperties": false,
       "required": ["filename", "type", "data"]
