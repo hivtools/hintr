@@ -1,3 +1,36 @@
 {
-	"type": "string"
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions": {
+    "pjnz_response": {
+      "properties": {
+        "filename": { "$ref": "FileName.schema.json" },
+        "type": { 
+          "type": "string",
+          "enum": [ "pjnz" ]
+        },
+        "data": { "$ref": "PjnzResponseData.schema.json" }
+      },
+      "additionalProperties": false,
+      "required": ["filename", "type", "data"]
+    },
+
+    "shape_response": {
+      "properties": {
+        "filename": { "$ref": "FileName.schema.json" },
+        "type": { 
+          "type": "string",
+          "enum": [ "shape" ]
+        },
+        "data": { "$ref": "ShapefileResponseData.schema.json" }
+      },
+      "additionalProperties": false,
+      "required": ["filename", "type", "data"]
+    }
+  },
+
+  "oneOf": [
+    {"$ref": "#/definitions/pjnz_response"},
+    {"$ref": "#/definitions/shape_response"}
+  ]
 }
+

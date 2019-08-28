@@ -31,3 +31,12 @@ validate_schemas <- function() {
 scalar <- function(val) {
   jsonlite::unbox(val)
 }
+
+get_input_response_schema <- function(type) {
+  paste0(to_upper_first(tolower(type)), "ResponseData")
+}
+
+to_upper_first <- function(x) {
+  substr(x, 1, 1) <- toupper(substr(x, 1, 1))
+  x
+}
