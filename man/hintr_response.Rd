@@ -4,7 +4,7 @@
 \alias{hintr_response}
 \title{Format a hintr response and validate against schema.}
 \usage{
-hintr_response(value, schema, auto_unbox = FALSE)
+hintr_response(value, schema)
 }
 \arguments{
 \item{value}{List containing an indication of success, any errors and the

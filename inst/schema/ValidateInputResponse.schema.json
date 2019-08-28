@@ -44,7 +44,7 @@
   "oneOf": [
     {"$ref": "#/definitions/pjnz_response"},
     {"$ref": "#/definitions/shape_response"},
-    {"$ref": "#/definition/population_response"}
+    {"$ref": "#/definitions/population_response"}
   ]
 }
 
