@@ -7,7 +7,7 @@
         "processId" : { "$ref": "URI.schema.json" },
         "complete": {
           "type": "string",
-          "enum": false
+          "enum": [false]
         },
         "progress": { "type": "integer" },
         "timeRemaining": { "type": "integer" }
