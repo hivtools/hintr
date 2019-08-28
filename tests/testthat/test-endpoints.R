@@ -54,7 +54,7 @@ test_that("endpoint_validate_input support shape file", {
 
   expect_equal(response$status, "success")
   expect_equal(response$data$filename, "malawi.geojson")
-  expect_equal(names(response$data$data), c("type", "name", "crs", "features"))
+  expect_equal(names(response$data$data), c("type", "features"))
   expect_equal(length(response$data$data$features), 502)
   expect_equal(res$status, 200)
 })
