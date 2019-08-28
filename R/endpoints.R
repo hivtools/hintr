@@ -1,7 +1,7 @@
 api_build <- function() {
   pr <- plumber::plumber$new()
   pr$handle("POST", "/validate", endpoint_validate_input,
-            serializer = serializer_json_hintr)
+            serializer = serializer_json_hintr())
   pr$handle("GET", "/", api_root)
   pr
 }
