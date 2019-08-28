@@ -6,7 +6,8 @@
       "properties": {
         "processId" : { "$ref": "URI.schema.json" },
         "complete": {
-          "const": true
+          "type": "string",
+          "enum": false
         },
         "progress": { "type": "integer" },
         "timeRemaining": { "type": "integer" }
@@ -23,7 +24,8 @@
       "properties": {
         "processId": { "$ref": "URI.schema.json" },
         "complete": {
-          "const": true
+          "type": "string",
+          "enum": [true]
         },
         "result": { "$ref": "ModelRunResult.schema.json" }
       },
