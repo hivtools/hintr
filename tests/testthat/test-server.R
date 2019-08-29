@@ -59,3 +59,22 @@ test_that("validate population", {
                                 type = "population",
                                 data = NULL)))
 })
+
+test_that("validate programme", {
+  server <- hintr_server()
+
+  programme <- file.path("testdata", "programme.csv")
+  body <- list(type = scalar("programme"), path = scalar(programme))
+
+  r <- httr::POST(paste0(server$url, "/validate"), body = body,
+                  encode = "json")
+  expect_equal(httr::status_code(r), 200)
+  response <- response_to_json(r)
+  expect_equal(response$status, "success")
+  expect_equal(response$errors, structure(list(), names = character(0)))
+  expect_equal(response$data$filename, "programme.csv")
+  expect_equal(response$data$type, "programme")
+  expect_true(length(response$data$data) >= 1400)
+  expect_equal(typeof(response$data$data[[1]]$value), "integer")
+})
+

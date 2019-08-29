@@ -28,3 +28,11 @@ test_that("do_validate_population validates population file", {
   ## No actual data to return but has been validated
   expect_true(is.na(pop))
 })
+
+test_that("do_validate_programme validates programme file", {
+  programme <- file.path("testdata", "programme.csv")
+  data <- do_validate_programme(programme)
+  ## Some arbitrary test that the data has actually been returned
+  expect_true(nrow(data) > 1400)
+  expect_equal(typeof(data$value), "integer")
+})

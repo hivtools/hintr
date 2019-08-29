@@ -43,6 +43,12 @@ curl -X POST -H 'Content-Type: application/json' \
      --data @example/docker_validate_population_payload.json http://localhost:8888/validate
 #> {"status":"success","errors":{},"data":{"filename":"population.csv","data":{}}}
 ```
+
+Validate programme data:
+```
+curl -X POST -H 'Content-Type: application/json' \
+     --data @example/docker_validate_programme_payload.json http://localhost:8888/validate
+```
   
 Docker container can be cleaned up using
 ```

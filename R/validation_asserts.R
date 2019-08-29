@@ -9,14 +9,26 @@ assert_column_names <- function(names, expected_names) {
   invisible(TRUE)
 }
 
-assert_single_country <- function(json) {
-  country <- vapply(json$features, function(x) {
+assert_single_country <- function(data, type) {
+  UseMethod("assert_single_country", data)
+}
+
+assert_single_country.json <- function(data, type) {
+  country <- vapply(data$features, function(x) {
     x$properties$iso3
   }, character(1))
-  if (length(unique(country)) != 1) {
+  assert_single_country(country, type)
+}
+
+assert_single_country.data.frame <- function(data, type) {
+  assert_single_country(data$iso3, type)
+}
+
+assert_single_country.character <- function(data, type) {
+  if (length(unique(data)) != 1) {
     stop(sprintf(
-      "Shape file contains regions for more than one country. Got countries %s.",
-      toString(unique(country))))
+      "%s file contains regions for more than one country. Got countries %s.",
+      to_upper_first(type), toString(unique(data))))
   }
   invisible(TRUE)
 }
