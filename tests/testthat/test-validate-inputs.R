@@ -48,7 +48,7 @@ test_that("do_validate_population validates population file", {
   population <- system.file("testdata", "population.csv", package = "hintr")
   pop <- do_validate_population(population)
   ## No actual data to return but has been validated
-  expect_null(pop)
+  expect_true(is.na(pop))
 })
 
 test_that("assert_column_names checks column names are as expected", {

@@ -83,7 +83,7 @@ do_validate_population <- function(population) {
   assert_column_names(
     colnames(population),
     c("iso3", "area_id", "time", "sex", "age_group_id", "source", "population"))
-  NULL
+  scalar(NA)
 }
 
 assert_column_names <- function(names, expected_names) {
