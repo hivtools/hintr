@@ -13,6 +13,8 @@ addons:
       - libv8-dev
       - protobuf-compiler
       - redis-server
+services:
+  - redis-server
 cache: packages
 env:
   - VALIDATE_JSON_SCHEMAS=true
