@@ -51,6 +51,19 @@
       },
       "additionalProperties": false,
       "required": ["filename", "type", "data"]
+    },
+
+    "anc_response": {
+      "properties": {
+        "filename": { "$ref": "FileName.schema.json" },
+        "type": { 
+          "type": "string",
+          "enum": [ "anc" ]
+        },
+        "data": { "$ref": "AncResponseData.schema.json" }
+      },
+      "additionalProperties": false,
+      "required": ["filename", "type", "data"]
     }
   },
 
@@ -58,7 +71,8 @@
     {"$ref": "#/definitions/pjnz_response"},
     {"$ref": "#/definitions/shape_response"},
     {"$ref": "#/definitions/population_response"},
-    {"$ref": "#/definitions/programme_response"}
+    {"$ref": "#/definitions/programme_response"},
+    {"$ref": "#/definitions/anc_response"}
   ]
 }
 

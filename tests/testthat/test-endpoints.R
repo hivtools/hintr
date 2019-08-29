@@ -93,6 +93,24 @@ test_that("endpoint_validate_input supports programme file", {
   expect_equal(typeof(response$data$data[[1]]$value), "integer")
 })
 
+test_that("endpoint_validate_input supports ANC file", {
+  anc <- file.path("testdata", "anc.csv")
+  res <- MockPlumberResponse$new()
+  response <- endpoint_validate_input(
+    list(postBody = '{"type":"anc","path":"path/to/file"}'),
+    res,
+    "anc",
+    anc)
+  response <- jsonlite::parse_json(response)
+
+  expect_equal(response$status, "success")
+  expect_equal(response$data$filename, "anc.csv")
+  expect_equal(res$status, 200)
+  ## Sanity check that data has been returned
+  expect_true(length(response$data$data) >= 800)
+  expect_equal(typeof(response$data$data[[1]]$value), "double")
+})
+
 test_that("hintr_response correctly prepares response", {
   value <- list(
     success = TRUE,
