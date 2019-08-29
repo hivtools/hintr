@@ -11,7 +11,7 @@ test_that("Root", {
 test_that("validate pjnz", {
   server <- hintr_server()
 
-  pjnz <- system.file("testdata", "Botswana2018.PJNZ", package = "hintr")
+  pjnz <- file.path("testdata", "Botswana2018.PJNZ")
   body <- list(type = scalar("pjnz"), path = scalar(pjnz))
 
   r <- httr::POST(paste0(server$url, "/validate"), body = body,
