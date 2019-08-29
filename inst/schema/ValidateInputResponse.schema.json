@@ -25,12 +25,26 @@
       },
       "additionalProperties": false,
       "required": ["filename", "type", "data"]
+    },
+
+    "population_response": {
+      "properties": {
+        "filename": { "$ref": "FileName.schema.json" },
+        "type": { 
+          "type": "string",
+          "enum": [ "population" ]
+        },
+        "data": { "$ref": "PopulationResponseData.schema.json" }
+      },
+      "additionalProperties": false,
+      "required": ["filename", "type", "data"]
     }
   },
 
   "oneOf": [
     {"$ref": "#/definitions/pjnz_response"},
-    {"$ref": "#/definitions/shape_response"}
+    {"$ref": "#/definitions/shape_response"},
+    {"$ref": "#/definitions/population_response"}
   ]
 }
 

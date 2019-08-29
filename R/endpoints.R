@@ -29,7 +29,8 @@ endpoint_validate_input <- function(req, res, type, path) {
   validate_json_schema(req$postBody, "ValidateInputRequest")
   validate_func <- switch(type,
     pjnz = do_validate_pjnz,
-    shape = do_validate_shape)
+    shape = do_validate_shape,
+    population = do_validate_population)
   response <- with_success(
     validate_func(path))
   if (response$success) {

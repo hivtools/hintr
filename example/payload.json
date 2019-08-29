@@ -1,4 +1,4 @@
 {
 	"type": "pjnz",
-	"path": "inst/testdata/Botswana2018.PJNZ"
+	"path": "tests/testthat/testdata/Botswana2018.PJNZ"
 }

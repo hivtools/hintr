@@ -1,7 +1,7 @@
 context("endpoints")
 
 test_that("endpoint_validate_input correctly validates data", {
-  pjnz <- system.file("testdata", "Botswana2018.PJNZ", package = "hintr")
+  pjnz <- file.path("testdata", "Botswana2018.PJNZ")
   req <- list(postBody = '{"type": "pjnz", "path": "path/to/file"}')
   res <- MockPlumberResponse$new()
   response <- endpoint_validate_input(req, res, "pjnz", pjnz)
@@ -26,7 +26,7 @@ test_that("endpoint_validate_input correctly validates data", {
 })
 
 test_that("endpoint_validate_input validates the input and response", {
-  pjnz <- system.file("testdata", "Botswana2018.PJNZ", package = "hintr")
+  pjnz <- file.path("testdata", "Botswana2018.PJNZ")
   mock_validate_json_schema <- mockery::mock(TRUE, cycle = TRUE)
   with_mock("hintr:::validate_json_schema" = mock_validate_json_schema, {
     ret <- endpoint_validate_input(list(postBody = "request"),
@@ -43,7 +43,7 @@ test_that("endpoint_validate_input validates the input and response", {
 })
 
 test_that("endpoint_validate_input support shape file", {
-  shape <- system.file("testdata", "malawi.geojson", package = "hintr")
+  shape <- file.path("testdata", "malawi.geojson")
   res <- MockPlumberResponse$new()
   response <- endpoint_validate_input(
     list(postBody = '{"type":"shape","path":"path/to/file"}'),
@@ -56,6 +56,22 @@ test_that("endpoint_validate_input support shape file", {
   expect_equal(response$data$filename, "malawi.geojson")
   expect_equal(names(response$data$data), c("type", "features"))
   expect_equal(length(response$data$data$features), 502)
+  expect_equal(res$status, 200)
+})
+
+test_that("endpoint_validate_input supports population file", {
+  population <- file.path("testdata", "population.csv")
+  res <- MockPlumberResponse$new()
+  response <- endpoint_validate_input(
+    list(postBody = '{"type":"population","path":"path/to/file"}'),
+    res,
+    "population",
+    population)
+  response <- jsonlite::parse_json(response)
+
+  expect_equal(response$status, "success")
+  expect_equal(response$data$filename, "population.csv")
+  expect_length(response$data$data, 0)
   expect_equal(res$status, 200)
 })
 
