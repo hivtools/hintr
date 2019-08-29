@@ -6,12 +6,12 @@ api_build <- function() {
   pr
 }
 
-api_run <- function(pr) {
-  pr$run(host = "0.0.0.0", port = 8888) # nocov
+api_run <- function(pr, port = 8888) {
+  pr$run(host = "0.0.0.0", port = port)
 }
 
-api <- function() {
-  api_run(api_build()) # nocov
+api <- function(port = 8888) {
+  api_run(api_build(), port)
 }
 
 #' Validate an input file and return an indication of success and
