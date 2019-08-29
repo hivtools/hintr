@@ -40,40 +40,11 @@ do_validate_shape <- function(shape) {
   json_verbatim(read_string(shape))
 }
 
-assert_single_country <- function(json) {
-  country <- vapply(json$features, function(x) {
-    x$properties$iso3
-  }, character(1))
-  if (length(unique(country)) != 1) {
-    stop(sprintf(
-      "Shape file contains regions for more than one country. Got countries %s.",
-      toString(unique(country))))
-  }
-  invisible(TRUE)
-}
-
-assert_area_id_exists <- function(json) {
-  contains_id <- vapply(json$features, function(x) {
-    !is_empty(x$properties$area_id)
-  }, logical(1))
-  if (!all(contains_id)) {
-    missing_count <- sum(!contains_id)
-    stop(
-      sprintf(
-        "Shape file does not contain an area ID for each region. Missing ID for %s %s.",
-        missing_count,
-        ngettext(missing_count, "feature", "features")
-      )
-    )
-  }
-  invisible(TRUE)
-}
-
 #' Validate population file.
 #'
 #' Check that population file can be read.
 #'
-#' @param shape Path to input population file.
+#' @param population Path to input population file.
 #'
 #' @return An error if invalid.
 #' @keywords internal
@@ -86,13 +57,19 @@ do_validate_population <- function(population) {
   scalar(NA)
 }
 
-assert_column_names <- function(names, expected_names) {
-  missing <- setdiff(expected_names, names)
-  if (length(missing) > 0) {
-    missing <- setdiff(expected_names, names)
-    stop(sprintf("Data missing %s %s",
-                 ngettext(length(missing), "column", "columns"),
-                 paste(setdiff(expected_names, names), collapse = ", ")))
-  }
-  invisible(TRUE)
+#' Validate programme ART data file.
+#'
+#' Check that programme ART data file can be read and return serialised data.
+#'
+#' @param programme Path to input population file.
+#'
+#' @return An error if invalid.
+#' @keywords internal
+do_validate_programme <- function(programme) {
+  population <- read_csv(population, header = TRUE)
+  ## Perhaps this kind of assertion should just be checked by json schema?
+  assert_column_names(
+    colnames(population),
+    c("iso3", "area_id", "time", "sex", "age_group_id", "source", "population"))
+  scalar(NA)
 }
