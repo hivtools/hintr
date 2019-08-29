@@ -14,7 +14,3 @@ is_empty <- function(x) {
 read_string <- function(path) {
   paste(readLines(path, warn = FALSE, encoding = "UTF-8"), collapse = "\n")
 }
-
-`%||%` <- function(a, b) {
-  if (is.null(a)) b else a
-}
