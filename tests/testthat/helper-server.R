@@ -52,7 +52,7 @@ hintr_server <- function(port = NULL, n_tries = 10, poll = 0.1) {
   url <- sprintf("http://localhost:%d", port)
 
   for (i in seq_len(n_tries)) {
-    ok <-  tryCatch({
+    ok <- tryCatch({
       httr::stop_for_status(httr::GET(url))
       TRUE
     }, error = function(e) FALSE)
