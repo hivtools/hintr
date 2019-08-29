@@ -1,7 +1,7 @@
 context("validate-inputs")
 
 test_that("baseline inputs can be validated and return data", {
-  pjnz <- system.file("testdata", "Botswana2018.PJNZ", package = "hintr")
+  pjnz <- file.path("testdata", "Botswana2018.PJNZ")
   ## TODO: Expand validation to include other input files
   expect_equal(do_validate_pjnz(pjnz), list(country = scalar("Botswana")))
 
@@ -12,12 +12,12 @@ test_that("baseline inputs can be validated and return data", {
 })
 
 test_that("country can be read from PJNZ file", {
-  pjnz <- system.file("testdata", "Botswana2018.PJNZ", package = "hintr")
+  pjnz <- file.path("testdata", "Botswana2018.PJNZ")
   expect_equal(read_country(pjnz), "Botswana")
 })
 
 test_that("assert fails if more than once country in json", {
-  shape <- system.file("testdata", "malawi.geojson", package = "hintr")
+  shape <- file.path("testdata", "malawi.geojson")
   json <- geojsonio::geojson_read(shape, method = "local")
   expect_true(assert_single_country(json))
 
@@ -28,7 +28,7 @@ test_that("assert fails if more than once country in json", {
 })
 
 test_that("assert fails if a feature is missing an area id", {
-  shape <- system.file("testdata", "malawi.geojson", package = "hintr")
+  shape <- file.path("testdata", "malawi.geojson")
   json <- geojsonio::geojson_read(shape, method = "local")
   expect_true(assert_area_id_exists(json))
 
@@ -39,13 +39,13 @@ test_that("assert fails if a feature is missing an area id", {
 })
 
 test_that("do_validate_shape validates shape and returns geojson as list", {
-  shape <- system.file("testdata", "malawi.geojson", package = "hintr")
+  shape <- file.path("testdata", "malawi.geojson")
   json <- do_validate_shape(shape)
   expect_s3_class(json, "json")
 })
 
 test_that("do_validate_population validates population file", {
-  population <- system.file("testdata", "population.csv", package = "hintr")
+  population <- file.path("testdata", "population.csv")
   pop <- do_validate_population(population)
   ## No actual data to return but has been validated
   expect_true(is.na(pop))

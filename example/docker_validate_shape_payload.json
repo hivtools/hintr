@@ -1,4 +1,4 @@
 {
   "type": "shape",
-  "path": "src/inst/testdata/malawi.geojson"
+  "path": "src/tests/testthat/testdata/malawi.geojson"
 }

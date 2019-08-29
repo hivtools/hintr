@@ -1,4 +1,4 @@
 {
   "type": "population",
-  "path": "src/inst/testdata/population.csv"
+  "path": "src/tests/testthat/testdata/population.csv"
 }
