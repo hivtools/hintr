@@ -63,5 +63,5 @@ hintr_server <- function(port = NULL, n_tries = 10, poll = 0.1) {
 }
 
 response_to_json <- function(x) {
-  jsonlite::fromJSON(httr::content(r, "text", encoding = "UTF-8"), FALSE)
+  jsonlite::fromJSON(httr::content(x, "text", encoding = "UTF-8"), FALSE)
 }
