@@ -36,6 +36,7 @@ get_free_port <- free_port(9000)
 
 hintr_server <- function(port = NULL, n_tries = 10, poll = 0.1) {
   skip_if_not_installed("processx")
+  skip_if_not_installed("httr")
 
   port <- port %||% get_free_port()
 
