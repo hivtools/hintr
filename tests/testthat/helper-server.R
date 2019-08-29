@@ -34,6 +34,13 @@ check_port <- function(port) {
 
 get_free_port <- free_port(9000)
 
+# The callr package will create a supervised process with a finaliser
+# that will clean up on garbage collection, so we don't need to
+# explicitly clean up. However, it means that consecutive tests should
+# not use the same port because a process might still be being cleaned
+# up. So the default is to use an incrementing port number. This has
+# proven more reliable in practice anyway. The approach above is the
+# same used in vaultr.
 hintr_server <- function(port = NULL, n_tries = 10, poll = 0.1) {
   skip_if_not_installed("callr")
   skip_if_not_installed("httr")
