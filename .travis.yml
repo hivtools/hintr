@@ -13,9 +13,8 @@ addons:
       - libv8-dev
       - protobuf-compiler
       - redis-server
-before_script:
-  - ./docker/travis
-  - ./docker/build_test_containers
+services:
+  - redis-server
 cache: packages
 env:
   - VALIDATE_JSON_SCHEMAS=true
