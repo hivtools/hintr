@@ -22,7 +22,9 @@ Imports:
     rrq,
     specio
 Suggests:
+    callr,
     covr,
+    httr,
     jsonvalidate,
     mockery,
     R6,

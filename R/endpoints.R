@@ -1,17 +1,17 @@
 api_build <- function() {
   pr <- plumber::plumber$new()
   pr$handle("POST", "/validate", endpoint_validate_input,
-            serializer = serializer_json_hintr)
+            serializer = serializer_json_hintr())
   pr$handle("GET", "/", api_root)
   pr
 }
 
-api_run <- function(pr) {
-  pr$run(host = "0.0.0.0", port = 8888) # nocov
+api_run <- function(pr, port = 8888) {
+  pr$run(host = "0.0.0.0", port = port) # nocov
 }
 
-api <- function() {
-  api_run(api_build()) # nocov
+api <- function(port = 8888) {
+  api_run(api_build(), port) # nocov
 }
 
 #' Validate an input file and return an indication of success and
