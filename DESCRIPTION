@@ -18,6 +18,7 @@ Imports:
     geojsonio,
     jsonlite (>= 1.2.2),
     plumber,
+    R6,
     redux,
     rrq,
     specio
@@ -27,6 +28,5 @@ Suggests:
     httr,
     jsonvalidate,
     mockery,
-    R6,
     testthat (>= 2.1.0),
     withr

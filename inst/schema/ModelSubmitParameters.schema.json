@@ -4,12 +4,11 @@
   "properties": {
     "max_iterations": { "type": "number" },
     "no_of_simulations": { "type": "number" },
-    "input_data": { "$ref": "ModelRunInputData.schema.json" }
+    "options": { "$ref": "ModelSubmitInputOptions.schema.json" }
   },
-  "additionalProperties": false,
   "required": [
     "max_iterations",
     "no_of_simulations",
-    "input_data"
+    "options"
   ]
 }

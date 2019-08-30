@@ -75,6 +75,113 @@ test_that("endpoint_validate_input supports population file", {
   expect_equal(res$status, 200)
 })
 
+test_that("endpoint model run queues a model run", {
+  test_redis_available()
+  ## Create request data
+  data <- list(
+    pjnz = "path/to/pjnz",
+    shape = "path",
+    population = "path",
+    survey = "path",
+    programme = "path",
+    anc = "path"
+  )
+  parameters <- list(
+    max_iterations = 250,
+    no_of_simulations = 3000,
+    input_data = list(
+      programme = TRUE,
+      anc = FALSE
+    )
+  )
+  req <- list(postBody = '
+  {
+    "data": {
+      "pjnz": "path/to/file",
+      "shape": "path/to/file",
+      "population": "path/to/file",
+      "survey": "path/to/file",
+      "programme": "path/to/file",
+      "anc": "path/to/file"
+    },
+    "parameters": {
+      "max_iterations" : 250,
+      "no_of_simulations": 3000,
+      "options": {
+        "programme": true,
+        "anc": false
+      }
+    }
+  }')
+
+  ## Create mock response
+  res <- MockPlumberResponse$new()
+
+  ## Call the endpoint
+  queue <- Queue$new()
+  model_submit <- endpoint_model_submit(queue)
+  response <- model_submit(req, res, data, parameters)
+  response <- jsonlite::parse_json(response)
+  expect_equal(response$status, "success")
+  expect_true("id" %in% names(response$data))
+  expect_equal(res$status, 200)
+})
+
+test_that("endpoint_run_model returns error if queueing fails", {
+  test_redis_available()
+  ## Create request data
+  data <- list(
+    pjnz = "path/tp/pjnz",
+    shape = "path",
+    population = "path",
+    survey = "path",
+    programme = "path",
+    anc = "path"
+  )
+  parameters <- list(
+    max_iterations = 250,
+    no_of_simulations = 3000,
+    options = list(
+      programme = TRUE,
+      anc = FALSE
+    )
+  )
+  req <- list(postBody = '
+    {
+      "data": {
+        "pjnz": "path/to/file",
+        "shape": "path/to/file",
+        "population": "path/to/file",
+        "survey": "path/to/file",
+        "programme": "path/to/file",
+        "anc": "path/to/file"
+      },
+      "options": {
+        "max_iterations" : 250,
+        "no_of_simulations": 3000,
+        "input_data": {
+          "programme": true,
+          "anc": false
+        }
+      }
+    }')
+
+  ## Create mocks
+  res <- MockPlumberResponse$new()
+  queue <- Queue$new()
+  mock_submit <- mockery::mock(stop("Failed to queue"))
+
+  ## Call the endpoint
+  model_submit <- endpoint_model_submit(queue)
+  response <- model_submit(req, res, data, parameters)
+  response <- jsonlite::parse_json(response)
+  expect_equal(response$status, "failure")
+  expect_length(response$errors, 1)
+  expect_equal(response$errors[[1]]$error, "FAILED_TO_QUEUE")
+  expect_equal(response$errors[[1]]$detail, "Failed to queue")
+  expect_equal(res$status, 400)
+})
+
 test_that("hintr_response correctly prepares response", {
   value <- list(
     success = TRUE,
@@ -123,17 +230,16 @@ test_that("hintr_response distinguishes incorrect data schema", {
       type = scalar("pjnz"),
       data = list(
         country = scalar("Botswana"))
-      )
     )
+  )
 
   expect_error(
     hintr_response(value, "ValidateInputResponse"),
     NA)
   expect_error(
-    hintr_response(value, "ModelRunResultResponse"),
+    hintr_response(value, "ModelResultResponse"),
     class = "validation_error")
 })
-
 
 test_that("with_success correctly builds success message", {
   expr <- "Passed validation"
@@ -169,8 +275,9 @@ test_that("hintr API can be tested", {
 test_that("plumber api can be built", {
   api <- api_build()
   expect_s3_class(api, "plumber")
-  expect_length(api$routes, 2)
-  expect_equal(names(api$routes), c("validate", ""))
+  expect_length(api$routes, 3)
+  expect_equal(names(api$routes), c("validate", "model", ""))
+  expect_equal(names(api$routes$model), c("submit", "status", "result"))
 })
 
 test_that("format_response_data correctly formats data and validates it", {
@@ -231,7 +338,7 @@ test_that("Schemas are draft-04", {
   path <- system.file("schema", package = "hintr", mustWork = TRUE)
   files <- dir(path, full.names = TRUE, pattern = "\\.schema\\.json$")
   for (f in files) {
-    expect_true(jsonvalidate::json_validate(f, meta), label = f)
+    expect_true(jsonvalidate::json_validate(f, meta))
   }
 })
 

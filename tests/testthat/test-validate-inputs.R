@@ -24,7 +24,7 @@ test_that("assert fails if more than once country in json", {
   ## Change a country for purpose of testing
   json$features[[1]]$properties$iso3 <- "AGO"
   expect_error(assert_single_country(json),
-    "Shape file contains regions for more than one country. Got countries AGO, MWI.")
+               "Shape file contains regions for more than one country. Got countries AGO, MWI.")
 })
 
 test_that("assert fails if a feature is missing an area id", {
@@ -35,7 +35,7 @@ test_that("assert fails if a feature is missing an area id", {
   ## Remove an ID for testing
   json$features[[1]]$properties$area_id <- NULL
   expect_error(assert_area_id_exists(json),
-    "Shape file does not contain an area ID for each region. Missing ID for 1 feature.")
+               "Shape file does not contain an area ID for each region. Missing ID for 1 feature.")
 })
 
 test_that("do_validate_shape validates shape and returns geojson as list", {

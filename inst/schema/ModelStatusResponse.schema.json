@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "id" : { "$ref": "URI.schema.json" },
+    "complete": { "type": "boolean" },
+    "progress": { "type": "string" },
+    "timeRemaining": { "type": "string" }
+  },
+  "additionalProperties": false,
+  "required": [
+    "job_id",
+    "complete",
+    "progress",
+    "timeRemaining"
+  ]
+}

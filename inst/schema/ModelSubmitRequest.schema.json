@@ -2,10 +2,12 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "processId" : { "$ref": "URI.schema.json" }
+    "data" : { "$ref": "ModelSubmitData.schema.json" },
+    "parameters" : { "$ref": "ModelSubmitParameters.schema.json" }
   },
   "additionalProperties": false,
   "required": [
-    "processId"
+    "data",
+    "parameters"
   ]
 }

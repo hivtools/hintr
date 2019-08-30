@@ -35,11 +35,3 @@ MockPlumberResponse <- R6::R6Class("PlumberResponse", list(
     list(header = self$header, body = self$body)
   }
 ))
-
-test_redis_available <- function() {
-  available <- redux::redis_available()
-  if (!available) {
-    testthat::skip("Skipping test as redis is not available")
-  }
-  invisible(available)
-}

@@ -43,6 +43,19 @@ curl -X POST -H 'Content-Type: application/json' \
      --data @example/docker_validate_population_payload.json http://localhost:8888/validate
 #> {"status":"success","errors":{},"data":{"filename":"population.csv","data":{}}}
 ```
+
+Run a model:
+```
+curl -X POST -H 'Content-Type: application/json' \
+     --data @example/model_submit_payload.json http://localhost:8888/model/submit
+#> {"status":"success","errors":{},"data":{"id":"4d99b972cdcbebc96835c102857a808c"}}
+```
+
+Query status of model run:
+```
+curl http://localhost:8888/model/status/4d99b972cdcbebc96835c102857a808c
+
+```
   
 Docker container can be cleaned up using
 ```

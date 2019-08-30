@@ -1,5 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "string",
-  "enum": ["INVALID_FILE", "FAILED_TO_QUEUE", "INVALID_PJNZ", "OTHER_ERROR", "FAILED_TO_CHECK_STATUS"]
+  "enum": [
+    "INVALID_FILE", "FAILED_TO_QUEUE", "INVALID_PJNZ", 
+    "FAILED_TO_RETRIEVE_STATUS", "FAILED_TO_RETRIEVE_RESULT", 
+    "OTHER_ERROR", "FAILED_TO_CHECK_STATUS"]
 }
