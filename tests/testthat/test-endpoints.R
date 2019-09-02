@@ -221,7 +221,7 @@ test_that("endpoint_run_model returns error if queueing fails", {
 
 
 
-test_that("querying for status of missing job returns ", {
+test_that("querying for status of missing job returns useful message", {
   test_redis_available()
 
   res <- MockPlumberResponse$new()
