@@ -51,6 +51,32 @@
       },
       "additionalProperties": false,
       "required": ["filename", "type", "data"]
+    },
+
+    "programme_response": {
+      "properties": {
+        "filename": { "$ref": "FileName.schema.json" },
+        "type": {
+          "type": "string",
+          "enum": [ "survey" ]
+        },
+        "data": { "$ref": "ProgrammeResponseData.schema.json" }
+      },
+      "additionalProperties": false,
+      "required": ["filename", "type", "data"]
+    },
+
+    "anc_response": {
+      "properties": {
+        "filename": { "$ref": "FileName.schema.json" },
+        "type": {
+          "type": "string",
+          "enum": [ "survey" ]
+        },
+        "data": { "$ref": "ANCResponseData.schema.json" }
+      },
+      "additionalProperties": false,
+      "required": ["filename", "type", "data"]
     }
   },
 
@@ -58,7 +84,9 @@
     {"$ref": "#/definitions/pjnz_response"},
     {"$ref": "#/definitions/shape_response"},
     {"$ref": "#/definitions/population_response"},
-    {"$ref": "#/definitions/survey_response"}
+    {"$ref": "#/definitions/survey_response"},
+    {"$ref": "#/definitions/programme_response"},
+    {"$ref": "#/definitions/anc_response"}
   ]
 }
 
