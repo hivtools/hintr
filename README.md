@@ -56,6 +56,12 @@ Query status of model run:
 curl http://localhost:8888/model/status/4d99b972cdcbebc96835c102857a808c
 
 ```
+
+Get the result of a model run:
+```
+curl http://localhost:8888/model/result/4d99b972cdcbebc96835c102857a808c
+
+```
   
 Docker container can be cleaned up using
 ```
