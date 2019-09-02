@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "displayName": {
+      "type": "string"
+    },
+    "columnName": {
+      "type": "string"
+    },
+    "options": {
+      "type": "array",
+      "items": {
+        "$ref": "FilterOption.schema.json"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "displayName",
+    "columnName",
+    "options"
+  ]
+}
