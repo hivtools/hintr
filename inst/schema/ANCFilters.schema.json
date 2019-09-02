@@ -2,23 +2,19 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "displayName": {
-      "type": "string"
+    "age": {
+      "type": "array",
+      "items": { "type": "string" }
     },
-    "columnName": {
-      "type": "string"
-    },
-    "options": {
+    "region": {
       "type": "array",
       "items": {
-        "$ref": "FilterOption.schema.json"
+        "$ref": "NestedFilterOption"
       }
     }
   },
   "additionalProperties": false,
   "required": [
-    "displayName",
-    "columnName",
-    "options"
+    "age", "region"
   ]
 }

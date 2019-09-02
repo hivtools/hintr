@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "sex": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "age": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "region": {
+      "type": "array",
+      "items": {
+        "$ref": "NestedFilterOption"
+      }
+    },
+    "survey": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "sex", "age", "region", "survey"
+  ]
+}
