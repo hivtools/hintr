@@ -3,9 +3,9 @@
   "type": "object",
   "properties": {
     "id" : { "$ref": "URI.schema.json" },
-    "done": { "type": "boolean" },
+    "done": { "type": [ "boolean", "null" ] },
     "status": { "type": "string" },
-    "success": { "type": "boolean" },
+    "success": { "type": [ "boolean", "null" ] },
     "queue": { "type": "integer" },
     "progress": { "type": "string" },
     "timeRemaining": { "type": "string" }

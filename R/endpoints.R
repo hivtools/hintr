@@ -17,7 +17,7 @@ api_run <- function(pr, port = 8888) {
 }
 
 api <- function(port = 8888) {
-  queue <- Queue$new()
+  queue <- Queue$new() # nocov
   api_run(api_build(queue), port) # nocov
 }
 
@@ -58,7 +58,14 @@ endpoint_model_result <- function(queue) {
 
     response <- with_success(
       queue$result(id))
-    if (response$success) {
+    if (is_error(response$value)) {
+      response$success <- FALSE
+      response$errors <- hintr_errors(
+        list("MODEL_RUN_FAILED" = scalar(toString(response$value)))
+      )
+      response$value <- NULL
+      res$status <- 400
+    } else if (response$success) {
       response$value <- scalar(response$value)
     } else {
       response$errors <- hintr_errors(
@@ -67,6 +74,10 @@ endpoint_model_result <- function(queue) {
     }
     hintr_response(response, "ModelResultResponse")
   }
+}
+
+is_error <- function(x) {
+  inherits(x, "error")
 }
 
 #' Validate an input file and return an indication of success and

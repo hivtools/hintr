@@ -36,9 +36,9 @@ test_that("endpoint_validate_input validates the input and response", {
   mockery::expect_called(mock_validate_json_schema, 4)
   mockery::expect_args(mock_validate_json_schema, 1, "request",
                        "ValidateInputRequest")
-  mockery::expect_args(mock_validate_json_schema, 3, ret,
-                       "Response")
   mockery::expect_args(mock_validate_json_schema, 4, ret,
+                       "Response")
+  mockery::expect_args(mock_validate_json_schema, 3, ret,
                        "ValidateInputResponse", "data")
 })
 
@@ -93,7 +93,7 @@ test_that("endpoint model run queues a model run", {
       programme = TRUE,
       anc = FALSE
     ),
-    sleep = 0
+    sleep = 5
   )
   req <- list(postBody = '
   {
@@ -112,7 +112,7 @@ test_that("endpoint model run queues a model run", {
         "programme": true,
         "anc": false
       },
-      "sleep": 0
+      "sleep": 5
     }
   }')
 
@@ -136,11 +136,23 @@ test_that("endpoint model run queues a model run", {
   expect_equal(res$status, 200)
   expect_equal(status$status, "success")
   expect_equal(status$data$id, response$data$id)
+  expect_equal(status$data$done, FALSE)
+  expect_equal(status$data$status, "RUNNING")
+  expect_equal(status$data$queue, 0)
+
+  ## Wait for complete and query for status
+  ## Query for status
+  Sys.sleep(5)
+  res <- MockPlumberResponse$new()
+  status <- model_status(NULL, res, response$data$id)
+  status <- jsonlite::parse_json(status)
+  expect_equal(res$status, 200)
+  expect_equal(status$status, "success")
+  expect_equal(status$data$id, response$data$id)
   expect_equal(status$data$done, TRUE)
   expect_equal(status$data$status, "COMPLETE")
   expect_equal(status$data$queue, 0)
   expect_equal(status$data$success, TRUE)
-
 
   ## Get the result
   res <- MockPlumberResponse$new()
@@ -193,10 +205,11 @@ test_that("endpoint_run_model returns error if queueing fails", {
   ## Create mocks
   res <- MockPlumberResponse$new()
   queue <- Queue$new()
-  mock_submit <- mockery::mock(stop("Failed to queue"))
+  mock_submit <- function(data, parameters) { stop("Failed to queue") }
 
   ## Call the endpoint
   model_submit <- endpoint_model_submit(queue)
+  mockery::stub(model_submit, "queue$submit", mock_submit)
   response <- model_submit(req, res, data, parameters)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "failure")
@@ -204,6 +217,157 @@ test_that("endpoint_run_model returns error if queueing fails", {
   expect_equal(response$errors[[1]]$error, "FAILED_TO_QUEUE")
   expect_equal(response$errors[[1]]$detail, "Failed to queue")
   expect_equal(res$status, 400)
+})
+
+
+
+test_that("querying for status of missing job returns ", {
+  test_redis_available()
+
+  res <- MockPlumberResponse$new()
+  queue <- Queue$new()
+  model_status <- endpoint_model_status(queue)
+  status <- model_status(NULL, res, "ID")
+  status <- jsonlite::parse_json(status)
+  expect_equal(res$status, 200)
+  expect_equal(status$status, "success")
+  expect_null(status$data$done)
+  expect_equal(status$data$status, "MISSING")
+  expect_null(status$data$success)
+  expect_equal(status$data$id, "ID")
+})
+
+test_that("querying for result of missing job returns useful error", {
+  test_redis_available()
+
+  res <- MockPlumberResponse$new()
+  queue <- Queue$new()
+  model_result <- endpoint_model_result(queue)
+  result <- model_result(NULL, res, "ID")
+  result <- jsonlite::parse_json(result)
+  expect_equal(res$status, 400)
+  expect_equal(result$status, "failure")
+  expect_length(result$data, 0)
+  expect_length(result$errors, 1)
+  expect_equal(result$errors[[1]]$error, "FAILED_TO_RETRIEVE_RESULT")
+  expect_equal(result$errors[[1]]$detail, "Missing some results")
+})
+
+test_that("endpoint_run_status returns error if query for status fails", {
+  test_redis_available()
+
+  ## Create mocks
+  res <- MockPlumberResponse$new()
+  queue <- Queue$new()
+  mock_status <- function(data, parameters) { stop("Failed to get status") }
+
+  ## Call the endpoint
+  model_status <- endpoint_model_status(queue)
+  mockery::stub(model_status, "queue$status", mock_status)
+  response <- model_status(req, res, "ID")
+  response <- jsonlite::parse_json(response)
+  expect_equal(response$status, "failure")
+  expect_length(response$errors, 1)
+  expect_equal(response$errors[[1]]$error, "FAILED_TO_RETRIEVE_STATUS")
+  expect_equal(response$errors[[1]]$detail, "Failed to get status")
+  expect_equal(res$status, 400)
+})
+
+test_that("querying for result of incomplete jobs returns useful error", {
+  test_redis_available()
+  data <- list(
+    pjnz = "path/to/pjnz",
+    shape = "path",
+    population = "path",
+    survey = "path",
+    programme = "path",
+    anc = "path"
+  )
+  parameters <- list(
+    max_iterations = 250,
+    no_of_simulations = 3000,
+    input_data = list(
+      programme = TRUE,
+      anc = FALSE
+    ),
+    sleep = 5
+  )
+  req <- list(postBody = '
+  {
+    "data": {
+      "pjnz": "path/to/file",
+      "shape": "path/to/file",
+      "population": "path/to/file",
+      "survey": "path/to/file",
+      "programme": "path/to/file",
+      "anc": "path/to/file"
+    },
+    "parameters": {
+      "max_iterations" : 250,
+      "no_of_simulations": 3000,
+      "options": {
+        "programme": true,
+        "anc": false
+      },
+      "sleep": 5
+    }
+  }')
+
+  ## Create mock response
+  res <- MockPlumberResponse$new()
+
+  ## Call the endpoint
+  queue <- Queue$new()
+  model_submit <- endpoint_model_submit(queue)
+  response <- model_submit(req, res, data, parameters)
+  response <- jsonlite::parse_json(response)
+  expect_equal(response$status, "success")
+
+  ## Get result prematurely
+  model_result <- endpoint_model_result(queue)
+  result <- model_result(NULL, res, response$data$id)
+  result <- jsonlite::parse_json(result)
+  expect_equal(res$status, 400)
+  expect_equal(result$status, "failure")
+  expect_length(result$data, 0)
+  expect_length(result$errors, 1)
+  expect_equal(result$errors[[1]]$error, "FAILED_TO_RETRIEVE_RESULT")
+  expect_equal(result$errors[[1]]$detail, "Missing some results")
+})
+
+test_that("erroring model run returns useful messages", {
+  test_redis_available()
+
+  res <- MockPlumberResponse$new()
+
+  ## Call the endpoint
+  queue <- Queue$new()
+  model_submit <- endpoint_model_submit(queue)
+  response <- model_submit(req, res, NULL, NULL)
+  response <- jsonlite::parse_json(response)
+  expect_equal(response$status, "success")
+
+  ## Get the status
+  model_status <- endpoint_model_status(queue)
+  status <- model_status(req, res, response$data$id)
+  status <- jsonlite::parse_json(status)
+  expect_equal(status$status, "success")
+  expect_length(status$errors, 0)
+  expect_equal(status$data$done, TRUE)
+  expect_equal(status$data$status, "ERROR")
+  expect_equal(status$data$success, FALSE)
+  expect_equal(status$data$id, response$data$id)
+
+  ## Get the result
+  model_result <- endpoint_model_result(queue)
+  result <- model_result(req, res, response$data$id)
+  result <- jsonlite::parse_json(result)
+  expect_equal(res$status, 400)
+  expect_equal(result$status, "failure")
+  expect_length(result$data, 0)
+  expect_length(result$errors, 1)
+  expect_equal(result$errors[[1]]$error, "MODEL_RUN_FAILED")
+  expect_equal(result$errors[[1]]$detail, "Error in Sys.sleep(parameters$sleep): invalid 'time' value\n")
 })
 
 test_that("hintr_response correctly prepares response", {

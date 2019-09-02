@@ -33,15 +33,21 @@ Queue <- R6::R6Class(
     status = function(id) {
       status <- unname(self$queue$task_status(id))
       done <- c("ERROR", "COMPLETE")
+      incomplete <- c("MISSING")
       if (status %in% done) {
         list(done = TRUE,
              status = status,
              success = status == "COMPLETE",
              queue = 0)
+      } else if (status %in% incomplete) {
+        list(done = json_verbatim("null"),
+             status = status,
+             success = json_verbatim("null"),
+             queue = self$queue$task_position(id))
       } else {
         list(done = FALSE,
              status = status,
-             success = NULL,
+             success = json_verbatim("null"),
              queue = self$queue$task_position(id))
       }
     },

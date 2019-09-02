@@ -60,15 +60,35 @@ test_that("validate population", {
 test_that("model interactions", {
   server <- hintr_server()
 
+  ## Submit a model run
   submit <- file.path("payload", "model_submit_payload.json")
-
   r <- httr::POST(paste0(server$url, "/model/submit"),
                   body = httr::upload_file(submit),
-                  encode = "json", httr::verbose())
+                  encode = "json")
   expect_equal(httr::status_code(r), 200)
   response <- response_to_json(r)
   expect_equal(response$status, "success")
   expect_equal(response$errors, structure(list(), names = character(0)))
   expect_equal(names(response$data), c("id"))
-  expect_equal(response$data$data$type, "FeatureCollection")
+
+  ## Get the status
+  Sys.sleep(1)
+  r <- httr::GET(paste0(server$url, "/model/status/", response$data$id))
+  expect_equal(httr::status_code(r), 200)
+  response <- response_to_json(r)
+  expect_equal(response$status, "success")
+  expect_equal(response$errors, structure(list(), names = character(0)))
+  expect_equal(response$data$done, TRUE)
+  expect_equal(response$data$status, "COMPLETE")
+  expect_equal(response$data$success, TRUE)
+  expect_equal(response$data$queue, 0)
+  expect_true("id" %in% names(response$data))
+
+  ## Get the result
+  r <- httr::GET(paste0(server$url, "/model/result/", response$data$id))
+  expect_equal(httr::status_code(r), 200)
+  response <- response_to_json(r)
+  expect_equal(response$status, "success")
+  expect_equal(response$errors, structure(list(), names = character(0)))
+  expect_equal(response$data, 2)
 })

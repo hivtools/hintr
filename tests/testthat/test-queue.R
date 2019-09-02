@@ -28,7 +28,7 @@ test_that("queue works as intended", {
   status <- queue$status(job_id)
   expect_equal(status$status, "RUNNING")
   expect_false(status$done)
-  expect_null(status$success)
+  expect_equal(status$success, json_verbatim("null"))
   expect_equal(status$queue, 0)
 
   ## After task has completed
