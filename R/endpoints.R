@@ -125,10 +125,10 @@ hintr_response <- function(value, schema) {
     status = scalar(status),
     errors = value$errors,
     data = value$value))
-  validate_json_schema(ret, "Response")
   if (value$success) {
     validate_json_schema(ret, schema, query = "data")
   }
+  validate_json_schema(ret, "Response")
   ret
 }
 
