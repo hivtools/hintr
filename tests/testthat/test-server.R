@@ -1,6 +1,7 @@
 context("server")
 
 test_that("Root", {
+  test_redis_available()
   server <- hintr_server()
 
   r <- httr::GET(server$url)
@@ -9,6 +10,7 @@ test_that("Root", {
 })
 
 test_that("validate pjnz", {
+  test_redis_available()
   server <- hintr_server()
 
   payload <- file.path("payload", "validate_pjnz_payload.json")
@@ -25,6 +27,7 @@ test_that("validate pjnz", {
 })
 
 test_that("validate shape", {
+  test_redis_available()
   server <- hintr_server()
 
   payload <- file.path("payload", "validate_shape_payload.json")
@@ -42,6 +45,7 @@ test_that("validate shape", {
 })
 
 test_that("validate population", {
+  test_redis_available()
   server <- hintr_server()
 
   payload <- file.path("payload", "validate_population_payload.json")
@@ -58,6 +62,7 @@ test_that("validate population", {
 })
 
 test_that("model interactions", {
+  test_redis_available()
   server <- hintr_server()
 
   ## Submit a model run
