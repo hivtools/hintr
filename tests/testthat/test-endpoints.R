@@ -92,7 +92,8 @@ test_that("endpoint model run queues a model run", {
     input_data = list(
       programme = TRUE,
       anc = FALSE
-    )
+    ),
+    sleep = 0
   )
   req <- list(postBody = '
   {
@@ -110,7 +111,8 @@ test_that("endpoint model run queues a model run", {
       "options": {
         "programme": true,
         "anc": false
-      }
+      },
+      "sleep": 0
     }
   }')
 
@@ -125,6 +127,28 @@ test_that("endpoint model run queues a model run", {
   expect_equal(response$status, "success")
   expect_true("id" %in% names(response$data))
   expect_equal(res$status, 200)
+
+  ## Query for status
+  res <- MockPlumberResponse$new()
+  model_status <- endpoint_model_status(queue)
+  status <- model_status(NULL, res, response$data$id)
+  status <- jsonlite::parse_json(status)
+  expect_equal(res$status, 200)
+  expect_equal(status$status, "success")
+  expect_equal(status$data$id, response$data$id)
+  expect_equal(status$data$done, TRUE)
+  expect_equal(status$data$status, "COMPLETE")
+  expect_equal(status$data$queue, 0)
+  expect_equal(status$data$success, TRUE)
+
+
+  ## Get the result
+  res <- MockPlumberResponse$new()
+  model_result <- endpoint_model_result(queue)
+  result <- model_result(NULL, res, status$data$id)
+  result <- jsonlite::parse_json(result)
+  expect_equal(res$status, 200)
+  expect_equal(result$data, 2)
 })
 
 test_that("endpoint_run_model returns error if queueing fails", {

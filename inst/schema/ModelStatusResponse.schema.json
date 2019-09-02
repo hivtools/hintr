@@ -3,14 +3,20 @@
   "type": "object",
   "properties": {
     "id" : { "$ref": "URI.schema.json" },
-    "complete": { "type": "boolean" },
+    "done": { "type": "boolean" },
+    "status": { "type": "string" },
+    "success": { "type": "boolean" },
+    "queue": { "type": "integer" },
     "progress": { "type": "string" },
     "timeRemaining": { "type": "string" }
   },
   "additionalProperties": false,
   "required": [
-    "job_id",
-    "complete",
+    "id",
+    "done",
+    "status",
+    "success",
+    "queue",
     "progress",
     "timeRemaining"
   ]

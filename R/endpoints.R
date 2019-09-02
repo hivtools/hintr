@@ -41,6 +41,9 @@ endpoint_model_status <- function(queue) {
       queue$status(id))
     if (response$success) {
       response$value <- lapply(response$value, scalar)
+      response$value$id <- scalar(id)
+      response$value$progress <- scalar("50%")
+      response$value$timeRemaining <- scalar("10s")
     } else {
       response$errors <- hintr_errors(
         list("FAILED_TO_RETRIEVE_STATUS" = response$message))
