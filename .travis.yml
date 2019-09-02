@@ -22,6 +22,7 @@ env:
   - VALIDATE_JSON_SCHEMAS=true
 r_packages:
   - covr
+  - R6
 r_github_packages:
   - ropensci/jsonvalidate@i25
 after_success:
