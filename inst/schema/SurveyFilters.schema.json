@@ -23,6 +23,6 @@
   },
   "additionalProperties": false,
   "required": [
-    "sex", "age", "region", "survey"
+    "sex", "age", "region"
   ]
 }
