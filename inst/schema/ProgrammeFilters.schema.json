@@ -13,7 +13,7 @@
     "region": {
       "type": "array",
       "items": {
-        "$ref": "NestedFilterOption"
+        "$ref": "NestedFilterOption.schema.json"
       }
     }
   },
