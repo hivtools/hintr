@@ -46,8 +46,12 @@ hintr_server <- function(n_tries = 10, poll = 0.1) {
   skip_if_not_installed("httr")
 
   port <- get_free_port()
-  process <- callr::r_bg(function(port) hintr:::api(port),
-                         args = list(port = port))
+  process <- callr::r_bg(
+    function(port) {
+      hintr:::test_redis_available()
+      hintr:::api(port)
+    },
+    args = list(port = port))
   url <- sprintf("http://localhost:%d", port)
 
   for (i in seq_len(n_tries)) {
