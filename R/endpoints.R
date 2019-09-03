@@ -30,7 +30,8 @@ endpoint_validate_input <- function(req, res, type, path) {
   validate_func <- switch(type,
     pjnz = do_validate_pjnz,
     shape = do_validate_shape,
-    population = do_validate_population)
+    population = do_validate_population,
+    programme = do_validate_programme)
   response <- with_success(
     validate_func(path))
   if (response$success) {

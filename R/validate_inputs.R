@@ -31,8 +31,8 @@ do_validate_shape <- function(shape) {
   # and it's only 2.5MB large).  A caching layer will help, but this
   # is going to lock things up enough we might need to do it
   # asynchronously.
-  json <- geojsonio::geojson_read(shape, method = "local")
-  assert_single_country(json)
+  json <- hintr_geojson_read(shape)
+  assert_single_country(json, "shape")
   assert_area_id_exists(json)
   # Then we have to *reread* the file now that we know that it is
   # valid, but but this is not too slow, especially as the file is now
@@ -40,59 +40,36 @@ do_validate_shape <- function(shape) {
   json_verbatim(read_string(shape))
 }
 
-assert_single_country <- function(json) {
-  country <- vapply(json$features, function(x) {
-    x$properties$iso3
-  }, character(1))
-  if (length(unique(country)) != 1) {
-    stop(sprintf(
-      "Shape file contains regions for more than one country. Got countries %s.",
-      toString(unique(country))))
-  }
-  invisible(TRUE)
-}
-
-assert_area_id_exists <- function(json) {
-  contains_id <- vapply(json$features, function(x) {
-    !is_empty(x$properties$area_id)
-  }, logical(1))
-  if (!all(contains_id)) {
-    missing_count <- sum(!contains_id)
-    stop(
-      sprintf(
-        "Shape file does not contain an area ID for each region. Missing ID for %s %s.",
-        missing_count,
-        ngettext(missing_count, "feature", "features")
-      )
-    )
-  }
-  invisible(TRUE)
-}
-
 #' Validate population file.
 #'
 #' Check that population file can be read.
 #'
-#' @param shape Path to input population file.
+#' @param population Path to input population file.
 #'
 #' @return An error if invalid.
 #' @keywords internal
 do_validate_population <- function(population) {
   population <- read_csv(population, header = TRUE)
-  ## Perhaps this kind of assertion should just be checked by json schema?
+  assert_single_country(population, "population")
   assert_column_names(
     colnames(population),
     c("iso3", "area_id", "time", "sex", "age_group_id", "source", "population"))
   scalar(NA)
 }
 
-assert_column_names <- function(names, expected_names) {
-  missing <- setdiff(expected_names, names)
-  if (length(missing) > 0) {
-    missing <- setdiff(expected_names, names)
-    stop(sprintf("Data missing %s %s",
-                 ngettext(length(missing), "column", "columns"),
-                 paste(setdiff(expected_names, names), collapse = ", ")))
-  }
-  invisible(TRUE)
+#' Validate programme ART data file.
+#'
+#' Check that programme ART data file can be read and return serialised data.
+#'
+#' @param programme Path to input population file.
+#'
+#' @return An error if invalid.
+#' @keywords internal
+do_validate_programme <- function(programme) {
+  programme <- read_csv(programme, header = TRUE)
+  assert_single_country(programme, "programme")
+  assert_column_names(
+    colnames(programme),
+    c("iso3", "area_id", "period", "sex", "age_group_id", "indicator", "value"))
+  programme
 }
