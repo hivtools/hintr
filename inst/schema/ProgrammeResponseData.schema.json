@@ -22,7 +22,7 @@
     },
     "filters": {
       "$ref": "AgeFilters.schema.json"
-    },
+    }
   },
   "required": [
     "data", "filters"
