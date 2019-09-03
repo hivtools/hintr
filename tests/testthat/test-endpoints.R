@@ -120,7 +120,7 @@ test_that("hintr_response correctly prepares response", {
       data = list(country = scalar("Botswana"))
     )
   )
-  expected_response <- '{"status":"success","errors":{},"data":"Passed"}'
+
   ## NOTE: using a schema here that will work for now at least, but if
   ## that gets stricter it won't!
   response <- hintr_response(value, "ValidateInputResponse")
@@ -128,6 +128,7 @@ test_that("hintr_response correctly prepares response", {
   expect_equal(response$status, "success")
   expect_equal(response$data$filename, "file.pjnz")
   expect_equal(response$data$data$country, "Botswana")
+  expect_equal(response$errors, list())
 
   value <- list(
     success = FALSE,
