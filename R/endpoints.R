@@ -97,7 +97,8 @@ endpoint_validate_input <- function(req, res, type, path) {
     pjnz = do_validate_pjnz,
     shape = do_validate_shape,
     population = do_validate_population,
-    programme = do_validate_programme)
+    programme = do_validate_programme,
+    anc = do_validate_anc)
   response <- with_success(
     validate_func(path))
   if (response$success) {
