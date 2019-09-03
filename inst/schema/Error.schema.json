@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "error" : { "$ref": "ErrorTypes.schema.json" },
+    "error" : { "$ref": "ErrorCode.schema.json" },
     "detail" : { "type": ["string", "null"] }
   },
   "additionalProperties": false

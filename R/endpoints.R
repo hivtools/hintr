@@ -68,9 +68,15 @@ hintr_response <- function(value, schema) {
   } else {
     status <- "failure"
   }
+  if (is.null(value$errors)) {
+    errors <- list()
+  }
+  else {
+    errors = value$errors
+  }
   ret <- to_json(list(
     status = scalar(status),
-    errors = value$errors,
+    errors = errors,
     data = value$value))
   validate_json_schema(ret, "Response")
   if (value$success) {
