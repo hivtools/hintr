@@ -21,7 +21,11 @@
           "type": "string",
           "enum": [ "shape" ]
         },
-        "data": { "$ref": "ShapeResponseData.schema.json" }
+        "data": { "$ref": "ShapeResponseData.schema.json" },
+        "filters": {
+          "type": "array",
+          "items": { "$ref": "NestedFilterOption.schema.json" }
+        }
       },
       "additionalProperties": false,
       "required": ["filename", "type", "data"]

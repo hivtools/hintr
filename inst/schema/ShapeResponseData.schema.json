@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Geo JSON object",
+  "description": "TODO: Validate against a URL e.g. https://geojson.org/schema/FeatureCollection.json",
+  "type": "object",
+  "required": [ "type", "features" ],
+  "properties": {
+    "type": { 
+      "type": "string",
+      "enum": [ "FeatureCollection" ] },
+    "crs": { "type": "object" },
+    "name": { "tyep": "string" },
+    "features": {
+      "type": "array",
+      "items": { "type": "object" }
+    }
+  }
+}
