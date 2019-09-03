@@ -47,10 +47,10 @@
           "type": "string",
           "enum": [ "survey" ]
         },
-        "data": { "$ref": "SurveyResponseData.schema.json" }
+        "filters": { "$ref": "SurveyFilters.schema.json" }
       },
       "additionalProperties": false,
-      "required": ["filename", "type", "data"]
+      "required": ["filename", "type"]
     },
 
     "programme_response": {
@@ -60,7 +60,8 @@
           "type": "string",
           "enum": [ "programme" ]
         },
-        "data": { "$ref": "ProgrammeResponseData.schema.json" }
+        "data": { "$ref": "ProgrammeResponseData.schema.json" },
+        "filters": { "$ref": "AgeFilters.schema.json" }
       },
       "additionalProperties": false,
       "required": ["filename", "type", "data"]
@@ -71,12 +72,12 @@
         "filename": { "$ref": "FileName.schema.json" },
         "type": {
           "type": "string",
-          "enum": [ "survey" ]
+          "enum": [ "anc" ]
         },
-        "data": { "$ref": "ANCResponseData.schema.json" }
+        "filters": { "$ref": "AgeFilters.schema.json" }
       },
       "additionalProperties": false,
-      "required": ["filename", "type", "data"]
+      "required": ["filename", "type"]
     }
   },
 
