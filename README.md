@@ -77,3 +77,9 @@ To run tests including those which rely on a redis instance being available you 
 ```
 docker run --rm -d --network=host --name hintr_redis redis
 ```
+
+You will need to install the package by running 
+```
+R CMD INSTALL .
+```
+and tests can be run from R wtih `devtools::test()`
