@@ -13,7 +13,7 @@ assert_single_country <- function(data, type) {
   UseMethod("assert_single_country", data)
 }
 
-assert_single_country.json <- function(data, type) {
+assert_single_country.geojson <- function(data, type) {
   country <- vapply(data$features, function(x) {
     x$properties$iso3
   }, character(1))

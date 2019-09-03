@@ -109,6 +109,25 @@ test_that("endpoint_validate_input supports ANC file", {
   ## Sanity check that data has been returned
   expect_true(length(response$data$data) >= 800)
   expect_equal(typeof(response$data$data[[1]]$value), "double")
+
+})
+
+test_that("endpoint_validate_input returns error on invalid programme data", {
+  programme <- file.path("testdata", "malformed_programme.csv")
+  res <- MockPlumberResponse$new()
+  response <- endpoint_validate_input(
+    list(postBody = '{"type":"programme","path":"path/to/file"}'),
+    res,
+    "programme",
+    programme)
+  response <- jsonlite::parse_json(response)
+
+  expect_equal(response$status, "failure")
+  expect_equal(res$status, 400)
+  expect_equal(response$data, structure(list(), names = character(0)))
+  expect_length(response$errors, 1)
+  expect_equal(response$errors[[1]]$error, "INVALID_FILE")
+  expect_equal(response$errors[[1]]$detail, "Data missing column area_id")
 })
 
 test_that("hintr_response correctly prepares response", {

@@ -23,8 +23,8 @@ test_that("validate locates schema and does validation with referenced files", {
   expect_error(validate(test_json, "ValidateInputRequest"))
 })
 
-test_that("geojson read applies json class", {
+test_that("geojson read applies geojson class", {
   path <- file.path("testdata", "malawi.geojson")
   json <- hintr_geojson_read(path)
-  expect_s3_class(json, "json")
+  expect_s3_class(json, "geojson")
 })
