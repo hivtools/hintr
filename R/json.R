@@ -40,3 +40,11 @@ to_upper_first <- function(x) {
   substr(x, 1, 1) <- toupper(substr(x, 1, 1))
   x
 }
+
+## Read json and apply a class so we can use method dispatching for json
+hintr_geojson_read <- function(path) {
+  json <- geojsonio::geojson_read(path, method = "local")
+  class(json) <- "geojson"
+  json
+}
+

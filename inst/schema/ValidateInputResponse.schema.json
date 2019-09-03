@@ -56,9 +56,9 @@
     "programme_response": {
       "properties": {
         "filename": { "$ref": "FileName.schema.json" },
-        "type": {
+        "type": { 
           "type": "string",
-          "enum": [ "survey" ]
+          "enum": [ "programme" ]
         },
         "data": { "$ref": "ProgrammeResponseData.schema.json" }
       },

@@ -7,7 +7,7 @@
 do_validate_population(population)
 }
 \arguments{
-\item{shape}{Path to input population file.}
+\item{population}{Path to input population file.}
 }
 \value{
 An error if invalid.

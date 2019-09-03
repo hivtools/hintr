@@ -2,9 +2,29 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "filters": {"$ref": "AgeFilters.schema.json"}
+    "data": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "iso3": {
+            "type": "string"
+          },
+          "area_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "iso3",
+          "area_id"
+        ]
+      }
+    },
+    "filters": {
+      "$ref": "AgeFilters.schema.json"
+    },
   },
   "required": [
-    "filters"
+    "data", "filters"
   ]
 }
