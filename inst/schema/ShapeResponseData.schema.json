@@ -13,6 +13,12 @@
     "features": {
       "type": "array",
       "items": { "type": "object" }
+    },
+    "filters": {
+      "type": "array",
+      "items": {
+        "$ref": "NestedFilterOption.schema.json"
+      }
     }
   }
 }

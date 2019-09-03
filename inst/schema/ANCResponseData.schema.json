@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "filters": {"$ref": "ANCFilters.schema.json"}
+    "filters": {"$ref": "AgeFilters.schema.json"}
   },
   "required": [
     "filters"
