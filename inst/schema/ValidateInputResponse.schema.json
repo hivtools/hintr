@@ -28,7 +28,7 @@
         }
       },
       "additionalProperties": false,
-      "required": ["filename", "type", "data"]
+      "required": ["filename", "type", "data", "filters"]
     },
 
     "population_response": {
@@ -54,7 +54,7 @@
         "filters": { "$ref": "SurveyFilters.schema.json" }
       },
       "additionalProperties": false,
-      "required": ["filename", "type"]
+      "required": ["filename", "type", "filters"]
     },
 
     "programme_response": {
@@ -68,7 +68,7 @@
         "filters": { "$ref": "AgeFilters.schema.json" }
       },
       "additionalProperties": false,
-      "required": ["filename", "type", "data"]
+      "required": ["filename", "type", "data", "filters"]
     },
 
     "anc_response": {
@@ -81,7 +81,7 @@
         "filters": { "$ref": "AgeFilters.schema.json" }
       },
       "additionalProperties": false,
-      "required": ["filename", "type"]
+      "required": ["filename", "type", "filters"]
     }
   },
 
