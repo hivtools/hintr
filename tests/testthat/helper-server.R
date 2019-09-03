@@ -48,7 +48,6 @@ hintr_server <- function(n_tries = 10, poll = 0.1) {
   port <- get_free_port()
   process <- callr::r_bg(
     function(port) {
-      hintr:::test_redis_available()
       hintr:::api(port)
     },
     args = list(port = port))
