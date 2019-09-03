@@ -18,18 +18,18 @@ test_that("country can be read from PJNZ file", {
 
 test_that("assert fails if more than once country in json", {
   shape <- file.path("testdata", "malawi.geojson")
-  json <- geojsonio::geojson_read(shape, method = "local")
-  expect_true(assert_single_country(json))
+  json <- hintr_geojson_read(shape)
+  expect_true(assert_single_country(json, "shape"))
 
   ## Change a country for purpose of testing
   json$features[[1]]$properties$iso3 <- "AGO"
-  expect_error(assert_single_country(json),
+  expect_error(assert_single_country(json, "shape"),
                "Shape file contains regions for more than one country. Got countries AGO, MWI.")
 })
 
 test_that("assert fails if a feature is missing an area id", {
   shape <- file.path("testdata", "malawi.geojson")
-  json <- geojsonio::geojson_read(shape, method = "local")
+  json <- hintr_geojson_read(shape)
   expect_true(assert_area_id_exists(json))
 
   ## Remove an ID for testing
@@ -51,9 +51,10 @@ test_that("do_validate_population validates population file", {
   expect_true(is.na(pop))
 })
 
-test_that("assert_column_names checks column names are as expected", {
-  expect_true(assert_column_names(c("col1", "col2"), c("col1", "col2")))
-  expect_error(assert_column_names(c("col1"), c("col1", "col2")),
-               "Data missing column col2")
-  expect_true(assert_column_names(c("col1", "col2"), c("col1")))
+test_that("do_validate_programme validates programme file", {
+  programme <- file.path("testdata", "programme.csv")
+  data <- do_validate_programme(programme)
+  ## Some arbitrary test that the data has actually been returned
+  expect_true(nrow(data) > 1400)
+  expect_equal(typeof(data$value), "integer")
 })

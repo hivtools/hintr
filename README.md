@@ -44,6 +44,7 @@ curl -X POST -H 'Content-Type: application/json' \
 #> {"status":"success","errors":{},"data":{"filename":"population.csv","data":{}}}
 ```
 
+<<<<<<< HEAD
 Run a model:
 ```
 curl -X POST -H 'Content-Type: application/json' \
@@ -61,6 +62,12 @@ Get the result of a model run:
 ```
 curl http://localhost:8888/model/result/4d99b972cdcbebc96835c102857a808c
 
+=======
+Validate programme data:
+```
+curl -X POST -H 'Content-Type: application/json' \
+     --data @example/docker_validate_programme_payload.json http://localhost:8888/validate
+>>>>>>> master
 ```
   
 Docker container can be cleaned up using
@@ -90,3 +97,9 @@ To run tests including those which rely on a redis instance being available you 
 ```
 docker run --rm -d --network=host --name hintr_redis redis
 ```
+
+You will need to install the package by running 
+```
+R CMD INSTALL .
+```
+and tests can be run from R wtih `devtools::test()`

@@ -38,13 +38,27 @@
       },
       "additionalProperties": false,
       "required": ["filename", "type", "data"]
+    },
+
+    "programme_response": {
+      "properties": {
+        "filename": { "$ref": "FileName.schema.json" },
+        "type": { 
+          "type": "string",
+          "enum": [ "programme" ]
+        },
+        "data": { "$ref": "ProgrammeResponseData.schema.json" }
+      },
+      "additionalProperties": false,
+      "required": ["filename", "type", "data"]
     }
   },
 
   "oneOf": [
     {"$ref": "#/definitions/pjnz_response"},
     {"$ref": "#/definitions/shape_response"},
-    {"$ref": "#/definitions/population_response"}
+    {"$ref": "#/definitions/population_response"},
+    {"$ref": "#/definitions/programme_response"}
   ]
 }
 

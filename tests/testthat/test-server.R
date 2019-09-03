@@ -6,7 +6,7 @@ test_that("Root", {
 
   r <- httr::GET(server$url)
   expect_equal(httr::status_code(r), 200)
-  expect_equal(response_to_json(r), "Welcome to hintr")
+  expect_equal(response_from_json(r), "Welcome to hintr")
 })
 
 test_that("validate pjnz", {
@@ -18,9 +18,9 @@ test_that("validate pjnz", {
                   body = httr::upload_file(payload),
                   encode = "json")
   expect_equal(httr::status_code(r), 200)
-  expect_equal(response_to_json(r),
+  expect_equal(response_from_json(r),
                list(status = "success",
-                    errors = structure(list(), names = character(0)),
+                    errors = list(),
                     data = list(filename = "Botswana2018.PJNZ",
                                 type = "pjnz",
                                 data = list(country = "Botswana"))))
@@ -35,9 +35,10 @@ test_that("validate shape", {
                   body = httr::upload_file(payload),
                   encode = "json")
   expect_equal(httr::status_code(r), 200)
-  response <- response_to_json(r)
+  response <- response_from_json(r)
+
   expect_equal(response$status, "success")
-  expect_equal(response$errors, structure(list(), names = character(0)))
+  expect_equal(response$errors, list())
   expect_equal(response$data$filename, "malawi.geojson")
   expect_equal(response$data$type, "shape")
   expect_equal(names(response$data$data), c("type", "features"))
@@ -53,12 +54,30 @@ test_that("validate population", {
                   body = httr::upload_file(payload),
                   encode = "json")
   expect_equal(httr::status_code(r), 200)
-  expect_equal(response_to_json(r),
+  expect_equal(response_from_json(r),
                list(status = "success",
-                    errors = structure(list(), names = character(0)),
+                    errors = list(),
                     data = list(filename = "population.csv",
                                 type = "population",
                                 data = NULL)))
+})
+
+test_that("validate programme", {
+  server <- hintr_server()
+
+  programme <- file.path("testdata", "programme.csv")
+  body <- list(type = scalar("programme"), path = scalar(programme))
+
+  r <- httr::POST(paste0(server$url, "/validate"), body = body,
+                  encode = "json")
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+  expect_equal(response$errors, list())
+  expect_equal(response$data$filename, "programme.csv")
+  expect_equal(response$data$type, "programme")
+  expect_true(length(response$data$data) >= 1400)
+  expect_equal(typeof(response$data$data[[1]]$value), "integer")
 })
 
 test_that("model interactions", {
@@ -97,3 +116,4 @@ test_that("model interactions", {
   expect_equal(response$errors, structure(list(), names = character(0)))
   expect_equal(response$data, 2)
 })
+

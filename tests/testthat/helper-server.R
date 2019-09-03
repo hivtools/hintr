@@ -72,6 +72,6 @@ hintr_server <- function(n_tries = 10, poll = 0.1) {
   stop("Failed to start server")
 }
 
-response_to_json <- function(x) {
-  jsonlite::fromJSON(httr::content(x, "text", encoding = "UTF-8"), FALSE)
+response_from_json <- function(x) {
+  jsonlite::parse_json(httr::content(x, "text", encoding = "UTF-8"))
 }
