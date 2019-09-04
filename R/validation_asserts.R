@@ -2,7 +2,7 @@ assert_column_names <- function(names, expected_names) {
   missing <- setdiff(expected_names, names)
   if (length(missing) > 0) {
     missing <- setdiff(expected_names, names)
-    stop(sprintf("Data missing %s %s",
+    stop(sprintf("Data missing %s %s.",
                  ngettext(length(missing), "column", "columns"),
                  paste(setdiff(expected_names, names), collapse = ", ")))
   }

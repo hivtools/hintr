@@ -90,3 +90,21 @@ do_validate_anc <- function(anc) {
     c("iso3", "area_id", "period", "sex", "age_group_id", "indicator", "value"))
   anc
 }
+
+#' Validate survey data file.
+#'
+#' Check that survey data file can be read and return serialised data.
+#'
+#' @param anc Path to input survey file.
+#'
+#' @return An error if invalid.
+#' @keywords internal
+do_validate_survey <- function(survey) {
+  survey <- read_csv(survey, header = TRUE)
+  assert_single_country(survey, "survey")
+  assert_column_names(
+    colnames(survey),
+    c("iso3", "area_id", "survey_id", "year", "sex", "age_group_id",
+      "indicator", "value", "se", "ci_l", "ci_u"))
+  survey
+}
