@@ -13,7 +13,6 @@
       "additionalProperties": false,
       "required": ["filename", "type", "data"]
     },
-
     "shape_response": {
       "properties": {
         "filename": { "$ref": "FileName.schema.json" },
@@ -26,7 +25,6 @@
       "additionalProperties": false,
       "required": ["filename", "type", "data"]
     },
-
     "population_response": {
       "properties": {
         "filename": { "$ref": "FileName.schema.json" },
@@ -39,7 +37,6 @@
       "additionalProperties": false,
       "required": ["filename", "type", "data"]
     },
-
     "programme_response": {
       "properties": {
         "filename": { "$ref": "FileName.schema.json" },
@@ -52,7 +49,6 @@
       "additionalProperties": false,
       "required": ["filename", "type", "data"]
     },
-
     "anc_response": {
       "properties": {
         "filename": { "$ref": "FileName.schema.json" },
@@ -66,8 +62,6 @@
       "required": ["filename", "type", "data"]
     }
   },
-  "oneOf": [{"$ref": "#/definitions/pjnz_response"},{"$ref": "#/definitions/shape_response"},{"$ref": "#/definitions/population_response"},
-    {"$ref": "#/definitions/programme_response"},{"$ref": "#/definitions/anc_response"}
+  "oneOf": [{"$ref": "#/definitions/pjnz_response"},{"$ref": "#/definitions/shape_response"},{"$ref": "#/definitions/population_response"},{"$ref": "#/definitions/programme_response"},{"$ref": "#/definitions/anc_response"}
   ]
 }
-
