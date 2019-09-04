@@ -46,8 +46,8 @@ test_that("do_validate_anc validates ANC file", {
 })
 
 test_that("do_validate_survey validates survey file", {
-  anc <- file.path("testdata", "survey.csv")
-  data <- do_validate_survey(anc)
+  survey <- file.path("testdata", "survey.csv")
+  data <- do_validate_survey(survey)
   ## Some arbitrary test that the data has actually been returned
   expect_true(nrow(data) > 30000)
   expect_equal(typeof(data$value), "double")
