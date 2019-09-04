@@ -28,7 +28,7 @@ Validate PJNZ:
 ``` 
 curl -X POST -H 'Content-Type: application/json' \
      --data @example/docker_payload.json http://localhost:8888/validate
-#> {"status":"success","errors":{},"data":{"filename":"Botswana2018.PJNZ","data":{"country":"Botswana"}}}
+#> {"status":"success","errors":{},"data":{"filename":"Botswana2018.PJNZ","type":"pjnz","data":{"country":"Botswana"}}}
 ```
 
 Validate shape file and return serialised data:
@@ -41,13 +41,19 @@ Validate population data:
 ```
 curl -X POST -H 'Content-Type: application/json' \
      --data @example/docker_validate_population_payload.json http://localhost:8888/validate
-#> {"status":"success","errors":{},"data":{"filename":"population.csv","data":{}}}
+#> {"status":"success","errors":{},"data":{"filename":"population.csv","type":"population","data":null}
 ```
 
-Validate programme data:
+Validate programme ART data:
 ```
 curl -X POST -H 'Content-Type: application/json' \
      --data @example/docker_validate_programme_payload.json http://localhost:8888/validate
+```
+
+Validate ANC data:
+```
+curl -X POST -H 'Content-Type: application/json' \
+     --data @example/docker_validate_anc_payload.json http://localhost:8888/validate
 ```
   
 Docker container can be cleaned up using
@@ -77,3 +83,9 @@ To run tests including those which rely on a redis instance being available you 
 ```
 docker run --rm -d --network=host --name hintr_redis redis
 ```
+
+You will need to install the package by running 
+```
+R CMD INSTALL .
+```
+and tests can be run from R wtih `devtools::test()`

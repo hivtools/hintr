@@ -74,14 +74,15 @@
     "anc_response": {
       "properties": {
         "filename": { "$ref": "FileName.schema.json" },
-        "type": {
+        "type": { 
           "type": "string",
           "enum": [ "anc" ]
         },
+        "data": { "$ref": "AncResponseData.schema.json" },
         "filters": { "$ref": "AgeFilters.schema.json" }
       },
       "additionalProperties": false,
-      "required": ["filename", "type", "filters"]
+      "required": ["filename", "type", "data","filters"]
     }
   },
 

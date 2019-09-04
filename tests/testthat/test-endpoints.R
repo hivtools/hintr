@@ -93,6 +93,25 @@ test_that("endpoint_validate_input supports programme file", {
   expect_equal(typeof(response$data$data[[1]]$value), "integer")
 })
 
+test_that("endpoint_validate_input supports ANC file", {
+  anc <- file.path("testdata", "anc.csv")
+  res <- MockPlumberResponse$new()
+  response <- endpoint_validate_input(
+    list(postBody = '{"type":"anc","path":"path/to/file"}'),
+    res,
+    "anc",
+    anc)
+  response <- jsonlite::parse_json(response)
+
+  expect_equal(response$status, "success")
+  expect_equal(response$data$filename, "anc.csv")
+  expect_equal(res$status, 200)
+  ## Sanity check that data has been returned
+  expect_true(length(response$data$data) >= 800)
+  expect_equal(typeof(response$data$data[[1]]$value), "double")
+
+})
+
 test_that("endpoint_validate_input returns error on invalid programme data", {
   programme <- file.path("testdata", "malformed_programme.csv")
   res <- MockPlumberResponse$new()
@@ -120,14 +139,16 @@ test_that("hintr_response correctly prepares response", {
       data = list(country = scalar("Botswana"))
     )
   )
-  expected_response <- '{"status":"success","errors":{},"data":"Passed"}'
+
   ## NOTE: using a schema here that will work for now at least, but if
   ## that gets stricter it won't!
   response <- hintr_response(value, "ValidateInputResponse")
+
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
   expect_equal(response$data$filename, "file.pjnz")
   expect_equal(response$data$data$country, "Botswana")
+  expect_equal(response$errors, list())
 
   value <- list(
     success = FALSE,

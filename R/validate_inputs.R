@@ -73,3 +73,20 @@ do_validate_programme <- function(programme) {
     c("iso3", "area_id", "period", "sex", "age_group_id", "indicator", "value"))
   programme
 }
+
+#' Validate ANC data file.
+#'
+#' Check that ANC data file can be read and return serialised data.
+#'
+#' @param anc Path to input population file.
+#'
+#' @return An error if invalid.
+#' @keywords internal
+do_validate_anc <- function(anc) {
+  anc <- read_csv(anc, header = TRUE)
+  assert_single_country(anc, "anc")
+  assert_column_names(
+    colnames(anc),
+    c("iso3", "area_id", "period", "sex", "age_group_id", "indicator", "value"))
+  anc
+}
