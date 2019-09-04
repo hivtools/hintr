@@ -41,15 +41,23 @@ endpoint_validate_input <- function(req, res, type, path) {
     response$errors <- hintr_errors(list("INVALID_FILE" = response$message))
     res$status <- 400
   }
-  
-  if (type=="shape" || type=="pjnz") {
+
+  if (type=="shape") {
+    print("ADDING SHAPE FILTERS")
     response$filters <- list()
   }
-  
-  if (type=="programme") {
-    response$filters <- {"age": list()}
+
+  if (type=="programme" || type=="anc") {
+    print("ADDING AGE FILTERS")
+    response$filters <- list(age=list())
+    print(to_json(response))
   }
-  
+
+  if (type=="survey") {
+    print("ADDING SURVEY FILTERS")
+    response$filters <- list(age=list(), surveys=list())
+  }
+
   hintr_response(response, "ValidateInputResponse")
 }
 

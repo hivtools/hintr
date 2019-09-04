@@ -13,6 +13,9 @@ validate_json_schema <- function(json, schema, query = NULL) {
   if (!validate_schemas()) {
     return(invisible(TRUE))
   }
+  
+  #print(json)
+  
   valid <- validate(json, schema, query)
   
   invisible(valid)
