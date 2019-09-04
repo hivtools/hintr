@@ -37,10 +37,18 @@ test_that("do_validate_programme validates programme file", {
   expect_equal(typeof(data$value), "integer")
 })
 
-test_that("do_validate_programme validates ANC file", {
+test_that("do_validate_anc validates ANC file", {
   anc <- file.path("testdata", "anc.csv")
-  data <- do_validate_programme(anc)
+  data <- do_validate_anc(anc)
   ## Some arbitrary test that the data has actually been returned
   expect_true(nrow(data) > 800)
+  expect_equal(typeof(data$value), "double")
+})
+
+test_that("do_validate_survey validates survey file", {
+  anc <- file.path("testdata", "survey.csv")
+  data <- do_validate_survey(anc)
+  ## Some arbitrary test that the data has actually been returned
+  expect_true(nrow(data) > 30000)
   expect_equal(typeof(data$value), "double")
 })

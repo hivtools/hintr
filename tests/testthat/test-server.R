@@ -96,3 +96,21 @@ test_that("validate ANC", {
   expect_true(length(response$data$data) >= 800)
   expect_equal(typeof(response$data$data[[1]]$value), "double")
 })
+
+test_that("validate survey", {
+  server <- hintr_server()
+
+  survey <- file.path("testdata", "survey.csv")
+  body <- list(type = scalar("survey"), path = scalar(survey))
+
+  r <- httr::POST(paste0(server$url, "/validate"), body = body,
+                  encode = "json")
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+  expect_equal(response$errors, list())
+  expect_equal(response$data$filename, "survey.csv")
+  expect_equal(response$data$type, "survey")
+  expect_true(length(response$data$data) >= 30000)
+  expect_equal(typeof(response$data$data[[1]]$value), "double")
+})

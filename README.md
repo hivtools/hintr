@@ -55,6 +55,12 @@ Validate ANC data:
 curl -X POST -H 'Content-Type: application/json' \
      --data @example/docker_validate_anc_payload.json http://localhost:8888/validate
 ```
+
+Validate survey data:
+```
+curl -X POST -H 'Content-Type: application/json' \
+     --data @example/docker_validate_survey_payload.json http://localhost:8888/validate
+```
   
 Docker container can be cleaned up using
 ```
