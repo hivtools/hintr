@@ -14,6 +14,7 @@
         "type": "string"
       }
     },
+    "additonalProperties": "true",
     "required": [ "iso3", "area_id", "survey_id" ]
   }
 }

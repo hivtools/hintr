@@ -42,10 +42,23 @@ endpoint_validate_input <- function(req, res, type, path) {
     validate_if_exists(path))
   if (response$success) {
     response$value <- input_response(response$value, path, type)
+
+    # Add placeholder filters
+    if (type=="shape") {
+      response$value$filters <- list()
+    }
+    if (type=="programme" || type=="anc") {
+      response$value$filters <- list(age=list())
+    }
+    if (type=="survey") {
+      response$value$filters <- list(age=list(), surveys=list())
+    }
+
   } else {
     response$errors <- hintr_errors(list("INVALID_FILE" = response$message))
     res$status <- 400
   }
+
   hintr_response(response, "ValidateInputResponse")
 }
 

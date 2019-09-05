@@ -4,7 +4,7 @@
     "pjnz_response": {
       "properties": {
         "filename": { "$ref": "FileName.schema.json" },
-        "type": { 
+        "type": {
           "type": "string",
           "enum": [ "pjnz" ]
         },
@@ -17,20 +17,24 @@
     "shape_response": {
       "properties": {
         "filename": { "$ref": "FileName.schema.json" },
-        "type": { 
+        "type": {
           "type": "string",
           "enum": [ "shape" ]
         },
-        "data": { "$ref": "ShapeResponseData.schema.json" }
+        "data": { "$ref": "ShapeResponseData.schema.json" },
+        "filters": {
+          "type": "array",
+          "items": { "$ref": "NestedFilterOption.schema.json" }
+        }
       },
       "additionalProperties": false,
-      "required": ["filename", "type", "data"]
+      "required": ["filename", "type", "data", "filters"]
     },
 
     "population_response": {
       "properties": {
         "filename": { "$ref": "FileName.schema.json" },
-        "type": { 
+        "type": {
           "type": "string",
           "enum": [ "population" ]
         },
@@ -43,40 +47,43 @@
     "programme_response": {
       "properties": {
         "filename": { "$ref": "FileName.schema.json" },
-        "type": { 
+        "type": {
           "type": "string",
           "enum": [ "programme" ]
         },
-        "data": { "$ref": "ProgrammeResponseData.schema.json" }
+        "data": { "$ref": "ProgrammeResponseData.schema.json" },
+        "filters": { "$ref": "AgeFilters.schema.json" }
       },
       "additionalProperties": false,
-      "required": ["filename", "type", "data"]
+      "required": ["filename", "type", "data", "filters"]
     },
 
     "anc_response": {
       "properties": {
         "filename": { "$ref": "FileName.schema.json" },
-        "type": { 
+        "type": {
           "type": "string",
           "enum": [ "anc" ]
         },
-        "data": { "$ref": "AncResponseData.schema.json" }
+        "data": { "$ref": "AncResponseData.schema.json" },
+        "filters": { "$ref": "AgeFilters.schema.json" }
       },
       "additionalProperties": false,
-      "required": ["filename", "type", "data"]
+      "required": ["filename", "type", "data", "filters"]
     },
 
     "survey_response": {
       "properties": {
         "filename": { "$ref": "FileName.schema.json" },
-        "type": { 
+        "type": {
           "type": "string",
           "enum": [ "survey" ]
         },
-        "data": { "$ref": "SurveyResponseData.schema.json" }
+        "data": { "$ref": "SurveyResponseData.schema.json" },
+        "filters": { "$ref": "SurveyFilters.schema.json" }
       },
       "additionalProperties": false,
-      "required": ["filename", "type", "data"]
+      "required": ["filename", "type", "data", "filters"]
     }
   },
 
