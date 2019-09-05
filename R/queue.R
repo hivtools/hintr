@@ -75,6 +75,10 @@ Queue <- R6::R6Class(
   )
 )
 
+queue_new <- function() {
+  Queue$new()
+}
+
 ## Support for queue building
 context_init <- function(root, name = "hintr") {
   context::context_save(root,
