@@ -49,3 +49,28 @@ assert_area_id_exists <- function(json) {
   }
   invisible(TRUE)
 }
+
+assert_consistent_country <- function(country_x, source_x, country_y, source_y) {
+  if (!is.null(country_x) && !is.null(country_y) &&
+      tolower(country_x) != tolower(country_y)) {
+    stop(sprintf("Countries aren't consistent got %s from %s and %s from %s.",
+                 country_x, source_x, country_y, source_y))
+  }
+  invisible(TRUE)
+}
+
+assert_consistent_regions <- function(shape_regions, test_regions, test_source) {
+  ## Regions are fine if regions from shape file are a super set of the
+  ## regions being tested
+  if (!is_superset(shape_regions, test_regions)) {
+    stop(sprintf(
+      "Regions aren't consistent %s file contains regions %s missing from shape file.",
+      test_source, paste0(setdiff(test_regions, shape_regions), collapse = ", ")))
+  }
+  invisible(TRUE)
+}
+
+is_superset <- function(super, sub) {
+  diff <- setdiff(sub, super)
+  length(diff) == 0
+}

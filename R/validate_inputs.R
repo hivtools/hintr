@@ -95,7 +95,7 @@ do_validate_anc <- function(anc) {
 #'
 #' Check that survey data file can be read and return serialised data.
 #'
-#' @param anc Path to input survey file.
+#' @param survey Path to input survey file.
 #'
 #' @return An error if invalid.
 #' @keywords internal
@@ -107,4 +107,38 @@ do_validate_survey <- function(survey) {
     c("iso3", "area_id", "survey_id", "year", "sex", "age_group_id",
       "indicator", "value", "se", "ci_l", "ci_u"))
   survey
+}
+
+#' Validate collection of baseline data for consistency.
+#'
+#'
+#' @param pjnz Path to input pjnz file.
+#' @param shape Path to input shape file.
+#' @param population Path to input population file.
+#'
+#' @return An error if invalid.
+#' @keywords internal
+validate_baseline <- function(pjnz, shape, population) {
+  null_count <- is.null(pjnz) + is.null(shape) + is.null(population)
+  value <- list()
+  value$complete <- FALSE
+  if (null_count >= 2) {
+    value$consistent <- TRUE
+    return(value)
+  } else if (null_count == 0) {
+    value$complete <- TRUE
+  }
+  if (!is.null(pjnz)) {
+    pjnz_country <- read_country(pjnz)
+  }
+  if (!is.null(shape)) {
+    shape_country <- read_country(shape)
+    shape_regions <- read_regions(shape)
+  }
+  if (!is.null(population)) {
+    ## get regions from population
+  }
+  valid_country <- assert_consistent_country(pjnz, shape)
+  valid_regions <- assert_consistent_regions(shape, population)
+  value$consistent <- valid_country && valid_regions
 }

@@ -2,6 +2,8 @@ api_build <- function() {
   pr <- plumber::plumber$new()
   pr$handle("POST", "/validate", endpoint_validate_input,
             serializer = serializer_json_hintr())
+  pr$handle("POST", "/validate_baseline", endpoint_validate_baselline,
+            serializer = serializer_json_hintr())
   pr$handle("GET", "/", api_root)
   pr
 }
@@ -23,7 +25,7 @@ api <- function(port = 8888) {
 #' survey or programme.
 #' @param path Path to the file to validate.
 #'
-#' @return Validates JSON response with data and incidcation of success.
+#' @return Validated JSON response with data and incidcation of success.
 #' @keywords internal
 endpoint_validate_input <- function(req, res, type, path) {
   validate_json_schema(req$postBody, "ValidateInputRequest")
@@ -35,7 +37,9 @@ endpoint_validate_input <- function(req, res, type, path) {
     anc = do_validate_anc,
     survey = do_validate_survey)
   validate_if_exists <- function(path) {
-    if (!file.exists(path)) stop("File does not exist. Create it, or fix the path.", call. = FALSE)
+    if (!file.exists(path)) {
+      stop("File does not exist. Create it, or fix the path.", call. = FALSE)
+    }
     validate_func(path)
   }
   response <- with_success(
@@ -69,6 +73,29 @@ input_response <- function(data, path, type) {
               data = data)
   validate_json_schema(to_json(ret), get_input_response_schema(type), "data")
   ret
+}
+
+#' Validate the baseline data as a collection.
+#'
+#' Checks whether the collection of baseline data (pjnz, shape and population)
+#' are consistent.
+#'
+#' @param req The request as PlumberRequest object.
+#' @param res The response as a PlumberResponse object.
+#' @param pjnz Path to the pjnz file.
+#' @param shape Path to the shape file.
+#' @param population Path to the population file.
+#'
+#' @return Validated JSON response with data and incidcation of success.
+#' @keywords internal
+endpoint_validate_baseline <- function(req, res, pjnz, shape, population) {
+  validate_json_schema(req$postBody, "ValidateBaselineRequest")
+  response <- with_success(validate_baseline(pjnz, shape, population))
+  if (!response$success) {
+    response$errors <- hintr_errors(list("INVALID_BASELINE" = response$message))
+    res$status <- 400
+  }
+  hintr_response(response, "ValidateBaselineResponse")
 }
 
 #' Format a hintr response and validate against schema.
