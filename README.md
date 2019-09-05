@@ -83,15 +83,22 @@ Input data should be written to the shared `upload_volume`. When requesting vali
 To turn on validation of requests and responses you need to set the environmental variable VALIDATE_JSON_SCHEMAS to true. You can do that by writing to a `.Renviron` file, on linux `echo -e "VALIDATE_JSON_SCHEMAS=true" >> .Renviron`.
 
 
-## Running tests which use redis
+## Running tests
 
-To run tests including those which rely on a redis instance being available you need to start a redis docker container
-```
-docker run --rm -d --network=host --name hintr_redis redis
-```
+To run tests locally:
+ 
+1. Install all dependencies with `devtools::install_deps(".")`. You may be prompted to install some operating system 
+    packages; these should be available via your package manager but for `protoc` you may need the following instructions:
+   https://askubuntu.com/questions/1072683/how-can-i-install-protoc-on-ubuntu-16-04
+1. Install the latest version of `jsonvalidate` from GitHub with
+     `devtools::install_github("ropensci/jsonvalidate")`
+1. Install the hintr package:
+   ```
+   R CMD INSTALL .
+   ```
+1. If running all tests, including those that require redis, start a redis docker container
+    ```
+    docker run --rm -d --network=host --name hintr_redis redis
+    ```
 
-You will need to install the package by running 
-```
-R CMD INSTALL .
-```
-and tests can be run from R wtih `devtools::test()`
+Finally tests can be run with `devtools::test()`.
