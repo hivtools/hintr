@@ -6,13 +6,13 @@
       "type": "array",
       "items": { "type": "string" }
     },
-    "survey": {
+    "surveys": {
       "type": "array",
       "items": { "type": "string" }
     }
   },
   "additionalProperties": false,
   "required": [
-    "age", "survey"
+    "age", "surveys"
   ]
 }

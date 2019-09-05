@@ -69,7 +69,7 @@
         "filters": { "$ref": "AgeFilters.schema.json" }
       },
       "additionalProperties": false,
-      "required": ["filename", "type", "data","filters"]
+      "required": ["filename", "type", "data", "filters"]
     },
 
     "survey_response": {
@@ -83,7 +83,7 @@
         "filters": { "$ref": "SurveyFilters.schema.json" }
       },
       "additionalProperties": false,
-      "required": ["filename", "type", "data"]
+      "required": ["filename", "type", "data", "filters"]
     }
   },
 
@@ -91,7 +91,6 @@
     {"$ref": "#/definitions/pjnz_response"},
     {"$ref": "#/definitions/shape_response"},
     {"$ref": "#/definitions/population_response"},
-    {"$ref": "#/definitions/survey_response"},
     {"$ref": "#/definitions/programme_response"},
     {"$ref": "#/definitions/anc_response"},
     {"$ref": "#/definitions/survey_response"}
