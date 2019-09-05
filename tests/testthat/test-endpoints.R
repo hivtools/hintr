@@ -25,6 +25,20 @@ test_that("endpoint_validate_input correctly validates data", {
   })
 })
 
+test_that("endpoint_validate_input returns nice error if file does not exist", {
+
+  req <- list(postBody = '{"type": "pjnz", "path": "path/to/file"}')
+  res <- MockPlumberResponse$new()
+  response <- endpoint_validate_input(req, res, "pjnz", "path/to/file")
+  response <- jsonlite::parse_json(response)
+  expect_equal(response$status, "failure")
+  expect_length(response$errors, 1)
+  expect_equal(response$errors[[1]]$error, "INVALID_FILE")
+  expect_equal(response$errors[[1]]$detail, "File does not exist. Create it, or fix the path.")
+  expect_equal(res$status, 400)
+
+})
+
 test_that("endpoint_validate_input validates the input and response", {
   pjnz <- file.path("testdata", "Botswana2018.PJNZ")
   mock_validate_json_schema <- mockery::mock(TRUE, cycle = TRUE)
