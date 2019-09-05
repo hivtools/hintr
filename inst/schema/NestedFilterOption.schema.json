@@ -8,7 +8,7 @@
     "options": {
       "type": "array",
       "items": {
-        "$ref": "#"
+        "type": "object"
       }
     }
   },
