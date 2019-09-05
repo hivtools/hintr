@@ -70,7 +70,6 @@
       },
       "additionalProperties": false,
       "required": ["filename", "type", "data","filters"]
-      "required": ["filename", "type", "data"]
     },
 
     "survey_response": {
