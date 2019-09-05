@@ -1,0 +1,4 @@
+{
+  "type": "survey",
+  "path": "src/tests/testthat/testdata/survey.csv"
+}
