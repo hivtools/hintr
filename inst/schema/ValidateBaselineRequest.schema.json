@@ -4,7 +4,7 @@
   "properties": {
     "pjnz" : { "$ref": "FilePath.schema.json" },
     "shape" : { "$ref": "FilePath.schema.json" },
-    "population" : { "$ref": "FilePath.schema.json" },
+    "population" : { "$ref": "FilePath.schema.json" }
   },
   "additionalProperties": false,
   "required": [

@@ -14,6 +14,20 @@ read_country <- function(pjnz) {
   hiv_params$country
 }
 
+read_regions <- function(data) {
+  UseMethod("read_regions", data)
+}
+
+read_regions.geojson <- function(data) {
+  vapply(json$features, function(x) {
+    x$properties$area_id
+  }, character(1))
+}
+
+read_regions.data.frame <- function(data) {
+  unique(data$area_id)
+}
+
 
 #' Validate shape file and return geojson for plotting.
 #'
@@ -111,14 +125,13 @@ do_validate_survey <- function(survey) {
 
 #' Validate collection of baseline data for consistency.
 #'
-#'
 #' @param pjnz Path to input pjnz file.
 #' @param shape Path to input shape file.
 #' @param population Path to input population file.
 #'
 #' @return An error if invalid.
 #' @keywords internal
-validate_baseline <- function(pjnz, shape, population) {
+do_validate_baseline <- function(pjnz, shape, population) {
   null_count <- is.null(pjnz) + is.null(shape) + is.null(population)
   value <- list()
   value$complete <- FALSE
