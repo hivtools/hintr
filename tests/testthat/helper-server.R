@@ -69,12 +69,12 @@ hintr_server <- function(n_tries = 10, poll = 0.5) {
     Sys.sleep(poll)
   }
 
-  message("alive?")
+  message("Is API process alive?")
   message(process$is_alive())
-  message("output:")
+  message("API output:")
   tryCatch(
     message(process$read_output()), error = function(e) message("FAILED: ", e$message))
-  message("error:")
+  message("API error:")
   tryCatch(
     message(process$read_error()), error = function(e) message("FAILED: ", e$message))
   process$kill()
