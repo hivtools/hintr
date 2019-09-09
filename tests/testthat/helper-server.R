@@ -41,7 +41,8 @@ get_free_port <- free_port(9000)
 # up. So the default is to use an incrementing port number. This has
 # proven more reliable in practice anyway. The approach above is the
 # same used in vaultr.
-hintr_server <- function(n_tries = 10, poll = 0.1) {
+hintr_server <- function(n_tries = 10, poll = 0.5) {
+  test_redis_available()
   skip_if_not_installed("callr")
   skip_if_not_installed("httr")
 
@@ -54,6 +55,7 @@ hintr_server <- function(n_tries = 10, poll = 0.1) {
   url <- sprintf("http://localhost:%d", port)
 
   for (i in seq_len(n_tries)) {
+    message("Attempt ", i)
     ok <- tryCatch({
       httr::stop_for_status(httr::GET(url))
       TRUE
