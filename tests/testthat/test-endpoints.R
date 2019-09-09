@@ -328,8 +328,6 @@ test_that("endpoint_run_model returns error if queueing fails", {
   expect_equal(res$status, 400)
 })
 
-
-
 test_that("querying for status of missing job returns useful message", {
   test_redis_available()
 

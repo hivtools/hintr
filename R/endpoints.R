@@ -17,7 +17,7 @@ api_run <- function(pr, port = 8888) {
 }
 
 api <- function(port = 8888) {
-  queue <- Queue$new()
+  queue <- Queue$new() # nocov
   api_run(api_build(queue), port) # nocov
 }
 
