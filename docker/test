@@ -24,6 +24,7 @@ docker volume create $NAME_VOLUME
 docker run --rm -d --network=$NAME_NETWORK --name hintr_redis redis
 docker run --rm -d --network=$NAME_NETWORK \
        -p 8888:8888 \
+       -e REDIS_URL=redis://hintr_redis:6379 \
        --mount type=volume,src=$NAME_VOLUME,dst=/uploads \
        --name $NAME_SERVER $TAG_SHA
 
