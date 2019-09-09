@@ -68,13 +68,13 @@ hintr_server <- function(n_tries = 10, poll = 0.1) {
   }
 
   message("alive?")
-  process$is_alive()
+  message(process$is_alive())
   message("output:")
   tryCatch(
-    process$read_output(), error = function(e) message("FAILED: ", e$message))
+    message(process$read_output()), error = function(e) message("FAILED: ", e$message))
   message("error:")
   tryCatch(
-    process$read_error(), error = function(e) message("FAILED: ", e$message))
+    message(process$read_error()), error = function(e) message("FAILED: ", e$message))
   process$kill()
   stop("Failed to start server")
 }
