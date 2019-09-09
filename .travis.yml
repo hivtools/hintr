@@ -17,6 +17,7 @@ services:
   - redis-server
 before_script:
   - R CMD INSTALL .
+  - ./debug.R
 cache: packages
 env:
   - VALIDATE_JSON_SCHEMAS=true
