@@ -3,7 +3,7 @@ context("queue")
 test_that("queue works as intended", {
   test_redis_available()
 
-  queue <- queue_new()
+  queue <- Queue$new()
   expect_equal(queue$queue$worker_len(), 2)
 
   worker_1 <- queue$queue$worker_list()[[1]]

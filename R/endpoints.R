@@ -17,8 +17,8 @@ api_run <- function(pr, port = 8888) {
 }
 
 api <- function(port = 8888) {
-  queue <- hintr:::queue_new() # nocov
-  hintr:::api_run(hintr:::api_build(queue), port) # nocov
+  queue <- Queue$new()
+  api_run(api_build(queue), port) # nocov
 }
 
 endpoint_model_submit <- function(queue) {

@@ -229,7 +229,7 @@ test_that("endpoint model run queues a model run", {
   res <- MockPlumberResponse$new()
 
   ## Call the endpoint
-  queue <- queue_new()
+  queue <- Queue$new()
   model_submit <- endpoint_model_submit(queue)
   response <- model_submit(req, res, data, parameters)
   response <- jsonlite::parse_json(response)
@@ -313,7 +313,7 @@ test_that("endpoint_run_model returns error if queueing fails", {
 
   ## Create mocks
   res <- MockPlumberResponse$new()
-  queue <- queue_new()
+  queue <- Queue$new()
   mock_submit <- function(data, parameters) { stop("Failed to queue") }
 
   ## Call the endpoint
@@ -334,7 +334,7 @@ test_that("querying for status of missing job returns useful message", {
   test_redis_available()
 
   res <- MockPlumberResponse$new()
-  queue <- queue_new()
+  queue <- Queue$new()
   model_status <- endpoint_model_status(queue)
   status <- model_status(NULL, res, "ID")
   status <- jsonlite::parse_json(status)
@@ -350,7 +350,7 @@ test_that("querying for result of missing job returns useful error", {
   test_redis_available()
 
   res <- MockPlumberResponse$new()
-  queue <- queue_new()
+  queue <- Queue$new()
   model_result <- endpoint_model_result(queue)
   result <- model_result(NULL, res, "ID")
   result <- jsonlite::parse_json(result)
@@ -367,7 +367,7 @@ test_that("endpoint_run_status returns error if query for status fails", {
 
   ## Create mocks
   res <- MockPlumberResponse$new()
-  queue <- queue_new()
+  queue <- Queue$new()
   mock_status <- function(data, parameters) { stop("Failed to get status") }
 
   ## Call the endpoint
@@ -399,7 +399,7 @@ test_that("querying for result of incomplete jobs returns useful error", {
       programme = TRUE,
       anc = FALSE
     ),
-    sleep = 5
+    sleep = 10
   )
   req <- list(postBody = '
   {
@@ -418,7 +418,7 @@ test_that("querying for result of incomplete jobs returns useful error", {
         "programme": true,
         "anc": false
       },
-      "sleep": 5
+      "sleep": 10
     }
   }')
 
@@ -426,7 +426,7 @@ test_that("querying for result of incomplete jobs returns useful error", {
   res <- MockPlumberResponse$new()
 
   ## Call the endpoint
-  queue <- queue_new()
+  queue <- Queue$new()
   model_submit <- endpoint_model_submit(queue)
   response <- model_submit(req, res, data, parameters)
   response <- jsonlite::parse_json(response)
@@ -450,7 +450,7 @@ test_that("erroring model run returns useful messages", {
   res <- MockPlumberResponse$new()
 
   ## Call the endpoint
-  queue <- queue_new()
+  queue <- Queue$new()
   model_submit <- endpoint_model_submit(queue)
   response <- model_submit(req, res, NULL, NULL)
   response <- jsonlite::parse_json(response)
