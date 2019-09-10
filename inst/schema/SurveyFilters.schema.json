@@ -4,11 +4,11 @@
   "properties": {
     "age": {
       "type": "array",
-      "items": { "type": "string" }
+      "items": { "$ref": "FilterOption.schema.json" }
     },
     "surveys": {
       "type": "array",
-      "items": { "type": "string" }
+      "items": { "$ref": "FilterOption.schema.json" }
     }
   },
   "additionalProperties": false,
