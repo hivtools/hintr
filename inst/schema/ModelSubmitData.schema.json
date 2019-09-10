@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "pjnz": { "$ref": "FilePath.schema.json" },
+    "shape": { "$ref": "FilePath.schema.json" },
+    "population": { "$ref": "FilePath.schema.json" },
+    "survey": { "$ref": "FilePath.schema.json" },
+    "programme": { "$ref": "FilePath.schema.json" },
+    "anc": { "$ref": "FilePath.schema.json" }
+  },
+  "additionalProperties": false,
+  "required": [
+    "pjnz",
+    "shape",
+    "population",
+    "survey",
+    "programme",
+    "anc"
+  ]
+}

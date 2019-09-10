@@ -2,13 +2,10 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "age": {
-      "type": "array",
-      "items": { "$ref": "FilterOption.schema.json" }
-    }
+    "id" : { "$ref": "URI.schema.json" }
   },
   "additionalProperties": false,
   "required": [
-    "age"
+    "id"
   ]
 }
