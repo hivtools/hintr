@@ -1,0 +1,19 @@
+{
+  "data": {
+    "pjnz": "path/to/file",
+    "shape": "path/to/file",
+    "population": "path/to.file",
+    "survey": "path/to/file",
+    "programme": "path/to/file",
+    "anc": "path/to/file"
+  },
+  "parameters": {
+    "max_iterations": 100,
+    "no_of_simulations": 3000,
+    "options": {
+      "programme": true,
+      "anc": false
+    },
+    "sleep": 1
+  }
+}

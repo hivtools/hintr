@@ -1,6 +1,12 @@
-api_build <- function() {
+api_build <- function(queue) {
   pr <- plumber::plumber$new()
   pr$handle("POST", "/validate", endpoint_validate_input,
+            serializer = serializer_json_hintr())
+  pr$handle("POST", "/model/submit", endpoint_model_submit(queue),
+            serializer = serializer_json_hintr())
+  pr$handle("GET", "/model/status/<id>", endpoint_model_status(queue),
+            serializer = serializer_json_hintr())
+  pr$handle("GET", "/model/result/<id>", endpoint_model_result(queue),
             serializer = serializer_json_hintr())
   pr$handle("GET", "/", api_root)
   pr
@@ -11,7 +17,67 @@ api_run <- function(pr, port = 8888) {
 }
 
 api <- function(port = 8888) {
-  api_run(api_build(), port) # nocov
+  queue <- Queue$new() # nocov
+  api_run(api_build(queue), port) # nocov
+}
+
+endpoint_model_submit <- function(queue) {
+  function(req, res, data, parameters) {
+    response <- with_success(
+      queue$submit(data, parameters))
+    if (response$success) {
+      response$value <- list(id = scalar(response$value))
+    } else {
+      response$errors <- hintr_errors(list("FAILED_TO_QUEUE" = response$message))
+      res$status <- 400
+    }
+    hintr_response(response, "ModelSubmitResponse")
+  }
+}
+
+endpoint_model_status <- function(queue) {
+  function(req, res, id) {
+    response <- with_success(
+      queue$status(id))
+    if (response$success) {
+      response$value <- lapply(response$value, scalar)
+      response$value$id <- scalar(id)
+      response$value$progress <- scalar("50%")
+      response$value$timeRemaining <- scalar("10s")
+    } else {
+      response$errors <- hintr_errors(
+        list("FAILED_TO_RETRIEVE_STATUS" = response$message))
+      res$status <- 400
+    }
+    hintr_response(response, "ModelStatusResponse")
+  }
+}
+
+endpoint_model_result <- function(queue) {
+  function(req, res, id) {
+
+    response <- with_success(
+      queue$result(id))
+    if (is_error(response$value)) {
+      response$success <- FALSE
+      response$errors <- hintr_errors(
+        list("MODEL_RUN_FAILED" = scalar(toString(response$value)))
+      )
+      response$value <- NULL
+      res$status <- 400
+    } else if (response$success) {
+      response$value <- scalar(response$value)
+    } else {
+      response$errors <- hintr_errors(
+        list("FAILED_TO_RETRIEVE_RESULT" = response$message))
+      res$status <- 400
+    }
+    hintr_response(response, "ModelResultResponse")
+  }
+}
+
+is_error <- function(x) {
+  inherits(x, "error")
 }
 
 #' Validate an input file and return an indication of success and
@@ -96,10 +162,10 @@ hintr_response <- function(value, schema) {
     status = scalar(status),
     errors = errors,
     data = value$value))
-  validate_json_schema(ret, "Response")
   if (value$success) {
     validate_json_schema(ret, schema, query = "data")
   }
+  validate_json_schema(ret, "Response")
   ret
 }
 

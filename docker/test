@@ -21,9 +21,11 @@ trap cleanup EXIT
 docker network create $NAME_NETWORK
 docker volume create $NAME_VOLUME
 
-docker run --rm -d --network=$NAME_NETWORK --name hintr_redis redis
+docker run --rm -d --network=$NAME_NETWORK --network-alias=redis \
+       --name hintr_redis redis
 docker run --rm -d --network=$NAME_NETWORK \
        -p 8888:8888 \
+       -e REDIS_URL=redis://redis:6379 \
        --mount type=volume,src=$NAME_VOLUME,dst=/uploads \
        --name $NAME_SERVER $TAG_SHA
 
@@ -35,7 +37,7 @@ for attempt in $(seq 10); do
         echo "SUCCESS"
         exit 0
     fi
-    sleep 0.1
+    sleep 0.5
 done
 
 echo "FAIL"
