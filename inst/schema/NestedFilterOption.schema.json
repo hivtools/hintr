@@ -5,6 +5,9 @@
     "name": {
       "type": "string"
     },
+    "id": {
+      "type": "string"
+    },
     "options": {
       "type": "array",
       "items": {
@@ -14,6 +17,6 @@
   },
   "additionalProperties": false,
   "required": [
-    "name"
+    "name", "id"
   ]
 }
