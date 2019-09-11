@@ -112,6 +112,21 @@ test_that("validate survey", {
   expect_equal(typeof(response$data$data[[1]]$value), "double")
 })
 
+test_that("validate baseline", {
+  server <- hintr_server()
+
+  payload <- file.path("payload", "validate_baseline_payload.json")
+  r <- httr::POST(paste0(server$url, "/validate_baseline"),
+                  body = httr::upload_file(payload),
+                  encode = "json")
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+  expect_equal(response$errors, list())
+  expect_equal(response$data$complete, TRUE)
+  expect_equal(response$data$consistent, TRUE)
+})
+
 test_that("model interactions", {
   server <- hintr_server()
 
