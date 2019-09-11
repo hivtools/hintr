@@ -44,6 +44,13 @@ curl -X POST -H 'Content-Type: application/json' \
 #> {"status":"success","errors":{},"data":{"filename":"population.csv","type":"population","data":null}
 ```
 
+Validate baseline data:
+```
+curl -X POST -H 'Content-Type: application/json' \
+     --data @example/docker_validate_baseline_payload.json http://localhost:8888/validate_baseline
+#> {"status":"success","errors":[],"data":{"complete":true,"consistent":true}}
+```
+
 Validate programme ART data:
 ```
 curl -X POST -H 'Content-Type: application/json' \
