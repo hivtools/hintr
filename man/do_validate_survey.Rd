@@ -7,7 +7,7 @@
 do_validate_survey(survey)
 }
 \arguments{
-\item{anc}{Path to input survey file.}
+\item{survey}{Path to input survey file.}
 }
 \value{
 An error if invalid.

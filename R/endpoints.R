@@ -156,7 +156,7 @@ input_response <- function(data, path, type) {
 #' @keywords internal
 endpoint_validate_baseline <- function(req, res, pjnz, shape, population) {
   validate_json_schema(req$postBody, "ValidateBaselineRequest")
-  response <- with_success(validate_baseline(pjnz, shape, population))
+  response <- with_success(do_validate_baseline(pjnz, shape, population))
   if (!response$success) {
     response$errors <- hintr_errors(list("INVALID_BASELINE" = response$message))
     res$status <- 400

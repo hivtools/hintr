@@ -50,9 +50,14 @@ assert_area_id_exists <- function(json) {
   invisible(TRUE)
 }
 
-assert_consistent_country <- function(country_x, source_x, country_y, source_y) {
+assert_consistent_country <- function(country_x, source_x, country_y, source_y,
+                                      convert_to_alpha3 = FALSE) {
   if (!is.null(country_x) && !is.null(country_y) &&
       tolower(country_x) != tolower(country_y)) {
+    if (convert_to_alpha3) {
+      country_x <- iso_numeric_to_alpha_3(country_x)
+      country_y <- iso_numeric_to_alpha_3(country_y)
+    }
     stop(sprintf("Countries aren't consistent got %s from %s and %s from %s.",
                  country_x, source_x, country_y, source_y))
   }

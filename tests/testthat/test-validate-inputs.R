@@ -9,7 +9,7 @@ test_that("PJNZ can be validated and return data", {
   })
 })
 
-test_that("country can be read from PJNZ file", {
+test_that("country can be read", {
   pjnz <- file.path("testdata", "Botswana2018.PJNZ")
   expect_equal(read_country(pjnz), "Botswana")
 })
@@ -71,6 +71,27 @@ test_that("do_validate_survey validates survey file", {
   ## Some arbitrary test that the data has actually been returned
   expect_true(nrow(data) > 30000)
   expect_equal(typeof(data$value), "double")
+})
+
+test_that("converting from numeric to iso3 works", {
+  expect_equal(iso_numeric_to_alpha_3(454), "MWI")
+  expect_equal(iso_numeric_to_alpha_3(084), "BLZ")
+})
+
+test_that("can read iso3", {
+  pjnz <- file.path("testdata", "Malawi2019.PJNZ")
+  expect_equal(read_iso3(pjnz, "pjnz"), "MWI")
+  shape <- file.path("testdata", "malawi.geojson")
+  expect_equal(read_iso3(shape, "shape"), "MWI")
+})
+
+test_that("can read regions", {
+  shape <- file.path("testdata", "malawi.geojson")
+  expect_true(all(grepl(
+    "^MWI[\\.\\d]*$", read_regions(shape, "shape"), perl = TRUE)))
+  population <- file.path("testdata", "population.csv")
+  expect_true(all(grepl(
+    "^MWI[\\.\\d]*$", read_regions(population, "population"), perl = TRUE)))
 })
 
 test_that("baseline data can be validated as a collection", {

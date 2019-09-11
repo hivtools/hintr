@@ -1,4 +1,13 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "type": "null"
+  "type": "object",
+  "properties": {
+    "complete": { "type": "boolean" },
+    "consistent": { "type": "boolean" }
+  },
+  "additionalProperties": false,
+  "required": [
+    "complete",
+    "consistent"
+  ]
 }
