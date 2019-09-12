@@ -19,6 +19,8 @@ docker run --rm -d --network=host --mount type=volume,src=upload_volume,dst=/upl
   --name hintr mrcide/hintr:latest
 ```
 
+For a more complete example of running on a network see [docker test script](https://github.com/mrc-ide/hintr/blob/master/docker/test).
+
 Test that container is working by using:
 ```
 curl http://localhost:8888
