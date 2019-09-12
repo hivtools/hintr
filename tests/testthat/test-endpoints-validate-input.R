@@ -37,7 +37,7 @@ test_that("endpoint_validate_input returns nice error if file does not exist", {
   expect_length(response$errors, 1)
   expect_equal(response$errors[[1]]$error, "INVALID_FILE")
   expect_equal(response$errors[[1]]$detail,
-               "File at path /path/to/file does not exist. Create it, or fix the path.")
+               "File at path path/to/file does not exist. Create it, or fix the path.")
   expect_equal(res$status, 400)
 
 })
