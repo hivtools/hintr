@@ -18,7 +18,3 @@ is_empty <- function(x) {
 read_string <- function(path) {
   paste(readLines(path, warn = FALSE, encoding = "UTF-8"), collapse = "\n")
 }
-
-vcapply <- function(X, FUN, ...) {
-  vapply(X, FUN, character(1), ...)
-}
