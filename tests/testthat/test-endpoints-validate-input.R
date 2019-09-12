@@ -10,7 +10,11 @@ test_that("endpoint_validate_input correctly validates data", {
   expect_equal(response$data$filename, "Botswana2018.PJNZ")
   expect_equal(response$data$data$country, "Botswana")
   expect_equal(res$status, 200)
+})
 
+test_that("endpoint_validate_input returns error on invalid data", {
+  pjnz <- file.path("testdata", "Botswana2018.PJNZ")
+  req <- list(postBody = '{"type": "pjnz", "path": "path/to/file"}')
   mock_read_country <- mockery::mock("GBR")
   with_mock("hintr:::read_country" = mock_read_country, {
     res <- MockPlumberResponse$new()
@@ -25,7 +29,6 @@ test_that("endpoint_validate_input correctly validates data", {
 })
 
 test_that("endpoint_validate_input returns nice error if file does not exist", {
-
   req <- list(postBody = '{"type": "pjnz", "path": "path/to/file"}')
   res <- MockPlumberResponse$new()
   response <- endpoint_validate_input(req, res, "pjnz", "path/to/file")
@@ -33,7 +36,8 @@ test_that("endpoint_validate_input returns nice error if file does not exist", {
   expect_equal(response$status, "failure")
   expect_length(response$errors, 1)
   expect_equal(response$errors[[1]]$error, "INVALID_FILE")
-  expect_equal(response$errors[[1]]$detail, "File does not exist. Create it, or fix the path.")
+  expect_equal(response$errors[[1]]$detail,
+               "File at path /path/to/file does not exist. Create it, or fix the path.")
   expect_equal(res$status, 400)
 
 })
