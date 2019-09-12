@@ -103,9 +103,7 @@ endpoint_validate_input <- function(req, res, type, path) {
     anc = do_validate_anc,
     survey = do_validate_survey)
   validate_if_exists <- function(path) {
-    if (!file.exists(path)) {
-      stop("File does not exist. Create it, or fix the path.", call. = FALSE)
-    }
+    assert_file_exists(path)
     validate_func(path)
   }
   response <- with_success(

@@ -57,3 +57,9 @@ test_that("assert_consistent_regions checks for consistent regions", {
   expect_error(assert_consistent_regions(shape_regions, test_regions, "population"),
     "Regions aren't consistent population file contains regions Rumphi, Balaka missing from shape file.")
 })
+
+test_that("assert_file_exists throws error if file doesn't exist", {
+  expect_true(assert_file_exists(file.path("testdata", "Malawi2019.PJNZ")))
+  expect_error(assert_file_exists("file.path"),
+               "File at path file.path does not exist. Create it, or fix the path.")
+})
