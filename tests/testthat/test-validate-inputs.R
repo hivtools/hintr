@@ -3,7 +3,9 @@ context("validate-inputs")
 test_that("baseline inputs can be validated and return data", {
   pjnz <- file.path("testdata", "Botswana2018.PJNZ")
   ## TODO: Expand validation to include other input files
-  expect_equal(do_validate_pjnz(pjnz), list(country = scalar("Botswana")))
+  expect_equal(do_validate_pjnz(pjnz),
+               list(data = list(country = scalar("Botswana")),
+                    filters = scalar(NA)))
 
   mock_read_country <- mockery::mock("GBR")
   with_mock("hintr:::read_country" = mock_read_country, {
@@ -41,36 +43,64 @@ test_that("assert fails if a feature is missing an area id", {
 test_that("do_validate_shape validates shape and returns geojson as list", {
   shape <- file.path("testdata", "malawi.geojson")
   json <- do_validate_shape(shape)
-  expect_s3_class(json, "json")
+  expect_s3_class(json$data, "json")
 })
 
 test_that("do_validate_population validates population file", {
   population <- file.path("testdata", "population.csv")
   pop <- do_validate_population(population)
   ## No actual data to return but has been validated
-  expect_true(is.na(pop))
+  expect_true(is.na(pop$data))
+  expect_true(is.na(pop$filters))
 })
 
 test_that("do_validate_programme validates programme file", {
   programme <- file.path("testdata", "programme.csv")
   data <- do_validate_programme(programme)
   ## Some arbitrary test that the data has actually been returned
-  expect_true(nrow(data) > 1400)
-  expect_equal(typeof(data$value), "integer")
+  expect_true(nrow(data$data) > 1400)
+  expect_equal(typeof(data$data$value), "integer")
+
+  expected_filters <- list(
+    list(id = scalar("5"),
+         name = scalar("20-24")),
+    list(id = scalar("28"),
+         name = scalar("50-64")),
+    list(id = scalar("3"),
+         name = scalar("10-14"))
+  )
+  expect_equal(data$filters$age, expected_filters)
 })
 
 test_that("do_validate_anc validates ANC file", {
   anc <- file.path("testdata", "anc.csv")
   data <- do_validate_anc(anc)
   ## Some arbitrary test that the data has actually been returned
-  expect_true(nrow(data) > 800)
-  expect_equal(typeof(data$value), "double")
+  expect_true(nrow(data$data) > 800)
+  expect_equal(typeof(data$data$value), "double")
+  expected_filters <- list(
+    list(id = scalar("1"),
+         name = scalar("0-4")))
+  expect_equal(data$filters$age, expected_filters)
 })
 
 test_that("do_validate_survey validates survey file", {
   survey <- file.path("testdata", "survey.csv")
   data <- do_validate_survey(survey)
   ## Some arbitrary test that the data has actually been returned
-  expect_true(nrow(data) > 30000)
-  expect_equal(typeof(data$value), "double")
+  expect_true(nrow(data$data) > 30000)
+  expect_equal(typeof(data$data$value), "double")
+  expected_ages <- list(id = scalar("1"),
+         name = scalar("0-4"))
+  expected_survey <- list(
+    list(id = scalar("MWI2004DHS"),
+         name = scalar("MWI2004DHS")),
+    list(id = scalar("MWI2010DHS"),
+         name = scalar("MWI2010DHS")),
+    list(id = scalar("MWI2015DHS"),
+         name = scalar("MWI2015DHS"))
+  )
+  expect_equal(data$filters$age[[1]], expected_ages)
+  expect_length(data$filters$age, 11)
+  expect_equal(data$filters$survey, expected_survey)
 })

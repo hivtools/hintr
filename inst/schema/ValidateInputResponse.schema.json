@@ -8,7 +8,8 @@
           "type": "string",
           "enum": [ "pjnz" ]
         },
-        "data": { "$ref": "PjnzResponseData.schema.json" }
+        "data": { "$ref": "PjnzResponseData.schema.json" },
+        "filters": { "type": "null" }
       },
       "additionalProperties": false,
       "required": ["filename", "type", "data"]
@@ -23,8 +24,13 @@
         },
         "data": { "$ref": "ShapeResponseData.schema.json" },
         "filters": {
-          "type": "array",
-          "items": { "$ref": "NestedFilterOption.schema.json" }
+          "type": "object",
+          "properties" :{
+            "regions": {
+              "type": "array",
+              "items": { "$ref": "NestedFilterOption.schema.json" }
+            }
+          }
         }
       },
       "additionalProperties": false,
@@ -38,7 +44,8 @@
           "type": "string",
           "enum": [ "population" ]
         },
-        "data": { "$ref": "PopulationResponseData.schema.json" }
+        "data": { "$ref": "PopulationResponseData.schema.json" },
+        "filters": { "type": "null" }
       },
       "additionalProperties": false,
       "required": ["filename", "type", "data"]
