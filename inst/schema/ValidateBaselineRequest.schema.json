@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "pjnz" : { "$ref": "FilePath.schema.json" },
+    "shape" : { "$ref": "FilePath.schema.json" },
+    "population" : { "$ref": "FilePath.schema.json" }
+  },
+  "additionalProperties": false,
+  "required": [
+    "pjnz",
+    "shape",
+    "population"
+  ]
+}

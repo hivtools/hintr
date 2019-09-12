@@ -18,7 +18,7 @@ survey or programme.}
 \item{path}{Path to the file to validate.}
 }
 \value{
-Validates JSON response with data and incidcation of success.
+Validated JSON response with data and incidcation of success.
 }
 \description{
 Validate an input file and return an indication of success and
