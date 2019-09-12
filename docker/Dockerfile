@@ -25,6 +25,8 @@ RUN install_packages --repo=https://mrc-ide.github.io/drat \
         specio \
         testthat
 
+RUN install_remote mrc-ide/naomi
+
 COPY . /src
 RUN R CMD INSTALL /src
 
