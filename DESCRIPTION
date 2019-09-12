@@ -1,12 +1,13 @@
 Package: hintr
 Title: R API for calling naomi district level HIV model
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: 
     person(given = "Robert",
            family = "Ashton",
            role = c("aut", "cre"),
            email = "r.ashton@imperial.ac.uk")
 Description: R API for calling naomi district level HIV model.
+Depends: R (>= 3.5.0)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

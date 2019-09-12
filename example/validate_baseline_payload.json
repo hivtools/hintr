@@ -1,0 +1,5 @@
+{
+  "pjnz": "tests/testthat/testdata/Malawi2019.PJNZ",
+  "shape": "tests/testthat/testdata/malawi.geojson",
+  "population": "tests/testthat/testdata/population.csv"
+}

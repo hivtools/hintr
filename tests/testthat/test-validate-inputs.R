@@ -1,17 +1,15 @@
 context("validate-inputs")
 
-test_that("baseline inputs can be validated and return data", {
+test_that("PJNZ can be validated and return data", {
   pjnz <- file.path("testdata", "Botswana2018.PJNZ")
-  ## TODO: Expand validation to include other input files
   expect_equal(do_validate_pjnz(pjnz), list(country = scalar("Botswana")))
-
   mock_read_country <- mockery::mock("GBR")
   with_mock("hintr:::read_country" = mock_read_country, {
     expect_error(do_validate_pjnz(pjnz), "Invalid country")
   })
 })
 
-test_that("country can be read from PJNZ file", {
+test_that("country can be read", {
   pjnz <- file.path("testdata", "Botswana2018.PJNZ")
   expect_equal(read_country(pjnz), "Botswana")
 })
@@ -73,4 +71,53 @@ test_that("do_validate_survey validates survey file", {
   ## Some arbitrary test that the data has actually been returned
   expect_true(nrow(data) > 30000)
   expect_equal(typeof(data$value), "double")
+})
+
+test_that("converting from numeric to iso3 works", {
+  expect_equal(iso_numeric_to_alpha_3(454), "MWI")
+  expect_equal(iso_numeric_to_alpha_3(084), "BLZ")
+})
+
+test_that("can read iso3", {
+  pjnz <- file.path("testdata", "Malawi2019.PJNZ")
+  expect_equal(read_iso3(pjnz, "pjnz"), "MWI")
+  shape <- file.path("testdata", "malawi.geojson")
+  expect_equal(read_iso3(shape, "shape"), "MWI")
+})
+
+test_that("can read regions", {
+  shape <- file.path("testdata", "malawi.geojson")
+  expect_true(all(grepl(
+    "^MWI[\\.\\d]*$", read_regions(shape, "shape"), perl = TRUE)))
+  population <- file.path("testdata", "population.csv")
+  expect_true(all(grepl(
+    "^MWI[\\.\\d]*$", read_regions(population, "population"), perl = TRUE)))
+})
+
+test_that("baseline data can be validated as a collection", {
+  pjnz <- file.path("testdata", "Malawi2019.PJNZ")
+  shape <- file.path("testdata", "malawi.geojson")
+  population <- file.path("testdata", "population.csv")
+  response <- do_validate_baseline(pjnz, shape, population)
+  expect_true(response$consistent)
+  expect_true(response$complete)
+
+  response <- do_validate_baseline(NULL, shape, population)
+  expect_true(response$consistent)
+  expect_false(response$complete)
+
+  response <- do_validate_baseline(pjnz, NULL, population)
+  expect_true(response$consistent)
+  expect_false(response$complete)
+
+  response <- do_validate_baseline(pjnz, shape, NULL)
+  expect_true(response$consistent)
+  expect_false(response$complete)
+
+  botswana_pjnz <- file.path("testdata", "Botswana2018.PJNZ")
+  expect_error(do_validate_baseline(botswana_pjnz, shape, NULL))
+
+  response <- do_validate_baseline(botswana_pjnz, NULL, population)
+  expect_true(response$consistent)
+  expect_false(response$complete)
 })

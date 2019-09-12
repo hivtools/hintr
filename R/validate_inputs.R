@@ -6,12 +6,57 @@ do_validate_pjnz <- function(pjnz) {
   list(country = scalar(country))
 }
 
-
 read_country <- function(pjnz) {
   ## TODO: Add function to specio to just extract metadata from the PJN and
   ## use this here instead to avoid getting unnecessary data. See mrc-388.
   hiv_params <- specio::read_hivproj_param(pjnz)
   hiv_params$country
+}
+
+read_iso3 <- function(file, type) {
+  func <- switch(type,
+    "pjnz" = read_pjnz_iso3,
+    "shape" = read_geojson_iso3,
+    stop(sprintf("Can't read country from data of type %s.", type)))
+  func(file)
+}
+
+read_pjnz_iso3 <- function(pjnz_file) {
+  hiv_params <- specio::read_hivproj_param(pjnz_file)
+  iso_numeric_to_alpha_3(hiv_params$iso3)
+}
+
+## Convert numeric iso3 country code to the alpha-3 code
+iso_numeric_to_alpha_3 <- function(numeric_iso) {
+  spectrum5_countrylist[which(spectrum5_countrylist$Code == numeric_iso),
+                        "iso3"]
+}
+
+read_geojson_iso3 <- function(geojson_file) {
+  json <- hintr_geojson_read(geojson_file)
+  ## At this point we have validated there is only data for 1 country so we can
+  ## just take the first.
+  json$features[[1]]$properties$iso3
+}
+
+read_regions <- function(file, type) {
+  func <- switch(type,
+    "shape" = read_geojson_regions,
+    "population" = read_csv_regions,
+    stop(sprintf("Can't read regions from data of type %s.", type)))
+  func(file)
+}
+
+read_geojson_regions <- function(geojson_file) {
+  json <- hintr_geojson_read(geojson_file)
+  vapply(json$features, function(x) {
+    x$properties$area_id
+  }, character(1))
+}
+
+read_csv_regions <- function(csv_file) {
+  data <- read_csv(csv_file, header = TRUE)
+  unique(data$area_id)
 }
 
 
@@ -95,7 +140,7 @@ do_validate_anc <- function(anc) {
 #'
 #' Check that survey data file can be read and return serialised data.
 #'
-#' @param anc Path to input survey file.
+#' @param survey Path to input survey file.
 #'
 #' @return An error if invalid.
 #' @keywords internal
@@ -107,4 +152,35 @@ do_validate_survey <- function(survey) {
     c("iso3", "area_id", "survey_id", "year", "sex", "age_group_id",
       "indicator", "value", "se", "ci_l", "ci_u"))
   survey
+}
+
+#' Validate collection of baseline data for consistency.
+#'
+#' @param pjnz Path to input pjnz file.
+#' @param shape Path to input shape file.
+#' @param population Path to input population file.
+#'
+#' @return An error if invalid.
+#' @keywords internal
+do_validate_baseline <- function(pjnz, shape, population) {
+  check_country <- !is.null(pjnz) && !is.null(shape)
+  check_regions <- !is.null(shape) && !is.null(population)
+  consistent_country <- TRUE
+  consistent_regions <- TRUE
+
+  if (check_country) {
+    pjnz_country <- read_iso3(pjnz, "pjnz")
+    shape_country <- read_iso3(shape, "shape")
+    consistent_country <- assert_consistent_country(pjnz_country, "pjnz",
+                                                    shape_country, "shape",
+                                                    convert_to_alpha3 = TRUE)
+  }
+  if (check_regions) {
+    shape_regions <- read_regions(shape, "shape")
+    population_regions <- read_regions(population, "population")
+    consistent_regions <- assert_consistent_regions(
+      shape_regions, population_regions, "population")
+  }
+  list(complete = scalar(check_country && check_regions),
+       consistent = scalar(consistent_country && consistent_regions))
 }
