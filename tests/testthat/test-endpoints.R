@@ -95,9 +95,10 @@ test_that("hintr API can be tested", {
 test_that("plumber api can be built", {
   api <- api_build()
   expect_s3_class(api, "plumber")
-  expect_length(api$routes, 4)
+  expect_length(api$routes, 3)
   expect_equal(names(api$routes),
-               c("validate", "validate_baseline", "model", ""))
+               c("validate", "model", ""))
+  expect_equal(names(api$routes$validate), c("input", "baseline"))
   expect_equal(names(api$routes$model), c("submit", "status", "result"))
 })
 

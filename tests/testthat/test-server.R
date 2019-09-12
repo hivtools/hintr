@@ -12,7 +12,7 @@ test_that("validate pjnz", {
   server <- hintr_server()
 
   payload <- file.path("payload", "validate_pjnz_payload.json")
-  r <- httr::POST(paste0(server$url, "/validate"),
+  r <- httr::POST(paste0(server$url, "/validate/input"),
                   body = httr::upload_file(payload),
                   encode = "json")
   expect_equal(httr::status_code(r), 200)
@@ -28,7 +28,7 @@ test_that("validate shape", {
   server <- hintr_server()
 
   payload <- file.path("payload", "validate_shape_payload.json")
-  r <- httr::POST(paste0(server$url, "/validate"),
+  r <- httr::POST(paste0(server$url, "/validate/input"),
                   body = httr::upload_file(payload),
                   encode = "json")
   expect_equal(httr::status_code(r), 200)
@@ -46,7 +46,7 @@ test_that("validate population", {
   server <- hintr_server()
 
   payload <- file.path("payload", "validate_population_payload.json")
-  r <- httr::POST(paste0(server$url, "/validate"),
+  r <- httr::POST(paste0(server$url, "/validate/input"),
                   body = httr::upload_file(payload),
                   encode = "json")
   expect_equal(httr::status_code(r), 200)
@@ -64,7 +64,7 @@ test_that("validate programme", {
   programme <- file.path("testdata", "programme.csv")
   body <- list(type = scalar("programme"), path = scalar(programme))
 
-  r <- httr::POST(paste0(server$url, "/validate"), body = body,
+  r <- httr::POST(paste0(server$url, "/validate/input"), body = body,
                   encode = "json")
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
@@ -82,7 +82,7 @@ test_that("validate ANC", {
   anc <- file.path("testdata", "anc.csv")
   body <- list(type = scalar("anc"), path = scalar(anc))
 
-  r <- httr::POST(paste0(server$url, "/validate"), body = body,
+  r <- httr::POST(paste0(server$url, "/validate/input"), body = body,
                   encode = "json")
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
@@ -100,7 +100,7 @@ test_that("validate survey", {
   survey <- file.path("testdata", "survey.csv")
   body <- list(type = scalar("survey"), path = scalar(survey))
 
-  r <- httr::POST(paste0(server$url, "/validate"), body = body,
+  r <- httr::POST(paste0(server$url, "/validate/input"), body = body,
                   encode = "json")
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
@@ -116,7 +116,7 @@ test_that("validate baseline", {
   server <- hintr_server()
 
   payload <- file.path("payload", "validate_baseline_payload.json")
-  r <- httr::POST(paste0(server$url, "/validate_baseline"),
+  r <- httr::POST(paste0(server$url, "/validate/baseline"),
                   body = httr::upload_file(payload),
                   encode = "json")
   expect_equal(httr::status_code(r), 200)

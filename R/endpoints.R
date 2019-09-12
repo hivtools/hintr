@@ -1,8 +1,8 @@
 api_build <- function(queue) {
   pr <- plumber::plumber$new()
-  pr$handle("POST", "/validate", endpoint_validate_input,
+  pr$handle("POST", "/validate/input", endpoint_validate_input,
             serializer = serializer_json_hintr())
-  pr$handle("POST", "/validate_baseline", endpoint_validate_baseline,
+  pr$handle("POST", "/validate/baseline", endpoint_validate_baseline,
             serializer = serializer_json_hintr())
   pr$handle("POST", "/model/submit", endpoint_model_submit(queue),
             serializer = serializer_json_hintr())

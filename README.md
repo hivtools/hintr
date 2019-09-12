@@ -27,46 +27,46 @@ curl http://localhost:8888
 Validate PJNZ:
 ``` 
 curl -X POST -H 'Content-Type: application/json' \
-     --data @example/docker_payload.json http://localhost:8888/validate
+     --data @example/docker_payload.json http://localhost:8888/validate/input
 #> {"status":"success","errors":{},"data":{"filename":"Botswana2018.PJNZ","type":"pjnz","data":{"country":"Botswana"}}}
 ```
 
 Validate shape file and return serialised data:
 ``` 
 curl -X POST -H 'Content-Type: application/json' \
-     --data @example/docker_validate_shape_payload.json http://localhost:8888/validate
+     --data @example/docker_validate_shape_payload.json http://localhost:8888/validate/input
 ```
 
 Validate population data:
 ```
 curl -X POST -H 'Content-Type: application/json' \
-     --data @example/docker_validate_population_payload.json http://localhost:8888/validate
+     --data @example/docker_validate_population_payload.json http://localhost:8888/validate/input
 #> {"status":"success","errors":{},"data":{"filename":"population.csv","type":"population","data":null}
 ```
 
 Validate baseline data:
 ```
 curl -X POST -H 'Content-Type: application/json' \
-     --data @example/docker_validate_baseline_payload.json http://localhost:8888/validate_baseline
+     --data @example/docker_validate_baseline_payload.json http://localhost:8888/validate/baseline
 #> {"status":"success","errors":[],"data":{"complete":true,"consistent":true}}
 ```
 
 Validate programme ART data:
 ```
 curl -X POST -H 'Content-Type: application/json' \
-     --data @example/docker_validate_programme_payload.json http://localhost:8888/validate
+     --data @example/docker_validate_programme_payload.json http://localhost:8888/validate/input
 ```
 
 Validate ANC data:
 ```
 curl -X POST -H 'Content-Type: application/json' \
-     --data @example/docker_validate_anc_payload.json http://localhost:8888/validate
+     --data @example/docker_validate_anc_payload.json http://localhost:8888/validate/input
 ```
 
 Validate survey data:
 ```
 curl -X POST -H 'Content-Type: application/json' \
-     --data @example/docker_validate_survey_payload.json http://localhost:8888/validate
+     --data @example/docker_validate_survey_payload.json http://localhost:8888/validate/input
 ```
 
 Run a model:
