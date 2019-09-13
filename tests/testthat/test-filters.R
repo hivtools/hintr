@@ -30,7 +30,7 @@ test_that("get_age_filters gets available filter options", {
   expect_equal(get_age_filters(data.frame(age_group_id = NULL)), list())
 })
 
-test_that("get_survey_filters gets available filter options", {
+test_that("get_survey_filters gets available filter options and sorts them", {
   data <- data.frame(test = c(1, 2, 3, 4, 5, 6, 7),
                      survey_id = c("MWI2004DHS", "MWI2004DHS", "MWI2004DHS",
                                    "surv2", "surv2", "test", "test"),
@@ -38,16 +38,16 @@ test_that("get_survey_filters gets available filter options", {
   filters <- get_survey_filters(data)
   expect_equal(filters, list(
     list(
-      id = scalar("MWI2004DHS"),
-      name = scalar("MWI2004DHS")
+      id = scalar("test"),
+      name = scalar("test")
     ),
     list(
       id = scalar("surv2"),
       name = scalar("surv2")
     ),
     list(
-      id = scalar("test"),
-      name = scalar("test")
+      id = scalar("MWI2004DHS"),
+      name = scalar("MWI2004DHS")
     )
   ))
 

@@ -15,10 +15,12 @@ get_age_label <- function(age_group_id) {
                  length(index), age_group_id))
   }
   age_groups[index, "age_group_label"]
+  ## TODO: sort filter order on metadata from naomi get_age_groups once
+  ## that is available
 }
 
 get_survey_filters <- function(data) {
-  survey_ids <- unique(data$survey_id)
+  survey_ids <- sort(unique(data$survey_id), decreasing = TRUE)
   lapply(survey_ids, function(survey_id) {
     list(id = scalar(survey_id),
          name = scalar(survey_id))

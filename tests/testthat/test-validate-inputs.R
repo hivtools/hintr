@@ -92,12 +92,12 @@ test_that("do_validate_survey validates survey file", {
   expected_ages <- list(id = scalar("1"),
          name = scalar("0-4"))
   expected_survey <- list(
-    list(id = scalar("MWI2004DHS"),
-         name = scalar("MWI2004DHS")),
+    list(id = scalar("MWI2015DHS"),
+         name = scalar("MWI2015DHS")),
     list(id = scalar("MWI2010DHS"),
          name = scalar("MWI2010DHS")),
-    list(id = scalar("MWI2015DHS"),
-         name = scalar("MWI2015DHS"))
+    list(id = scalar("MWI2004DHS"),
+         name = scalar("MWI2004DHS"))
   )
   expect_equal(data$filters$age[[1]], expected_ages)
   expect_length(data$filters$age, 11)

@@ -244,16 +244,16 @@ test_that("possible filters are returned for data", {
   expect_length(response$data$filters$surveys, 3)
   expect_equal(response$data$filters$surveys, list(
     list(
-      id = "MWI2004DHS",
-      name = "MWI2004DHS"
+      id = "MWI2015DHS",
+      name = "MWI2015DHS"
     ),
     list(
       id = "MWI2010DHS",
       name = "MWI2010DHS"
     ),
     list(
-      id = "MWI2015DHS",
-      name = "MWI2015DHS"
+      id = "MWI2004DHS",
+      name = "MWI2004DHS"
     )
   ))
 })
