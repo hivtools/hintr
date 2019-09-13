@@ -105,7 +105,8 @@ test_that("plumber api can be built", {
 test_that("format_response_data correctly formats data and validates it", {
   mock_validate <- mockery::mock(TRUE)
   with_mock("hintr:::validate_json_schema" = mock_validate, {
-    response <- input_response(list(country = scalar("Botswana")),
+    response <- input_response(list(data = list(country = scalar("Botswana")),
+                                    filters = scalar(NA)),
                                "/path/to/file.pjnz",
                                "pjnz")
   })
@@ -114,11 +115,12 @@ test_that("format_response_data correctly formats data and validates it", {
   mockery::expect_called(mock_validate, 1)
   args <- mockery::mock_args(mock_validate)[[1]]
   expected_data <- list(
-    "filename" = "file.pjnz",
-    "type" = "pjnz",
-    "data" = list(
-      "country" = "Botswana"
-    )
+    filename = "file.pjnz",
+    type = "pjnz",
+    data = list(
+      country = "Botswana"
+    ),
+    filters = NULL
   )
   expect_equal(jsonlite::fromJSON(args[[1]]), expected_data)
   expect_equal(args[[2]], "PjnzResponseData")
@@ -181,4 +183,77 @@ test_that("Schemas do not use const", {
   for (f in files) {
     expect_error(check1(jsonlite::fromJSON(f)), NA, label = f)
   }
+})
+
+test_that("possible filters are returned for data", {
+  programme <- file.path("testdata", "programme.csv")
+  res <- MockPlumberResponse$new()
+  response <- endpoint_validate_input(
+    list(postBody = '{"type":"programme","path":"path/to/file"}'),
+    res,
+    "programme",
+    programme)
+  response <- jsonlite::parse_json(response)
+
+  expect_equal(names(response$data$filters), "age")
+  expect_length(response$data$filters$age, 3)
+  expect_equal(response$data$filters$age, list(
+    list(
+      id = "5",
+      name = "20-24"
+    ),
+    list(
+      id = "28",
+      name = "50-64"
+    ),
+    list(
+      id = "3",
+      name = "10-14"
+    )
+  ))
+
+  anc <- file.path("testdata", "anc.csv")
+  res <- MockPlumberResponse$new()
+  response <- endpoint_validate_input(
+    list(postBody = '{"type":"anc","path":"path/to/file"}'),
+    res,
+    "anc",
+    anc)
+  response <- jsonlite::parse_json(response)
+
+  expect_equal(names(response$data$filters), "age")
+  expect_length(response$data$filters$age, 1)
+  expect_equal(response$data$filters$age, list(
+    list(
+      id = "1",
+      name = "0-4"
+    )
+  ))
+
+  survey <- file.path("testdata", "survey.csv")
+  res <- MockPlumberResponse$new()
+  response <- endpoint_validate_input(
+    list(postBody = '{"type":"survey","path":"path/to/file"}'),
+    res,
+    "survey",
+    survey)
+  response <- jsonlite::parse_json(response)
+
+  expect_equal(names(response$data$filters), c("age", "surveys"))
+  expect_length(response$data$filters$age, 11)
+  expect_length(response$data$filters$surveys, 3)
+  expect_equal(response$data$filters$surveys, list(
+    list(
+      id = "MWI2015DHS",
+      name = "MWI2015DHS"
+    ),
+    list(
+      id = "MWI2010DHS",
+      name = "MWI2010DHS"
+    ),
+    list(
+      id = "MWI2004DHS",
+      name = "MWI2004DHS"
+    )
+  ))
 })

@@ -48,3 +48,12 @@ hintr_geojson_read <- function(path) {
   json
 }
 
+json_verbatim <- function(x) {
+  class(x) <- "json"
+  x
+}
+
+to_json <- function(x) {
+  jsonlite::toJSON(x, json_verbatim = TRUE)
+}
+

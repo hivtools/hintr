@@ -18,6 +18,7 @@ Imports:
     context,
     geojsonio,
     jsonlite (>= 1.2.2),
+    naomi,
     plumber,
     R6,
     redux,
@@ -31,3 +32,5 @@ Suggests:
     mockery,
     testthat (>= 2.1.0),
     withr
+Remotes:
+    mrc-ide/naomi

@@ -16,12 +16,14 @@ test_that("validate pjnz", {
                   body = httr::upload_file(payload),
                   encode = "json")
   expect_equal(httr::status_code(r), 200)
-  expect_equal(response_from_json(r),
-               list(status = "success",
-                    errors = list(),
-                    data = list(filename = "Botswana2018.PJNZ",
-                                type = "pjnz",
-                                data = list(country = "Botswana"))))
+  expect_equal(
+    response_from_json(r),
+    list(status = "success",
+         errors = list(),
+         data = list(filename = "Botswana2018.PJNZ",
+                     type = "pjnz",
+                     data = list(country = "Botswana"),
+                     filters = NULL)))
 })
 
 test_that("validate shape", {
@@ -55,7 +57,8 @@ test_that("validate population", {
                     errors = list(),
                     data = list(filename = "population.csv",
                                 type = "population",
-                                data = NULL)))
+                                data = NULL,
+                                filters = NULL)))
 })
 
 test_that("validate programme", {
@@ -74,6 +77,8 @@ test_that("validate programme", {
   expect_equal(response$data$type, "programme")
   expect_true(length(response$data$data) >= 1400)
   expect_equal(typeof(response$data$data[[1]]$value), "integer")
+  expect_equal(names(response$data$filters), "age")
+  expect_length(response$data$filters$age, 3)
 })
 
 test_that("validate ANC", {
@@ -92,6 +97,8 @@ test_that("validate ANC", {
   expect_equal(response$data$type, "anc")
   expect_true(length(response$data$data) >= 800)
   expect_equal(typeof(response$data$data[[1]]$value), "double")
+  expect_equal(names(response$data$filters), "age")
+  expect_length(response$data$filters$age, 1)
 })
 
 test_that("validate survey", {
@@ -110,6 +117,9 @@ test_that("validate survey", {
   expect_equal(response$data$type, "survey")
   expect_true(length(response$data$data) >= 30000)
   expect_equal(typeof(response$data$data[[1]]$value), "double")
+  expect_equal(names(response$data$filters), c("age", "surveys"))
+  expect_length(response$data$filters$age, 11)
+  expect_length(response$data$filters$surveys, 3)
 })
 
 test_that("validate baseline", {

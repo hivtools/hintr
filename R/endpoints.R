@@ -110,18 +110,6 @@ endpoint_validate_input <- function(req, res, type, path) {
     validate_if_exists(path))
   if (response$success) {
     response$value <- input_response(response$value, path, type)
-
-    # Add placeholder filters
-    if (type=="shape") {
-      response$value$filters <- list()
-    }
-    if (type=="programme" || type=="anc") {
-      response$value$filters <- list(age=list())
-    }
-    if (type=="survey") {
-      response$value$filters <- list(age=list(), surveys=list())
-    }
-
   } else {
     response$errors <- hintr_errors(list("INVALID_FILE" = response$message))
     res$status <- 400
@@ -131,10 +119,11 @@ endpoint_validate_input <- function(req, res, type, path) {
 }
 
 
-input_response <- function(data, path, type) {
+input_response <- function(value, path, type) {
   ret <- list(filename = scalar(basename(path)),
               type = scalar(type),
-              data = data)
+              data = value$data,
+              filters = value$filters)
   validate_json_schema(to_json(ret), get_input_response_schema(type), "data")
   ret
 }
@@ -238,13 +227,4 @@ serializer_json_hintr <- function() {
       errorHandler(req, res, e)
     })
   }
-}
-
-json_verbatim <- function(x) {
-  class(x) <- "json"
-  x
-}
-
-to_json <- function(x) {
-  jsonlite::toJSON(x, json_verbatim = TRUE)
 }

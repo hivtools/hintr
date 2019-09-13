@@ -3,7 +3,10 @@ do_validate_pjnz <- function(pjnz) {
   if (country == "GBR") {
     stop("Invalid country")
   }
-  list(country = scalar(country))
+  list(
+    data = list(country = scalar(country)),
+    filters = scalar(NA)
+  )
 }
 
 read_country <- function(pjnz) {
@@ -82,7 +85,9 @@ do_validate_shape <- function(shape) {
   # Then we have to *reread* the file now that we know that it is
   # valid, but but this is not too slow, especially as the file is now
   # in cache (but still ~1/20s)
-  json_verbatim(read_string(shape))
+  ## TODO: Add shape region filters
+  list(data = json_verbatim(read_string(shape)),
+       filters = NULL)
 }
 
 #' Validate population file.
@@ -99,7 +104,8 @@ do_validate_population <- function(population) {
   assert_column_names(
     colnames(population),
     c("iso3", "area_id", "time", "sex", "age_group_id", "source", "population"))
-  scalar(NA)
+  list(data = scalar(NA),
+       filters = scalar(NA))
 }
 
 #' Validate programme ART data file.
@@ -116,7 +122,8 @@ do_validate_programme <- function(programme) {
   assert_column_names(
     colnames(programme),
     c("iso3", "area_id", "period", "sex", "age_group_id", "indicator", "value"))
-  programme
+  list(data = programme,
+       filters = list("age" = get_age_filters(programme)))
 }
 
 #' Validate ANC data file.
@@ -133,7 +140,8 @@ do_validate_anc <- function(anc) {
   assert_column_names(
     colnames(anc),
     c("iso3", "area_id", "period", "sex", "age_group_id", "indicator", "value"))
-  anc
+  list(data = anc,
+       filters = list("age" = get_age_filters(anc)))
 }
 
 #' Validate survey data file.
@@ -152,6 +160,9 @@ do_validate_survey <- function(survey) {
     c("iso3", "area_id", "survey_id", "year", "sex", "age_group_id",
       "indicator", "value", "se", "ci_l", "ci_u"))
   survey
+  list(data = survey,
+       filters = list("age" = get_age_filters(survey),
+                      "surveys" = get_survey_filters(survey)))
 }
 
 #' Validate collection of baseline data for consistency.

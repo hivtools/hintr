@@ -19,6 +19,8 @@ docker run --rm -d --network=host --mount type=volume,src=upload_volume,dst=/upl
   --name hintr mrcide/hintr:latest
 ```
 
+For a more complete example of running on a network see [docker test script](https://github.com/mrc-ide/hintr/blob/master/docker/test).
+
 Test that container is working by using:
 ```
 curl http://localhost:8888
@@ -28,7 +30,7 @@ Validate PJNZ:
 ``` 
 curl -X POST -H 'Content-Type: application/json' \
      --data @example/docker_payload.json http://localhost:8888/validate/input
-#> {"status":"success","errors":{},"data":{"filename":"Botswana2018.PJNZ","type":"pjnz","data":{"country":"Botswana"}}}
+#> {"status":"success","errors":{},"data":{"filename":"Botswana2018.PJNZ","type":"pjnz","data":{"country":"Botswana"},"filters":null}}
 ```
 
 Validate shape file and return serialised data:
@@ -41,7 +43,7 @@ Validate population data:
 ```
 curl -X POST -H 'Content-Type: application/json' \
      --data @example/docker_validate_population_payload.json http://localhost:8888/validate/input
-#> {"status":"success","errors":{},"data":{"filename":"population.csv","type":"population","data":null}
+#> {"status":"success","errors":{},"data":{"filename":"population.csv","type":"population","data":null,"filters":null}
 ```
 
 Validate baseline data:
