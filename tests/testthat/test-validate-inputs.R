@@ -55,7 +55,8 @@ test_that("do_validate_population validates population file", {
 
 test_that("do_validate_programme validates programme file", {
   programme <- file.path("testdata", "programme.csv")
-  data <- do_validate_programme(programme)
+  shape <- file.path("testdata", "malawi.geojson")
+  data <- do_validate_programme(programme, shape)
   ## Some arbitrary test that the data has actually been returned
   expect_true(nrow(data$data) > 1400)
   expect_equal(typeof(data$data$value), "integer")
@@ -73,7 +74,8 @@ test_that("do_validate_programme validates programme file", {
 
 test_that("do_validate_anc validates ANC file", {
   anc <- file.path("testdata", "anc.csv")
-  data <- do_validate_anc(anc)
+  shape <- file.path("testdata", "malawi.geojson")
+  data <- do_validate_anc(anc, shape)
   ## Some arbitrary test that the data has actually been returned
   expect_true(nrow(data$data) > 800)
   expect_equal(typeof(data$data$value), "double")
@@ -85,7 +87,8 @@ test_that("do_validate_anc validates ANC file", {
 
 test_that("do_validate_survey validates survey file", {
   survey <- file.path("testdata", "survey.csv")
-  data <- do_validate_survey(survey)
+  shape <- file.path("testdata", "malawi.geojson")
+  data <- do_validate_survey(survey, shape)
   ## Some arbitrary test that the data has actually been returned
   expect_true(nrow(data$data) > 30000)
   expect_equal(typeof(data$data$value), "double")

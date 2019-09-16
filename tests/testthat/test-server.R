@@ -64,11 +64,11 @@ test_that("validate population", {
 test_that("validate programme", {
   server <- hintr_server()
 
-  programme <- file.path("testdata", "programme.csv")
-  body <- list(type = scalar("programme"), path = scalar(programme))
-
-  r <- httr::POST(paste0(server$url, "/validate/input"), body = body,
-                  encode = "json")
+  payload <- file.path("payload", "validate_programme_payload.json")
+  r <- httr::POST(
+    paste0(server$url, "/validate/survey_and_programme"),
+    body = httr::upload_file(payload),
+    encode = "json")
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
   expect_equal(response$status, "success")
@@ -84,11 +84,11 @@ test_that("validate programme", {
 test_that("validate ANC", {
   server <- hintr_server()
 
-  anc <- file.path("testdata", "anc.csv")
-  body <- list(type = scalar("anc"), path = scalar(anc))
-
-  r <- httr::POST(paste0(server$url, "/validate/input"), body = body,
-                  encode = "json")
+  payload <- file.path("payload", "validate_anc_payload.json")
+  r <- httr::POST(
+    paste0(server$url, "/validate/survey_and_programme"),
+    body = httr::upload_file(payload),
+    encode = "json")
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
   expect_equal(response$status, "success")
@@ -104,11 +104,11 @@ test_that("validate ANC", {
 test_that("validate survey", {
   server <- hintr_server()
 
-  survey <- file.path("testdata", "survey.csv")
-  body <- list(type = scalar("survey"), path = scalar(survey))
-
-  r <- httr::POST(paste0(server$url, "/validate/input"), body = body,
-                  encode = "json")
+  payload <- file.path("payload", "validate_survey_payload.json")
+  r <- httr::POST(
+    paste0(server$url, "/validate/survey_and_programme"),
+    body = httr::upload_file(payload),
+    encode = "json")
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
   expect_equal(response$status, "success")

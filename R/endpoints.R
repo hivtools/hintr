@@ -4,6 +4,8 @@ api_build <- function(queue) {
             serializer = serializer_json_hintr())
   pr$handle("POST", "/validate/baseline", endpoint_validate_baseline,
             serializer = serializer_json_hintr())
+  pr$handle("POST", "/validate/survey_and_programme", endpoint_validate_survey_programme,
+            serializer = serializer_json_hintr())
   pr$handle("POST", "/model/submit", endpoint_model_submit(queue),
             serializer = serializer_json_hintr())
   pr$handle("GET", "/model/status/<id>", endpoint_model_status(queue),
@@ -98,16 +100,48 @@ endpoint_validate_input <- function(req, res, type, path) {
   validate_func <- switch(type,
     pjnz = do_validate_pjnz,
     shape = do_validate_shape,
-    population = do_validate_population,
-    programme = do_validate_programme,
-    anc = do_validate_anc,
-    survey = do_validate_survey)
+    population = do_validate_population)
   validate_if_exists <- function(path) {
     assert_file_exists(path)
     validate_func(path)
   }
   response <- with_success(
     validate_if_exists(path))
+  if (response$success) {
+    response$value <- input_response(response$value, path, type)
+  } else {
+    response$errors <- hintr_errors(list("INVALID_FILE" = response$message))
+    res$status <- 400
+  }
+
+  hintr_response(response, "ValidateInputResponse")
+}
+
+#' Validate survey and programme data including consistency with shape file
+#' returning an indication of success and if successful return the data
+#' required by UI.
+#'
+#' @param req The request as PlumberRequest object.
+#' @param res The response as a PlumberResponse object.
+#' @param type The type of file to validate: ANC, survey or programme.
+#' @param path Path to the file to validate.
+#' @param shape Path to shape file for comparison.
+#'
+#' @return Validated JSON response with data and incidcation of success.
+#' @keywords internal
+endpoint_validate_survey_programme <- function(req, res, type, path, shape) {
+  validate_json_schema(req$postBody, "ValidateSurveyAndProgrammeRequest")
+  validate_func <- switch(type,
+                          programme = do_validate_programme,
+                          anc = do_validate_anc,
+                          survey = do_validate_survey)
+  validate_if_exists <- function(path, shape) {
+    assert_file_exists(path)
+    assert_file_exists(shape)
+    validate_func(path, shape)
+  }
+  response <- with_success(
+    validate_if_exists(path, shape))
   if (response$success) {
     response$value <- input_response(response$value, path, type)
   } else {

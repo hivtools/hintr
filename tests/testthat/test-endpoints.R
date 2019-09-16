@@ -98,7 +98,8 @@ test_that("plumber api can be built", {
   expect_length(api$routes, 3)
   expect_equal(names(api$routes),
                c("validate", "model", ""))
-  expect_equal(names(api$routes$validate), c("input", "baseline"))
+  expect_equal(names(api$routes$validate), c("input", "baseline",
+                                             "survey_and_programme"))
   expect_equal(names(api$routes$model), c("submit", "status", "result"))
 })
 
@@ -187,12 +188,14 @@ test_that("Schemas do not use const", {
 
 test_that("possible filters are returned for data", {
   programme <- file.path("testdata", "programme.csv")
+  shape <- file.path("testdata", "malawi.geojson")
   res <- MockPlumberResponse$new()
-  response <- endpoint_validate_input(
-    list(postBody = '{"type":"programme","path":"path/to/file"}'),
+  response <- endpoint_validate_survey_programme(
+    list(postBody = '{"type":"programme","path":"path/to/file","shape":"path"}'),
     res,
     "programme",
-    programme)
+    programme,
+    shape)
   response <- jsonlite::parse_json(response)
 
   expect_equal(names(response$data$filters), "age")
@@ -214,11 +217,12 @@ test_that("possible filters are returned for data", {
 
   anc <- file.path("testdata", "anc.csv")
   res <- MockPlumberResponse$new()
-  response <- endpoint_validate_input(
-    list(postBody = '{"type":"anc","path":"path/to/file"}'),
+  response <- endpoint_validate_survey_programme(
+    list(postBody = '{"type":"anc","path":"path/to/file","shape":"path"}'),
     res,
     "anc",
-    anc)
+    anc,
+    shape)
   response <- jsonlite::parse_json(response)
 
   expect_equal(names(response$data$filters), "age")
@@ -232,11 +236,12 @@ test_that("possible filters are returned for data", {
 
   survey <- file.path("testdata", "survey.csv")
   res <- MockPlumberResponse$new()
-  response <- endpoint_validate_input(
-    list(postBody = '{"type":"survey","path":"path/to/file"}'),
+  response <- endpoint_validate_survey_programme(
+    list(postBody = '{"type":"survey","path":"path/to/file","shape":"path"}'),
     res,
     "survey",
-    survey)
+    survey,
+    shape)
   response <- jsonlite::parse_json(response)
 
   expect_equal(names(response$data$filters), c("age", "surveys"))

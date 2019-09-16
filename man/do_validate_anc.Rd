@@ -4,7 +4,7 @@
 \alias{do_validate_anc}
 \title{Validate ANC data file.}
 \usage{
-do_validate_anc(anc)
+do_validate_anc(anc, shape)
 }
 \arguments{
 \item{anc}{Path to input population file.}
