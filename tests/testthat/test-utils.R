@@ -15,3 +15,19 @@ test_that("system file returns useful message when file cannot be located ", {
 "Failed to locate file from args
 testdata missing_file.txt hintr")
 })
+
+test_that("collapse prepares vector for printing", {
+  test_vector <- c("one", "two", "three", "four", "five", "six")
+  expect_equal(collapse(test_vector),
+               "one, two, three, four, five, six")
+  expect_equal(collapse(test_vector, limit = 4),
+               "one, two, three, four, ...")
+  expect_equal(collapse(test_vector, limit = 4, end = NULL),
+               "one, two, three, four")
+  expect_equal(collapse(test_vector, limit = 6),
+               "one, two, three, four, five, six")
+  expect_equal(collapse(test_vector, limit = 4, end = ", etc."),
+               "one, two, three, four, etc.")
+  expect_equal(collapse(test_vector, collapse = " and ", limit = 2, end = NULL),
+               "one and two")
+})

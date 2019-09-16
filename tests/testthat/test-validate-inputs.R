@@ -107,6 +107,27 @@ test_that("do_validate_survey validates survey file", {
   expect_equal(data$filters$survey, expected_survey)
 })
 
+test_that("do_validate_programme returns useful error from shapefile comparison", {
+  programme <- file.path("testdata", "programme.csv")
+  shape <- file.path("testdata", "malawi_missing_regions.geojson")
+  expect_error(do_validate_programme(programme, shape),
+    "Regions aren't consistent programme file contains 28 regions missing from shape file including:\n\\w+")
+})
+
+test_that("do_validate_anc returns useful error from shapefile comparison", {
+  anc <- file.path("testdata", "anc.csv")
+  shape <- file.path("testdata", "malawi_missing_regions.geojson")
+  expect_error(do_validate_anc(anc, shape),
+    "Regions aren't consistent ANC file contains 28 regions missing from shape file including:\n\\w+")
+})
+
+test_that("do_validate_survey returns useful error from shapefile comparison", {
+  survey <- file.path("testdata", "survey.csv")
+  shape <- file.path("testdata", "malawi_missing_regions.geojson")
+  expect_error(do_validate_survey(survey, shape),
+    "Regions aren't consistent survey file contains 434 regions missing from shape file including:\n\\w+")
+})
+
 test_that("converting from numeric to iso3 works", {
   expect_equal(iso_numeric_to_alpha_3(454), "MWI")
   expect_equal(iso_numeric_to_alpha_3(084), "BLZ")

@@ -55,7 +55,8 @@ test_that("assert_consistent_regions checks for consistent regions", {
   expect_true(assert_consistent_regions(shape_regions, shape_regions, "population"))
   test_regions <- c("Rumphi", "Balaka", "Blantyre", "Chikwawa", "Chiradzulu")
   expect_error(assert_consistent_regions(shape_regions, test_regions, "population"),
-    "Regions aren't consistent population file contains regions Rumphi, Balaka missing from shape file.")
+    "Regions aren't consistent population file contains 2 regions missing from shape file including:
+Rumphi, Balaka")
 })
 
 test_that("assert_file_exists throws error if file doesn't exist", {

@@ -68,9 +68,13 @@ assert_consistent_regions <- function(shape_regions, test_regions, test_source) 
   ## Regions are fine if regions from shape file are a super set of the
   ## regions being tested
   if (!is_superset(shape_regions, test_regions)) {
+    missing_regions <- setdiff(test_regions, shape_regions)
     stop(sprintf(
-      "Regions aren't consistent %s file contains regions %s missing from shape file.",
-      test_source, paste0(setdiff(test_regions, shape_regions), collapse = ", ")))
+      "Regions aren't consistent %s file contains %d %s missing from shape file including:\n%s",
+      test_source,
+      length(missing_regions),
+      ngettext(length(missing_regions), "region", "regions"),
+      collapse(missing_regions)))
   }
   invisible(TRUE)
 }

@@ -170,7 +170,7 @@ do_validate_survey <- function(survey, shape) {
       "indicator", "value", "se", "ci_l", "ci_u"))
   assert_consistent_regions(read_regions(shape, "shape"),
                             read_regions(survey, "survey"),
-                            "ANC")
+                            "survey")
   list(data = data,
        filters = list("age" = get_age_filters(data),
                       "surveys" = get_survey_filters(data)))
