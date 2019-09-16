@@ -1,4 +1,5 @@
 {
   "type": "survey",
-  "path": "tests/testthat/testdata/survey.csv"
+  "path": "tests/testthat/testdata/survey.csv",
+  "shape": "tests/testthat/testdata/malawi.geojson"
 }
