@@ -32,4 +32,5 @@ test_that("collapse prepares vector for printing", {
                "one, two, three, four, etc.")
   expect_equal(collapse(test_vector, collapse = " and ", limit = 13, end = NULL),
                "one and two")
+  expect_equal(collapse(test_vector, limit = 1), "...")
 })
