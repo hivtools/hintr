@@ -66,7 +66,7 @@ test_that("validate programme", {
 
   payload <- file.path("payload", "validate_programme_payload.json")
   r <- httr::POST(
-    paste0(server$url, "/validate/survey_and_programme"),
+    paste0(server$url, "/validate/survey-and-programme"),
     body = httr::upload_file(payload),
     encode = "json")
   expect_equal(httr::status_code(r), 200)
@@ -86,7 +86,7 @@ test_that("validate ANC", {
 
   payload <- file.path("payload", "validate_anc_payload.json")
   r <- httr::POST(
-    paste0(server$url, "/validate/survey_and_programme"),
+    paste0(server$url, "/validate/survey-and-programme"),
     body = httr::upload_file(payload),
     encode = "json")
   expect_equal(httr::status_code(r), 200)
@@ -106,7 +106,7 @@ test_that("validate survey", {
 
   payload <- file.path("payload", "validate_survey_payload.json")
   r <- httr::POST(
-    paste0(server$url, "/validate/survey_and_programme"),
+    paste0(server$url, "/validate/survey-and-programme"),
     body = httr::upload_file(payload),
     encode = "json")
   expect_equal(httr::status_code(r), 200)

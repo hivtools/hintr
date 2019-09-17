@@ -56,19 +56,19 @@ curl -X POST -H 'Content-Type: application/json' \
 Validate programme ART data:
 ```
 curl -X POST -H 'Content-Type: application/json' \
-     --data @example/docker_validate_programme_payload.json http://localhost:8888/validate/survey_and_programme
+     --data @example/docker_validate_programme_payload.json http://localhost:8888/validate/survey-and-programme
 ```
 
 Validate ANC data:
 ```
 curl -X POST -H 'Content-Type: application/json' \
-     --data @example/docker_validate_anc_payload.json http://localhost:8888/validate/survey_and_programme
+     --data @example/docker_validate_anc_payload.json http://localhost:8888/validate/survey-and-programme
 ```
 
 Validate survey data:
 ```
 curl -X POST -H 'Content-Type: application/json' \
-     --data @example/docker_validate_survey_payload.json http://localhost:8888/validate/survey_and_programme
+     --data @example/docker_validate_survey_payload.json http://localhost:8888/validate/survey-and-programme
 ```
 
 Run a model:
