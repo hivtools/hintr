@@ -1,6 +1,6 @@
 # hintr 0.0.3
 
-* Split baseline validation endpoint from survey and programme data validation endpoint
+* Validate survey and programme data using a different endpoint from the validation of baseline data
 
 # hintr 0.0.2
 
