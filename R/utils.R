@@ -21,22 +21,26 @@ read_string <- function(path) {
 
 #' Collapse a vector into a human readable format for returning in messages
 #'
+#' Limits the returned message based on a character maximum.
+#'
 #' @param vector The vector to collapse
 #' @param collapse Separator between each element after collapse
-#' @param limit Max number of items from vector to return in string
-#' @param end If length of vector over the max a string to append to the end
+#' @param limit Max character length for message
+#' @param end If length of message is over the limit this string will be
+#' appended to the end
 #'
 #' @return The collapsed vector as a string.
 #' @keywords internal
-collapse <- function(vector, collapse = ", ", limit = 10, end = ", ...") {
-  truncated <- FALSE
-  if (length(vector) > limit) {
-    vector <- vector[seq_len(limit)]
-    truncated <- TRUE
+collapse <- function(vector, collapse = ", ", limit = 150, end = "...") {
+  width <- nchar(vector)
+  width[-1] <- width[-1] + nchar(collapse)
+  too_long <- cumsum(width) >= limit
+  if (any(too_long)) {
+    vector <- vector[!too_long]
+    if (!is.null(end) && end != "") {
+      vector <- c(vector, end)
+    }
   }
-  out <- paste0(vector, collapse = collapse)
-  if (!is.null(end) && truncated) {
-    out <- paste(out, end, sep = "")
-  }
+  out <- paste(vector, collapse = collapse)
   out
 }

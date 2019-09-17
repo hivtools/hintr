@@ -20,14 +20,16 @@ test_that("collapse prepares vector for printing", {
   test_vector <- c("one", "two", "three", "four", "five", "six")
   expect_equal(collapse(test_vector),
                "one, two, three, four, five, six")
-  expect_equal(collapse(test_vector, limit = 4),
+  expect_equal(collapse(test_vector, limit = 27),
                "one, two, three, four, ...")
-  expect_equal(collapse(test_vector, limit = 4, end = NULL),
+  expect_equal(collapse(test_vector, limit = 28),
+               "one, two, three, four, five, ...")
+  expect_equal(collapse(test_vector, limit = 25, end = NULL),
                "one, two, three, four")
-  expect_equal(collapse(test_vector, limit = 6),
+  expect_equal(collapse(test_vector, limit = 40),
                "one, two, three, four, five, six")
-  expect_equal(collapse(test_vector, limit = 4, end = ", etc."),
+  expect_equal(collapse(test_vector, limit = 25, end = "etc."),
                "one, two, three, four, etc.")
-  expect_equal(collapse(test_vector, collapse = " and ", limit = 2, end = NULL),
+  expect_equal(collapse(test_vector, collapse = " and ", limit = 13, end = NULL),
                "one and two")
 })
