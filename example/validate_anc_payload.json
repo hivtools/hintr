@@ -1,4 +1,5 @@
 {
   "type": "anc",
-  "path": "tests/testthat/testdata/anc.csv"
+  "path": "tests/testthat/testdata/anc.csv",
+  "shape": "tests/testthat/testdata/malawi.geojson"
 }

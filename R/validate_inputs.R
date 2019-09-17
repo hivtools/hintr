@@ -46,6 +46,9 @@ read_regions <- function(file, type) {
   func <- switch(type,
     "shape" = read_geojson_regions,
     "population" = read_csv_regions,
+    "programme" = read_csv_regions,
+    "anc" = read_csv_regions,
+    "survey" = read_csv_regions,
     stop(sprintf("Can't read regions from data of type %s.", type)))
   func(file)
 }
@@ -116,14 +119,17 @@ do_validate_population <- function(population) {
 #'
 #' @return An error if invalid.
 #' @keywords internal
-do_validate_programme <- function(programme) {
-  programme <- read_csv(programme, header = TRUE)
-  assert_single_country(programme, "programme")
+do_validate_programme <- function(programme, shape) {
+  data <- read_csv(programme, header = TRUE)
+  assert_single_country(data, "programme")
   assert_column_names(
-    colnames(programme),
+    colnames(data),
     c("iso3", "area_id", "period", "sex", "age_group_id", "indicator", "value"))
-  list(data = programme,
-       filters = list("age" = get_age_filters(programme)))
+  assert_consistent_regions(read_regions(shape, "shape"),
+                            read_regions(programme, "programme"),
+                            "programme")
+  list(data = data,
+       filters = list("age" = get_age_filters(data)))
 }
 
 #' Validate ANC data file.
@@ -134,14 +140,17 @@ do_validate_programme <- function(programme) {
 #'
 #' @return An error if invalid.
 #' @keywords internal
-do_validate_anc <- function(anc) {
-  anc <- read_csv(anc, header = TRUE)
-  assert_single_country(anc, "anc")
+do_validate_anc <- function(anc, shape) {
+  data <- read_csv(anc, header = TRUE)
+  assert_single_country(data, "anc")
   assert_column_names(
-    colnames(anc),
+    colnames(data),
     c("iso3", "area_id", "period", "sex", "age_group_id", "indicator", "value"))
-  list(data = anc,
-       filters = list("age" = get_age_filters(anc)))
+  assert_consistent_regions(read_regions(shape, "shape"),
+                            read_regions(anc, "anc"),
+                            "ANC")
+  list(data = data,
+       filters = list("age" = get_age_filters(data)))
 }
 
 #' Validate survey data file.
@@ -152,17 +161,19 @@ do_validate_anc <- function(anc) {
 #'
 #' @return An error if invalid.
 #' @keywords internal
-do_validate_survey <- function(survey) {
-  survey <- read_csv(survey, header = TRUE)
-  assert_single_country(survey, "survey")
+do_validate_survey <- function(survey, shape) {
+  data <- read_csv(survey, header = TRUE)
+  assert_single_country(data, "survey")
   assert_column_names(
-    colnames(survey),
+    colnames(data),
     c("iso3", "area_id", "survey_id", "year", "sex", "age_group_id",
       "indicator", "value", "se", "ci_l", "ci_u"))
-  survey
-  list(data = survey,
-       filters = list("age" = get_age_filters(survey),
-                      "surveys" = get_survey_filters(survey)))
+  assert_consistent_regions(read_regions(shape, "shape"),
+                            read_regions(survey, "survey"),
+                            "survey")
+  list(data = data,
+       filters = list("age" = get_age_filters(data),
+                      "surveys" = get_survey_filters(data)))
 }
 
 #' Validate collection of baseline data for consistency.

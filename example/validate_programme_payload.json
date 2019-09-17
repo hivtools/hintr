@@ -1,4 +1,5 @@
 {
   "type": "programme",
-  "path": "tests/testthat/testdata/programme.csv"
+  "path": "tests/testthat/testdata/programme.csv",
+  "shape": "tests/testthat/testdata/malawi.geojson"
 }
