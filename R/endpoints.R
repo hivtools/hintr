@@ -101,12 +101,10 @@ endpoint_validate_input <- function(req, res, type, path) {
     pjnz = do_validate_pjnz,
     shape = do_validate_shape,
     population = do_validate_population)
-  validate_if_exists <- function(path) {
+  response <- with_success({
     assert_file_exists(path)
     validate_func(path)
-  }
-  response <- with_success(
-    validate_if_exists(path))
+  })
   if (response$success) {
     response$value <- input_response(response$value, path, type)
   } else {
@@ -135,13 +133,11 @@ endpoint_validate_survey_programme <- function(req, res, type, path, shape) {
                           programme = do_validate_programme,
                           anc = do_validate_anc,
                           survey = do_validate_survey)
-  validate_if_exists <- function(path, shape) {
+  response <- with_success({
     assert_file_exists(path)
     assert_file_exists(shape)
     validate_func(path, shape)
-  }
-  response <- with_success(
-    validate_if_exists(path, shape))
+  })
   if (response$success) {
     response$value <- input_response(response$value, path, type)
   } else {
