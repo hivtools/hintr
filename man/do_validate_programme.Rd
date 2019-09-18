@@ -4,7 +4,7 @@
 \alias{do_validate_programme}
 \title{Validate programme ART data file.}
 \usage{
-do_validate_programme(programme)
+do_validate_programme(programme, shape)
 }
 \arguments{
 \item{programme}{Path to input population file.}
