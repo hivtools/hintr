@@ -106,7 +106,7 @@ do_validate_population <- function(population) {
   assert_single_country(population, "population")
   assert_column_names(
     colnames(population),
-    c("iso3", "area_id", "time", "sex", "age_group_id", "source", "population"))
+    c("area_id", "quarter_id", "sex", "age_group_id", "source", "population"))
   list(data = scalar(NA),
        filters = scalar(NA))
 }
@@ -124,7 +124,7 @@ do_validate_programme <- function(programme, shape) {
   assert_single_country(data, "programme")
   assert_column_names(
     colnames(data),
-    c("iso3", "area_id", "period", "sex", "age_group_id", "indicator", "value"))
+    c("area_id", "quarter_id", "sex", "age_group_id", "current_art"))
   assert_consistent_regions(read_regions(shape, "shape"),
                             read_regions(programme, "programme"),
                             "programme")
@@ -145,10 +145,14 @@ do_validate_anc <- function(anc, shape) {
   assert_single_country(data, "anc")
   assert_column_names(
     colnames(data),
-    c("iso3", "area_id", "period", "sex", "age_group_id", "indicator", "value"))
+    c("area_id", "age_group_id", "quarter_id", "anc_clients",
+      "ancrt_hiv_status", "ancrt_known_pos", "ancrt_already_art",
+      "ancrt_tested", "ancrt_test_pos"))
   assert_consistent_regions(read_regions(shape, "shape"),
                             read_regions(anc, "anc"),
                             "ANC")
+  ## TODO: Call naomi to calculate prevalence & art_coverage which is what we
+  ## need to return to the front end for plotting.
   list(data = data,
        filters = list("age" = get_age_filters(data)))
 }

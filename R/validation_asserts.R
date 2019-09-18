@@ -14,18 +14,26 @@ assert_single_country <- function(data, type) {
 }
 
 assert_single_country.geojson <- function(data, type) {
+  ## TODO: geojson will contain the spectrum ID perhaps that will make a more
+  ## appropriate check of single country? See once geojson has been updated by
+  ## Jeff
   country <- vapply(data$features, function(x) {
-    x$properties$iso3
+    substr(x$properties$area_id, 1, 3)
   }, character(1))
   assert_single_country(country, type)
 }
 
 assert_single_country.data.frame <- function(data, type) {
-  assert_single_country(data$iso3, type)
+  assert_single_country(substr(data$area_id, 1, 3), type)
 }
 
 assert_single_country.character <- function(data, type) {
-  if (length(unique(data)) != 1) {
+  if (length(unique(data)) == 0) {
+    stop(sprintf(
+      "%s file contains no regions. Check file has an area_id column.",
+      to_upper_first(type)
+    ))
+  } else if (length(unique(data)) != 1) {
     stop(sprintf(
       "%s file contains regions for more than one country. Got countries %s.",
       to_upper_first(type), toString(unique(data))))

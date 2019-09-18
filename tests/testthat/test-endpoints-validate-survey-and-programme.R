@@ -17,7 +17,7 @@ test_that("endpoint_validate_survey_programme supports programme file", {
   expect_equal(res$status, 200)
   ## Sanity check that data has been returned
   expect_true(length(response$data$data) >= 1400)
-  expect_equal(typeof(response$data$data[[1]]$value), "integer")
+  expect_equal(typeof(response$data$data[[1]]$current_art), "double")
 })
 
 test_that("endpoint_validate_survey_programme returns error on invalid programme data", {
@@ -37,7 +37,7 @@ test_that("endpoint_validate_survey_programme returns error on invalid programme
   expect_equal(response$data, structure(list(), names = character(0)))
   expect_length(response$errors, 1)
   expect_equal(response$errors[[1]]$error, "INVALID_FILE")
-  expect_equal(response$errors[[1]]$detail, "Data missing column area_id.")
+  expect_equal(response$errors[[1]]$detail, "Data missing column quarter_id.")
 })
 
 test_that("endpoint_validate_survey_programme supports ANC file", {
@@ -57,7 +57,10 @@ test_that("endpoint_validate_survey_programme supports ANC file", {
   expect_equal(res$status, 200)
   ## Sanity check that data has been returned
   expect_true(length(response$data$data) >= 800)
-  expect_equal(typeof(response$data$data[[1]]$value), "double")
+  ## TODO: Add test to ensure we are returning prevalence & art coverage are
+  ## returned to front end for plotting.
+  ##expect_equal(typeof(response$data$data[[1]]$prevalence), "double")
+  ##expect_equal(typeof(response$data$data[[1]]$art_coverage), "double")
 })
 
 test_that("endpoint_validate_survey_programme returns error on invalid ANC data", {

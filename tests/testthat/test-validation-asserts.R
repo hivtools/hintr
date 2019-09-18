@@ -16,6 +16,9 @@ test_that("assert fails if more than once country in json", {
   df[11, "iso3"] <- "AGO"
   expect_error(assert_single_country(df, "population"),
                "Population file contains regions for more than one country. Got countries MWI, AGO.")
+
+  expect_error(assert_single_country(character(0), "test"),
+               "Test file contains no regions. Check file has an area_id column.")
 })
 
 test_that("assert fails if a feature is missing an area id", {
