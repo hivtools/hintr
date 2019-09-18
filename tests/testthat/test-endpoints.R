@@ -199,19 +199,15 @@ test_that("possible filters are returned for data", {
   response <- jsonlite::parse_json(response)
 
   expect_equal(names(response$data$filters), "age")
-  expect_length(response$data$filters$age, 3)
+  expect_length(response$data$filters$age, 2)
   expect_equal(response$data$filters$age, list(
     list(
-      id = "5",
-      name = "20-24"
+      id = "24",
+      name = "0-14"
     ),
     list(
-      id = "28",
-      name = "50-64"
-    ),
-    list(
-      id = "3",
-      name = "10-14"
+      id = "20",
+      name = "15+"
     )
   ))
 
@@ -229,8 +225,8 @@ test_that("possible filters are returned for data", {
   expect_length(response$data$filters$age, 1)
   expect_equal(response$data$filters$age, list(
     list(
-      id = "1",
-      name = "0-4"
+      id = "18",
+      name = "15-49"
     )
   ))
 
@@ -245,9 +241,13 @@ test_that("possible filters are returned for data", {
   response <- jsonlite::parse_json(response)
 
   expect_equal(names(response$data$filters), c("age", "surveys"))
-  expect_length(response$data$filters$age, 11)
-  expect_length(response$data$filters$surveys, 3)
+  expect_length(response$data$filters$age, 21)
+  expect_length(response$data$filters$surveys, 4)
   expect_equal(response$data$filters$surveys, list(
+    list(
+      id = "MWI2016PHIA",
+      name = "MWI2016PHIA"
+    ),
     list(
       id = "MWI2015DHS",
       name = "MWI2015DHS"

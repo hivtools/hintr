@@ -40,7 +40,7 @@ test_that("validate shape", {
   expect_equal(response$errors, list())
   expect_equal(response$data$filename, "malawi.geojson")
   expect_equal(response$data$type, "shape")
-  expect_equal(names(response$data$data), c("type", "features"))
+  expect_true(all(c("type", "features") %in% names(response$data$data)))
   expect_equal(response$data$data$type, "FeatureCollection")
 })
 
@@ -76,9 +76,9 @@ test_that("validate programme", {
   expect_equal(response$data$filename, "programme.csv")
   expect_equal(response$data$type, "programme")
   expect_true(length(response$data$data) >= 1400)
-  expect_equal(typeof(response$data$data[[1]]$value), "integer")
+  expect_equal(typeof(response$data$data[[1]]$current_art), "double")
   expect_equal(names(response$data$filters), "age")
-  expect_length(response$data$filters$age, 3)
+  expect_length(response$data$filters$age, 2)
 })
 
 test_that("validate ANC", {
@@ -96,7 +96,7 @@ test_that("validate ANC", {
   expect_equal(response$data$filename, "anc.csv")
   expect_equal(response$data$type, "anc")
   expect_true(length(response$data$data) >= 800)
-  expect_equal(typeof(response$data$data[[1]]$value), "double")
+  expect_equal(typeof(response$data$data[[1]]$ancrt_hiv_status), "integer")
   expect_equal(names(response$data$filters), "age")
   expect_length(response$data$filters$age, 1)
 })
@@ -115,11 +115,11 @@ test_that("validate survey", {
   expect_equal(response$errors, list())
   expect_equal(response$data$filename, "survey.csv")
   expect_equal(response$data$type, "survey")
-  expect_true(length(response$data$data) >= 30000)
-  expect_equal(typeof(response$data$data[[1]]$value), "double")
+  expect_true(length(response$data$data) >= 20000)
+  expect_equal(typeof(response$data$data[[1]]$est), "double")
   expect_equal(names(response$data$filters), c("age", "surveys"))
-  expect_length(response$data$filters$age, 11)
-  expect_length(response$data$filters$surveys, 3)
+  expect_length(response$data$filters$age, 21)
+  expect_length(response$data$filters$surveys, 4)
 })
 
 test_that("validate baseline", {

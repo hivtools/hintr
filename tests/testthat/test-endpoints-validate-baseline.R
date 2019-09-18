@@ -26,7 +26,7 @@ test_that("endpoint_validate_baseline returns error on invalid data", {
                 '{"pjnz": "path/to/file",
                   "shape": "path/to/file",
                   "population": "path/to.file"}')
-  mock_read_iso3 <- mockery::mock(084, 454)
+  mock_read_iso3 <- mockery::mock("BLZ", "MWI")
   with_mock("hintr:::read_iso3" = mock_read_iso3, {
     res <- MockPlumberResponse$new()
     response <- endpoint_validate_baseline(req, res, pjnz, shape, population)

@@ -100,8 +100,8 @@ test_that("endpoint_validate_survey_programme supports survey file", {
   expect_equal(response$data$filename, "survey.csv")
   expect_equal(res$status, 200)
   ## Sanity check that data has been returned
-  expect_true(length(response$data$data) >= 30000)
-  expect_equal(typeof(response$data$data[[1]]$value), "double")
+  expect_true(length(response$data$data) >= 20000)
+  expect_equal(typeof(response$data$data[[1]]$est), "double")
 })
 
 test_that("endpoint_validate_survey_programme returns error on invalid survey data", {

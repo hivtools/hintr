@@ -6,14 +6,16 @@ test_that("assert fails if more than once country in json", {
   expect_true(assert_single_country(json, "shape"))
 
   ## Change a country for purpose of testing
-  json$features[[1]]$properties$iso3 <- "AGO"
+  json$features[[1]]$properties$area_id <- "AGO"
   expect_error(assert_single_country(json, "shape"),
                "Shape file contains regions for more than one country. Got countries AGO, MWI.")
 
-  df <- data.frame(iso3 = rep("MWI", 10), stringsAsFactors = FALSE)
+  df <- data.frame(
+    area_id = paste0(rep("MWI", 10), ".", as.character(seq_len(10))),
+    stringsAsFactors = FALSE)
   expect_true(assert_single_country(df, "population"))
 
-  df[11, "iso3"] <- "AGO"
+  df[11, "area_id"] <- "AGO.1.2.3"
   expect_error(assert_single_country(df, "population"),
                "Population file contains regions for more than one country. Got countries MWI, AGO.")
 
@@ -47,8 +49,6 @@ test_that("assert_consistent_country checks for consistent countries", {
   expect_true(assert_consistent_country(NULL, "source1", "test", "source2"))
   expect_error(assert_consistent_country("test", "source1", "test2", "source2"),
     "Countries aren't consistent got test from source1 and test2 from source2.")
-  expect_error(assert_consistent_country(084, "source1", 454, "source2", TRUE),
-    "Countries aren't consistent got BLZ from source1 and MWI from source2.")
 })
 
 test_that("assert_consistent_regions checks for consistent regions", {

@@ -39,7 +39,7 @@ read_geojson_iso3 <- function(geojson_file) {
   json <- hintr_geojson_read(geojson_file)
   ## At this point we have validated there is only data for 1 country so we can
   ## just take the first.
-  json$features[[1]]$properties$iso3
+  substr(json$features[[1]]$properties$area_id, 1, 3)
 }
 
 read_regions <- function(file, type) {
@@ -170,8 +170,8 @@ do_validate_survey <- function(survey, shape) {
   assert_single_country(data, "survey")
   assert_column_names(
     colnames(data),
-    c("iso3", "area_id", "survey_id", "year", "sex", "age_group_id",
-      "indicator", "value", "se", "ci_l", "ci_u"))
+    c("iso3", "area_id", "survey_id", "survey_year", "sex", "age_group_id",
+      "indicator", "n_cluster", "n_obs", "est", "se", "ci_l", "ci_u"))
   assert_consistent_regions(read_regions(shape, "shape"),
                             read_regions(survey, "survey"),
                             "survey")
@@ -198,8 +198,7 @@ do_validate_baseline <- function(pjnz, shape, population) {
     pjnz_country <- read_iso3(pjnz, "pjnz")
     shape_country <- read_iso3(shape, "shape")
     consistent_country <- assert_consistent_country(pjnz_country, "pjnz",
-                                                    shape_country, "shape",
-                                                    convert_to_alpha3 = TRUE)
+                                                    shape_country, "shape")
   }
   if (check_regions) {
     shape_regions <- read_regions(shape, "shape")
