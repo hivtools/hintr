@@ -120,7 +120,7 @@ test_that("do_validate_survey validates survey file", {
   )
   expect_equal(data$filters$age[[1]], expected_ages)
   expect_length(data$filters$age, 21)
-  expect_equal(data$filters$survey, expected_survey)
+  expect_equal(data$filters$surveys, expected_survey)
 })
 
 test_that("do_validate_programme returns useful error from shapefile comparison", {

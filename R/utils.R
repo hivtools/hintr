@@ -47,7 +47,6 @@ collapse <- function(vector, collapse = ", ", limit = 150, end = "...") {
 
 `%||%` <- function(a, b) if (is.null(a)) b else a
 
-
-vcapply <- function(X, FUN, ...) {
-  vapply(X, FUN, character(1), ...)
+data_frame <- function(...) {
+  data.frame(..., stringsAsFactors = FALSE)
 }

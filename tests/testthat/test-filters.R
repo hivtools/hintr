@@ -55,10 +55,11 @@ test_that("get_survey_filters gets available filter options and sorts them", {
   expect_equal(get_age_filters(data.frame(survey_id = NULL)), list())
 })
 
-test_that("can construct tree from data frame", {
+test_that("can construct sorted tree from data frame", {
   data <- data.frame(
     id = c("MWI", "MWI.1", "MWI.2", "MWI.1.1", "MWI.1.2"),
     parent_id = c(NA, "MWI", "MWI", "MWI.1", "MWI.1"),
+    sort_order = c(1, 2, 3, 4, 5),
     stringsAsFactors = FALSE
   )
   expected_tree <- list(
@@ -89,6 +90,7 @@ test_that("can construct tree from data frame", {
     id = c("MWI", "MWI.1", "MWI.2", "MWI.1.1", "MWI.1.2"),
     name = c("Malawi", "Northern", "Central", "Chitipa", "Karonga"),
     parent_id = c(NA, "MWI", "MWI", "MWI.1", "MWI.1"),
+    sort_order = c(1, 2, 3, 4, 5),
     stringsAsFactors = FALSE
   )
   expected_tree <- list(
@@ -118,7 +120,26 @@ test_that("can construct tree from data frame", {
       )
     )
   )
-  expect_equal(construct_tree(data, parent_id_column = 3), expected_tree)
+  expect_equal(
+    construct_tree(data, parent_id_column = 3, sort_order_column = 4),
+    expected_tree)
+})
+
+test_that("construct tree creates tree in correct order", {
+  data <- data.frame(
+    id = c("MWI", "MWI.1", "MWI.2", "MWI.1.1", "MWI.1.2"),
+    name = c("Malawi", "Northern", "Central", "Chitipa", "Karonga"),
+    parent_id = c(NA, "MWI", "MWI", "MWI.1", "MWI.1"),
+    sort_order = c(2, 3, 5, 4, 1),
+    stringsAsFactors = FALSE
+  )
+  tree <- construct_tree(data, parent_id_column = 3)
+  ## Ordering is respected within the level
+  expect_equal(tree$id, scalar("MWI"))
+  expect_equal(tree$options[[1]]$id, scalar("MWI.1"))
+  expect_equal(tree$options[[2]]$id, scalar("MWI.2"))
+  expect_equal(tree$options[[1]]$options[[1]]$id, scalar("MWI.1.2"))
+  expect_equal(tree$options[[1]]$options[[2]]$id, scalar("MWI.1.1"))
 })
 
 test_that("error thrown when tree can't be constructed", {
