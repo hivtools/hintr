@@ -14,18 +14,26 @@ assert_single_country <- function(data, type) {
 }
 
 assert_single_country.geojson <- function(data, type) {
+  ## TODO: geojson will contain the spectrum ID perhaps that will make a more
+  ## appropriate check of single country? See once geojson has been updated by
+  ## Jeff mrc-501
   country <- vapply(data$features, function(x) {
-    x$properties$iso3
+    substr(x$properties$area_id, 1, 3)
   }, character(1))
   assert_single_country(country, type)
 }
 
 assert_single_country.data.frame <- function(data, type) {
-  assert_single_country(data$iso3, type)
+  assert_single_country(substr(data$area_id, 1, 3), type)
 }
 
 assert_single_country.character <- function(data, type) {
-  if (length(unique(data)) != 1) {
+  if (length(unique(data)) == 0) {
+    stop(sprintf(
+      "%s file contains no regions. Check file has an area_id column.",
+      to_upper_first(type)
+    ))
+  } else if (length(unique(data)) != 1) {
     stop(sprintf(
       "%s file contains regions for more than one country. Got countries %s.",
       to_upper_first(type), toString(unique(data))))
@@ -50,14 +58,9 @@ assert_area_id_exists <- function(json) {
   invisible(TRUE)
 }
 
-assert_consistent_country <- function(country_x, source_x, country_y, source_y,
-                                      convert_to_alpha3 = FALSE) {
+assert_consistent_country <- function(country_x, source_x, country_y, source_y) {
   if (!is.null(country_x) && !is.null(country_y) &&
       tolower(country_x) != tolower(country_y)) {
-    if (convert_to_alpha3) {
-      country_x <- iso_numeric_to_alpha_3(country_x)
-      country_y <- iso_numeric_to_alpha_3(country_y)
-    }
     stop(sprintf("Countries aren't consistent got %s from %s and %s from %s.",
                  country_x, source_x, country_y, source_y))
   }

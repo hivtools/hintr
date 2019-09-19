@@ -2,7 +2,6 @@ context("validate-inputs")
 
 test_that("PJNZ can be validated and return data", {
   pjnz <- file.path("testdata", "Botswana2018.PJNZ")
-  ## TODO: Expand validation to include other input files
   expect_equal(do_validate_pjnz(pjnz),
                list(data = list(country = scalar("Botswana")),
                     filters = scalar(NA)))
@@ -23,7 +22,7 @@ test_that("assert fails if more than once country in json", {
   expect_true(assert_single_country(json, "shape"))
 
   ## Change a country for purpose of testing
-  json$features[[1]]$properties$iso3 <- "AGO"
+  json$features[[1]]$properties$area_id <- "AGO"
   expect_error(assert_single_country(json, "shape"),
                "Shape file contains regions for more than one country. Got countries AGO, MWI.")
 })
@@ -59,15 +58,13 @@ test_that("do_validate_programme validates programme file", {
   data <- do_validate_programme(programme, shape)
   ## Some arbitrary test that the data has actually been returned
   expect_true(nrow(data$data) > 1400)
-  expect_equal(typeof(data$data$value), "integer")
+  expect_equal(typeof(data$data$current_art), "double")
 
   expected_filters <- list(
-    list(id = scalar("5"),
-         name = scalar("20-24")),
-    list(id = scalar("28"),
-         name = scalar("50-64")),
-    list(id = scalar("3"),
-         name = scalar("10-14"))
+    list(id = scalar("24"),
+         name = scalar("0-14")),
+    list(id = scalar("20"),
+         name = scalar("15+"))
   )
   expect_equal(data$filters$age, expected_filters)
 })
@@ -78,10 +75,10 @@ test_that("do_validate_anc validates ANC file", {
   data <- do_validate_anc(anc, shape)
   ## Some arbitrary test that the data has actually been returned
   expect_true(nrow(data$data) > 800)
-  expect_equal(typeof(data$data$value), "double")
+  expect_equal(typeof(data$data$ancrt_hiv_status), "integer")
   expected_filters <- list(
-    list(id = scalar("1"),
-         name = scalar("0-4")))
+    list(id = scalar("18"),
+         name = scalar("15-49")))
   expect_equal(data$filters$age, expected_filters)
 })
 
@@ -90,11 +87,13 @@ test_that("do_validate_survey validates survey file", {
   shape <- file.path("testdata", "malawi.geojson")
   data <- do_validate_survey(survey, shape)
   ## Some arbitrary test that the data has actually been returned
-  expect_true(nrow(data$data) > 30000)
-  expect_equal(typeof(data$data$value), "double")
-  expected_ages <- list(id = scalar("1"),
-         name = scalar("0-4"))
+  expect_true(nrow(data$data) > 20000)
+  expect_equal(typeof(data$data$est), "double")
+  expected_ages <- list(id = scalar("4"),
+         name = scalar("15-19"))
   expected_survey <- list(
+    list(id = scalar("MWI2016PHIA"),
+         name = scalar("MWI2016PHIA")),
     list(id = scalar("MWI2015DHS"),
          name = scalar("MWI2015DHS")),
     list(id = scalar("MWI2010DHS"),
@@ -103,7 +102,7 @@ test_that("do_validate_survey validates survey file", {
          name = scalar("MWI2004DHS"))
   )
   expect_equal(data$filters$age[[1]], expected_ages)
-  expect_length(data$filters$age, 11)
+  expect_length(data$filters$age, 21)
   expect_equal(data$filters$survey, expected_survey)
 })
 
@@ -111,21 +110,21 @@ test_that("do_validate_programme returns useful error from shapefile comparison"
   programme <- file.path("testdata", "programme.csv")
   shape <- file.path("testdata", "malawi_missing_regions.geojson")
   expect_error(do_validate_programme(programme, shape),
-    "Regions aren't consistent programme file contains 28 regions missing from shape file including:\n\\w+")
+    "Regions aren't consistent programme file contains 32 regions missing from shape file including:\n\\w+")
 })
 
 test_that("do_validate_anc returns useful error from shapefile comparison", {
   anc <- file.path("testdata", "anc.csv")
   shape <- file.path("testdata", "malawi_missing_regions.geojson")
   expect_error(do_validate_anc(anc, shape),
-    "Regions aren't consistent ANC file contains 28 regions missing from shape file including:\n\\w+")
+    "Regions aren't consistent ANC file contains 32 regions missing from shape file including:\n\\w+")
 })
 
 test_that("do_validate_survey returns useful error from shapefile comparison", {
   survey <- file.path("testdata", "survey.csv")
   shape <- file.path("testdata", "malawi_missing_regions.geojson")
   expect_error(do_validate_survey(survey, shape),
-    "Regions aren't consistent survey file contains 434 regions missing from shape file including:\n\\w+")
+    "Regions aren't consistent survey file contains 64 regions missing from shape file including:\n\\w+")
 })
 
 test_that("converting from numeric to iso3 works", {

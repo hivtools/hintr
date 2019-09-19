@@ -39,7 +39,7 @@ read_geojson_iso3 <- function(geojson_file) {
   json <- hintr_geojson_read(geojson_file)
   ## At this point we have validated there is only data for 1 country so we can
   ## just take the first.
-  json$features[[1]]$properties$iso3
+  substr(json$features[[1]]$properties$area_id, 1, 3)
 }
 
 read_regions <- function(file, type) {
@@ -88,7 +88,7 @@ do_validate_shape <- function(shape) {
   # Then we have to *reread* the file now that we know that it is
   # valid, but but this is not too slow, especially as the file is now
   # in cache (but still ~1/20s)
-  ## TODO: Add shape region filters
+  ## TODO: Add shape region filters mrc-473
   list(data = json_verbatim(read_string(shape)),
        filters = NULL)
 }
@@ -106,7 +106,7 @@ do_validate_population <- function(population) {
   assert_single_country(population, "population")
   assert_column_names(
     colnames(population),
-    c("iso3", "area_id", "time", "sex", "age_group_id", "source", "population"))
+    c("area_id", "quarter_id", "sex", "age_group_id", "source", "population"))
   list(data = scalar(NA),
        filters = scalar(NA))
 }
@@ -124,7 +124,7 @@ do_validate_programme <- function(programme, shape) {
   assert_single_country(data, "programme")
   assert_column_names(
     colnames(data),
-    c("iso3", "area_id", "period", "sex", "age_group_id", "indicator", "value"))
+    c("area_id", "quarter_id", "sex", "age_group_id", "current_art"))
   assert_consistent_regions(read_regions(shape, "shape"),
                             read_regions(programme, "programme"),
                             "programme")
@@ -145,10 +145,14 @@ do_validate_anc <- function(anc, shape) {
   assert_single_country(data, "anc")
   assert_column_names(
     colnames(data),
-    c("iso3", "area_id", "period", "sex", "age_group_id", "indicator", "value"))
+    c("area_id", "age_group_id", "quarter_id", "anc_clients",
+      "ancrt_hiv_status", "ancrt_known_pos", "ancrt_already_art",
+      "ancrt_tested", "ancrt_test_pos"))
   assert_consistent_regions(read_regions(shape, "shape"),
                             read_regions(anc, "anc"),
                             "ANC")
+  ## TODO: Call naomi to calculate prevalence & art_coverage which is what we
+  ## need to return to the front end for plotting. mrc-492
   list(data = data,
        filters = list("age" = get_age_filters(data)))
 }
@@ -166,8 +170,8 @@ do_validate_survey <- function(survey, shape) {
   assert_single_country(data, "survey")
   assert_column_names(
     colnames(data),
-    c("iso3", "area_id", "survey_id", "year", "sex", "age_group_id",
-      "indicator", "value", "se", "ci_l", "ci_u"))
+    c("iso3", "area_id", "survey_id", "survey_year", "sex", "age_group_id",
+      "indicator", "n_cluster", "n_obs", "est", "se", "ci_l", "ci_u"))
   assert_consistent_regions(read_regions(shape, "shape"),
                             read_regions(survey, "survey"),
                             "survey")
@@ -194,8 +198,7 @@ do_validate_baseline <- function(pjnz, shape, population) {
     pjnz_country <- read_iso3(pjnz, "pjnz")
     shape_country <- read_iso3(shape, "shape")
     consistent_country <- assert_consistent_country(pjnz_country, "pjnz",
-                                                    shape_country, "shape",
-                                                    convert_to_alpha3 = TRUE)
+                                                    shape_country, "shape")
   }
   if (check_regions) {
     shape_regions <- read_regions(shape, "shape")
