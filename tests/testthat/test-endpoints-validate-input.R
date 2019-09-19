@@ -74,6 +74,7 @@ test_that("endpoint_validate_input support shape file", {
   expect_true(all(c("type", "features") %in% names(response$data$data)))
   expect_equal(length(response$data$data$features), 69)
   expect_equal(res$status, 200)
+  expect_equal(names(response$data$filters), c("regions", "level_labels"))
 })
 
 test_that("endpoint_validate_input supports population file", {

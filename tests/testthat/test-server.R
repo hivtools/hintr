@@ -42,6 +42,7 @@ test_that("validate shape", {
   expect_equal(response$data$type, "shape")
   expect_true(all(c("type", "features") %in% names(response$data$data)))
   expect_equal(response$data$data$type, "FeatureCollection")
+  expect_equal(names(response$data$filters), c("regions", "level_labels"))
 })
 
 test_that("validate population", {

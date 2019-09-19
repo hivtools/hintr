@@ -54,3 +54,79 @@ test_that("get_survey_filters gets available filter options and sorts them", {
   expect_equal(get_survey_filters(NULL), list())
   expect_equal(get_age_filters(data.frame(survey_id = NULL)), list())
 })
+
+test_that("can construct tree from data frame", {
+  data <- data.frame(
+    id = c("MWI", "MWI.1", "MWI.2", "MWI.1.1", "MWI.1.2"),
+    parent_id = c(NA, "MWI", "MWI", "MWI.1", "MWI.1"),
+    stringsAsFactors = FALSE
+  )
+  expected_tree <- list(
+    id = scalar("MWI"),
+    options = list(
+      list(
+        id = scalar("MWI.1"),
+        options = list(
+          list(
+            id = scalar("MWI.1.1"),
+            options = list()
+          ),
+          list(
+            id = scalar("MWI.1.2"),
+            options = list()
+          )
+        )
+      ),
+      list(
+        id = scalar("MWI.2"),
+        options = list()
+      )
+    )
+  )
+  expect_equal(construct_tree(data), expected_tree)
+
+  data <- data.frame(
+    id = c("MWI", "MWI.1", "MWI.2", "MWI.1.1", "MWI.1.2"),
+    name = c("Malawi", "Northern", "Central", "Chitipa", "Karonga"),
+    parent_id = c(NA, "MWI", "MWI", "MWI.1", "MWI.1"),
+    stringsAsFactors = FALSE
+  )
+  expected_tree <- list(
+    id = scalar("MWI"),
+    name = scalar("Malawi"),
+    options = list(
+      list(
+        id = scalar("MWI.1"),
+        name = scalar("Northern"),
+        options = list(
+          list(
+            id = scalar("MWI.1.1"),
+            name = scalar("Chitipa"),
+            options = list()
+          ),
+          list(
+            id = scalar("MWI.1.2"),
+            name = scalar("Karonga"),
+            options = list()
+          )
+        )
+      ),
+      list(
+        id = scalar("MWI.2"),
+        name = scalar("Central"),
+        options = list()
+      )
+    )
+  )
+  expect_equal(construct_tree(data, parent_id_column = 3), expected_tree)
+})
+
+test_that("error thrown when tree can't be constructed", {
+  data <- data.frame(
+    id = c("MWI", "MWI.1", "MWI.2", "MWI.1.1", "MWI.1.2"),
+    parent_id = c(NA, NA, "MWI", "MWI.1", "MWI.1"),
+    stringsAsFactors = FALSE
+  )
+  expect_error(construct_tree(data),
+               "Got 2 root nodes - tree must have 1 root.")
+})

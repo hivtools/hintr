@@ -90,7 +90,8 @@ do_validate_shape <- function(shape) {
   # in cache (but still ~1/20s)
   ## TODO: Add shape region filters
   list(data = json_verbatim(read_string(shape)),
-       filters = NULL)
+       filters = list("regions" = get_region_filters(json),
+                      "level_labels" = get_level_labels(json)))
 }
 
 #' Validate population file.

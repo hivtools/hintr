@@ -26,3 +26,42 @@ get_survey_filters <- function(data) {
          name = scalar(survey_id))
   })
 }
+
+get_level_labels <- function(json) {
+  labels <- lapply(json$features, function(feature) {
+    list(id = scalar(feature$properties$area_level),
+         area_level_label = scalar(feature$properties$area_level_label),
+         display = scalar(as.logical(feature$properties$display)))
+  })
+  unique(labels)
+}
+
+get_region_filters <- function(json) {
+  extract <- function(x) {
+    vcapply(x$properties[c("area_id", "parent_area_id", "area_name")],
+            function(x) x %||% NA_character_)
+  }
+  hierarchy <- vapply(json$features, extract, character(3))
+  rownames(hierarchy) <- c("id", "parent_id", "name")
+  construct_tree(as.data.frame(t(hierarchy), stringsAsFactors = FALSE))
+}
+
+construct_tree <- function(data, id_column = 1, parent_id_column = 2) {
+  root_node <- is.na(data[, parent_id_column])
+  if (sum(root_node) != 1) {
+    stop(sprintf("Got %s root nodes - tree must have 1 root.",
+                 sum(root_node)))
+  }
+
+  build_immediate_children <- function(current_node_id) {
+    current_node <- data[, id_column] == current_node_id
+    children <- data[, parent_id_column] == data[current_node, id_column]
+    tree <- lapply(data[current_node, -parent_id_column, drop = FALSE], scalar)
+    tree$options <- lapply(which(children), function(child) {
+      build_immediate_children(data[child, id_column])
+    })
+    tree
+  }
+
+  build_immediate_children(data[root_node, id_column])
+}

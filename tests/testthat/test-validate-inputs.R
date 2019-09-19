@@ -43,6 +43,23 @@ test_that("do_validate_shape validates shape and returns geojson as list", {
   shape <- file.path("testdata", "malawi.geojson")
   json <- do_validate_shape(shape)
   expect_s3_class(json$data, "json")
+  expect_equal(names(json$filters), c("regions", "level_labels"))
+
+  expect_length(json$filters$level_labels, 5)
+  expect_equal(names(json$filters$level_labels[[1]]),
+               c("id", "area_level_label", "display"))
+  expect_equal(json$filters$level_labels[[1]]$id, scalar(0))
+  expect_equal(json$filters$level_labels[[1]]$area_level_label,
+               scalar("Country"))
+  expect_equal(json$filters$level_labels[[1]]$display, scalar(TRUE))
+
+  expect_equal(names(json$filters$regions), c("id", "name", "options"))
+  expect_equal(json$filters$regions$id, scalar("MWI"))
+  expect_equal(json$filters$regions$name, scalar("Malawi"))
+  expect_length(json$filters$regions$options, 3)
+  expect_equal(json$filters$regions$options[[1]]$name, scalar("Northern"))
+  expect_equal(json$filters$regions$options[[2]]$name, scalar("Central"))
+  expect_equal(json$filters$regions$options[[3]]$name, scalar("Southern"))
 })
 
 test_that("do_validate_population validates population file", {

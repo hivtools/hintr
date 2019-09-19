@@ -44,3 +44,10 @@ collapse <- function(vector, collapse = ", ", limit = 150, end = "...") {
   out <- paste(vector, collapse = collapse)
   out
 }
+
+`%||%` <- function(a, b) if (is.null(a)) b else a
+
+
+vcapply <- function(X, FUN, ...) {
+  vapply(X, FUN, character(1), ...)
+}
