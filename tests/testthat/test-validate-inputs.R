@@ -2,7 +2,6 @@ context("validate-inputs")
 
 test_that("PJNZ can be validated and return data", {
   pjnz <- file.path("testdata", "Botswana2018.PJNZ")
-  ## TODO: Expand validation to include other input files
   expect_equal(do_validate_pjnz(pjnz),
                list(data = list(country = scalar("Botswana")),
                     filters = scalar(NA)))

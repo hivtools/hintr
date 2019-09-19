@@ -88,7 +88,7 @@ do_validate_shape <- function(shape) {
   # Then we have to *reread* the file now that we know that it is
   # valid, but but this is not too slow, especially as the file is now
   # in cache (but still ~1/20s)
-  ## TODO: Add shape region filters
+  ## TODO: Add shape region filters mrc-473
   list(data = json_verbatim(read_string(shape)),
        filters = list("regions" = get_region_filters(json),
                       "level_labels" = get_level_labels(json)))
@@ -153,7 +153,7 @@ do_validate_anc <- function(anc, shape) {
                             read_regions(anc, "anc"),
                             "ANC")
   ## TODO: Call naomi to calculate prevalence & art_coverage which is what we
-  ## need to return to the front end for plotting.
+  ## need to return to the front end for plotting. mrc-492
   list(data = data,
        filters = list("age" = get_age_filters(data)))
 }

@@ -16,7 +16,7 @@ assert_single_country <- function(data, type) {
 assert_single_country.geojson <- function(data, type) {
   ## TODO: geojson will contain the spectrum ID perhaps that will make a more
   ## appropriate check of single country? See once geojson has been updated by
-  ## Jeff
+  ## Jeff mrc-501
   country <- vapply(data$features, function(x) {
     substr(x$properties$area_id, 1, 3)
   }, character(1))

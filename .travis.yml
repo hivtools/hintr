@@ -18,8 +18,6 @@ services:
 before_script:
   - R CMD INSTALL .
 cache: packages
-repos:
-  INLA: https://inla.r-inla-download.org/R/stable
 env:
   - VALIDATE_JSON_SCHEMAS=true
 r_packages:
