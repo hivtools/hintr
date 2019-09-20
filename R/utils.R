@@ -45,7 +45,9 @@ collapse <- function(vector, collapse = ", ", limit = 150, end = "...") {
   out
 }
 
-`%||%` <- function(a, b) if (is.null(a)) b else a
+`%||%` <- function(a, b) {
+  if (is.null(a)) b else a
+}
 
 data_frame <- function(...) {
   data.frame(..., stringsAsFactors = FALSE)
