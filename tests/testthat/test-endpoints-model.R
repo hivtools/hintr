@@ -18,7 +18,7 @@ test_that("endpoint model run queues a model run", {
       programme = TRUE,
       anc = FALSE
     ),
-    sleep = 5
+    sleep = 3
   )
   req <- list(postBody = '
               {
@@ -37,7 +37,7 @@ test_that("endpoint model run queues a model run", {
               "programme": true,
               "anc": false
               },
-              "sleep": 5
+              "sleep": 3
               }
               }')
 
@@ -85,7 +85,16 @@ test_that("endpoint model run queues a model run", {
   result <- model_result(NULL, res, status$data$id)
   result <- jsonlite::parse_json(result)
   expect_equal(res$status, 200)
-  expect_equal(result$data, 2)
+  expect_equal(names(result$data), c("data", "filters"))
+  expect_equal(names(result$data$data[[1]]),
+               c("area_id", "sex", "age_group_id", "quarter_id", "indicator_id",
+                 "mode", "mean", "lower", "upper"))
+  expect_length(result$data$data, 42021)
+  expect_equal(names(result$data$filters), c("age", "quarter", "indicator"))
+  expect_length(result$data$filters$age, 29)
+  expect_length(result$data$filters$quarter, 1)
+  expect_equal(result$data$filters$quarter[[1]]$name, "Jan-Mar 2016")
+  expect_length(result$data$filters$indicator, 7)
 })
 
 test_that("endpoint_run_model returns error if queueing fails", {
