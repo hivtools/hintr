@@ -13,9 +13,7 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
-Additional_repositories: 
-    https://mrc-ide.github.io/drat,
-    https://inla.r-inla-download.org/R/stable
+Additional_repositories: https://mrc-ide.github.io/drat
 Imports:
     context,
     geojsonio,
