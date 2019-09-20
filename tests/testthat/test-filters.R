@@ -7,9 +7,8 @@ test_that("get_age_label correctly maps to label and returns useful error", {
 })
 
 test_that("get_age_filters gets available filter options", {
-  data <- data.frame(test = c(1, 2, 3, 4, 5, 6, 7),
-                     age_group_id = c(10, 27, 2, 10, 10, 10, 2),
-                     stringsAsFactors = FALSE)
+  data <- data_frame(test = c(1, 2, 3, 4, 5, 6, 7),
+                     age_group_id = c(10, 27, 2, 10, 10, 10, 2))
   filters <- get_age_filters(data)
   expect_equal(filters, list(
     list(
@@ -31,10 +30,9 @@ test_that("get_age_filters gets available filter options", {
 })
 
 test_that("get_survey_filters gets available filter options and sorts them", {
-  data <- data.frame(test = c(1, 2, 3, 4, 5, 6, 7),
+  data <- data_frame(test = c(1, 2, 3, 4, 5, 6, 7),
                      survey_id = c("MWI2004DHS", "MWI2004DHS", "MWI2004DHS",
-                                   "surv2", "surv2", "test", "test"),
-                     stringsAsFactors = FALSE)
+                                   "surv2", "surv2", "test", "test"))
   filters <- get_survey_filters(data)
   expect_equal(filters, list(
     list(
@@ -56,11 +54,10 @@ test_that("get_survey_filters gets available filter options and sorts them", {
 })
 
 test_that("can construct sorted tree from data frame", {
-  data <- data.frame(
+  data <- data_frame(
     id = c("MWI", "MWI.1", "MWI.2", "MWI.1.1", "MWI.1.2"),
     parent_id = c(NA, "MWI", "MWI", "MWI.1", "MWI.1"),
-    sort_order = c(1, 2, 3, 4, 5),
-    stringsAsFactors = FALSE
+    sort_order = c(1, 2, 3, 4, 5)
   )
   expected_tree <- list(
     id = scalar("MWI"),
@@ -86,12 +83,11 @@ test_that("can construct sorted tree from data frame", {
   )
   expect_equal(construct_tree(data), expected_tree)
 
-  data <- data.frame(
+  data <- data_frame(
     id = c("MWI", "MWI.1", "MWI.2", "MWI.1.1", "MWI.1.2"),
     name = c("Malawi", "Northern", "Central", "Chitipa", "Karonga"),
     parent_id = c(NA, "MWI", "MWI", "MWI.1", "MWI.1"),
-    sort_order = c(1, 2, 3, 4, 5),
-    stringsAsFactors = FALSE
+    sort_order = c(1, 2, 3, 4, 5)
   )
   expected_tree <- list(
     id = scalar("MWI"),
@@ -126,12 +122,11 @@ test_that("can construct sorted tree from data frame", {
 })
 
 test_that("construct tree creates tree in correct order", {
-  data <- data.frame(
+  data <- data_frame(
     id = c("MWI", "MWI.1", "MWI.2", "MWI.1.1", "MWI.1.2"),
     name = c("Malawi", "Northern", "Central", "Chitipa", "Karonga"),
     parent_id = c(NA, "MWI", "MWI", "MWI.1", "MWI.1"),
-    sort_order = c(2, 3, 5, 4, 1),
-    stringsAsFactors = FALSE
+    sort_order = c(2, 3, 5, 4, 1)
   )
   tree <- construct_tree(data, parent_id_column = 3)
   ## Ordering is respected within the level
@@ -143,10 +138,9 @@ test_that("construct tree creates tree in correct order", {
 })
 
 test_that("error thrown when tree can't be constructed", {
-  data <- data.frame(
+  data <- data_frame(
     id = c("MWI", "MWI.1", "MWI.2", "MWI.1.1", "MWI.1.2"),
-    parent_id = c(NA, NA, "MWI", "MWI.1", "MWI.1"),
-    stringsAsFactors = FALSE
+    parent_id = c(NA, NA, "MWI", "MWI.1", "MWI.1")
   )
   expect_error(construct_tree(data),
                "Got 2 root nodes - tree must have 1 root.")
