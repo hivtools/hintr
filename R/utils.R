@@ -44,3 +44,11 @@ collapse <- function(vector, collapse = ", ", limit = 150, end = "...") {
   out <- paste(vector, collapse = collapse)
   out
 }
+
+`%||%` <- function(a, b) {
+  if (is.null(a)) b else a
+}
+
+data_frame <- function(...) {
+  data.frame(..., stringsAsFactors = FALSE)
+}
