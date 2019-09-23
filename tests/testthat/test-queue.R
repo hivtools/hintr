@@ -32,7 +32,7 @@ test_that("queue works as intended", {
   expect_equal(status$queue, 0)
 
   ## After task has completed
-  Sys.sleep(2)
+  result <- queue$queue$task_wait(job_id)
   status <- queue$status(job_id)
   expect_equal(status$status, "COMPLETE")
   expect_true(status$done)

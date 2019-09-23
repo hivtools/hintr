@@ -67,7 +67,7 @@ test_that("endpoint model run queues a model run", {
 
   ## Wait for complete and query for status
   ## Query for status
-  Sys.sleep(5)
+  result <- queue$queue$task_wait(response$data$id)
   res <- MockPlumberResponse$new()
   status <- model_status(NULL, res, response$data$id)
   status <- jsonlite::parse_json(status)
