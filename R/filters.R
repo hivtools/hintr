@@ -1,22 +1,25 @@
 get_age_filters <- function(data) {
   ## Assuming data is a data frame with age_group_id
-  age_groups <- unique(data$age_group_id)
-  lapply(age_groups, function(age_group_id) {
+  filters <- get_age_labels(unique(data$age_group_id))
+  sorted_filters <- filters[order(filters$age_group_sort_order), ]
+  construct_filter <- function(age_group_id, age_group_label) {
     list(id = scalar(as.character(age_group_id)),
-         name = scalar(get_age_label(age_group_id)))
-  })
+         name = scalar(age_group_label))
+  }
+  Map(construct_filter,
+      sorted_filters$age_group_id, sorted_filters$age_group_label)
 }
 
-get_age_label <- function(age_group_id) {
+get_age_labels <- function(age_group_ids) {
   age_groups <- naomi::get_age_groups()
-  index <- which(age_groups$age_group_id == age_group_id)
-  if (length(index) != 1) {
-    stop(sprintf("Found %s rows matching age_group_id %s.",
-                 length(index), age_group_id))
+  groups <- age_groups$age_group_id %in% age_group_ids
+  missing_ids <- setdiff(age_group_ids, age_groups$age_group_id)
+  if (length(missing_ids) > 0) {
+    stop(sprintf("Found 0 rows for age_group_id %s.",
+                 collapse(missing_ids)))
   }
-  age_groups[index, "age_group_label"]
-  ## TODO: sort filter order on metadata from naomi get_age_groups once
-  ## that is available mrc-502
+  age_groups[groups,
+             c("age_group_id", "age_group_label", "age_group_sort_order")]
 }
 
 get_survey_filters <- function(data) {

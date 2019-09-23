@@ -202,12 +202,12 @@ test_that("possible filters are returned for data", {
   expect_length(response$data$filters$age, 2)
   expect_equal(response$data$filters$age, list(
     list(
-      id = "24",
-      name = "0-14"
-    ),
-    list(
       id = "20",
       name = "15+"
+    ),
+    list(
+      id = "24",
+      name = "0-14"
     )
   ))
 
