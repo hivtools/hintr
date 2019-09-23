@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "age": {
+      "type": "array",
+      "items": { "$ref": "FilterOption.schema.json" }
+    },
+    "quarter": {
+      "type": "array",
+      "items": { "$ref": "FilterOption.schema.json" }
+    },
+    "indicator": {
+      "type": "array",
+      "items": { "$ref": "FilterOption.schema.json" }
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "age", "quarter", "indicator"
+  ]
+}
