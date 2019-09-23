@@ -12,7 +12,7 @@ test_that("validate pjnz", {
   server <- hintr_server()
 
   payload <- file.path("payload", "validate_pjnz_payload.json")
-  r <- httr::POST(paste0(server$url, "/validate/baseline"),
+  r <- httr::POST(paste0(server$url, "/validate/baseline-individual"),
                   body = httr::upload_file(payload),
                   encode = "json")
   expect_equal(httr::status_code(r), 200)
@@ -30,7 +30,7 @@ test_that("validate shape", {
   server <- hintr_server()
 
   payload <- file.path("payload", "validate_shape_payload.json")
-  r <- httr::POST(paste0(server$url, "/validate/baseline"),
+  r <- httr::POST(paste0(server$url, "/validate/baseline-individual"),
                   body = httr::upload_file(payload),
                   encode = "json")
   expect_equal(httr::status_code(r), 200)
@@ -49,7 +49,7 @@ test_that("validate population", {
   server <- hintr_server()
 
   payload <- file.path("payload", "validate_population_payload.json")
-  r <- httr::POST(paste0(server$url, "/validate/baseline"),
+  r <- httr::POST(paste0(server$url, "/validate/baseline-individual"),
                   body = httr::upload_file(payload),
                   encode = "json")
   expect_equal(httr::status_code(r), 200)
@@ -127,7 +127,7 @@ test_that("validate baseline", {
   server <- hintr_server()
 
   payload <- file.path("payload", "validate_baseline_payload.json")
-  r <- httr::POST(paste0(server$url, "/validate/baseline-all"),
+  r <- httr::POST(paste0(server$url, "/validate/baseline-combined"),
                   body = httr::upload_file(payload),
                   encode = "json")
   expect_equal(httr::status_code(r), 200)

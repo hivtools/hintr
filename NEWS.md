@@ -1,6 +1,6 @@
 # hintr 0.0.4
 
-* Rename validate/input endpoint to validate/baseline and rename validate/baseline to validate/baseline-all for clarity
+* Rename validate/input endpoint to validate/baseline-individual and rename validate/baseline to validate/baseline-combined for clarity
 
 # hintr 0.0.3
 

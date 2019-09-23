@@ -99,7 +99,7 @@ test_that("plumber api can be built", {
   expect_equal(names(api$routes),
                c("validate", "model", ""))
   expect_equal(names(api$routes$validate),
-               c("baseline", "baseline-all", "survey-and-programme"))
+               c("baseline-individual", "baseline-combined", "survey-and-programme"))
   expect_equal(names(api$routes$model), c("submit", "status", "result"))
 })
 

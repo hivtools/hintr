@@ -1,8 +1,8 @@
 api_build <- function(queue) {
   pr <- plumber::plumber$new()
-  pr$handle("POST", "/validate/baseline", endpoint_validate_baseline,
+  pr$handle("POST", "/validate/baseline-individual", endpoint_validate_baseline,
             serializer = serializer_json_hintr())
-  pr$handle("POST", "/validate/baseline-all", endpoint_validate_baseline_all,
+  pr$handle("POST", "/validate/baseline-combined", endpoint_validate_baseline_combined,
             serializer = serializer_json_hintr())
   pr$handle("POST", "/validate/survey-and-programme", endpoint_validate_survey_programme,
             serializer = serializer_json_hintr())
@@ -168,7 +168,7 @@ input_response <- function(value, path, type) {
 #'
 #' @return Validated JSON response with data and incidcation of success.
 #' @keywords internal
-endpoint_validate_baseline_all <- function(req, res, pjnz, shape, population) {
+endpoint_validate_baseline_combined <- function(req, res, pjnz, shape, population) {
   validate_json_schema(req$postBody, "ValidateBaselineRequest")
   response <- with_success(do_validate_baseline(pjnz, shape, population))
   if (!response$success) {
