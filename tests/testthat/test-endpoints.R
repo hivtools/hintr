@@ -98,8 +98,8 @@ test_that("plumber api can be built", {
   expect_length(api$routes, 3)
   expect_equal(names(api$routes),
                c("validate", "model", ""))
-  expect_equal(names(api$routes$validate), c("input", "baseline",
-                                             "survey-and-programme"))
+  expect_equal(names(api$routes$validate),
+               c("baseline", "baseline-all", "survey-and-programme"))
   expect_equal(names(api$routes$model), c("submit", "status", "result"))
 })
 

@@ -2,26 +2,26 @@
 % Please edit documentation in R/endpoints.R
 \name{endpoint_validate_baseline}
 \alias{endpoint_validate_baseline}
-\title{Validate the baseline data as a collection.}
+\title{Validate an baseline input file and return an indication of success and
+if successful return the data required by UI.}
 \usage{
-endpoint_validate_baseline(req, res, pjnz, shape, population)
+endpoint_validate_baseline(req, res, type, path)
 }
 \arguments{
 \item{req}{The request as PlumberRequest object.}
 
 \item{res}{The response as a PlumberResponse object.}
 
-\item{pjnz}{Path to the pjnz file.}
+\item{type}{The type of file to validate: pjnz, shape, population, ANC,
+survey or programme.}
 
-\item{shape}{Path to the shape file.}
-
-\item{population}{Path to the population file.}
+\item{path}{Path to the file to validate.}
 }
 \value{
 Validated JSON response with data and incidcation of success.
 }
 \description{
-Checks whether the collection of baseline data (pjnz, shape and population)
-are consistent.
+Validate an baseline input file and return an indication of success and
+if successful return the data required by UI.
 }
 \keyword{internal}

@@ -1,10 +1,10 @@
 context("endpoints-validate")
 
-test_that("endpoint_validate_input correctly validates data", {
+test_that("endpoint_validate_baseline correctly validates data", {
   pjnz <- file.path("testdata", "Botswana2018.PJNZ")
   req <- list(postBody = '{"type": "pjnz", "path": "path/to/file"}')
   res <- MockPlumberResponse$new()
-  response <- endpoint_validate_input(req, res, "pjnz", pjnz)
+  response <- endpoint_validate_baseline(req, res, "pjnz", pjnz)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
   expect_equal(response$data$filename, "Botswana2018.PJNZ")
@@ -12,13 +12,13 @@ test_that("endpoint_validate_input correctly validates data", {
   expect_equal(res$status, 200)
 })
 
-test_that("endpoint_validate_input returns error on invalid data", {
+test_that("endpoint_validate_baseline returns error on invalid data", {
   pjnz <- file.path("testdata", "Botswana2018.PJNZ")
   req <- list(postBody = '{"type": "pjnz", "path": "path/to/file"}')
   mock_read_country <- mockery::mock("GBR")
   with_mock("hintr:::read_country" = mock_read_country, {
     res <- MockPlumberResponse$new()
-    response <- endpoint_validate_input(req, res, "pjnz", pjnz)
+    response <- endpoint_validate_baseline(req, res, "pjnz", pjnz)
     response <- jsonlite::parse_json(response)
     expect_equal(response$status, "failure")
     expect_length(response$errors, 1)
@@ -28,10 +28,10 @@ test_that("endpoint_validate_input returns error on invalid data", {
   })
 })
 
-test_that("endpoint_validate_input returns nice error if file does not exist", {
+test_that("endpoint_validate_baseline returns nice error if file does not exist", {
   req <- list(postBody = '{"type": "pjnz", "path": "path/to/file"}')
   res <- MockPlumberResponse$new()
-  response <- endpoint_validate_input(req, res, "pjnz", "path/to/file")
+  response <- endpoint_validate_baseline(req, res, "pjnz", "path/to/file")
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "failure")
   expect_length(response$errors, 1)
@@ -42,11 +42,11 @@ test_that("endpoint_validate_input returns nice error if file does not exist", {
 
 })
 
-test_that("endpoint_validate_input validates the input and response", {
+test_that("endpoint_validate_baseline validates the input and response", {
   pjnz <- file.path("testdata", "Botswana2018.PJNZ")
   mock_validate_json_schema <- mockery::mock(TRUE, cycle = TRUE)
   with_mock("hintr:::validate_json_schema" = mock_validate_json_schema, {
-    ret <- endpoint_validate_input(list(postBody = "request"),
+    ret <- endpoint_validate_baseline(list(postBody = "request"),
                                    MockPlumberResponse$new(), "pjnz", pjnz)
   })
 
@@ -59,10 +59,10 @@ test_that("endpoint_validate_input validates the input and response", {
                        "ValidateInputResponse", "data")
 })
 
-test_that("endpoint_validate_input support shape file", {
+test_that("endpoint_validate_baseline support shape file", {
   shape <- file.path("testdata", "malawi.geojson")
   res <- MockPlumberResponse$new()
-  response <- endpoint_validate_input(
+  response <- endpoint_validate_baseline(
     list(postBody = '{"type":"shape","path":"path/to/file"}'),
     res,
     "shape",
@@ -77,10 +77,10 @@ test_that("endpoint_validate_input support shape file", {
   expect_equal(names(response$data$filters), c("regions", "level_labels"))
 })
 
-test_that("endpoint_validate_input supports population file", {
+test_that("endpoint_validate_baseline supports population file", {
   population <- file.path("testdata", "population.csv")
   res <- MockPlumberResponse$new()
-  response <- endpoint_validate_input(
+  response <- endpoint_validate_baseline(
     list(postBody = '{"type":"population","path":"path/to/file"}'),
     res,
     "population",

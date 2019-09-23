@@ -1,8 +1,8 @@
 api_build <- function(queue) {
   pr <- plumber::plumber$new()
-  pr$handle("POST", "/validate/input", endpoint_validate_input,
-            serializer = serializer_json_hintr())
   pr$handle("POST", "/validate/baseline", endpoint_validate_baseline,
+            serializer = serializer_json_hintr())
+  pr$handle("POST", "/validate/baseline-all", endpoint_validate_baseline_all,
             serializer = serializer_json_hintr())
   pr$handle("POST", "/validate/survey-and-programme", endpoint_validate_survey_programme,
             serializer = serializer_json_hintr())
@@ -84,7 +84,7 @@ is_error <- function(x) {
   inherits(x, "error")
 }
 
-#' Validate an input file and return an indication of success and
+#' Validate an baseline input file and return an indication of success and
 #' if successful return the data required by UI.
 #'
 #' @param req The request as PlumberRequest object.
@@ -95,7 +95,7 @@ is_error <- function(x) {
 #'
 #' @return Validated JSON response with data and incidcation of success.
 #' @keywords internal
-endpoint_validate_input <- function(req, res, type, path) {
+endpoint_validate_baseline <- function(req, res, type, path) {
   validate_json_schema(req$postBody, "ValidateInputRequest")
   validate_func <- switch(type,
     pjnz = do_validate_pjnz,
@@ -171,7 +171,7 @@ input_response <- function(value, path, type) {
 #'
 #' @return Validated JSON response with data and incidcation of success.
 #' @keywords internal
-endpoint_validate_baseline <- function(req, res, pjnz, shape, population) {
+endpoint_validate_baseline_all <- function(req, res, pjnz, shape, population) {
   validate_json_schema(req$postBody, "ValidateBaselineRequest")
   response <- with_success(do_validate_baseline(pjnz, shape, population))
   if (!response$success) {
