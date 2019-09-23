@@ -59,7 +59,6 @@ endpoint_model_status <- function(queue) {
 
 endpoint_model_result <- function(queue) {
   function(req, res, id) {
-
     response <- with_success(
       queue$result(id))
     if (is_error(response$value)) {
@@ -69,9 +68,7 @@ endpoint_model_result <- function(queue) {
       )
       response$value <- NULL
       res$status <- 400
-    } else if (response$success) {
-      response$value <- scalar(response$value)
-    } else {
+    } else if (!response$success) {
       response$errors <- hintr_errors(
         list("FAILED_TO_RETRIEVE_RESULT" = response$message))
       res$status <- 400
@@ -98,9 +95,9 @@ is_error <- function(x) {
 endpoint_validate_baseline <- function(req, res, type, path) {
   validate_json_schema(req$postBody, "ValidateInputRequest")
   validate_func <- switch(type,
-    pjnz = do_validate_pjnz,
-    shape = do_validate_shape,
-    population = do_validate_population)
+                          pjnz = do_validate_pjnz,
+                          shape = do_validate_shape,
+                          population = do_validate_population)
   response <- with_success({
     assert_file_exists(path)
     validate_func(path)

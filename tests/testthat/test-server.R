@@ -153,7 +153,7 @@ test_that("model interactions", {
   expect_equal(names(response$data), c("id"))
 
   ## Get the status
-  Sys.sleep(1)
+  Sys.sleep(2)
   r <- httr::GET(paste0(server$url, "/model/status/", response$data$id))
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
@@ -171,6 +171,16 @@ test_that("model interactions", {
   response <- response_from_json(r)
   expect_equal(response$status, "success")
   expect_equal(response$errors, list())
-  expect_equal(response$data, 2)
+  expect_equal(httr::status_code(r), 200)
+  expect_equal(names(response$data), c("data", "filters"))
+  expect_equal(names(response$data$data[[1]]),
+               c("area_id", "sex", "age_group_id", "quarter_id", "indicator_id",
+                 "mode", "mean", "lower", "upper"))
+  expect_length(response$data$data, 42021)
+  expect_equal(names(response$data$filters), c("age", "quarter", "indicator"))
+  expect_length(response$data$filters$age, 29)
+  expect_length(response$data$filters$quarter, 1)
+  expect_equal(response$data$filters$quarter[[1]]$name, "Jan-Mar 2016")
+  expect_length(response$data$filters$indicator, 7)
 })
 
