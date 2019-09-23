@@ -78,10 +78,10 @@ test_that("do_validate_programme validates programme file", {
   expect_equal(typeof(data$data$current_art), "double")
 
   expected_filters <- list(
-    list(id = scalar("24"),
-         name = scalar("0-14")),
     list(id = scalar("20"),
-         name = scalar("15+"))
+         name = scalar("15+")),
+    list(id = scalar("24"),
+         name = scalar("0-14"))
   )
   expect_equal(data$filters$age, expected_filters)
 })
@@ -106,8 +106,8 @@ test_that("do_validate_survey validates survey file", {
   ## Some arbitrary test that the data has actually been returned
   expect_true(nrow(data$data) > 20000)
   expect_equal(typeof(data$data$est), "double")
-  expected_ages <- list(id = scalar("4"),
-         name = scalar("15-19"))
+  expected_ages <- list(id = scalar("18"),
+         name = scalar("15-49"))
   expected_survey <- list(
     list(id = scalar("MWI2016PHIA"),
          name = scalar("MWI2016PHIA")),
