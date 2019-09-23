@@ -10,9 +10,8 @@ test_that("assert fails if more than once country in json", {
   expect_error(assert_single_country(json, "shape"),
                "Shape file contains regions for more than one country. Got countries AGO, MWI.")
 
-  df <- data.frame(
-    area_id = paste0(rep("MWI", 10), ".", as.character(seq_len(10))),
-    stringsAsFactors = FALSE)
+  df <- data_frame(
+    area_id = paste0(rep("MWI", 10), ".", as.character(seq_len(10))))
   expect_true(assert_single_country(df, "population"))
 
   df[11, "area_id"] <- "AGO.1.2.3"

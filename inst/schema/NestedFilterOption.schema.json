@@ -10,9 +10,7 @@
     },
     "options": {
       "type": "array",
-      "items": {
-        "type": "object"
-      }
+      "items": { "$ref": "NestedFilterOption.schema.json" }
     }
   },
   "additionalProperties": false,

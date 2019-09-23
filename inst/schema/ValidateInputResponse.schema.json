@@ -25,9 +25,13 @@
         "data": { "$ref": "ShapeResponseData.schema.json" },
         "filters": {
           "type": "object",
-          "properties" :{
-            "regions": {
+          "properties" : {
+            "level_labels": {
               "type": "array",
+              "items": { "$ref": "LevelLabels.schema.json"}
+            },
+            "regions": {
+              "type": "object",
               "items": { "$ref": "NestedFilterOption.schema.json" }
             }
           }
