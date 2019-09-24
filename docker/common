@@ -4,6 +4,7 @@ PACKAGE_NAME=hintr
 PACKAGE_ORG=mrcide
 
 GIT_SHA=$(git -C "$PACKAGE_ROOT" rev-parse --short=7 HEAD)
+PKG_VERSION=$(cat $PACKAGE_ROOT/DESCRIPTION | grep '^Version:' | sed 's/^.*: *//')
 
 if [ "$TRAVIS" = "true" ]; then
     GIT_BRANCH=$TRAVIS_BRANCH
@@ -13,3 +14,4 @@ fi
 
 TAG_SHA="${PACKAGE_ORG}/${PACKAGE_NAME}:${GIT_SHA}"
 TAG_BRANCH="${PACKAGE_ORG}/${PACKAGE_NAME}:${GIT_BRANCH}"
+TAG_VERSION="${PACKAGE_ORG}/${PACKAGE_NAME}:v${PKG_VERSION}"
