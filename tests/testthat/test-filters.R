@@ -1,20 +1,24 @@
 context("filters")
 
 test_that("get_age_label correctly maps to label and returns useful error", {
-  expect_equal(get_age_label(11), "50-54")
-  expect_error(get_age_label(-5), "Found 0 rows matching age_group_id -5.")
-  expect_error(get_age_label(50), "Found 0 rows matching age_group_id 50.")
+  expect_equivalent(get_age_labels(11), data_frame(age_group_id = 11,
+                                              age_group_label = "50-54",
+                                              age_group_sort_order = 23))
+
+  expect_equivalent(get_age_labels(c(11, 12, 13)),
+                    data_frame(age_group_id = c(11, 12, 13),
+                               age_group_label = c("50-54", "55-59", "60-64"),
+                               age_group_sort_order = c(23, 24, 25)))
+  expect_error(get_age_labels(-5), "Found 0 rows for age_group_id -5.")
+  expect_error(get_age_labels(c(-5, 50)),
+               "Found 0 rows for age_group_id -5, 50.")
 })
 
-test_that("get_age_filters gets available filter options", {
+test_that("get_age_filters gets available filter options in correct order", {
   data <- data_frame(test = c(1, 2, 3, 4, 5, 6, 7),
                      age_group_id = c(10, 27, 2, 10, 10, 10, 2))
   filters <- get_age_filters(data)
   expect_equal(filters, list(
-    list(
-      id = scalar("10"),
-      name = scalar("45-49")
-    ),
     list(
       id = scalar("27"),
       name = scalar("35-49")
@@ -22,6 +26,10 @@ test_that("get_age_filters gets available filter options", {
     list(
       id = scalar("2"),
       name = scalar("5-9")
+    ),
+    list(
+      id = scalar("10"),
+      name = scalar("45-49")
     )
   ))
 
