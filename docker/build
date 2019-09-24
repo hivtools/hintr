@@ -6,5 +6,6 @@ HERE=$(dirname $0)
 docker build --pull \
        -t $TAG_SHA \
        -t $TAG_BRANCH \
+       -t $TAG_VERSION \
        -f docker/Dockerfile \
        .
