@@ -152,9 +152,7 @@ do_validate_anc <- function(anc, shape) {
   assert_consistent_regions(read_regions(shape, "shape"),
                             read_regions(anc, "anc"),
                             "ANC")
-  ## TODO: Call naomi to calculate prevalence & art_coverage which is what we
-  ## need to return to the front end for plotting. mrc-492
-  list(data = data,
+  list(data = naomi::calculate_prevalence_art_coverage(data),
        filters = list("age" = get_age_filters(data)))
 }
 

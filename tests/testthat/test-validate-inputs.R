@@ -86,13 +86,15 @@ test_that("do_validate_programme validates programme file", {
   expect_equal(data$filters$age, expected_filters)
 })
 
-test_that("do_validate_anc validates ANC file", {
+test_that("do_validate_anc validates ANC file and gets data for plotting", {
   anc <- file.path("testdata", "anc.csv")
   shape <- file.path("testdata", "malawi.geojson")
   data <- do_validate_anc(anc, shape)
-  ## Some arbitrary test that the data has actually been returned
+
   expect_true(nrow(data$data) > 800)
   expect_equal(typeof(data$data$ancrt_hiv_status), "integer")
+  expect_true(all(c("prevalence", "art_coverage") %in% colnames(data$data)))
+
   expected_filters <- list(
     list(id = scalar("18"),
          name = scalar("15-49")))
