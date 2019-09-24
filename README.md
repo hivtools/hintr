@@ -29,27 +29,27 @@ curl http://localhost:8888
 Validate PJNZ:
 ``` 
 curl -X POST -H 'Content-Type: application/json' \
-     --data @example/docker_payload.json http://localhost:8888/validate/input
+     --data @example/docker_payload.json http://localhost:8888/validate/baseline-individual
 #> {"status":"success","errors":{},"data":{"filename":"Botswana2018.PJNZ","type":"pjnz","data":{"country":"Botswana"},"filters":null}}
 ```
 
 Validate shape file and return serialised data:
 ``` 
 curl -X POST -H 'Content-Type: application/json' \
-     --data @example/docker_validate_shape_payload.json http://localhost:8888/validate/input
+     --data @example/docker_validate_shape_payload.json http://localhost:8888/validate/baseline-individual
 ```
 
 Validate population data:
 ```
 curl -X POST -H 'Content-Type: application/json' \
-     --data @example/docker_validate_population_payload.json http://localhost:8888/validate/input
+     --data @example/docker_validate_population_payload.json http://localhost:8888/validate/baseline-individual
 #> {"status":"success","errors":{},"data":{"filename":"population.csv","type":"population","data":null,"filters":null}
 ```
 
 Validate baseline data:
 ```
 curl -X POST -H 'Content-Type: application/json' \
-     --data @example/docker_validate_baseline_payload.json http://localhost:8888/validate/baseline
+     --data @example/docker_validate_baseline_payload.json http://localhost:8888/validate/baseline-combined
 #> {"status":"success","errors":[],"data":{"complete":true,"consistent":true}}
 ```
 
