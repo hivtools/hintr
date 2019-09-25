@@ -147,7 +147,7 @@ endpoint_validate_survey_programme <- function(req, res, type, path, shape, orig
 
 
 input_response <- function(value, path, type, filename) {
-  ret <- list(filename = scalar(basename(path)),
+  ret <- list(hash = scalar(basename(path)),
               type = scalar(type),
               data = value$data,
               originalFilename = filename,

@@ -1,5 +1,6 @@
 {
   "type": "programme",
   "path": "testdata/programme.csv",
-  "shape": "testdata/malawi.geojson"
+  "shape": "testdata/malawi.geojson",
+  "originalFilename": "original.csv"
 }

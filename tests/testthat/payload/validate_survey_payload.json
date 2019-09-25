@@ -1,5 +1,6 @@
 {
   "type": "survey",
   "path": "testdata/survey.csv",
-  "shape": "testdata/malawi.geojson"
+  "shape": "testdata/malawi.geojson",
+  "originalFilename": "original.csv"
 }

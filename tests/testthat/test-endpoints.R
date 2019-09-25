@@ -4,7 +4,8 @@ test_that("hintr_response correctly prepares response", {
   value <- list(
     success = TRUE,
     value = list(
-      filename = scalar("file.pjnz"),
+      originalFilename = scalar("original.pjnz"),
+      path = scalar("path/to/file")
       type = scalar("pjnz"),
       data = list(country = scalar("Botswana"))
     )
@@ -16,7 +17,8 @@ test_that("hintr_response correctly prepares response", {
 
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
-  expect_equal(response$data$filename, "file.pjnz")
+  expect_equal(response$data$hash, "file")
+  expect_equal(response$data$originalFilename, "original.pjnz")
   expect_equal(response$data$data$country, "Botswana")
   expect_equal(response$errors, list())
 
@@ -46,8 +48,9 @@ test_that("hintr_response distinguishes incorrect data schema", {
   value <- list(
     success = TRUE,
     value = list(
-      filename = scalar("test.pjnz"),
+      originalFilename = scalar("test.pjnz"),
       type = scalar("pjnz"),
+      hash = "file",
       data = list(
         country = scalar("Botswana"))
     )
@@ -117,7 +120,7 @@ test_that("format_response_data correctly formats data and validates it", {
   mockery::expect_called(mock_validate, 1)
   args <- mockery::mock_args(mock_validate)[[1]]
   expected_data <- list(
-    path = "/path/to/file.pjnz",
+    hash = "file.pjnz",
     originalFilename = "original.pjnz",
     type = "pjnz",
     data = list(
@@ -197,7 +200,8 @@ test_that("possible filters are returned for data", {
     res,
     "programme",
     programme,
-    shape)
+    shape,
+    "original")
   response <- jsonlite::parse_json(response)
 
   expect_equal(names(response$data$filters), "age")
@@ -220,7 +224,8 @@ test_that("possible filters are returned for data", {
     res,
     "anc",
     anc,
-    shape)
+    shape,
+    "original")
   response <- jsonlite::parse_json(response)
 
   expect_equal(names(response$data$filters), "age")
@@ -239,7 +244,8 @@ test_that("possible filters are returned for data", {
     res,
     "survey",
     survey,
-    shape)
+    shape,
+    "original")
   response <- jsonlite::parse_json(response)
 
   expect_equal(names(response$data$filters), c("age", "surveys"))
