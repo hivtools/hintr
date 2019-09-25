@@ -9,7 +9,8 @@ test_that("endpoint_validate_survey_programme supports programme file", {
     res,
     "programme",
     programme,
-    shape)
+    shape,
+    "original")
   response <- jsonlite::parse_json(response)
 
   expect_equal(response$status, "success")
@@ -30,7 +31,8 @@ test_that("endpoint_validate_survey_programme returns error on invalid programme
     res,
     "programme",
     programme,
-    shape)
+    shape,
+    "original")
   response <- jsonlite::parse_json(response)
 
   expect_equal(response$status, "failure")
@@ -50,7 +52,8 @@ test_that("endpoint_validate_survey_programme supports ANC file", {
     res,
     "anc",
     anc,
-    shape)
+    shape,
+    "original")
   response <- jsonlite::parse_json(response)
 
   expect_equal(response$status, "success")
@@ -74,7 +77,8 @@ test_that("endpoint_validate_survey_programme returns error on invalid ANC data"
     res,
     "anc",
     anc,
-    shape)
+    shape,
+    "original")
   response <- jsonlite::parse_json(response)
 
   expect_equal(response$status, "failure")
@@ -95,7 +99,8 @@ test_that("endpoint_validate_survey_programme supports survey file", {
     res,
     "survey",
     survey,
-    shape)
+    shape,
+    "original")
   response <- jsonlite::parse_json(response)
 
   expect_equal(response$status, "success")
@@ -116,7 +121,8 @@ test_that("endpoint_validate_survey_programme returns error on invalid survey da
     res,
     "survey",
     survey,
-    shape)
+    shape,
+    "original")
   response <- jsonlite::parse_json(response)
 
   expect_equal(response$status, "failure")

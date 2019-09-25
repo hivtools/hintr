@@ -5,7 +5,7 @@ test_that("hintr_response correctly prepares response", {
     success = TRUE,
     value = list(
       originalFilename = scalar("original.pjnz"),
-      path = scalar("path/to/file")
+      path = scalar("path/to/file"),
       type = scalar("pjnz"),
       data = list(country = scalar("Botswana"))
     )

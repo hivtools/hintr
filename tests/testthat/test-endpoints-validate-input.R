@@ -4,7 +4,7 @@ test_that("endpoint_validate_baseline correctly validates data", {
   pjnz <- file.path("testdata", "Botswana2018.PJNZ")
   req <- list(postBody = '{"type": "pjnz", "path": "path/to/file","originalFilename":"original"}')
   res <- MockPlumberResponse$new()
-  response <- endpoint_validate_baseline(req, res, "pjnz", pjnz)
+  response <- endpoint_validate_baseline(req, res, "pjnz", pjnz, "original")
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
   expect_equal(response$data$hash, "file")
@@ -19,7 +19,7 @@ test_that("endpoint_validate_baseline returns error on invalid data", {
   mock_read_country <- mockery::mock("GBR")
   with_mock("hintr:::read_country" = mock_read_country, {
     res <- MockPlumberResponse$new()
-    response <- endpoint_validate_baseline(req, res, "pjnz", pjnz)
+    response <- endpoint_validate_baseline(req, res, "pjnz", pjnz, "original")
     response <- jsonlite::parse_json(response)
     expect_equal(response$status, "failure")
     expect_length(response$errors, 1)
@@ -67,7 +67,8 @@ test_that("endpoint_validate_baseline support shape file", {
     list(postBody = '{"type":"shape","path":"path/to/file","originalFilename":"original"}'),
     res,
     "shape",
-    shape)
+    shape,
+    "original")
   response <- jsonlite::parse_json(response)
 
   expect_equal(response$status, "success")
@@ -86,7 +87,8 @@ test_that("endpoint_validate_baseline supports population file", {
     list(postBody = '{"type":"population","path":"path/to/file","originalFilename":"original"}'),
     res,
     "population",
-    population)
+    population,
+    "original")
   response <- jsonlite::parse_json(response)
 
   expect_equal(response$status, "success")
