@@ -92,7 +92,7 @@ is_error <- function(x) {
 #'
 #' @return Validated JSON response with data and incidcation of success.
 #' @keywords internal
-endpoint_validate_baseline <- function(req, res, type, path) {
+endpoint_validate_baseline <- function(req, res, type, path, originalFilename) {
   validate_json_schema(req$postBody, "ValidateInputRequest")
   validate_func <- switch(type,
                           pjnz = do_validate_pjnz,
@@ -103,7 +103,7 @@ endpoint_validate_baseline <- function(req, res, type, path) {
     validate_func(path)
   })
   if (response$success) {
-    response$value <- input_response(response$value, path, type)
+    response$value <- input_response(response$value, path, type, originalFilename)
   } else {
     response$errors <- hintr_errors(list("INVALID_FILE" = response$message))
     res$status <- 400
@@ -124,7 +124,7 @@ endpoint_validate_baseline <- function(req, res, type, path) {
 #'
 #' @return Validated JSON response with data and incidcation of success.
 #' @keywords internal
-endpoint_validate_survey_programme <- function(req, res, type, path, shape) {
+endpoint_validate_survey_programme <- function(req, res, type, path, shape, originalFilename) {
   validate_json_schema(req$postBody, "ValidateSurveyAndProgrammeRequest")
   validate_func <- switch(type,
                           programme = do_validate_programme,
@@ -136,7 +136,7 @@ endpoint_validate_survey_programme <- function(req, res, type, path, shape) {
     validate_func(path, shape)
   })
   if (response$success) {
-    response$value <- input_response(response$value, path, type)
+    response$value <- input_response(response$value, path, type, originalFilename)
   } else {
     response$errors <- hintr_errors(list("INVALID_FILE" = response$message))
     res$status <- 400
@@ -146,10 +146,11 @@ endpoint_validate_survey_programme <- function(req, res, type, path, shape) {
 }
 
 
-input_response <- function(value, path, type) {
+input_response <- function(value, path, type, filename) {
   ret <- list(filename = scalar(basename(path)),
               type = scalar(type),
               data = value$data,
+              originalFilename = filename,
               filters = value$filters)
   validate_json_schema(to_json(ret), get_input_response_schema(type), "data")
   ret

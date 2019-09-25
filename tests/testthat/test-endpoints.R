@@ -109,14 +109,16 @@ test_that("format_response_data correctly formats data and validates it", {
     response <- input_response(list(data = list(country = scalar("Botswana")),
                                     filters = scalar(NA)),
                                "/path/to/file.pjnz",
-                               "pjnz")
+                               "pjnz",
+                               "original.pjnz")
   })
   expect_equal(response$data$country, scalar("Botswana"))
   expect_equal(response$filename, scalar("file.pjnz"))
   mockery::expect_called(mock_validate, 1)
   args <- mockery::mock_args(mock_validate)[[1]]
   expected_data <- list(
-    filename = "file.pjnz",
+    path = "/path/to/file.pjnz",
+    originalFilename = "original.pjnz",
     type = "pjnz",
     data = list(
       country = "Botswana"
@@ -191,7 +193,7 @@ test_that("possible filters are returned for data", {
   shape <- file.path("testdata", "malawi.geojson")
   res <- MockPlumberResponse$new()
   response <- endpoint_validate_survey_programme(
-    list(postBody = '{"type":"programme","path":"path/to/file","shape":"path"}'),
+    list(postBody = '{"type":"programme","path":"path/to/file","shape":"path","originalFilename":"original"}'),
     res,
     "programme",
     programme,
@@ -214,7 +216,7 @@ test_that("possible filters are returned for data", {
   anc <- file.path("testdata", "anc.csv")
   res <- MockPlumberResponse$new()
   response <- endpoint_validate_survey_programme(
-    list(postBody = '{"type":"anc","path":"path/to/file","shape":"path"}'),
+    list(postBody = '{"type":"anc","path":"path/to/file","shape":"path","originalFilename":"original"}'),
     res,
     "anc",
     anc,
@@ -233,7 +235,7 @@ test_that("possible filters are returned for data", {
   survey <- file.path("testdata", "survey.csv")
   res <- MockPlumberResponse$new()
   response <- endpoint_validate_survey_programme(
-    list(postBody = '{"type":"survey","path":"path/to/file","shape":"path"}'),
+    list(postBody = '{"type":"survey","path":"path/to/file","shape":"path","originalFilename":"original"}'),
     res,
     "survey",
     survey,

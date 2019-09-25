@@ -3,11 +3,13 @@
   "type": "object",
   "properties": {
     "type" : { "$ref": "InputType.schema.json" },
-    "path" : { "$ref": "FilePath.schema.json" }
+    "path" : { "$ref": "FilePath.schema.json" },
+    "originalFilename" : { "$ref": "FilePath.schema.json" }
   },
   "additionalProperties": false,
   "required": [
     "type",
-    "path"
+    "path",
+    "originalFilename"
   ]
 }

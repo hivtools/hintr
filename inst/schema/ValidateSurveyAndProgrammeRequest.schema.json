@@ -4,12 +4,14 @@
   "properties": {
     "type" : { "$ref": "InputType.schema.json" },
     "path" : { "$ref": "FilePath.schema.json" },
-    "shape": { "$ref": "FilePath.schema.json" }
+    "shape": { "$ref": "FilePath.schema.json" },
+    "originalFilename" : { "$ref": "FilePath.schema.json" }
   },
   "additionalProperties": false,
   "required": [
     "type",
     "path",
-    "shape"
+    "shape",
+    "originalFilename"
   ]
 }
