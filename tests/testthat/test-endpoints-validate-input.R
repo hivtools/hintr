@@ -7,7 +7,7 @@ test_that("endpoint_validate_baseline correctly validates data", {
   response <- endpoint_validate_baseline(req, res, "pjnz", pjnz)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
-  expect_equal(response$data$path, "path/to/file")
+  expect_equal(response$data$hash, "file")
   expect_equal(response$data$data$country, "Botswana")
   expect_equal(response$data$data$originalFilename, "original")
   expect_equal(res$status, 200)
@@ -72,7 +72,7 @@ test_that("endpoint_validate_baseline support shape file", {
 
   expect_equal(response$status, "success")
   expect_equal(response$data$originalFilename, "original")
-  expect_equal(response$data$path, "path/to/file")
+  expect_equal(response$data$hash, "file")
   expect_true(all(c("type", "features") %in% names(response$data$data)))
   expect_equal(length(response$data$data$features), 69)
   expect_equal(res$status, 200)
@@ -91,7 +91,7 @@ test_that("endpoint_validate_baseline supports population file", {
 
   expect_equal(response$status, "success")
   expect_equal(response$data$originalFilename, "original")
-  expect_equal(response$data$path, "path/to/file")
+  expect_equal(response$data$hash, "file")
   expect_length(response$data$data, 0)
   expect_equal(res$status, 200)
 })
