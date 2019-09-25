@@ -6,6 +6,36 @@
     "properties": {
       "area_id": {
         "type": "string"
+      },
+      "age_group_id": {
+        "type": "number"
+      },
+      "quarter_id": {
+        "type": "number"
+      },
+      "anc_clients": {
+        "type": "number"
+      },
+      "ancrt_hiv_status": {
+        "type": "number"
+      },
+      "ancrt_known_pos": {
+        "type": "number"
+      },
+      "ancrt_already_art": {
+        "type": "number"
+      },
+      "ancrt_tested": {
+        "type": "number"
+      },
+      "ancrt_test_pos": {
+        "type": "number"
+      },
+      "prevalence": {
+        "type": "number"
+      },
+      "art_coverage": {
+        "type": "number"
       }
     },
     "required": [ "area_id" ]
