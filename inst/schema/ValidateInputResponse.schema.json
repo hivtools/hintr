@@ -70,7 +70,7 @@
         "filters": { "$ref": "AgeFilters.schema.json" }
       },
       "additionalProperties": false,
-      "required": ["originalFilename", "hash", "data", "filters"]
+      "required": ["originalFilename", "hash", "type", "data", "filters"]
     },
 
     "anc_response": {

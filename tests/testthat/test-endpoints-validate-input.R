@@ -7,9 +7,9 @@ test_that("endpoint_validate_baseline correctly validates data", {
   response <- endpoint_validate_baseline(req, res, "pjnz", pjnz, "original")
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
-  expect_equal(response$data$hash, "file")
+  expect_equal(response$data$hash, "Botswana2018.PJNZ")
   expect_equal(response$data$data$country, "Botswana")
-  expect_equal(response$data$data$originalFilename, "original")
+  expect_equal(response$data$originalFilename, "original")
   expect_equal(res$status, 200)
 })
 
@@ -48,7 +48,7 @@ test_that("endpoint_validate_baseline validates the input and response", {
   mock_validate_json_schema <- mockery::mock(TRUE, cycle = TRUE)
   with_mock("hintr:::validate_json_schema" = mock_validate_json_schema, {
     ret <- endpoint_validate_baseline(list(postBody = "request"),
-                                   MockPlumberResponse$new(), "pjnz", pjnz)
+                                   MockPlumberResponse$new(), "pjnz", pjnz, "original")
   })
 
   mockery::expect_called(mock_validate_json_schema, 4)
@@ -73,7 +73,7 @@ test_that("endpoint_validate_baseline support shape file", {
 
   expect_equal(response$status, "success")
   expect_equal(response$data$originalFilename, "original")
-  expect_equal(response$data$hash, "file")
+  expect_equal(response$data$hash, "malawi.geojson")
   expect_true(all(c("type", "features") %in% names(response$data$data)))
   expect_equal(length(response$data$data$features), 69)
   expect_equal(res$status, 200)
@@ -93,7 +93,7 @@ test_that("endpoint_validate_baseline supports population file", {
 
   expect_equal(response$status, "success")
   expect_equal(response$data$originalFilename, "original")
-  expect_equal(response$data$hash, "file")
+  expect_equal(response$data$hash, "population.csv")
   expect_length(response$data$data, 0)
   expect_equal(res$status, 200)
 })

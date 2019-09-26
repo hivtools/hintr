@@ -15,7 +15,7 @@ test_that("endpoint_validate_survey_programme supports programme file", {
 
   expect_equal(response$status, "success")
   expect_equal(response$data$originalFilename, "original")
-  expect_equal(response$data$hash, "file")
+  expect_equal(response$data$hash, "programme.csv")
   expect_equal(res$status, 200)
   ## Sanity check that data has been returned
   expect_true(length(response$data$data) >= 1400)
@@ -58,7 +58,7 @@ test_that("endpoint_validate_survey_programme supports ANC file", {
 
   expect_equal(response$status, "success")
   expect_equal(response$data$originalFilename, "original")
-  expect_equal(response$data$hash, "file")
+  expect_equal(response$data$hash, "anc.csv")
   expect_equal(res$status, 200)
   ## Sanity check that data has been returned
   expect_true(length(response$data$data) >= 800)
@@ -105,7 +105,7 @@ test_that("endpoint_validate_survey_programme supports survey file", {
 
   expect_equal(response$status, "success")
   expect_equal(response$data$originalFilename, "original")
-  expect_equal(response$data$hash, "file")
+  expect_equal(response$data$hash, "survey.csv")
   expect_equal(res$status, 200)
   ## Sanity check that data has been returned
   expect_true(length(response$data$data) >= 20000)

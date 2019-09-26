@@ -22,8 +22,8 @@ test_that("validate pjnz", {
          errors = list(),
          data = list(hash = "Botswana2018.PJNZ",
                      type = "pjnz",
-                     originalFilename = "original.PJNZ",
                      data = list(country = "Botswana"),
+                     originalFilename = "original.PJNZ",
                      filters = NULL)))
 })
 
@@ -58,10 +58,10 @@ test_that("validate population", {
   expect_equal(response_from_json(r),
                list(status = "success",
                     errors = list(),
-                    data = list(originalFilename = "origianl.csv",
-                                hash = "population.csv",
+                    data = list(hash = "population.csv",
                                 type = "population",
                                 data = NULL,
+                                originalFilename = "original.csv",
                                 filters = NULL)))
 })
 

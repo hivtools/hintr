@@ -5,7 +5,7 @@ test_that("hintr_response correctly prepares response", {
     success = TRUE,
     value = list(
       originalFilename = scalar("original.pjnz"),
-      path = scalar("path/to/file"),
+      hash = scalar("file.pjnz"),
       type = scalar("pjnz"),
       data = list(country = scalar("Botswana"))
     )
@@ -17,7 +17,7 @@ test_that("hintr_response correctly prepares response", {
 
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
-  expect_equal(response$data$hash, "file")
+  expect_equal(response$data$hash, "file.pjnz")
   expect_equal(response$data$originalFilename, "original.pjnz")
   expect_equal(response$data$data$country, "Botswana")
   expect_equal(response$errors, list())
@@ -50,7 +50,7 @@ test_that("hintr_response distinguishes incorrect data schema", {
     value = list(
       originalFilename = scalar("test.pjnz"),
       type = scalar("pjnz"),
-      hash = "file",
+      hash = scalar("file"),
       data = list(
         country = scalar("Botswana"))
     )
@@ -116,16 +116,16 @@ test_that("format_response_data correctly formats data and validates it", {
                                "original.pjnz")
   })
   expect_equal(response$data$country, scalar("Botswana"))
-  expect_equal(response$filename, scalar("file.pjnz"))
+  expect_equal(response$hash, scalar("file.pjnz"))
   mockery::expect_called(mock_validate, 1)
   args <- mockery::mock_args(mock_validate)[[1]]
   expected_data <- list(
     hash = "file.pjnz",
-    originalFilename = "original.pjnz",
     type = "pjnz",
     data = list(
       country = "Botswana"
     ),
+    originalFilename = "original.pjnz",
     filters = NULL
   )
   expect_equal(jsonlite::fromJSON(args[[1]]), expected_data)

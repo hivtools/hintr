@@ -89,6 +89,7 @@ is_error <- function(x) {
 #' @param type The type of file to validate: pjnz, shape, population, ANC,
 #' survey or programme.
 #' @param path Path to the file to validate.
+#' @param originalFilename Original file name to be returned in the serialised data.
 #'
 #' @return Validated JSON response with data and incidcation of success.
 #' @keywords internal
@@ -121,6 +122,7 @@ endpoint_validate_baseline <- function(req, res, type, path, originalFilename) {
 #' @param type The type of file to validate: ANC, survey or programme.
 #' @param path Path to the file to validate.
 #' @param shape Path to shape file for comparison.
+#' @param originalFilename Original file name to be returned in the serialised data.
 #'
 #' @return Validated JSON response with data and incidcation of success.
 #' @keywords internal
@@ -146,11 +148,11 @@ endpoint_validate_survey_programme <- function(req, res, type, path, shape, orig
 }
 
 
-input_response <- function(value, path, type, filename) {
+input_response <- function(value, path, type, originalFilename) {
   ret <- list(hash = scalar(basename(path)),
               type = scalar(type),
               data = value$data,
-              originalFilename = filename,
+              originalFilename = scalar(originalFilename),
               filters = value$filters)
   validate_json_schema(to_json(ret), get_input_response_schema(type), "data")
   ret
