@@ -1,0 +1,10 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "properties": {
+    "prevalence": { "type": "PrevalenceMetadata.schema.json" }
+      "additionalProperties": false,
+      "required": ["indicators"]
+  },
+  "additionalProperties": false,
+  "required": ["choropleth"]
+}

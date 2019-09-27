@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "properties": {
+    "survey": { "type": "PlotTypeMetadata.schema.json" },
+    "anc": { "type": "PlotTypeMetadata.schema.json" },
+    "programme": { "type": "PlotTypeMetadata.schema.json" },
+    "output": { "type": "PlotTypeMetadata.schema.json" }
+  },
+  "additionalProperties": false,
+  "required": ["survey", "anc", "programme", "output"]
+}

@@ -262,3 +262,22 @@ test_that("possible filters are returned for data", {
     )
   ))
 })
+
+test_that("endpoint_plotting_metadata gets metadata", {
+  res <- MockPlumberResponse$new()
+  response <- endpoint_plotting_metadata(NULL, res, "Malawi")
+  response <- jsonlite::parse_json(response)
+
+  expect_equal(res$status, 200)
+
+  expect_true(all(names(metadata) %in%
+                    c("survey", "anc", "output", "programme")))
+  expect_equal(names(metadata$survey), "choropleth")
+  expect_equal(names(metadata$anc), "choropleth")
+  expect_equal(names(metadata$output), "choropleth")
+  expect_equal(names(metadata$programme), "choropleth")
+  expect_equal(names(metadata$anc$choropleth$indicators),
+               c("art_coverage", "prevalence"))
+  expect_equal(metadata$anc$choropleth$indicators$art_coverage$name,
+               scalar("ART coverage"))
+})

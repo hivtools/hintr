@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "properties": {
+    "choropleth": { 
+      "type": "object",
+      "proerties": {
+        "indicators": { "type": "IndicatorMetadata.schema.json" }
+      },
+      "additionalProperties": false,
+      "required": ["indicators"]
+  },
+  "additionalProperties": false,
+  "required": ["choropleth"]
+}

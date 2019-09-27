@@ -12,6 +12,8 @@ api_build <- function(queue) {
             serializer = serializer_json_hintr())
   pr$handle("GET", "/model/result/<id>", endpoint_model_result(queue),
             serializer = serializer_json_hintr())
+  pr$handle("GET", "/meta/plotting/<country>", endpoint_plotting_metadata,
+            serializer = serializer_json_hintr())
   pr$handle("GET", "/", api_root)
   pr
 }
@@ -176,6 +178,16 @@ endpoint_validate_baseline_combined <- function(req, res, pjnz, shape, populatio
     res$status <- 400
   }
   hintr_response(response, "ValidateBaselineResponse")
+}
+
+endpoint_plotting_metadata <- function(req, res, country) {
+  response <- with_success(do_plotting_metadata(country))
+  if (!response$success) {
+    response$errors <- hintr_errors(
+      list("FAILED_TO_GET_METADATA" = response$message))
+    res$status <- 400
+  }
+  hintr_response(response, "PlottingMetadataResponse")
 }
 
 #' Format a hintr response and validate against schema.
