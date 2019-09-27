@@ -88,9 +88,7 @@ is_error <- function(x) {
 #' @param res The response as a PlumberResponse object.
 #' @param type The type of file to validate: pjnz, shape, population, ANC,
 #' survey or programme.
-#' @param path Path to the file to validate.
-#' @param hash md5 hash of the file to validate.
-#' @param filename Original file name to be returned in the serialised data.
+#' @param file File object containing path, filename and md5 hash.
 #'
 #' @return Validated JSON response with data and incidcation of success.
 #' @keywords internal
@@ -122,9 +120,8 @@ endpoint_validate_baseline <- function(req, res, type, file) {
 #' @param res The response as a PlumberResponse object.
 #' @param type The type of file to validate: ANC, survey or programme.
 #' @param path Path to the file to validate.
+#' @param file File object containing path, filename and md5 hash.
 #' @param shape Path to shape file for comparison.
-#' @param hash md5 hash of the file to validate.
-#' @param filename Original file name to be returned in the serialised data.
 #'
 #' @return Validated JSON response with data and incidcation of success.
 #' @keywords internal
