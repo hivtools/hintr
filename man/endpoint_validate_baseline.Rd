@@ -5,7 +5,7 @@
 \title{Validate an baseline input file and return an indication of success and
 if successful return the data required by UI.}
 \usage{
-endpoint_validate_baseline(req, res, type, path)
+endpoint_validate_baseline(req, res, type, path, hash, filename)
 }
 \arguments{
 \item{req}{The request as PlumberRequest object.}
@@ -16,6 +16,10 @@ endpoint_validate_baseline(req, res, type, path)
 survey or programme.}
 
 \item{path}{Path to the file to validate.}
+
+\item{hash}{md5 hash of the file to validate.}
+
+\item{filename}{Original file name to be returned in the serialised data.}
 }
 \value{
 Validated JSON response with data and incidcation of success.

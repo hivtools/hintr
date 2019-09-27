@@ -1,5 +1,6 @@
 {
 	"type": "pjnz",
 	"path": "testdata/Botswana2018.PJNZ",
-	"originalFilename": "original.PJNZ"
+	"filename": "original.PJNZ",
+	"hash": "12345"
 }

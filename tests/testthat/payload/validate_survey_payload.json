@@ -2,5 +2,6 @@
   "type": "survey",
   "path": "testdata/survey.csv",
   "shape": "testdata/malawi.geojson",
-  "originalFilename": "original.csv"
+  "filename": "original.csv",
+  "hash": "12345"
 }

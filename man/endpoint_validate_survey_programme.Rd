@@ -6,7 +6,8 @@
 returning an indication of success and if successful return the data
 required by UI.}
 \usage{
-endpoint_validate_survey_programme(req, res, type, path, shape)
+endpoint_validate_survey_programme(req, res, type, path, shape, hash,
+  filename)
 }
 \arguments{
 \item{req}{The request as PlumberRequest object.}
@@ -18,6 +19,10 @@ endpoint_validate_survey_programme(req, res, type, path, shape)
 \item{path}{Path to the file to validate.}
 
 \item{shape}{Path to shape file for comparison.}
+
+\item{hash}{md5 hash of the file to validate.}
+
+\item{filename}{Original file name to be returned in the serialised data.}
 }
 \value{
 Validated JSON response with data and incidcation of success.

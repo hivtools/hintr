@@ -23,7 +23,7 @@ test_that("validate pjnz", {
          data = list(hash = "Botswana2018.PJNZ",
                      type = "pjnz",
                      data = list(country = "Botswana"),
-                     originalFilename = "original.PJNZ",
+                     filename = "original.PJNZ",
                      filters = NULL)))
 })
 
@@ -40,7 +40,7 @@ test_that("validate shape", {
   expect_equal(response$status, "success")
   expect_equal(response$errors, list())
   expect_equal(response$data$hash, "malawi.geojson")
-  expect_equal(response$data$originalFilename, "original.geojson")
+  expect_equal(response$data$filename, "original.geojson")
   expect_equal(response$data$type, "shape")
   expect_true(all(c("type", "features") %in% names(response$data$data)))
   expect_equal(response$data$data$type, "FeatureCollection")
@@ -61,7 +61,7 @@ test_that("validate population", {
                     data = list(hash = "population.csv",
                                 type = "population",
                                 data = NULL,
-                                originalFilename = "original.csv",
+                                filename = "original.csv",
                                 filters = NULL)))
 })
 
@@ -78,7 +78,7 @@ test_that("validate programme", {
   expect_equal(response$status, "success")
   expect_equal(response$errors, list())
   expect_equal(response$data$hash, "programme.csv")
-  expect_equal(response$data$originalFilename, "original.csv")
+  expect_equal(response$data$filename, "original.csv")
   expect_equal(response$data$type, "programme")
   expect_true(length(response$data$data) >= 1400)
   expect_equal(typeof(response$data$data[[1]]$current_art), "double")
@@ -98,8 +98,8 @@ test_that("validate ANC", {
   response <- response_from_json(r)
   expect_equal(response$status, "success")
   expect_equal(response$errors, list())
-  expect_equal(response$data$hash, "anc.csv")
-  expect_equal(response$data$originalFilename, "original.csv")
+  expect_equal(response$data$hash, "12345")
+  expect_equal(response$data$filename, "original.csv")
   expect_equal(response$data$type, "anc")
   expect_true(length(response$data$data) >= 800)
   expect_equal(typeof(response$data$data[[1]]$ancrt_hiv_status), "integer")
@@ -120,7 +120,7 @@ test_that("validate survey", {
   expect_equal(response$status, "success")
   expect_equal(response$errors, list())
   expect_equal(response$data$hash, "survey.csv")
-  expect_equal(response$data$originalFilename, "original.csv")
+  expect_equal(response$data$filename, "original.csv")
   expect_equal(response$data$type, "survey")
   expect_true(length(response$data$data) >= 20000)
   expect_equal(typeof(response$data$data[[1]]$est), "double")

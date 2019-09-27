@@ -89,11 +89,12 @@ is_error <- function(x) {
 #' @param type The type of file to validate: pjnz, shape, population, ANC,
 #' survey or programme.
 #' @param path Path to the file to validate.
-#' @param originalFilename Original file name to be returned in the serialised data.
+#' @param hash md5 hash of the file to validate.
+#' @param filename Original file name to be returned in the serialised data.
 #'
 #' @return Validated JSON response with data and incidcation of success.
 #' @keywords internal
-endpoint_validate_baseline <- function(req, res, type, path, originalFilename) {
+endpoint_validate_baseline <- function(req, res, type, path, hash, filename) {
   validate_json_schema(req$postBody, "ValidateInputRequest")
   validate_func <- switch(type,
                           pjnz = do_validate_pjnz,
@@ -104,7 +105,7 @@ endpoint_validate_baseline <- function(req, res, type, path, originalFilename) {
     validate_func(path)
   })
   if (response$success) {
-    response$value <- input_response(response$value, path, type, originalFilename)
+    response$value <- input_response(response$value, type, hash, filename)
   } else {
     response$errors <- hintr_errors(list("INVALID_FILE" = response$message))
     res$status <- 400
@@ -122,11 +123,12 @@ endpoint_validate_baseline <- function(req, res, type, path, originalFilename) {
 #' @param type The type of file to validate: ANC, survey or programme.
 #' @param path Path to the file to validate.
 #' @param shape Path to shape file for comparison.
-#' @param originalFilename Original file name to be returned in the serialised data.
+#' @param hash md5 hash of the file to validate.
+#' @param filename Original file name to be returned in the serialised data.
 #'
 #' @return Validated JSON response with data and incidcation of success.
 #' @keywords internal
-endpoint_validate_survey_programme <- function(req, res, type, path, shape, originalFilename) {
+endpoint_validate_survey_programme <- function(req, res, type, path, shape, hash, filename) {
   validate_json_schema(req$postBody, "ValidateSurveyAndProgrammeRequest")
   validate_func <- switch(type,
                           programme = do_validate_programme,
@@ -138,7 +140,7 @@ endpoint_validate_survey_programme <- function(req, res, type, path, shape, orig
     validate_func(path, shape)
   })
   if (response$success) {
-    response$value <- input_response(response$value, path, type, originalFilename)
+    response$value <- input_response(response$value, type, hash, filename)
   } else {
     response$errors <- hintr_errors(list("INVALID_FILE" = response$message))
     res$status <- 400
@@ -148,11 +150,11 @@ endpoint_validate_survey_programme <- function(req, res, type, path, shape, orig
 }
 
 
-input_response <- function(value, path, type, originalFilename) {
-  ret <- list(hash = scalar(basename(path)),
+input_response <- function(value, type, hash, filename) {
+  ret <- list(hash = scalar(hash),
               type = scalar(type),
               data = value$data,
-              originalFilename = scalar(originalFilename),
+              filename = scalar(filename),
               filters = value$filters)
   validate_json_schema(to_json(ret), get_input_response_schema(type), "data")
   ret

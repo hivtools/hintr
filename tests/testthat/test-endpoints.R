@@ -4,8 +4,8 @@ test_that("hintr_response correctly prepares response", {
   value <- list(
     success = TRUE,
     value = list(
-      originalFilename = scalar("original.pjnz"),
-      hash = scalar("file.pjnz"),
+      filename = scalar("original.pjnz"),
+      hash = scalar("12345"),
       type = scalar("pjnz"),
       data = list(country = scalar("Botswana"))
     )
@@ -17,8 +17,8 @@ test_that("hintr_response correctly prepares response", {
 
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
-  expect_equal(response$data$hash, "file.pjnz")
-  expect_equal(response$data$originalFilename, "original.pjnz")
+  expect_equal(response$data$hash, "12345")
+  expect_equal(response$data$filename, "original.pjnz")
   expect_equal(response$data$data$country, "Botswana")
   expect_equal(response$errors, list())
 
@@ -48,9 +48,9 @@ test_that("hintr_response distinguishes incorrect data schema", {
   value <- list(
     success = TRUE,
     value = list(
-      originalFilename = scalar("test.pjnz"),
+      filename = scalar("test.pjnz"),
       type = scalar("pjnz"),
-      hash = scalar("file"),
+      hash = scalar("12345"),
       data = list(
         country = scalar("Botswana"))
     )
@@ -111,21 +111,21 @@ test_that("format_response_data correctly formats data and validates it", {
   with_mock("hintr:::validate_json_schema" = mock_validate, {
     response <- input_response(list(data = list(country = scalar("Botswana")),
                                     filters = scalar(NA)),
-                               "/path/to/file.pjnz",
                                "pjnz",
+                               "12345",
                                "original.pjnz")
   })
   expect_equal(response$data$country, scalar("Botswana"))
-  expect_equal(response$hash, scalar("file.pjnz"))
+  expect_equal(response$hash, scalar("12345"))
   mockery::expect_called(mock_validate, 1)
   args <- mockery::mock_args(mock_validate)[[1]]
   expected_data <- list(
-    hash = "file.pjnz",
+    hash = "12345",
     type = "pjnz",
     data = list(
       country = "Botswana"
     ),
-    originalFilename = "original.pjnz",
+    filename = "original.pjnz",
     filters = NULL
   )
   expect_equal(jsonlite::fromJSON(args[[1]]), expected_data)
@@ -196,11 +196,12 @@ test_that("possible filters are returned for data", {
   shape <- file.path("testdata", "malawi.geojson")
   res <- MockPlumberResponse$new()
   response <- endpoint_validate_survey_programme(
-    list(postBody = '{"type":"programme","path":"path/to/file","shape":"path","originalFilename":"original"}'),
+    list(postBody = '{"type":"programme","path":"path/to/file","shape":"path","hash":"12345","filename":"original"}'),
     res,
     "programme",
     programme,
     shape,
+    "12345",
     "original")
   response <- jsonlite::parse_json(response)
 
@@ -220,11 +221,12 @@ test_that("possible filters are returned for data", {
   anc <- file.path("testdata", "anc.csv")
   res <- MockPlumberResponse$new()
   response <- endpoint_validate_survey_programme(
-    list(postBody = '{"type":"anc","path":"path/to/file","shape":"path","originalFilename":"original"}'),
+    list(postBody = '{"type":"anc","path":"path/to/file","shape":"path","hash":"12345","filename":"original"}'),
     res,
     "anc",
     anc,
     shape,
+    "12345",
     "original")
   response <- jsonlite::parse_json(response)
 
@@ -240,11 +242,12 @@ test_that("possible filters are returned for data", {
   survey <- file.path("testdata", "survey.csv")
   res <- MockPlumberResponse$new()
   response <- endpoint_validate_survey_programme(
-    list(postBody = '{"type":"survey","path":"path/to/file","shape":"path","originalFilename":"original"}'),
+    list(postBody = '{"type":"survey","path":"path/to/file","shape":"path","hash":"12345","filename":"original"}'),
     res,
     "survey",
     survey,
     shape,
+    "12345",
     "original")
   response <- jsonlite::parse_json(response)
 
