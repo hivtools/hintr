@@ -108,12 +108,12 @@ test_that("plumber api can be built", {
 
 test_that("format_response_data correctly formats data and validates it", {
   mock_validate <- mockery::mock(TRUE)
+  file <- list(path = "path", hash = "12345", filename = "original.pjnz")
   with_mock("hintr:::validate_json_schema" = mock_validate, {
     response <- input_response(list(data = list(country = scalar("Botswana")),
                                     filters = scalar(NA)),
                                "pjnz",
-                               "12345",
-                               "original.pjnz")
+                                file)
   })
   expect_equal(response$data$country, scalar("Botswana"))
   expect_equal(response$hash, scalar("12345"))
@@ -195,14 +195,13 @@ test_that("possible filters are returned for data", {
   programme <- file.path("testdata", "programme.csv")
   shape <- file.path("testdata", "malawi.geojson")
   res <- MockPlumberResponse$new()
+  file <- list(path = programme, hash = "12345", filename = "original.pjnz")
   response <- endpoint_validate_survey_programme(
-    list(postBody = '{"type":"programme","path":"path/to/file","shape":"path","hash":"12345","filename":"original"}'),
+    list(postBody = '{"type":"programme","shape":"path","file": {"path":"path/to/file","hash":"12345","filename":"original"}}'),
     res,
     "programme",
-    programme,
-    shape,
-    "12345",
-    "original")
+    file,
+    shape)
   response <- jsonlite::parse_json(response)
 
   expect_equal(names(response$data$filters), "age")
@@ -222,7 +221,7 @@ test_that("possible filters are returned for data", {
   file <- list(path = anc, hash = "12345", filename = "original")
   res <- MockPlumberResponse$new()
   response <- endpoint_validate_survey_programme(
-    list(postBody = '{"type":"anc","path":"path/to/file","shape":"path","hash":"12345","filename":"original"}'),
+    list(postBody = '{"type":"anc","shape":"path","file": {"path":"path/to/file","hash":"12345","filename":"original"}}'),
     res,
     "anc",
     file,
@@ -242,7 +241,7 @@ test_that("possible filters are returned for data", {
   res <- MockPlumberResponse$new()
   file <- list(path = survey, hash = "12345", filename = "original")
   response <- endpoint_validate_survey_programme(
-    list(postBody = '{"type":"survey","path":"path/to/file","shape":"path","filename":"original"}'),
+    list(postBody = '{"type":"survey", "shape":"path", "file": {"path":"path/to/file","hash":"12345", "filename":"original"}}'),
     res,
     "survey",
     file,

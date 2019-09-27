@@ -58,7 +58,7 @@ test_that("validate population", {
   expect_equal(response_from_json(r),
                list(status = "success",
                     errors = list(),
-                    data = list(hash = "population.csv",
+                    data = list(hash = "12345",
                                 type = "population",
                                 data = NULL,
                                 filename = "original.csv",

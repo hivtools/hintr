@@ -13,7 +13,7 @@ test_that("schema validation can be turned off", {
 })
 
 test_that("validate locates schema and does validation with referenced files", {
-  test_json <- '{"type": "pjnz", "path": "path/to/file", "hash": "12345", "filename": "original"}'
+  test_json <- '{"type": "pjnz", "file": {"path": "path/to/file", "hash": "12345", "filename": "original"}}'
   expect_true(validate(test_json, "ValidateInputRequest"))
 
   test_json <- '{"type": "notvalid", "path": "path/to/file", "hash": "12345", "filename": "original"}'
