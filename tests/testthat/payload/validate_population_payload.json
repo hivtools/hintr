@@ -1,6 +1,8 @@
 {
   "type": "population",
-  "path": "testdata/population.csv",
-  "filename": "original.csv",
-  "hash": "12345"
+  "file": {
+    "path": "testdata/population.csv",
+    "filename": "original.csv",
+    "hash": "12345"
+  }
 }

@@ -219,15 +219,14 @@ test_that("possible filters are returned for data", {
   ))
 
   anc <- file.path("testdata", "anc.csv")
+  file <- list(path = anc, hash = "12345", filename = "original")
   res <- MockPlumberResponse$new()
   response <- endpoint_validate_survey_programme(
     list(postBody = '{"type":"anc","path":"path/to/file","shape":"path","hash":"12345","filename":"original"}'),
     res,
     "anc",
-    anc,
-    shape,
-    "12345",
-    "original")
+    file,
+    shape)
   response <- jsonlite::parse_json(response)
 
   expect_equal(names(response$data$filters), "age")
@@ -241,14 +240,13 @@ test_that("possible filters are returned for data", {
 
   survey <- file.path("testdata", "survey.csv")
   res <- MockPlumberResponse$new()
+  file <- list(path = survey, hash = "12345", filename = "original")
   response <- endpoint_validate_survey_programme(
-    list(postBody = '{"type":"survey","path":"path/to/file","shape":"path","hash":"12345","filename":"original"}'),
+    list(postBody = '{"type":"survey","path":"path/to/file","shape":"path","filename":"original"}'),
     res,
     "survey",
-    survey,
-    shape,
-    "12345",
-    "original")
+    file,
+    shape)
   response <- jsonlite::parse_json(response)
 
   expect_equal(names(response$data$filters), c("age", "surveys"))

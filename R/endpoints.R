@@ -94,18 +94,18 @@ is_error <- function(x) {
 #'
 #' @return Validated JSON response with data and incidcation of success.
 #' @keywords internal
-endpoint_validate_baseline <- function(req, res, type, path, hash, filename) {
+endpoint_validate_baseline <- function(req, res, type, file) {
   validate_json_schema(req$postBody, "ValidateInputRequest")
   validate_func <- switch(type,
                           pjnz = do_validate_pjnz,
                           shape = do_validate_shape,
                           population = do_validate_population)
   response <- with_success({
-    assert_file_exists(path)
-    validate_func(path)
+    assert_file_exists(file$path)
+    validate_func(file$path)
   })
   if (response$success) {
-    response$value <- input_response(response$value, type, hash, filename)
+    response$value <- input_response(response$value, type, file)
   } else {
     response$errors <- hintr_errors(list("INVALID_FILE" = response$message))
     res$status <- 400
@@ -128,19 +128,19 @@ endpoint_validate_baseline <- function(req, res, type, path, hash, filename) {
 #'
 #' @return Validated JSON response with data and incidcation of success.
 #' @keywords internal
-endpoint_validate_survey_programme <- function(req, res, type, path, shape, hash, filename) {
+endpoint_validate_survey_programme <- function(req, res, type, file, shape) {
   validate_json_schema(req$postBody, "ValidateSurveyAndProgrammeRequest")
   validate_func <- switch(type,
                           programme = do_validate_programme,
                           anc = do_validate_anc,
                           survey = do_validate_survey)
   response <- with_success({
-    assert_file_exists(path)
+    assert_file_exists(file$path)
     assert_file_exists(shape)
-    validate_func(path, shape)
+    validate_func(file$path, shape)
   })
   if (response$success) {
-    response$value <- input_response(response$value, type, hash, filename)
+    response$value <- input_response(response$value, type, file)
   } else {
     response$errors <- hintr_errors(list("INVALID_FILE" = response$message))
     res$status <- 400
@@ -150,11 +150,11 @@ endpoint_validate_survey_programme <- function(req, res, type, path, shape, hash
 }
 
 
-input_response <- function(value, type, hash, filename) {
-  ret <- list(hash = scalar(hash),
+input_response <- function(value, type, file) {
+  ret <- list(hash = scalar(file$hash),
               type = scalar(type),
               data = value$data,
-              filename = scalar(filename),
+              filename = scalar(file$filename),
               filters = value$filters)
   validate_json_schema(to_json(ret), get_input_response_schema(type), "data")
   ret

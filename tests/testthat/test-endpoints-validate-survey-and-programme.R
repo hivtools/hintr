@@ -3,15 +3,14 @@ context("survey-and-programme")
 test_that("endpoint_validate_survey_programme supports programme file", {
   programme <- file.path("testdata", "programme.csv")
   shape <- file.path("testdata", "malawi.geojson")
+  file <- list(path = programme, hash = "12345", filename = "original")
   res <- MockPlumberResponse$new()
   response <- endpoint_validate_survey_programme(
-    list(postBody = '{"type":"programme","path":"path/to/file","shape":"path","hash": "12345","filename":"original"}'),
+    list(postBody = '{"type":"programme", "file": {"path":"path/to/file","hash": "12345","filename":"original"}, "shape":"path"}'),
     res,
     "programme",
-    programme,
-    shape,
-    "12345",
-    "original")
+    file,
+    shape)
   response <- jsonlite::parse_json(response)
 
   expect_equal(response$status, "success")
@@ -26,15 +25,14 @@ test_that("endpoint_validate_survey_programme supports programme file", {
 test_that("endpoint_validate_survey_programme returns error on invalid programme data", {
   programme <- file.path("testdata", "malformed_programme.csv")
   shape <- file.path("testdata", "malawi.geojson")
+  file <- list(path = programme, hash = "12345", filename = "original")
   res <- MockPlumberResponse$new()
   response <- endpoint_validate_survey_programme(
-    list(postBody = '{"type":"programme","path":"path/to/file","shape":"path","hash": "12345","filename":"original"}'),
+    list(postBody = '{"type":"programme", "file": {"path":"path/to/file","hash": "12345","filename":"original"}, "shape":"path"}'),
     res,
     "programme",
-    programme,
-    shape,
-    "12345",
-    "original")
+    file,
+    shape)
   response <- jsonlite::parse_json(response)
 
   expect_equal(response$status, "failure")
@@ -48,15 +46,14 @@ test_that("endpoint_validate_survey_programme returns error on invalid programme
 test_that("endpoint_validate_survey_programme supports ANC file", {
   anc <- file.path("testdata", "anc.csv")
   shape <- file.path("testdata", "malawi.geojson")
+  file <- list(path = anc, hash = "12345", filename = "original")
   res <- MockPlumberResponse$new()
   response <- endpoint_validate_survey_programme(
-    list(postBody = '{"type":"anc","path":"path/to/file","shape":"path","hash": "12345","filename":"original"}'),
+    list(postBody = '{"type":"anc", "file": {"path":"path/to/file","hash": "12345","filename":"original"}, "shape":"path"}'),
     res,
     "anc",
-    anc,
-    shape,
-    "12345",
-    "original")
+    file,
+    shape)
   response <- jsonlite::parse_json(response)
 
   expect_equal(response$status, "success")
@@ -74,14 +71,14 @@ test_that("endpoint_validate_survey_programme supports ANC file", {
 test_that("endpoint_validate_survey_programme returns error on invalid ANC data", {
   anc <- file.path("testdata", "malformed_anc.csv")
   shape <- file.path("testdata", "malawi.geojson")
+  file <- list(path = anc, hash = "12345", filename = "original")
   res <- MockPlumberResponse$new()
   response <- endpoint_validate_survey_programme(
-    list(postBody = '{"type":"anc","path":"path/to/file","shape":"path","hash": "12345","filename":"original"}'),
+    list(postBody = '{"type":"anc", "file": {"path":"path/to/file","hash": "12345","filename":"original"}, "shape":"path"}'),
     res,
     "anc",
-    anc,
-    shape,
-    "original")
+    file,
+    shape)
   response <- jsonlite::parse_json(response)
 
   expect_equal(response$status, "failure")
@@ -96,15 +93,14 @@ test_that("endpoint_validate_survey_programme returns error on invalid ANC data"
 test_that("endpoint_validate_survey_programme supports survey file", {
   survey <- file.path("testdata", "survey.csv")
   shape <- file.path("testdata", "malawi.geojson")
+  file <- list(path = survey, hash = "12345", filename = "original")
   res <- MockPlumberResponse$new()
   response <- endpoint_validate_survey_programme(
-    list(postBody = '{"type":"survey","path":"path/to/file","shape":"path","hash": "12345","filename":"original"}'),
+    list(postBody = '{"type":"survey", "file": {"path":"path/to/file","hash": "12345","filename":"original"}, "shape":"path"}'),
     res,
     "survey",
-    survey,
-    shape,
-    "12345",
-    "original")
+    file,
+    shape)
   response <- jsonlite::parse_json(response)
 
   expect_equal(response$status, "success")
@@ -119,15 +115,14 @@ test_that("endpoint_validate_survey_programme supports survey file", {
 test_that("endpoint_validate_survey_programme returns error on invalid survey data", {
   survey <- file.path("testdata", "malformed_survey.csv")
   shape <- file.path("testdata", "malawi.geojson")
+  file <- list(path = survey, hash = "12345", filename = "original")
   res <- MockPlumberResponse$new()
   response <- endpoint_validate_survey_programme(
-    list(postBody = '{"type":"survey","path":"path/to/file","shape":"path","hash": "12345","filename":"original"}'),
+    list(postBody = '{"type":"survey", "file": {"path":"path/to/file","hash": "12345","filename":"original"}, "shape":"path"}'),
     res,
     "survey",
-    survey,
-    shape,
-    "12345",
-    "original")
+    file,
+    shape)
   response <- jsonlite::parse_json(response)
 
   expect_equal(response$status, "failure")
