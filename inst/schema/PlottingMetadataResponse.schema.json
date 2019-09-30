@@ -1,73 +1,37 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "definitions": {
-    "survey_choropleth": {
+    "prevalence_and_art_coverage_indicators": {
       "type": "object",
       "properties": {
         "prevalence": { "$ref": "IndicatorMetadata.schema.json" },
         "art_coverage": { "$ref": "IndicatorMetadata.schema.json" }
       }
     },
-    "anc_choropleth": {
-      "type": "object",
-      "properties": {
-        "prevalence": { "$ref": "IndicatorMetadata.schema.json" },
-        "art_coverage": { "$ref": "IndicatorMetadata.schema.json" }
-      }
-    },
-    "programme_choropleth": {
+    "current_art_indicator": {
       "type": "object",
       "properties": {
         "current_art": { "$ref": "IndicatorMetadata.schema.json" }
       }
     },
-    "output_choropleth": {
-      "type": "object",
-      "properties": {
-        "prevalence": { "$ref": "IndicatorMetadata.schema.json" },
-        "art_coverage": { "$ref": "IndicatorMetadata.schema.json" }
-      }
-    },
-    "survey" : {
+    "prevalence_and_art_coverage_choropleth" : {
       "type": "object",
       "properties": {
         "choropleth" : { 
           "type" : "object",
           "properties": {
-            "indicators": { "$ref": "#/definitions/survey_choropleth" }
+            "indicators": { "$ref": "#/definitions/prevalence_and_art_coverage_indicators" }
           }
         }
       }
     },
-    "anc" : {
+    "current_art_choropleth" : {
       "type": "object",
       "properties": {
         "choropleth" : { 
           "type" : "object",
           "properties": {
-            "indicators": { "$ref": "#/definitions/anc_choropleth" }
-          }
-        }
-      }
-    },
-    "programme" : {
-      "type": "object",
-      "properties": {
-        "choropleth" : { 
-          "type" : "object",
-          "properties": {
-            "indicators": { "$ref": "#/definitions/programme_choropleth" }
-          }
-        }
-      }
-    },
-    "output" : {
-      "type": "object",
-      "properties": {
-        "choropleth" : { 
-          "type" : "object",
-          "properties": {
-            "indicators": { "$ref": "#/definitions/output_choropleth" }
+            "indicators": { "$ref": "#/definitions/current_art_indicator" }
           }
         }
       }
@@ -76,10 +40,10 @@
 
   "type": "object",
   "properties": {
-    "survey": { "$ref": "#/definitions/survey" },
-    "anc": { "$ref": "#/definitions/anc" },
-    "programme": { "$ref": "#/definitions/programme" },
-    "output": { "$ref": "#/definitions/output" }
+    "survey": { "$ref": "#/definitions/prevalence_and_art_coverage_choropleth" },
+    "anc": { "$ref": "#/definitions/prevalence_and_art_coverage_choropleth" },
+    "programme": { "$ref": "#/definitions/current_art_choropleth" },
+    "output": { "$ref": "#/definitions/prevalence_and_art_coverage_choropleth" }
   },
   "additionalProperties": false,
   "required": ["survey", "anc", "programme", "output"]
