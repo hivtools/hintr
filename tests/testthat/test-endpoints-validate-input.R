@@ -2,23 +2,26 @@ context("endpoints-validate")
 
 test_that("endpoint_validate_baseline correctly validates data", {
   pjnz <- file.path("testdata", "Botswana2018.PJNZ")
-  req <- list(postBody = '{"type": "pjnz", "path": "path/to/file"}')
+  req <- list(postBody = '{"type": "pjnz", "file": {"path": "path/to/file", "hash": "12345", "filename": "original"}}')
   res <- MockPlumberResponse$new()
-  response <- endpoint_validate_baseline(req, res, "pjnz", pjnz)
+  file <- list(path = pjnz, hash = "12345", filename = "original")
+  response <- endpoint_validate_baseline(req, res, "pjnz", file)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
-  expect_equal(response$data$filename, "Botswana2018.PJNZ")
+  expect_equal(response$data$hash, "12345")
   expect_equal(response$data$data$country, "Botswana")
+  expect_equal(response$data$filename, "original")
   expect_equal(res$status, 200)
 })
 
 test_that("endpoint_validate_baseline returns error on invalid data", {
   pjnz <- file.path("testdata", "Botswana2018.PJNZ")
-  req <- list(postBody = '{"type": "pjnz", "path": "path/to/file"}')
+  req <- list(postBody = '{"type": "pjnz", "file": {"path": "path/to/file", "hash": "12345", "filename": "original"}}')
+  file <- list(path = pjnz, hash = "12345", filename = "original")
   mock_read_country <- mockery::mock("GBR")
   with_mock("hintr:::read_country" = mock_read_country, {
     res <- MockPlumberResponse$new()
-    response <- endpoint_validate_baseline(req, res, "pjnz", pjnz)
+    response <- endpoint_validate_baseline(req, res, "pjnz", file)
     response <- jsonlite::parse_json(response)
     expect_equal(response$status, "failure")
     expect_length(response$errors, 1)
@@ -29,9 +32,10 @@ test_that("endpoint_validate_baseline returns error on invalid data", {
 })
 
 test_that("endpoint_validate_baseline returns nice error if file does not exist", {
-  req <- list(postBody = '{"type": "pjnz", "path": "path/to/file"}')
+  req <- list(postBody = '{"type": "pjnz", "file": {"path": "path/to/file", "hash": "12345", "filename": "original"}}')
   res <- MockPlumberResponse$new()
-  response <- endpoint_validate_baseline(req, res, "pjnz", "path/to/file")
+  file <- list(path = "path/to/file", hash = "12345", filename = "original")
+  response <- endpoint_validate_baseline(req, res, "pjnz", file)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "failure")
   expect_length(response$errors, 1)
@@ -45,9 +49,10 @@ test_that("endpoint_validate_baseline returns nice error if file does not exist"
 test_that("endpoint_validate_baseline validates the input and response", {
   pjnz <- file.path("testdata", "Botswana2018.PJNZ")
   mock_validate_json_schema <- mockery::mock(TRUE, cycle = TRUE)
+  file <- list(path = pjnz, hash = "12345", filename = "original")
   with_mock("hintr:::validate_json_schema" = mock_validate_json_schema, {
     ret <- endpoint_validate_baseline(list(postBody = "request"),
-                                   MockPlumberResponse$new(), "pjnz", pjnz)
+                                   MockPlumberResponse$new(), "pjnz", file)
   })
 
   mockery::expect_called(mock_validate_json_schema, 4)
@@ -62,15 +67,17 @@ test_that("endpoint_validate_baseline validates the input and response", {
 test_that("endpoint_validate_baseline support shape file", {
   shape <- file.path("testdata", "malawi.geojson")
   res <- MockPlumberResponse$new()
+  file <- list(path = shape, hash = "12345", filename = "original")
   response <- endpoint_validate_baseline(
-    list(postBody = '{"type":"shape","path":"path/to/file"}'),
+    list(postBody = '{"type":"shape", "file": {"path": "path/to/file", "hash": "12345", "filename": "original"}}'),
     res,
     "shape",
-    shape)
+    file)
   response <- jsonlite::parse_json(response)
 
   expect_equal(response$status, "success")
-  expect_equal(response$data$filename, "malawi.geojson")
+  expect_equal(response$data$filename, "original")
+  expect_equal(response$data$hash, "12345")
   expect_true(all(c("type", "features") %in% names(response$data$data)))
   expect_equal(length(response$data$data$features), 69)
   expect_equal(res$status, 200)
@@ -80,15 +87,17 @@ test_that("endpoint_validate_baseline support shape file", {
 test_that("endpoint_validate_baseline supports population file", {
   population <- file.path("testdata", "population.csv")
   res <- MockPlumberResponse$new()
+  file <- list(path = population, hash = "12345", filename = "original")
   response <- endpoint_validate_baseline(
-    list(postBody = '{"type":"population","path":"path/to/file"}'),
+    list(postBody = '{"type":"population","file": {"path": "path/to/file", "hash": "12345", "filename": "original"}}'),
     res,
     "population",
-    population)
+    file)
   response <- jsonlite::parse_json(response)
 
   expect_equal(response$status, "success")
-  expect_equal(response$data$filename, "population.csv")
+  expect_equal(response$data$filename, "original")
+  expect_equal(response$data$hash, "12345")
   expect_length(response$data$data, 0)
   expect_equal(res$status, 200)
 })

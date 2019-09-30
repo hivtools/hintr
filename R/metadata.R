@@ -1,0 +1,30 @@
+do_plotting_metadata <- function(country) {
+  metadata <- naomi::get_plotting_metadata(country)
+  lapply(split(metadata, metadata$data_type), build_data_type_metadata)
+}
+
+build_data_type_metadata <- function(metadata) {
+  lapply(split(metadata, metadata$plot_type), build_plot_type_metadata)
+}
+
+build_plot_type_metadata <- function(metadata) {
+  list(indicators =
+         lapply(split(metadata, metadata$indicator), build_indicator_metadata))
+}
+
+build_indicator_metadata <- function(metadata) {
+  if (nrow(metadata) != 1) {
+    stop("Expected only 1 row for indicator, data type, plot type combination.
+Check each combination is unique in configuration.")
+  }
+  list(
+    value_column = scalar(metadata$value_column),
+    indicator_column = scalar(metadata$indicator_column),
+    indicator_value = scalar(metadata$indicator_value),
+    name = scalar(metadata$name),
+    min = scalar(metadata$min),
+    max = scalar(metadata$max),
+    colour = scalar(metadata$colour),
+    invert_scale = scalar(metadata$invert_scale)
+  )
+}

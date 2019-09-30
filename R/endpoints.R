@@ -12,6 +12,8 @@ api_build <- function(queue) {
             serializer = serializer_json_hintr())
   pr$handle("GET", "/model/result/<id>", endpoint_model_result(queue),
             serializer = serializer_json_hintr())
+  pr$handle("GET", "/meta/plotting/<country>", endpoint_plotting_metadata,
+            serializer = serializer_json_hintr())
   pr$handle("GET", "/", api_root)
   pr
 }
@@ -88,22 +90,22 @@ is_error <- function(x) {
 #' @param res The response as a PlumberResponse object.
 #' @param type The type of file to validate: pjnz, shape, population, ANC,
 #' survey or programme.
-#' @param path Path to the file to validate.
+#' @param file File object containing path, filename and md5 hash.
 #'
 #' @return Validated JSON response with data and incidcation of success.
 #' @keywords internal
-endpoint_validate_baseline <- function(req, res, type, path) {
+endpoint_validate_baseline <- function(req, res, type, file) {
   validate_json_schema(req$postBody, "ValidateInputRequest")
   validate_func <- switch(type,
                           pjnz = do_validate_pjnz,
                           shape = do_validate_shape,
                           population = do_validate_population)
   response <- with_success({
-    assert_file_exists(path)
-    validate_func(path)
+    assert_file_exists(file$path)
+    validate_func(file$path)
   })
   if (response$success) {
-    response$value <- input_response(response$value, path, type)
+    response$value <- input_response(response$value, type, file)
   } else {
     response$errors <- hintr_errors(list("INVALID_FILE" = response$message))
     res$status <- 400
@@ -120,23 +122,24 @@ endpoint_validate_baseline <- function(req, res, type, path) {
 #' @param res The response as a PlumberResponse object.
 #' @param type The type of file to validate: ANC, survey or programme.
 #' @param path Path to the file to validate.
+#' @param file File object containing path, filename and md5 hash.
 #' @param shape Path to shape file for comparison.
 #'
 #' @return Validated JSON response with data and incidcation of success.
 #' @keywords internal
-endpoint_validate_survey_programme <- function(req, res, type, path, shape) {
+endpoint_validate_survey_programme <- function(req, res, type, file, shape) {
   validate_json_schema(req$postBody, "ValidateSurveyAndProgrammeRequest")
   validate_func <- switch(type,
                           programme = do_validate_programme,
                           anc = do_validate_anc,
                           survey = do_validate_survey)
   response <- with_success({
-    assert_file_exists(path)
+    assert_file_exists(file$path)
     assert_file_exists(shape)
-    validate_func(path, shape)
+    validate_func(file$path, shape)
   })
   if (response$success) {
-    response$value <- input_response(response$value, path, type)
+    response$value <- input_response(response$value, type, file)
   } else {
     response$errors <- hintr_errors(list("INVALID_FILE" = response$message))
     res$status <- 400
@@ -146,10 +149,11 @@ endpoint_validate_survey_programme <- function(req, res, type, path, shape) {
 }
 
 
-input_response <- function(value, path, type) {
-  ret <- list(filename = scalar(basename(path)),
+input_response <- function(value, type, file) {
+  ret <- list(hash = scalar(file$hash),
               type = scalar(type),
               data = value$data,
+              filename = scalar(file$filename),
               filters = value$filters)
   validate_json_schema(to_json(ret), get_input_response_schema(type), "data")
   ret
@@ -176,6 +180,16 @@ endpoint_validate_baseline_combined <- function(req, res, pjnz, shape, populatio
     res$status <- 400
   }
   hintr_response(response, "ValidateBaselineResponse")
+}
+
+endpoint_plotting_metadata <- function(req, res, country) {
+  response <- with_success(do_plotting_metadata(country))
+  if (!response$success) {
+    response$errors <- hintr_errors(
+      list("FAILED_TO_GET_METADATA" = response$message))
+    res$status <- 400
+  }
+  hintr_response(response, "PlottingMetadataResponse")
 }
 
 #' Format a hintr response and validate against schema.

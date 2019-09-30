@@ -88,6 +88,11 @@ Get the result of a model run:
 curl http://localhost:8888/model/result/4d99b972cdcbebc96835c102857a808c
 ```
 
+Get plotting metadata for Malawi:
+```
+curl http://localhost:8888/meta/plotting/Malawi
+```
+
 Docker container can be cleaned up using
 ```
 docker rm -f hintr
@@ -116,8 +121,13 @@ To run tests locally:
 1. Install all dependencies with `devtools::install_deps(".")`. You may be prompted to install some operating system 
     packages; these should be available via your package manager but for `protoc` you may need the following instructions:
    https://askubuntu.com/questions/1072683/how-can-i-install-protoc-on-ubuntu-16-04
-1. Install the latest version of `jsonvalidate` from GitHub with
-     `devtools::install_github("ropensci/jsonvalidate")`
+1. Some packages need to be installed from GitHub:
+    * `devtools::install_github("ropensci/jsonvalidate")`
+    * `devtools::install_github("mrc-ide/eppasm")`
+    * `devtools::install_github("mrc-ide/naomi")`
+    * `devtools::install_github("mrc-ide/queuer")`
+    * `devtools::install_github("mrc-ide/context")`    
+    * `devtools::install_github("mrc-ide/rrq")`
 1. Install the hintr package:
    ```
    R CMD INSTALL .

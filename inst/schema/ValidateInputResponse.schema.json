@@ -3,7 +3,8 @@
   "definitions": {
     "pjnz_response": {
       "properties": {
-        "filename": { "$ref": "FileName.schema.json" },
+        "hash": { "$ref": "FileName.schema.json" },
+        "filename" : { "type": "string" },
         "type": {
           "type": "string",
           "enum": [ "pjnz" ]
@@ -12,12 +13,13 @@
         "filters": { "type": "null" }
       },
       "additionalProperties": false,
-      "required": ["filename", "type", "data"]
+      "required": ["filename", "hash", "type", "data"]
     },
 
     "shape_response": {
       "properties": {
-        "filename": { "$ref": "FileName.schema.json" },
+        "hash": { "$ref": "FileName.schema.json" },
+        "filename" : { "type": "string" },
         "type": {
           "type": "string",
           "enum": [ "shape" ]
@@ -38,12 +40,13 @@
         }
       },
       "additionalProperties": false,
-      "required": ["filename", "type", "data", "filters"]
+      "required": ["filename", "hash", "type", "data", "filters"]
     },
 
     "population_response": {
       "properties": {
-        "filename": { "$ref": "FileName.schema.json" },
+        "hash": { "$ref": "FileName.schema.json" },
+        "filename" : { "type": "string" },
         "type": {
           "type": "string",
           "enum": [ "population" ]
@@ -52,12 +55,13 @@
         "filters": { "type": "null" }
       },
       "additionalProperties": false,
-      "required": ["filename", "type", "data"]
+      "required": ["filename", "hash", "type", "data"]
     },
 
     "programme_response": {
       "properties": {
-        "filename": { "$ref": "FileName.schema.json" },
+        "hash": { "$ref": "FileName.schema.json" },
+        "filename" : { "type": "string" },
         "type": {
           "type": "string",
           "enum": [ "programme" ]
@@ -66,12 +70,13 @@
         "filters": { "$ref": "ProgrammeFilters.schema.json" }
       },
       "additionalProperties": false,
-      "required": ["filename", "type", "data", "filters"]
+      "required": ["filename", "hash", "type", "data", "filters"]
     },
 
     "anc_response": {
       "properties": {
-        "filename": { "$ref": "FileName.schema.json" },
+        "hash": { "$ref": "FileName.schema.json" },
+        "filename" : { "type": "string" },
         "type": {
           "type": "string",
           "enum": [ "anc" ]
@@ -80,12 +85,13 @@
         "filters": { "$ref": "AncFilters.schema.json" }
       },
       "additionalProperties": false,
-      "required": ["filename", "type", "data", "filters"]
+      "required": ["filename", "hash", "type", "data", "filters"]
     },
 
     "survey_response": {
       "properties": {
-        "filename": { "$ref": "FileName.schema.json" },
+        "hash": { "$ref": "FileName.schema.json" },
+        "filename" : { "type": "string" },
         "type": {
           "type": "string",
           "enum": [ "survey" ]
@@ -94,7 +100,7 @@
         "filters": { "$ref": "SurveyFilters.schema.json" }
       },
       "additionalProperties": false,
-      "required": ["filename", "type", "data", "filters"]
+      "required": ["filename", "hash", "type", "data", "filters"]
     }
   },
 
