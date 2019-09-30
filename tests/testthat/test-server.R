@@ -184,3 +184,21 @@ test_that("model interactions", {
   expect_length(response$data$filters$indicator, 7)
 })
 
+test_that("plotting metadata is exposed", {
+  server <- hintr_server()
+  r <- httr::GET(paste0(server$url, "/meta/plotting/", "Malawi"))
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+
+  expect_true(all(names(response$data) %in%
+                    c("survey", "anc", "output", "programme")))
+  expect_equal(names(response$data$survey), "choropleth")
+  expect_equal(names(response$data$anc), "choropleth")
+  expect_equal(names(response$data$output), "choropleth")
+  expect_equal(names(response$data$programme), "choropleth")
+  expect_equal(names(response$data$anc$choropleth$indicators),
+               c("art_coverage", "prevalence"))
+  expect_equal(response$data$anc$choropleth$indicators$art_coverage$name,
+               "ART coverage")
+})

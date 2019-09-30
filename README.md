@@ -88,6 +88,11 @@ Get the result of a model run:
 curl http://localhost:8888/model/result/4d99b972cdcbebc96835c102857a808c
 ```
 
+Get plotting metadata for Malawi:
+```
+curl http://localhost:8888/meta/plotting/Malawi
+```
+
 Docker container can be cleaned up using
 ```
 docker rm -f hintr

@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions": {
+    "prevalence_and_art_coverage_indicators": {
+      "type": "object",
+      "properties": {
+        "prevalence": { "$ref": "IndicatorMetadata.schema.json" },
+        "art_coverage": { "$ref": "IndicatorMetadata.schema.json" }
+      }
+    },
+    "current_art_indicator": {
+      "type": "object",
+      "properties": {
+        "current_art": { "$ref": "IndicatorMetadata.schema.json" }
+      }
+    },
+    "prevalence_and_art_coverage_choropleth" : {
+      "type": "object",
+      "properties": {
+        "choropleth" : { 
+          "type" : "object",
+          "properties": {
+            "indicators": { "$ref": "#/definitions/prevalence_and_art_coverage_indicators" }
+          }
+        }
+      }
+    },
+    "current_art_choropleth" : {
+      "type": "object",
+      "properties": {
+        "choropleth" : { 
+          "type" : "object",
+          "properties": {
+            "indicators": { "$ref": "#/definitions/current_art_indicator" }
+          }
+        }
+      }
+    }
+  },
+
+  "type": "object",
+  "properties": {
+    "survey": { "$ref": "#/definitions/prevalence_and_art_coverage_choropleth" },
+    "anc": { "$ref": "#/definitions/prevalence_and_art_coverage_choropleth" },
+    "programme": { "$ref": "#/definitions/current_art_choropleth" },
+    "output": { "$ref": "#/definitions/prevalence_and_art_coverage_choropleth" }
+  },
+  "additionalProperties": false,
+  "required": ["survey", "anc", "programme", "output"]
+}

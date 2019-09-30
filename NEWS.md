@@ -1,3 +1,7 @@
+# hintr 0.0.5
+
+* Add endpoint for retrieving plotting metadata
+
 # hintr 0.0.4
 
 * Rename validate/input endpoint to validate/baseline-individual and rename validate/baseline to validate/baseline-combined for clarity
