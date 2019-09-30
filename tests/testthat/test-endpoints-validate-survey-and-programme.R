@@ -57,10 +57,8 @@ test_that("endpoint_validate_survey_programme supports ANC file", {
   expect_equal(res$status, 200)
   ## Sanity check that data has been returned
   expect_true(length(response$data$data) >= 800)
-  ## TODO: Add test to ensure we are returning prevalence & art coverage are
-  ## returned to front end for plotting. mrc-492
-  ##expect_equal(typeof(response$data$data[[1]]$prevalence), "double")
-  ##expect_equal(typeof(response$data$data[[1]]$art_coverage), "double")
+  expect_equal(typeof(response$data$data[[1]]$prevalence), "double")
+  expect_equal(typeof(response$data$data[[1]]$art_coverage), "double")
 })
 
 test_that("endpoint_validate_survey_programme returns error on invalid ANC data", {
