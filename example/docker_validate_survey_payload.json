@@ -1,5 +1,9 @@
 {
   "type": "survey",
-  "path": "src/tests/testthat/testdata/survey.csv",
+  "file": {
+      "path": "src/tests/testthat/testdata/survey.csv",
+      "filename": "survey.csv",
+      "hash": "12345"
+  },
   "shape": "src/tests/testthat/testdata/malawi.geojson"
 }

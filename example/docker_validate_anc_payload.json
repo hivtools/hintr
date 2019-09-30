@@ -1,5 +1,9 @@
 {
   "type": "anc",
-  "path": "src/tests/testthat/testdata/anc.csv",
+  "file": {
+	    "path": "src/tests/testthat/testdata/anc.csv",
+	    "filename": "anc.csv",
+	    "hash": "12345"
+	},
   "shape": "src/tests/testthat/testdata/malawi.geojson"
 }
