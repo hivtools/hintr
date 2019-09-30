@@ -1,10 +1,85 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions": {
+    "survey_choropleth": {
+      "type": "object",
+      "properties": {
+        "prevalence": { "$ref": "IndicatorMetadata.schema.json" },
+        "art_coverage": { "$ref": "IndicatorMetadata.schema.json" }
+      }
+    },
+    "anc_choropleth": {
+      "type": "object",
+      "properties": {
+        "prevalence": { "$ref": "IndicatorMetadata.schema.json" },
+        "art_coverage": { "$ref": "IndicatorMetadata.schema.json" }
+      }
+    },
+    "programme_choropleth": {
+      "type": "object",
+      "properties": {
+        "current_art": { "$ref": "IndicatorMetadata.schema.json" }
+      }
+    },
+    "output_choropleth": {
+      "type": "object",
+      "properties": {
+        "prevalence": { "$ref": "IndicatorMetadata.schema.json" },
+        "art_coverage": { "$ref": "IndicatorMetadata.schema.json" }
+      }
+    },
+    "survey" : {
+      "type": "object",
+      "properties": {
+        "choropleth" : { 
+          "type" : "object",
+          "properties": {
+            "indicators": { "$ref": "#/definitions/survey_choropleth" }
+          }
+        }
+      }
+    },
+    "anc" : {
+      "type": "object",
+      "properties": {
+        "choropleth" : { 
+          "type" : "object",
+          "properties": {
+            "indicators": { "$ref": "#/definitions/anc_choropleth" }
+          }
+        }
+      }
+    },
+    "programme" : {
+      "type": "object",
+      "properties": {
+        "choropleth" : { 
+          "type" : "object",
+          "properties": {
+            "indicators": { "$ref": "#/definitions/programme_choropleth" }
+          }
+        }
+      }
+    },
+    "output" : {
+      "type": "object",
+      "properties": {
+        "choropleth" : { 
+          "type" : "object",
+          "properties": {
+            "indicators": { "$ref": "#/definitions/output_choropleth" }
+          }
+        }
+      }
+    }
+  },
+
+  "type": "object",
   "properties": {
-    "survey": { "type": "PlotTypeMetadata.schema.json" },
-    "anc": { "type": "PlotTypeMetadata.schema.json" },
-    "programme": { "type": "PlotTypeMetadata.schema.json" },
-    "output": { "type": "PlotTypeMetadata.schema.json" }
+    "survey": { "$ref": "#/definitions/survey" },
+    "anc": { "$ref": "#/definitions/anc" },
+    "programme": { "$ref": "#/definitions/programme" },
+    "output": { "$ref": "#/definitions/output" }
   },
   "additionalProperties": false,
   "required": ["survey", "anc", "programme", "output"]

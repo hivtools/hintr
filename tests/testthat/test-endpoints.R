@@ -95,12 +95,13 @@ test_that("hintr API can be tested", {
 test_that("plumber api can be built", {
   api <- api_build()
   expect_s3_class(api, "plumber")
-  expect_length(api$routes, 3)
+  expect_length(api$routes, 4)
   expect_equal(names(api$routes),
-               c("validate", "model", ""))
+               c("validate", "model", "meta", ""))
   expect_equal(names(api$routes$validate),
                c("baseline-individual", "baseline-combined", "survey-and-programme"))
   expect_equal(names(api$routes$model), c("submit", "status", "result"))
+  expect_equal(names(api$routes$meta), "plotting")
 })
 
 test_that("format_response_data correctly formats data and validates it", {
@@ -269,15 +270,26 @@ test_that("endpoint_plotting_metadata gets metadata", {
   response <- jsonlite::parse_json(response)
 
   expect_equal(res$status, 200)
-
-  expect_true(all(names(metadata) %in%
+  expect_true(all(names(response$data) %in%
                     c("survey", "anc", "output", "programme")))
-  expect_equal(names(metadata$survey), "choropleth")
-  expect_equal(names(metadata$anc), "choropleth")
-  expect_equal(names(metadata$output), "choropleth")
-  expect_equal(names(metadata$programme), "choropleth")
-  expect_equal(names(metadata$anc$choropleth$indicators),
+  expect_equal(names(response$data$survey), "choropleth")
+  expect_equal(names(response$data$anc), "choropleth")
+  expect_equal(names(response$data$output), "choropleth")
+  expect_equal(names(response$data$programme), "choropleth")
+  expect_equal(names(response$data$anc$choropleth$indicators),
                c("art_coverage", "prevalence"))
-  expect_equal(metadata$anc$choropleth$indicators$art_coverage$name,
-               scalar("ART coverage"))
+  expect_equal(response$data$anc$choropleth$indicators$art_coverage$name,
+               "ART coverage")
+})
+
+test_that("endpoint_plotting_metadata returns useful error", {
+  res <- MockPlumberResponse$new()
+  response <- endpoint_plotting_metadata(NULL, res, "Missing Country")
+  response <- jsonlite::parse_json(response)
+
+  expect_equal(res$status, 400)
+  expect_length(response$errors, 1)
+  expect_equal(response$errors[[1]]$error, "FAILED_TO_GET_METADATA")
+  expect_equal(response$errors[[1]]$detail,
+               "Can't retrieve colour scale for country Missing Country. Country not found in configuration.")
 })
