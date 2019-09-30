@@ -18,7 +18,7 @@ Imports:
     context,
     geojsonio,
     jsonlite (>= 1.2.2),
-    naomi (>= 0.0.2),
+    naomi (>= 0.0.3),
     plumber,
     R6,
     redux,
