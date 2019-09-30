@@ -1,0 +1,10 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "properties": {
+    "path" : { "$ref": "FilePath.schema.json" },
+    "hash" : { "type": "string" },
+    "filename" : { "type": "string" }
+  },
+  "additionalProperties": false,
+  "required": ["filename", "hash", "path"]
+}
