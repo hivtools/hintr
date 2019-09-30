@@ -63,7 +63,7 @@
           "enum": [ "programme" ]
         },
         "data": { "$ref": "ProgrammeResponseData.schema.json" },
-        "filters": { "$ref": "AgeFilters.schema.json" }
+        "filters": { "$ref": "ProgrammeFilters.schema.json" }
       },
       "additionalProperties": false,
       "required": ["filename", "type", "data", "filters"]
@@ -77,7 +77,7 @@
           "enum": [ "anc" ]
         },
         "data": { "$ref": "AncResponseData.schema.json" },
-        "filters": { "$ref": "AgeFilters.schema.json" }
+        "filters": { "$ref": "AncFilters.schema.json" }
       },
       "additionalProperties": false,
       "required": ["filename", "type", "data", "filters"]

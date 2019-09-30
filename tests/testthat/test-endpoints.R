@@ -198,7 +198,7 @@ test_that("possible filters are returned for data", {
     shape)
   response <- jsonlite::parse_json(response)
 
-  expect_equal(names(response$data$filters), "age")
+  expect_equal(names(response$data$filters), c("age", "quarter"))
   expect_length(response$data$filters$age, 2)
   expect_equal(response$data$filters$age, list(
     list(
@@ -210,6 +210,10 @@ test_that("possible filters are returned for data", {
       name = "0-14"
     )
   ))
+  expect_length(response$data$filters$quarter, 32)
+  expect_equal(response$data$filters$quarter[[1]]$id, "445")
+  expect_equal(response$data$filters$quarter[[1]]$name, "Jan-Mar 2011")
+
 
   anc <- file.path("testdata", "anc.csv")
   res <- MockPlumberResponse$new()
@@ -221,14 +225,10 @@ test_that("possible filters are returned for data", {
     shape)
   response <- jsonlite::parse_json(response)
 
-  expect_equal(names(response$data$filters), "age")
-  expect_length(response$data$filters$age, 1)
-  expect_equal(response$data$filters$age, list(
-    list(
-      id = "18",
-      name = "15-49"
-    )
-  ))
+  expect_equal(names(response$data$filters), "quarter")
+  expect_length(response$data$filters$quarter, 29)
+  expect_equal(response$data$filters$quarter[[1]]$id, "447")
+  expect_equal(response$data$filters$quarter[[1]]$name, "Jul-Sep 2011")
 
   survey <- file.path("testdata", "survey.csv")
   res <- MockPlumberResponse$new()

@@ -88,7 +88,6 @@ do_validate_shape <- function(shape) {
   # Then we have to *reread* the file now that we know that it is
   # valid, but but this is not too slow, especially as the file is now
   # in cache (but still ~1/20s)
-  ## TODO: Add shape region filters mrc-473
   list(data = json_verbatim(read_string(shape)),
        filters = list("regions" = get_region_filters(json),
                       "level_labels" = get_level_labels(json)))
@@ -130,7 +129,8 @@ do_validate_programme <- function(programme, shape) {
                             read_regions(programme, "programme"),
                             "programme")
   list(data = data,
-       filters = list("age" = get_age_filters(data)))
+       filters = list("age" = get_age_filters(data),
+                      "quarter" = get_quarter_filters(data)))
 }
 
 #' Validate ANC data file.
@@ -153,7 +153,7 @@ do_validate_anc <- function(anc, shape) {
                             read_regions(anc, "anc"),
                             "ANC")
   list(data = naomi::calculate_prevalence_art_coverage(data),
-       filters = list("age" = get_age_filters(data)))
+       filters = list("quarter" = get_quarter_filters(data)))
 }
 
 #' Validate survey data file.

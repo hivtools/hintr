@@ -58,7 +58,7 @@ test_that("endpoint_validate_survey_programme supports ANC file", {
   ## Sanity check that data has been returned
   expect_true(length(response$data$data) >= 800)
   expect_equal(typeof(response$data$data[[1]]$prevalence), "double")
-  expect_equal(typeof(response$data$data[[1]]$art_coverage), "double")
+  expect_equal(typeof(response$data$data[[1]]$art_coverage), "integer")
 })
 
 test_that("endpoint_validate_survey_programme returns error on invalid ANC data", {

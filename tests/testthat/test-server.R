@@ -78,8 +78,9 @@ test_that("validate programme", {
   expect_equal(response$data$type, "programme")
   expect_true(length(response$data$data) >= 1400)
   expect_equal(typeof(response$data$data[[1]]$current_art), "double")
-  expect_equal(names(response$data$filters), "age")
+  expect_equal(names(response$data$filters), c("age", "quarter"))
   expect_length(response$data$filters$age, 2)
+  expect_length(response$data$filters$quarter, 32)
 })
 
 test_that("validate ANC", {
@@ -98,8 +99,8 @@ test_that("validate ANC", {
   expect_equal(response$data$type, "anc")
   expect_true(length(response$data$data) >= 800)
   expect_equal(typeof(response$data$data[[1]]$ancrt_hiv_status), "integer")
-  expect_equal(names(response$data$filters), "age")
-  expect_length(response$data$filters$age, 1)
+  expect_equal(names(response$data$filters), "quarter")
+  expect_length(response$data$filters$quarter, 29)
 })
 
 test_that("validate survey", {
