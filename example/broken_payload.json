@@ -1,4 +1,8 @@
 {
 	"type": "invalid",
-	"path": "inst/testdata/Botswana2018.PJNZ"
+	"file": {
+	    "path": "tests/testthat/testdata/Botswana2018.PJNZ",
+	    "filename": "Botswana2018.PJNZ",
+	    "hash": "12345"
+	}
 }

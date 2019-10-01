@@ -5,10 +5,14 @@
     "age": {
       "type": "array",
       "items": { "$ref": "FilterOption.schema.json" }
+    },
+    "quarter": {
+      "type": "array",
+      "items": { "$ref": "FilterOption.schema.json" }
     }
   },
   "additionalProperties": false,
   "required": [
-    "age"
+    "age", "quarter"
   ]
 }

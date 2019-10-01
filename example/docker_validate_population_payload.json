@@ -1,4 +1,8 @@
 {
   "type": "population",
-  "path": "src/tests/testthat/testdata/population.csv"
+  "file": {
+      "path": "src/tests/testthat/testdata/population.csv",
+      "filename": "population.csv",
+      "hash": "12345"
+  }
 }

@@ -1,4 +1,8 @@
 {
 	"type": "pjnz",
-	"path": "src/tests/testthat/testdata/Botswana2018.PJNZ"
+	"file": {
+	    "path": "src/tests/testthat/testdata/Botswana2018.PJNZ",
+	    "filename": "Botswana2018.PJNZ",
+	    "hash": "12345"
+	}
 }
