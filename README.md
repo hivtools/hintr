@@ -124,10 +124,10 @@ To run tests locally:
 1. Some packages need to be installed from GitHub:
     * `devtools::install_github("ropensci/jsonvalidate")`
     * `devtools::install_github("mrc-ide/eppasm")`
-    * `devtools::install_github("mrc-ide/naomi")`
+    * `devtools::install_github("mrc-ide/naomi@demo-201910")`
     * `devtools::install_github("mrc-ide/queuer")`
     * `devtools::install_github("mrc-ide/context")`    
-    * `devtools::install_github("mrc-ide/rrq")`
+    * `devtools::install_github("mrc-ide/rrq@v0.1.2")`
 1. Install the hintr package:
    ```
    R CMD INSTALL .
