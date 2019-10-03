@@ -83,8 +83,3 @@ hintr_queue_id <- function(worker = FALSE) {
   }
   id
 }
-
-worker <- function(queue_id = NULL, ...) {
-  queue_id <- queue_id %||% hintr_queue_id(TRUE)
-  rrq::rrq_worker(queue_id, ...)
-}

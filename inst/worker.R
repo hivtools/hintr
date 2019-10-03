@@ -1,2 +1,2 @@
 #!/usr/bin/env Rscript
-hintr:::worker()
+rrq::rrq_worker(hintr_queue_id(TRUE))
