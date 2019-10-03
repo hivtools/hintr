@@ -21,7 +21,6 @@ RUN install_packages --repo=https://mrc-ide.github.io/drat \
         plumber \
         ps \
         remotes \
-        rrq \
         specio \
         testthat
 
@@ -30,7 +29,8 @@ RUN install_packages --repo=https://inla.r-inla-download.org/R/stable \
 
 RUN install_remote \
         mrc-ide/eppasm \
-        mrc-ide/naomi
+        mrc-ide/naomi@demo-201910 \
+        mrc-ide/rrq@v0.1.2
 
 COPY . /src
 RUN R CMD INSTALL /src
