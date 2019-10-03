@@ -3,7 +3,7 @@ set -e
 HERE=$(dirname $0)
 . $HERE/common
 
-echo <<EOF > $HERE/Dockerfile.worker
+cat << EOF > $HERE/Dockerfile.worker
 FROM $TAG_SHA
 ENTRYPOINT ["/src/inst/worker.R"]
 EOF
