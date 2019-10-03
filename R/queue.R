@@ -7,15 +7,16 @@ Queue <- R6::R6Class(
     queue = NULL,
 
     initialize = function(workers = 2, cleanup_on_exit = workers > 0) {
-      self$root <- tempfile()
+      ## TODO: This should be tuneable, perhaps falling back to an
+      ## environment variable?
+      id <- sprintf("hintr:%s", ids::random_id())
       self$cleanup_on_exit <- cleanup_on_exit
-      ctx <- context::context_load(context_init(self$root))
 
       message("connecting to redis at ", redux::redis_config()$url)
       con <- redux::hiredis()
 
       message("Starting queue")
-      self$queue <- rrq::rrq_controller(ctx, con)
+      self$queue <- rrq::rrq_controller(id, con)
 
       self$start(workers)
     },
@@ -74,11 +75,3 @@ Queue <- R6::R6Class(
     }
   )
 )
-
-## Support for queue building
-context_init <- function(root, name = "hintr") {
-  context::context_save(root,
-                        sources = character(0),
-                        packages = "hintr",
-                        name = name)
-}

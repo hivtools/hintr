@@ -15,14 +15,14 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
 Additional_repositories: https://mrc-ide.github.io/drat
 Imports:
-    context,
     geojsonio,
+    ids,
     jsonlite (>= 1.2.2),
-    naomi (>= 0.0.3),
+    naomi,
     plumber,
     R6,
     redux,
-    rrq,
+    rrq (>= 0.2.0),
     specio
 Suggests:
     callr,
