@@ -1,2 +1,2 @@
 #!/usr/bin/env Rscript
-rrq:::worker()
+hintr:::worker()
