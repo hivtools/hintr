@@ -7,16 +7,13 @@ Queue <- R6::R6Class(
     queue = NULL,
 
     initialize = function(workers = 2, cleanup_on_exit = workers > 0) {
-      ## TODO: This should be tuneable, perhaps falling back to an
-      ## environment variable?
-      id <- sprintf("hintr:%s", ids::random_id())
       self$cleanup_on_exit <- cleanup_on_exit
 
       message("connecting to redis at ", redux::redis_config()$url)
       con <- redux::hiredis()
 
       message("Starting queue")
-      self$queue <- rrq::rrq_controller(id, con)
+      self$queue <- rrq::rrq_controller(hintr_queue_id(), con)
 
       self$start(workers)
     },
@@ -75,3 +72,14 @@ Queue <- R6::R6Class(
     }
   )
 )
+
+hintr_queue_id <- function(worker = FALSE) {
+  id <- Sys.getenv("HINTR_QUEUE_ID", "")
+  if (!nzchar(id)) {
+    if (worker) {
+      stop("Environment variable 'HINTR_QUEUE_ID' is not set")
+    }
+    id <- sprintf("hintr:%s", ids::random_id())
+  }
+  id
+}
