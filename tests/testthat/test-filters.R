@@ -62,32 +62,23 @@ test_that("get_survey_filters gets available filter options and sorts them", {
 })
 
 test_that("get_id_name_map correctly builds map", {
-  data <- data.frame(id = c(1, 1, 2, 3),
-                     name = c("one", "one", "two", "three"),
+  data <- data.frame(id = c(1, 1, 2, "prev", "art_coverage"),
                      stringsAsFactors = FALSE)
   expected_map <- list(
     list(
-      id = scalar("1"),
-      name = scalar("one")
+      id = scalar("population"),
+      name = scalar("Population")
     ),
     list(
-      id = scalar("2"),
-      name = scalar("two")
+      id = scalar("prevalence"),
+      name = scalar("Prevalence")
     ),
     list(
-      id = scalar("3"),
-      name = scalar("three")
+      id = scalar("art_coverage"),
+      name = scalar("ART coverage")
     )
   )
-  expect_equal(get_id_name_map(data, "id", "name"), expected_map)
-})
-
-test_that("get_id_name_map throws error if non-unique ids", {
-  data <- data.frame(id = c(1, 1, 3),
-                     name = c("one", "two", "three"),
-                     stringsAsFactors = FALSE)
-  expect_error(get_id_name_map(data, "id", "name"),
-               "ID used more than once, ids must be unique.")
+  expect_equal(get_id_name_map(data, "id"), expected_map)
 })
 
 test_that("get_quarter_filters gets quarter names from ids", {
@@ -196,4 +187,20 @@ test_that("error thrown when tree can't be constructed", {
   )
   expect_error(construct_tree(data),
                "Got 2 root nodes - tree must have 1 root.")
+})
+
+test_that("naomi IDs can be mapped to hint IDs", {
+  expect_equal(get_hint_id(2), "prevalence")
+  expect_equal(get_hint_id("2"), "prevalence")
+  expect_equal(get_hint_id("prev"), "prevalence")
+  expect_equal(get_hint_id("art_coverage"), "art_coverage")
+  expect_error(get_hint_id("missing"),
+               "Failed to locate hint ID from naomi_id missing.")
+})
+
+test_that("can get indicator display name", {
+  expect_equal(get_indicator_display_name("vls"), "Viral load suppression")
+  expect_equal(get_indicator_display_name("prevalence"), "Prevalence")
+  expect_error(get_indicator_display_name("missing"),
+               "Failed to get display name for hint ID missing.")
 })

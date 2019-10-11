@@ -12,4 +12,6 @@ test_that("model can be run and filters extracted", {
   expect_length(model_run$filters$quarter, 1)
   expect_equal(model_run$filters$quarter[[1]]$name, scalar("Jan-Mar 2016"))
   expect_length(model_run$filters$indicator, 7)
+  expect_equal(model_run$filters$indicator[[1]]$id, "population")
+  expect_equal(model_run$filters$indicator[[1]]$name, "Population")
 })

@@ -33,7 +33,7 @@ get_survey_filters <- function(data) {
 get_model_output_filters <- function(data) {
   list(age = get_age_filters(data),
        quarter = get_quarter_filters(data),
-       indicator = get_id_name_map(data, "indicator_id", "indicator_label"))
+       indicator = get_id_name_map(data, "indicator_id"))
 }
 
 get_quarter_filters <- function(data) {
@@ -48,16 +48,24 @@ get_quarter_name <- function(quarter_id) {
   naomi::quarter_year_labels(quarter_id)
 }
 
-get_id_name_map <- function(data, id_column, name_column) {
-  ids <- unique(data[, c(id_column, name_column)])
-  if(nrow(unique(ids)) != length(unique(ids[, id_column]))) {
-    stop("ID used more than once, ids must be unique.")
+get_id_name_map <- function(data, id_column) {
+  ids <- unique(data[, c(id_column)])
+  build_list <- function(id) {
+    hint_id <- get_hint_id(id)
+    list(id = scalar(as.character(hint_id)),
+         name = scalar(get_indicator_display_name(hint_id)))
   }
-  build_list <- function(id, name) {
-    list(id = scalar(as.character(id)),
-         name = scalar(name))
+  id_name_pairs <- lapply(ids, build_list)
+  unique(id_name_pairs)
+}
+
+get_indicator_display_name <- function(indicator_id) {
+  metadata <- naomi::get_metadata()
+  display_name <- metadata[metadata$indicator == indicator_id, "name"]
+  if (length(unique(display_name)) != 1) {
+    stop(sprintf("Failed to get display name for hint ID %s.", indicator_id))
   }
-  Map(build_list, ids[, 1], ids[, 2])
+  display_name[[1]]
 }
 
 get_level_labels <- function(json) {
@@ -115,4 +123,24 @@ construct_tree <- function(data, id_column = 1, parent_id_column = 2,
   }
 
   build_immediate_children(data[root_node, id_column])
+}
+
+#' Get hint ID from naomi ID
+#'
+#' @param naomi_id The ID used in Naomi to identify an indicator.
+#'
+#' @return The ID as used in hint.
+#'
+#' @keywords internal
+get_hint_id <- function(naomi_id) {
+  metadata <- naomi::get_metadata()
+  if (naomi_id %in% metadata$indicator) {
+    hint_id <- naomi_id
+  } else if (naomi_id %in% metadata$indicator_value) {
+    hint_id <- metadata[metadata$indicator_value ==
+                          as.character(naomi_id), "indicator"]
+  } else {
+    stop(sprintf("Failed to locate hint ID from naomi_id %s.", naomi_id))
+  }
+  hint_id
 }
