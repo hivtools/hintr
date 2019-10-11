@@ -204,3 +204,8 @@ test_that("can get indicator display name", {
   expect_error(get_indicator_display_name("missing"),
                "Failed to get display name for hint ID missing.")
 })
+
+test_that("can get indicator filters for different input types", {
+  survey <-
+  get_indicator_filters
+})

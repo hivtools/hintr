@@ -130,7 +130,8 @@ do_validate_programme <- function(programme, shape) {
                             "programme")
   list(data = data,
        filters = list("age" = get_age_filters(data),
-                      "quarter" = get_quarter_filters(data)))
+                      "quarter" = get_quarter_filters(data),
+                      "indicators" = get_indicator_filters(data, "programme")))
 }
 
 #' Validate ANC data file.
@@ -152,8 +153,10 @@ do_validate_anc <- function(anc, shape) {
   assert_consistent_regions(read_regions(shape, "shape"),
                             read_regions(anc, "anc"),
                             "ANC")
-  list(data = naomi::calculate_prevalence_art_coverage(data),
-       filters = list("quarter" = get_quarter_filters(data)))
+  data <- naomi::calculate_prevalence_art_coverage(data)
+  list(data = data,
+       filters = list("quarter" = get_quarter_filters(data),
+                      "indicators" = get_indicator_filters(data, "anc")))
 }
 
 #' Validate survey data file.
@@ -176,7 +179,8 @@ do_validate_survey <- function(survey, shape) {
                             "survey")
   list(data = data,
        filters = list("age" = get_age_filters(data),
-                      "surveys" = get_survey_filters(data)))
+                      "surveys" = get_survey_filters(data),
+                      "indicators" = get_indicator_filters(data, "survey")))
 }
 
 #' Validate collection of baseline data for consistency.

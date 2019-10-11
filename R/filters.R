@@ -30,6 +30,70 @@ get_survey_filters <- function(data) {
   })
 }
 
+get_indicator_filters <- function(data, type) {
+  ## Input data either long or wide format
+  get_filters <- switch(type,
+                        "anc" = read_wide_indicator_filters,
+                        "programme" = read_wide_indicator_filters,
+                        "survey" = read_long_indicator_filters)
+  get_filters(data, type)
+}
+
+#' Read filters from wide format data
+#'
+#' Expect input data with headers like
+#'
+#' x, y, z, prevalence, art_cov
+#'
+#' So a column for each separate indicator. For the data type we have look
+#' for the list of possible indicators from the metadata. If that indicator
+#' exists in the metadata return it as a possible filter with ID and name.
+#'
+#' @param data Wide format data
+#' @param type The type of data set
+#'
+#' @return Indicator filters
+#' @keywords internal
+#'
+read_wide_indicator_filters <- function(data, type) {
+  metadata <- naomi::get_metadata()
+  type_metadata <- metadata[metadata$data_type == type, ]
+  present_indicators <- type_metadata[
+    type_metadata$value_column %in% colnames(data), ]
+  lapply(present_indicators, function(indicator) {
+    list(id = scalar(indicator$indicator),
+         name = scalar(indicator$name))
+  })
+}
+
+#' Read filters from long format data
+#'
+#' Expect input data with headers like
+#'
+#' x, y, z, indicator, value
+#'
+#' Where indicator columns describes the type of indicator the value is for.
+#' For the data type we have look for the list of possible indicators from the
+#' metadata. If that indicator exists in the metadata return it as a possible
+#' filter with ID and name.
+#'
+#' @param data Long format data
+#' @param type The type of data set
+#'
+#' @return Indicator filters
+#' @keywords internal
+#'
+read_long_indicator_filters <- function(data, type) {
+  metadata <- naomi::get_metadata()
+  type_metadata <- metadata[metadata$data_type == type, ]
+  present_indicators <- type_metadata[
+    type_metadata$value_column %in% colnames(data), ]
+  lapply(present_indicators, function(indicator) {
+    list(id = scalar(indicator$indicator),
+         name = scalar(indicator$name))
+  })
+}
+
 get_model_output_filters <- function(data) {
   list(age = get_age_filters(data),
        quarter = get_quarter_filters(data),
