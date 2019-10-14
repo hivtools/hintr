@@ -1,3 +1,9 @@
+# hintr 0.0.6
+
+* Fix plotting metadata for output dataset
+* Return indicator filters for input data
+* Make input and output data responses more consistent
+
 # hintr 0.0.5
 
 * Add endpoint for retrieving plotting metadata
