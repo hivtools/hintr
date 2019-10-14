@@ -2,12 +2,14 @@ get_age_filters <- function(data) {
   ## Assuming data is a data frame with age_group_id
   filters <- get_age_labels(unique(data$age_group_id))
   sorted_filters <- filters[order(filters$age_group_sort_order), ]
-  construct_filter <- function(age_group_id, age_group_label) {
-    list(id = scalar(as.character(age_group_id)),
-         name = scalar(age_group_label))
-  }
-  Map(construct_filter,
-      sorted_filters$age_group_id, sorted_filters$age_group_label)
+  construct_filter(sorted_filters, "age_group_id", "age_group_label")
+}
+
+construct_filter <- function(data, id, name) {
+  lapply(rownames(data), function(row_number) {
+    list(id = scalar(as.character(data[row_number, id])),
+         name = scalar(data[row_number, name]))
+  })
 }
 
 get_age_labels <- function(age_group_ids) {
@@ -30,10 +32,71 @@ get_survey_filters <- function(data) {
   })
 }
 
+get_indicator_filters <- function(data, type) {
+  ## Input data either long or wide format
+  get_filters <- switch(
+    type,
+    "anc" = read_wide_indicator_filters,
+    "programme" = read_wide_indicator_filters,
+    "survey" = read_long_indicator_filters,
+    stop(sprintf("Can't get indicator filters for data type %s.", type)))
+  get_filters(data, type)
+}
+
+#' Read filters from wide format data
+#'
+#' Expect input data with headers like
+#'
+#' x, y, z, prevalence, art_cov
+#'
+#' So a column for each separate indicator. For the data type we have look
+#' for the list of possible indicators from the metadata. If that indicator
+#' exists in the metadata return it as a possible filter with ID and name.
+#'
+#' @param data Wide format data
+#' @param type The type of data set
+#'
+#' @return Indicator filters
+#' @keywords internal
+#'
+read_wide_indicator_filters <- function(data, type) {
+  metadata <- naomi::get_metadata()
+  type_metadata <- metadata[metadata$data_type == type, ]
+  present_indicators <- type_metadata[
+    type_metadata$value_column %in% colnames(data), ]
+  construct_filter(present_indicators, "indicator", "name")
+}
+
+#' Read filters from long format data
+#'
+#' Expect input data with headers like
+#'
+#' x, y, z, indicator, value
+#'
+#' Where indicator columns describes the type of indicator the value is for.
+#' For the data type we have look for the list of possible indicators from the
+#' metadata. If that indicator exists in the metadata return it as a possible
+#' filter with ID and name.
+#'
+#' @param data Long format data
+#' @param type The type of data set
+#'
+#' @return Indicator filters
+#' @keywords internal
+#'
+read_long_indicator_filters <- function(data, type) {
+  metadata <- naomi::get_metadata()
+  type_metadata <- metadata[metadata$data_type == type, ]
+  indicator_column <- unique(type_metadata$indicator_column)
+  present_indicators <- type_metadata[
+    type_metadata$indicator_value %in% data[[indicator_column]], ]
+  construct_filter(present_indicators, "indicator", "name")
+}
+
 get_model_output_filters <- function(data) {
   list(age = get_age_filters(data),
        quarter = get_quarter_filters(data),
-       indicator = get_id_name_map(data, "indicator_id", "indicator_label"))
+       indicators = get_id_name_map(data, "indicator_id"))
 }
 
 get_quarter_filters <- function(data) {
@@ -48,16 +111,24 @@ get_quarter_name <- function(quarter_id) {
   naomi::quarter_year_labels(quarter_id)
 }
 
-get_id_name_map <- function(data, id_column, name_column) {
-  ids <- unique(data[, c(id_column, name_column)])
-  if(nrow(unique(ids)) != length(unique(ids[, id_column]))) {
-    stop("ID used more than once, ids must be unique.")
+get_id_name_map <- function(data, id_column) {
+  ids <- unique(data[, c(id_column)])
+  build_list <- function(id) {
+    hint_id <- get_hint_id(id)
+    list(id = scalar(as.character(hint_id)),
+         name = scalar(get_indicator_display_name(hint_id)))
   }
-  build_list <- function(id, name) {
-    list(id = scalar(as.character(id)),
-         name = scalar(name))
+  id_name_pairs <- lapply(ids, build_list)
+  unique(id_name_pairs)
+}
+
+get_indicator_display_name <- function(indicator_id) {
+  metadata <- naomi::get_metadata()
+  display_name <- metadata[metadata$indicator == indicator_id, "name"]
+  if (length(unique(display_name)) != 1) {
+    stop(sprintf("Failed to get display name for hint ID %s.", indicator_id))
   }
-  Map(build_list, ids[, 1], ids[, 2])
+  display_name[[1]]
 }
 
 get_level_labels <- function(json) {
@@ -115,4 +186,24 @@ construct_tree <- function(data, id_column = 1, parent_id_column = 2,
   }
 
   build_immediate_children(data[root_node, id_column])
+}
+
+#' Get hint ID from naomi ID
+#'
+#' @param naomi_id The ID used in Naomi to identify an indicator.
+#'
+#' @return The ID as used in hint.
+#'
+#' @keywords internal
+get_hint_id <- function(naomi_id) {
+  metadata <- naomi::get_metadata()
+  if (naomi_id %in% metadata$indicator) {
+    hint_id <- naomi_id
+  } else if (naomi_id %in% metadata$indicator_value) {
+    hint_id <- metadata[metadata$indicator_value ==
+                          as.character(naomi_id), "indicator"]
+  } else {
+    stop(sprintf("Failed to locate hint ID from naomi_id %s.", naomi_id))
+  }
+  hint_id
 }

@@ -62,32 +62,23 @@ test_that("get_survey_filters gets available filter options and sorts them", {
 })
 
 test_that("get_id_name_map correctly builds map", {
-  data <- data.frame(id = c(1, 1, 2, 3),
-                     name = c("one", "one", "two", "three"),
+  data <- data.frame(id = c(1, 1, 2, "prev", "art_coverage"),
                      stringsAsFactors = FALSE)
   expected_map <- list(
     list(
-      id = scalar("1"),
-      name = scalar("one")
+      id = scalar("population"),
+      name = scalar("Population")
     ),
     list(
-      id = scalar("2"),
-      name = scalar("two")
+      id = scalar("prevalence"),
+      name = scalar("Prevalence")
     ),
     list(
-      id = scalar("3"),
-      name = scalar("three")
+      id = scalar("art_coverage"),
+      name = scalar("ART coverage")
     )
   )
-  expect_equal(get_id_name_map(data, "id", "name"), expected_map)
-})
-
-test_that("get_id_name_map throws error if non-unique ids", {
-  data <- data.frame(id = c(1, 1, 3),
-                     name = c("one", "two", "three"),
-                     stringsAsFactors = FALSE)
-  expect_error(get_id_name_map(data, "id", "name"),
-               "ID used more than once, ids must be unique.")
+  expect_equal(get_id_name_map(data, "id"), expected_map)
 })
 
 test_that("get_quarter_filters gets quarter names from ids", {
@@ -196,4 +187,66 @@ test_that("error thrown when tree can't be constructed", {
   )
   expect_error(construct_tree(data),
                "Got 2 root nodes - tree must have 1 root.")
+})
+
+test_that("naomi IDs can be mapped to hint IDs", {
+  expect_equal(get_hint_id(2), "prevalence")
+  expect_equal(get_hint_id("2"), "prevalence")
+  expect_equal(get_hint_id("prev"), "prevalence")
+  expect_equal(get_hint_id("art_coverage"), "art_coverage")
+  expect_error(get_hint_id("missing"),
+               "Failed to locate hint ID from naomi_id missing.")
+})
+
+test_that("can get indicator display name", {
+  expect_equal(get_indicator_display_name("vls"), "Viral load suppression")
+  expect_equal(get_indicator_display_name("prevalence"), "Prevalence")
+  expect_error(get_indicator_display_name("missing"),
+               "Failed to get display name for hint ID missing.")
+})
+
+test_that("can get indicator filters for survey data", {
+  survey_path <- file.path("testdata", "survey.csv")
+  survey <- read_csv(survey_path, header = TRUE)
+  filters <- get_indicator_filters(survey, "survey")
+
+  expect_length(filters, 4)
+  expect_equal(filters[[1]]$id, scalar("prevalence"))
+  expect_equal(filters[[1]]$name, scalar("Prevalence"))
+  expect_equal(filters[[2]]$id, scalar("art_coverage"))
+  expect_equal(filters[[2]]$name, scalar("ART coverage"))
+  expect_equal(filters[[3]]$id, scalar("vls"))
+  expect_equal(filters[[3]]$name, scalar("Viral load suppression"))
+  expect_equal(filters[[4]]$id, scalar("recent"))
+  expect_equal(filters[[4]]$name, scalar("Proportion recently infected"))
+})
+
+test_that("can get indicator filters for programme data", {
+  programme_path <- file.path("testdata", "programme.csv")
+  programme <- read_csv(programme_path, header = TRUE)
+  filters <- get_indicator_filters(programme, "programme")
+
+  expect_length(filters, 1)
+  expect_equal(filters[[1]]$id, scalar("current_art"))
+  expect_equal(filters[[1]]$name, scalar("ART number"))
+})
+
+test_that("can get indicator filters for anc data", {
+  anc_path <- file.path("testdata", "anc.csv")
+  anc <- read_csv(anc_path, header = TRUE)
+  ## We will have calculated prev and art coverage for ANC data
+  anc <- naomi::calculate_prevalence_art_coverage(anc)
+  filters <- get_indicator_filters(anc, "anc")
+
+  expect_length(filters, 2)
+  expect_equal(filters[[1]]$id, scalar("prevalence"))
+  expect_equal(filters[[1]]$name, scalar("Prevalence"))
+  expect_equal(filters[[2]]$id, scalar("art_coverage"))
+  expect_equal(filters[[2]]$name, scalar("ART coverage"))
+})
+
+test_that("error thrown for unknown type", {
+  data <- data.frame(x = c(1, 2, 3), y = c(4, 5, 6))
+  expect_error(get_indicator_filters(data, "unknown"),
+               "Can't get indicator filters for data type unknown.")
 })

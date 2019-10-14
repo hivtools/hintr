@@ -205,7 +205,7 @@ test_that("possible filters are returned for data", {
     shape)
   response <- jsonlite::parse_json(response)
 
-  expect_equal(names(response$data$filters), c("age", "quarter"))
+  expect_equal(names(response$data$filters), c("age", "quarter", "indicators"))
   expect_length(response$data$filters$age, 2)
   expect_equal(response$data$filters$age, list(
     list(
@@ -221,6 +221,10 @@ test_that("possible filters are returned for data", {
   expect_equal(response$data$filters$quarter[[1]]$id, "445")
   expect_equal(response$data$filters$quarter[[1]]$name, "Jan-Mar 2011")
 
+  expect_length(response$data$filters$indicators, 1)
+  expect_equal(response$data$filters$indicators[[1]]$id, "current_art")
+  expect_equal(response$data$filters$indicators[[1]]$name, "ART number")
+
 
   anc <- file.path("testdata", "anc.csv")
   file <- list(path = anc, hash = "12345", filename = "original")
@@ -233,10 +237,16 @@ test_that("possible filters are returned for data", {
     shape)
   response <- jsonlite::parse_json(response)
 
-  expect_equal(names(response$data$filters), "quarter")
+  expect_equal(names(response$data$filters), c("quarter", "indicators"))
   expect_length(response$data$filters$quarter, 29)
   expect_equal(response$data$filters$quarter[[1]]$id, "447")
   expect_equal(response$data$filters$quarter[[1]]$name, "Jul-Sep 2011")
+
+  expect_length(response$data$filters$indicators, 2)
+  expect_equal(response$data$filters$indicators[[1]]$id, "prevalence")
+  expect_equal(response$data$filters$indicators[[1]]$name, "Prevalence")
+  expect_equal(response$data$filters$indicators[[2]]$id, "art_coverage")
+  expect_equal(response$data$filters$indicators[[2]]$name, "ART coverage")
 
   survey <- file.path("testdata", "survey.csv")
   res <- MockPlumberResponse$new()
@@ -249,7 +259,7 @@ test_that("possible filters are returned for data", {
     shape)
   response <- jsonlite::parse_json(response)
 
-  expect_equal(names(response$data$filters), c("age", "surveys"))
+  expect_equal(names(response$data$filters), c("age", "surveys", "indicators"))
   expect_length(response$data$filters$age, 21)
   expect_length(response$data$filters$surveys, 4)
   expect_equal(response$data$filters$surveys, list(
@@ -270,6 +280,18 @@ test_that("possible filters are returned for data", {
       name = "MWI2004DHS"
     )
   ))
+
+  expect_length(response$data$filters$indicators, 4)
+  expect_equal(response$data$filters$indicators[[1]]$id, "prevalence")
+  expect_equal(response$data$filters$indicators[[1]]$name, "Prevalence")
+  expect_equal(response$data$filters$indicators[[2]]$id, "art_coverage")
+  expect_equal(response$data$filters$indicators[[2]]$name, "ART coverage")
+  expect_equal(response$data$filters$indicators[[3]]$id, "vls")
+  expect_equal(response$data$filters$indicators[[3]]$name,
+               "Viral load suppression")
+  expect_equal(response$data$filters$indicators[[4]]$id, "recent")
+  expect_equal(response$data$filters$indicators[[4]]$name,
+               "Proportion recently infected")
 })
 
 test_that("endpoint_plotting_metadata gets metadata", {
@@ -284,10 +306,15 @@ test_that("endpoint_plotting_metadata gets metadata", {
   expect_equal(names(response$data$anc), "choropleth")
   expect_equal(names(response$data$output), "choropleth")
   expect_equal(names(response$data$programme), "choropleth")
-  expect_equal(names(response$data$anc$choropleth$indicators),
-               c("art_coverage", "prevalence"))
-  expect_equal(response$data$anc$choropleth$indicators$art_coverage$name,
+  expect_length(response$data$anc$choropleth$indicators, 2)
+  expect_equal(response$data$anc$choropleth$indicators[[1]]$indicator,
+               "art_coverage")
+  expect_equal(response$data$anc$choropleth$indicators[[2]]$indicator,
+               "prevalence")
+  expect_equal(response$data$anc$choropleth$indicators[[1]]$name,
                "ART coverage")
+  expect_equal(response$data$anc$choropleth$indicators[[2]]$name,
+               "Prevalence")
 })
 
 test_that("endpoint_plotting_metadata returns useful error", {

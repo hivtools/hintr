@@ -7,9 +7,11 @@ test_that("model can be run and filters extracted", {
                c("area_id", "sex", "age_group_id", "quarter_id", "indicator_id",
                  "mode", "mean", "lower", "upper"))
   expect_equal(nrow(model_run$data), 42021)
-  expect_equal(names(model_run$filters), c("age", "quarter", "indicator"))
+  expect_equal(names(model_run$filters), c("age", "quarter", "indicators"))
   expect_length(model_run$filters$age, 29)
   expect_length(model_run$filters$quarter, 1)
   expect_equal(model_run$filters$quarter[[1]]$name, scalar("Jan-Mar 2016"))
-  expect_length(model_run$filters$indicator, 7)
+  expect_length(model_run$filters$indicators, 7)
+  expect_equal(model_run$filters$indicators[[1]]$id, scalar("population"))
+  expect_equal(model_run$filters$indicators[[1]]$name, scalar("Population"))
 })
