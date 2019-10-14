@@ -32,10 +32,7 @@
               "type": "array",
               "items": { "$ref": "LevelLabels.schema.json"}
             },
-            "regions": {
-              "type": "object",
-              "items": { "$ref": "NestedFilterOption.schema.json" }
-            }
+            "regions": { "$ref": "NestedFilterOption.schema.json" }
           }
         }
       },

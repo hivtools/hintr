@@ -30,7 +30,7 @@ RUN install_packages --repo=https://inla.r-inla-download.org/R/stable \
 RUN install_remote \
         mrc-ide/eppasm \
         mrc-ide/naomi \
-        mrc-ide/rrq@mrc-538
+        mrc-ide/rrq
 
 COPY . /src
 RUN R CMD INSTALL /src
