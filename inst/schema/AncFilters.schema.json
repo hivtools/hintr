@@ -5,10 +5,14 @@
     "quarter": {
       "type": "array",
       "items": { "$ref": "FilterOption.schema.json" }
+    },
+    "indicators": {
+      "type": "array",
+      "items": { "$ref": "FilterOption.schema.json" }
     }
   },
   "additionalProperties": false,
   "required": [
-    "quarter"
+    "quarter", "indicators"
   ]
 }

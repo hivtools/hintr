@@ -77,7 +77,7 @@ test_that("do_validate_programme validates programme file", {
   expect_true(nrow(data$data) > 1400)
   expect_equal(typeof(data$data$current_art), "double")
 
-  expect_equal(names(data$filters), c("age", "quarter"))
+  expect_equal(names(data$filters), c("age", "quarter", "indicators"))
   expected_age_filters <- list(
     list(id = scalar("20"),
          name = scalar("15+")),
@@ -94,6 +94,10 @@ test_that("do_validate_programme validates programme file", {
   expect_length(data$filters$quarter, 32)
   expect_equal(data$filters$quarter[[1]]$id, scalar("445"))
   expect_equal(data$filters$quarter[[1]]$name, scalar("Jan-Mar 2011"))
+
+  expect_length(data$filters$indicators, 1)
+  expect_equal(data$filters$indicators[[1]]$id, scalar("current_art"))
+  expect_equal(data$filters$indicators[[1]]$name, scalar("ART number"))
 })
 
 test_that("do_validate_anc validates ANC file and gets data for plotting", {
@@ -105,13 +109,19 @@ test_that("do_validate_anc validates ANC file and gets data for plotting", {
   expect_equal(typeof(data$data$ancrt_hiv_status), "integer")
   expect_true(all(c("prevalence", "art_coverage") %in% colnames(data$data)))
 
-  expect_equal(names(data$filters), c("quarter"))
+  expect_equal(names(data$filters), c("quarter", "indicators"))
   expected_filters <- list(
     list(id = scalar("18"),
          name = scalar("15-49")))
   expect_length(data$filters$quarter, 29)
   expect_equal(data$filters$quarter[[1]]$id, scalar("447"))
   expect_equal(data$filters$quarter[[1]]$name, scalar("Jul-Sep 2011"))
+
+  expect_length(data$filters$indicators, 2)
+  expect_equal(data$filters$indicators[[1]]$id, scalar("prevalence"))
+  expect_equal(data$filters$indicators[[1]]$name, scalar("Prevalence"))
+  expect_equal(data$filters$indicators[[2]]$id, scalar("art_coverage"))
+  expect_equal(data$filters$indicators[[2]]$name, scalar("ART coverage"))
 })
 
 test_that("do_validate_survey validates survey file", {
@@ -121,7 +131,7 @@ test_that("do_validate_survey validates survey file", {
   ## Some arbitrary test that the data has actually been returned
   expect_true(nrow(data$data) > 20000)
   expect_equal(typeof(data$data$est), "double")
-  expect_equal(names(data$filters), c("age", "surveys"))
+  expect_equal(names(data$filters), c("age", "surveys", "indicators"))
   expected_ages <- list(id = scalar("18"),
          name = scalar("15-49"))
   expected_survey <- list(
@@ -137,6 +147,18 @@ test_that("do_validate_survey validates survey file", {
   expect_equal(data$filters$age[[1]], expected_ages)
   expect_length(data$filters$age, 21)
   expect_equal(data$filters$surveys, expected_survey)
+
+  expect_length(data$filters$indicators, 4)
+  expect_equal(data$filters$indicators[[1]]$id, scalar("prevalence"))
+  expect_equal(data$filters$indicators[[1]]$name, scalar("Prevalence"))
+  expect_equal(data$filters$indicators[[2]]$id, scalar("art_coverage"))
+  expect_equal(data$filters$indicators[[2]]$name, scalar("ART coverage"))
+  expect_equal(data$filters$indicators[[3]]$id, scalar("vls"))
+  expect_equal(data$filters$indicators[[3]]$name,
+               scalar("Viral load suppression"))
+  expect_equal(data$filters$indicators[[4]]$id, scalar("recent"))
+  expect_equal(data$filters$indicators[[4]]$name,
+               scalar("Proportion recently infected"))
 })
 
 test_that("do_validate_programme returns useful error from shapefile comparison", {

@@ -9,7 +9,9 @@ build_data_type_metadata <- function(metadata) {
 
 build_plot_type_metadata <- function(metadata) {
   list(indicators =
-         lapply(split(metadata, metadata$indicator), build_indicator_metadata))
+         lapply(metadata$indicator, function(indicator) {
+           build_indicator_metadata(metadata[metadata$indicator == indicator, ])
+           }))
 }
 
 build_indicator_metadata <- function(metadata) {
@@ -18,6 +20,7 @@ build_indicator_metadata <- function(metadata) {
 Check each combination is unique in configuration.")
   }
   list(
+    indicator = scalar(metadata$indicator),
     value_column = scalar(metadata$value_column),
     indicator_column = scalar(metadata$indicator_column),
     indicator_value = scalar(metadata$indicator_value),

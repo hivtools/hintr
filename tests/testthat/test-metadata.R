@@ -8,10 +8,15 @@ test_that("can build metadata response", {
   expect_equal(names(metadata$anc), "choropleth")
   expect_equal(names(metadata$output), "choropleth")
   expect_equal(names(metadata$programme), "choropleth")
-  expect_equal(names(metadata$anc$choropleth$indicators),
-               c("art_coverage", "prevalence"))
-  expect_equal(metadata$anc$choropleth$indicators$art_coverage$name,
+  expect_length(metadata$anc$choropleth$indicators, 2)
+  expect_equal(metadata$anc$choropleth$indicators[[1]]$indicator,
+               scalar("art_coverage"))
+  expect_equal(metadata$anc$choropleth$indicators[[2]]$indicator,
+               scalar("prevalence"))
+  expect_equal(metadata$anc$choropleth$indicators[[1]]$name,
                scalar("ART coverage"))
+  expect_equal(metadata$anc$choropleth$indicators[[2]]$name,
+               scalar("Prevalence"))
 })
 
 test_that("error thrown when metadata contains conflicting information", {
