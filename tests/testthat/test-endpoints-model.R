@@ -90,11 +90,11 @@ test_that("endpoint model run queues a model run", {
                c("area_id", "sex", "age_group_id", "quarter_id", "indicator_id",
                  "mode", "mean", "lower", "upper"))
   expect_length(result$data$data, 42021)
-  expect_equal(names(result$data$filters), c("age", "quarter", "indicator"))
+  expect_equal(names(result$data$filters), c("age", "quarter", "indicators"))
   expect_length(result$data$filters$age, 29)
   expect_length(result$data$filters$quarter, 1)
   expect_equal(result$data$filters$quarter[[1]]$name, "Jan-Mar 2016")
-  expect_length(result$data$filters$indicator, 7)
+  expect_length(result$data$filters$indicators, 7)
 })
 
 test_that("endpoint_run_model returns error if queueing fails", {

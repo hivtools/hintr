@@ -2,12 +2,14 @@ get_age_filters <- function(data) {
   ## Assuming data is a data frame with age_group_id
   filters <- get_age_labels(unique(data$age_group_id))
   sorted_filters <- filters[order(filters$age_group_sort_order), ]
-  construct_filter <- function(age_group_id, age_group_label) {
-    list(id = scalar(as.character(age_group_id)),
-         name = scalar(age_group_label))
-  }
-  Map(construct_filter,
-      sorted_filters$age_group_id, sorted_filters$age_group_label)
+  construct_filter(sorted_filters, "age_group_id", "age_group_label")
+}
+
+construct_filter <- function(data, id, name) {
+  lapply(rownames(data), function(row_number) {
+    list(id = scalar(as.character(data[row_number, id])),
+         name = scalar(data[row_number, name]))
+  })
 }
 
 get_age_labels <- function(age_group_ids) {
@@ -32,10 +34,12 @@ get_survey_filters <- function(data) {
 
 get_indicator_filters <- function(data, type) {
   ## Input data either long or wide format
-  get_filters <- switch(type,
-                        "anc" = read_wide_indicator_filters,
-                        "programme" = read_wide_indicator_filters,
-                        "survey" = read_long_indicator_filters)
+  get_filters <- switch(
+    type,
+    "anc" = read_wide_indicator_filters,
+    "programme" = read_wide_indicator_filters,
+    "survey" = read_long_indicator_filters,
+    stop(sprintf("Can't get indicator filters for data type %s", type)))
   get_filters(data, type)
 }
 
@@ -60,10 +64,7 @@ read_wide_indicator_filters <- function(data, type) {
   type_metadata <- metadata[metadata$data_type == type, ]
   present_indicators <- type_metadata[
     type_metadata$value_column %in% colnames(data), ]
-  lapply(present_indicators, function(indicator) {
-    list(id = scalar(indicator$indicator),
-         name = scalar(indicator$name))
-  })
+  construct_filter(present_indicators, "indicator", "name")
 }
 
 #' Read filters from long format data
@@ -86,18 +87,16 @@ read_wide_indicator_filters <- function(data, type) {
 read_long_indicator_filters <- function(data, type) {
   metadata <- naomi::get_metadata()
   type_metadata <- metadata[metadata$data_type == type, ]
+  indicator_column <- unique(type_metadata$indicator_column)
   present_indicators <- type_metadata[
-    type_metadata$value_column %in% colnames(data), ]
-  lapply(present_indicators, function(indicator) {
-    list(id = scalar(indicator$indicator),
-         name = scalar(indicator$name))
-  })
+    type_metadata$indicator_value %in% data[[indicator_column]], ]
+  construct_filter(present_indicators, "indicator", "name")
 }
 
 get_model_output_filters <- function(data) {
   list(age = get_age_filters(data),
        quarter = get_quarter_filters(data),
-       indicator = get_id_name_map(data, "indicator_id"))
+       indicators = get_id_name_map(data, "indicator_id"))
 }
 
 get_quarter_filters <- function(data) {

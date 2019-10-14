@@ -82,9 +82,10 @@ test_that("validate programme", {
   expect_equal(response$data$type, "programme")
   expect_true(length(response$data$data) >= 1400)
   expect_equal(typeof(response$data$data[[1]]$current_art), "double")
-  expect_equal(names(response$data$filters), c("age", "quarter"))
+  expect_equal(names(response$data$filters), c("age", "quarter", "indicators"))
   expect_length(response$data$filters$age, 2)
   expect_length(response$data$filters$quarter, 32)
+  expect_length(response$data$filters$indicators, 1)
 })
 
 test_that("validate ANC", {
@@ -104,8 +105,9 @@ test_that("validate ANC", {
   expect_equal(response$data$type, "anc")
   expect_true(length(response$data$data) >= 800)
   expect_equal(typeof(response$data$data[[1]]$ancrt_hiv_status), "integer")
-  expect_equal(names(response$data$filters), "quarter")
+  expect_equal(names(response$data$filters), c("quarter", "indicators"))
   expect_length(response$data$filters$quarter, 29)
+  expect_length(response$data$filters$indicators, 2)
 })
 
 test_that("validate survey", {
@@ -125,9 +127,10 @@ test_that("validate survey", {
   expect_equal(response$data$type, "survey")
   expect_true(length(response$data$data) >= 20000)
   expect_equal(typeof(response$data$data[[1]]$est), "double")
-  expect_equal(names(response$data$filters), c("age", "surveys"))
+  expect_equal(names(response$data$filters), c("age", "surveys", "indicators"))
   expect_length(response$data$filters$age, 21)
   expect_length(response$data$filters$surveys, 4)
+  expect_length(response$data$filters$indicators, 4)
 })
 
 test_that("validate baseline", {
@@ -184,11 +187,11 @@ test_that("model interactions", {
                c("area_id", "sex", "age_group_id", "quarter_id", "indicator_id",
                  "mode", "mean", "lower", "upper"))
   expect_length(response$data$data, 42021)
-  expect_equal(names(response$data$filters), c("age", "quarter", "indicator"))
+  expect_equal(names(response$data$filters), c("age", "quarter", "indicators"))
   expect_length(response$data$filters$age, 29)
   expect_length(response$data$filters$quarter, 1)
   expect_equal(response$data$filters$quarter[[1]]$name, "Jan-Mar 2016")
-  expect_length(response$data$filters$indicator, 7)
+  expect_length(response$data$filters$indicators, 7)
 })
 
 test_that("plotting metadata is exposed", {

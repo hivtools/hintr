@@ -205,7 +205,42 @@ test_that("can get indicator display name", {
                "Failed to get display name for hint ID missing.")
 })
 
-test_that("can get indicator filters for different input types", {
-  survey <-
-  get_indicator_filters
+test_that("can get indicator filters for survey data", {
+  survey_path <- file.path("testdata", "survey.csv")
+  survey <- read_csv(survey_path, header = TRUE)
+  filters <- get_indicator_filters(survey, "survey")
+
+  expect_length(filters, 4)
+  expect_equal(filters[[1]]$id, scalar("prevalence"))
+  expect_equal(filters[[1]]$name, scalar("Prevalence"))
+  expect_equal(filters[[2]]$id, scalar("art_coverage"))
+  expect_equal(filters[[2]]$name, scalar("ART coverage"))
+  expect_equal(filters[[3]]$id, scalar("vls"))
+  expect_equal(filters[[3]]$name, scalar("Viral load suppression"))
+  expect_equal(filters[[4]]$id, scalar("recent"))
+  expect_equal(filters[[4]]$name, scalar("Proportion recently infected"))
+})
+
+test_that("can get indicator filters for programme data", {
+  programme_path <- file.path("testdata", "programme.csv")
+  programme <- read_csv(programme_path, header = TRUE)
+  filters <- get_indicator_filters(programme, "programme")
+
+  expect_length(filters, 1)
+  expect_equal(filters[[1]]$id, scalar("current_art"))
+  expect_equal(filters[[1]]$name, scalar("ART number"))
+})
+
+test_that("can get indicator filters for anc data", {
+  anc_path <- file.path("testdata", "anc.csv")
+  anc <- read_csv(anc_path, header = TRUE)
+  ## We will have calculated prev and art coverage for ANC data
+  anc <- naomi::calculate_prevalence_art_coverage(anc)
+  filters <- get_indicator_filters(anc, "anc")
+
+  expect_length(filters, 2)
+  expect_equal(filters[[1]]$id, scalar("prevalence"))
+  expect_equal(filters[[1]]$name, scalar("Prevalence"))
+  expect_equal(filters[[2]]$id, scalar("art_coverage"))
+  expect_equal(filters[[2]]$name, scalar("ART coverage"))
 })

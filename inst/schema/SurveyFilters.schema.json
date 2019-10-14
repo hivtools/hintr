@@ -9,10 +9,14 @@
     "surveys": {
       "type": "array",
       "items": { "$ref": "FilterOption.schema.json" }
+    },
+    "indicators": {
+      "type": "array",
+      "items": { "$ref": "FilterOption.schema.json" }
     }
   },
   "additionalProperties": false,
   "required": [
-    "age", "surveys"
+    "age", "surveys", "indicators"
   ]
 }
