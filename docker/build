@@ -3,9 +3,21 @@ set -e
 HERE=$(dirname $0)
 . $HERE/common
 
+cat << EOF > $HERE/Dockerfile.worker
+FROM $TAG_SHA
+ENTRYPOINT ["/src/inst/worker.R"]
+EOF
+
 docker build --pull \
        -t $TAG_SHA \
        -t $TAG_BRANCH \
        -t $TAG_VERSION \
        -f docker/Dockerfile \
+       .
+
+docker build \
+       -t $TAG_WORKER_SHA \
+       -t $TAG_WORKER_BRANCH \
+       -t $TAG_WORKER_VERSION \
+       -f docker/Dockerfile.worker \
        .

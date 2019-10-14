@@ -5,3 +5,5 @@ test_redis_available <- function() {
   }
   invisible(available)
 }
+
+Sys.unsetenv("HINTR_QUEUE_ID")

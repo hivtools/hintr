@@ -30,13 +30,12 @@ RUN install_packages --repo=https://inla.r-inla-download.org/R/stable \
 RUN install_remote \
         mrc-ide/eppasm \
         mrc-ide/naomi \
-        mrc-ide/context \
-        mrc-ide/queuer \
-        mrc-ide/rrq@v0.1.2
+        mrc-ide/rrq
 
 COPY . /src
 RUN R CMD INSTALL /src
 
 EXPOSE 8888
+ENV HINTR_QUEUE_ID=hintr
 
 ENTRYPOINT ["/src/inst/entrypoint.R"]

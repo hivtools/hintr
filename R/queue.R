@@ -7,15 +7,13 @@ Queue <- R6::R6Class(
     queue = NULL,
 
     initialize = function(workers = 2, cleanup_on_exit = workers > 0) {
-      self$root <- tempfile()
       self$cleanup_on_exit <- cleanup_on_exit
-      ctx <- context::context_load(context_init(self$root))
 
       message("connecting to redis at ", redux::redis_config()$url)
       con <- redux::hiredis()
 
       message("Starting queue")
-      self$queue <- rrq::rrq_controller(ctx, con)
+      self$queue <- rrq::rrq_controller(hintr_queue_id(), con)
 
       self$start(workers)
     },
@@ -75,10 +73,13 @@ Queue <- R6::R6Class(
   )
 )
 
-## Support for queue building
-context_init <- function(root, name = "hintr") {
-  context::context_save(root,
-                        sources = character(0),
-                        packages = "hintr",
-                        name = name)
+hintr_queue_id <- function(worker = FALSE) {
+  id <- Sys.getenv("HINTR_QUEUE_ID", "")
+  if (!nzchar(id)) {
+    if (worker) {
+      stop("Environment variable 'HINTR_QUEUE_ID' is not set")
+    }
+    id <- sprintf("hintr:%s", ids::random_id())
+  }
+  id
 }
