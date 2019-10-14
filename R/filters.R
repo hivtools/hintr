@@ -39,7 +39,7 @@ get_indicator_filters <- function(data, type) {
     "anc" = read_wide_indicator_filters,
     "programme" = read_wide_indicator_filters,
     "survey" = read_long_indicator_filters,
-    stop(sprintf("Can't get indicator filters for data type %s", type)))
+    stop(sprintf("Can't get indicator filters for data type %s.", type)))
   get_filters(data, type)
 }
 

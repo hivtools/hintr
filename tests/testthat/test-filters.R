@@ -244,3 +244,9 @@ test_that("can get indicator filters for anc data", {
   expect_equal(filters[[2]]$id, scalar("art_coverage"))
   expect_equal(filters[[2]]$name, scalar("ART coverage"))
 })
+
+test_that("error thrown for unknown type", {
+  data <- data.frame(x = c(1, 2, 3), y = c(4, 5, 6))
+  expect_error(get_indicator_filters(data, "unknown"),
+               "Can't get indicator filters for data type unknown.")
+})
