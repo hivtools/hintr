@@ -217,3 +217,23 @@ test_that("plotting metadata is exposed", {
   expect_equal(response$data$anc$choropleth$indicators[[2]]$name,
                "Prevalence")
 })
+
+test_that("version information is returned", {
+  server <- hintr_server()
+  r <- httr::GET(paste0(server$url, "/hintr/version"))
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+  expect_setequal(names(response$data),
+                  c("hintr", "naomi", "rrq"))
+})
+
+test_that("worker information is returned", {
+  server <- hintr_server()
+  r <- httr::GET(paste0(server$url, "/hintr/worker/status"))
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+  expect_match(names(response$data), "^[a-z]+_[a-z]+_[12]$")
+  expect_equivalent(response$data, list("IDLE", "IDLE"))
+})

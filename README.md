@@ -93,6 +93,18 @@ Get plotting metadata for Malawi:
 curl http://localhost:8888/meta/plotting/Malawi
 ```
 
+Get information about hintr versions
+```
+curl http://localhost:8888/hintr/version
+#> {"status":"success","errors":[],"data":{"hintr":"0.0.7","naomi":"0.0.6","rrq":"0.2.0"}}
+```
+
+Get information about hintr's workers
+```
+curl http://localhost:8888/hintr/worker/status
+#> {"status":"success","errors":[],"data":{"acoustic_bufflehead_1":"IDLE","acoustic_bufflehead_2":"IDLE"}}
+```
+
 Docker container can be cleaned up using
 ```
 docker rm -f hintr
