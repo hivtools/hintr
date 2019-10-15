@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "shape" : { "$ref": "SessionFile.schema.json" },
+    "survey" : { "$ref": "SessionFile.schema.json" },
+    "programme" : { "$ref": "SessionFile.schema.json" },
+    "anc" : { "$ref": "SessionFile.schema.json" }
+  },
+  "additionalProperties": false,
+  "required": [
+    "shape",
+    "survey"
+  ]
+}

@@ -23,13 +23,18 @@ do_endpoint_model_options <- function(options_template, shape, survey,
   }
   params$area_scope_default <- parent_region
   params$area_level_options <- read_level_labels(shape)
-  art_quarter_options <-
-    naomi::quarter_year_labels(read_quarters(programme))
-  params$art_t1_options <- art_quarter_options
-  params$art_t2_options <- art_quarter_options
+  if (!is.null(programme)) {
+    art_quarter_options <-
+      naomi::quarter_year_labels(read_quarters(programme))
+    params$art_t1_options <- art_quarter_options
+    params$art_t2_options <- art_quarter_options
+  }
   ## We will need these when we move to full spec of UI - leaving in for now
   survey_options <- read_surveys(survey)
-  anc_quarter_options <- naomi::quarter_year_labels(read_quarters(anc))
+  if (!is.null(anc)) {
+    anc_quarter_options <- naomi::quarter_year_labels(read_quarters(anc))
+    ## TODO: write these into appropriate part of naomi template when avaialble
+  }
 
   build_json(options_template, params)
 }

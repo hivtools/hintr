@@ -79,4 +79,10 @@ test_that("can retrieve validated model options", {
   expect_equal(
     json$controlSections[[1]]$controlGroups[[2]]$controls[[1]]$options[[1]],
     "Country")
+  expect_equal(
+    json$controlSections[[2]]$controlGroups[[1]]$controls[[1]]$options[[1]],
+    "Jan-Mar 2011")
+  expect_equal(
+    json$controlSections[[2]]$controlGroups[[1]]$controls[[2]]$options[[1]],
+    "Jan-Mar 2011")
 })
