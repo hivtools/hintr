@@ -25,6 +25,6 @@ hintr_worker [<queue_id>]"
   list(queue_id = dat$queue_id)
 }
 
-main_worker <- function(args = commanbdArgs(TRUE)) {
+main_worker <- function(args = commandArgs(TRUE)) {
   rrq::rrq_worker(hintr_queue_id(main_worker_args(args)$queue_id, TRUE)) # nocov
 }
