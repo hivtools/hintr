@@ -1,0 +1,68 @@
+- comment: Test that container is working by using
+  command: http://localhost:8888
+
+- comment: Validate PJNZ
+  command: >
+    -X POST -H 'Content-Type: application/json'
+    --data @example/docker_payload.json
+    http://localhost:8888/validate/baseline-individual
+
+- comment: Validate shape file and return serialised data
+  command: > 
+    -X POST -H 'Content-Type: application/json'
+    --data @example/docker_validate_shape_payload.json
+    http://localhost:8888/validate/baseline-individual
+
+- comment: Validate population data
+  command: >
+    -X POST -H 'Content-Type: application/json'
+    --data @example/docker_validate_population_payload.json
+    http://localhost:8888/validate/baseline-individual
+
+- comment: Validate baseline data
+  command: >
+    -X POST -H 'Content-Type: application/json'
+    --data @example/docker_validate_baseline_payload.json
+    http://localhost:8888/validate/baseline-combined
+
+- comment: Validate programme ART data
+  command: >
+    -X POST -H 'Content-Type: application/json'
+    --data @example/docker_validate_programme_payload.json
+    http://localhost:8888/validate/survey-and-programme
+
+- comment: Validate ANC data
+  command: >
+    -X POST -H 'Content-Type: application/json'
+    --data @example/docker_validate_anc_payload.json
+    http://localhost:8888/validate/survey-and-programme
+
+- comment: Validate survey data
+  command: >
+    -X POST -H 'Content-Type: application/json'
+    --data @example/docker_validate_survey_payload.json
+    http://localhost:8888/validate/survey-and-programme
+
+- comment: Run a model
+  command: >
+    -X POST -H 'Content-Type: application/json'
+    --data @example/model_submit_payload.json
+    http://localhost:8888/model/submit
+  collect:
+    id: ["id"]
+
+- comment: Query status of model run
+  command: http://localhost:8888/model/status/{id}
+  sleep: 2
+
+- comment: Get the result of a model run
+  command: http://localhost:8888/model/result/{id}
+
+- comment: Get plotting metadata for Malawi
+  command: http://localhost:8888/meta/plotting/Malawi
+
+- comment: Get information about hintr versions
+  command: http://localhost:8888/hintr/version
+
+- comment: Get information about hintr's workers
+  command: http://localhost:8888/hintr/worker/status

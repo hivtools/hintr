@@ -5,3 +5,5 @@
 ^codecov\.yml$
 ^example$
 ^docker$
+^README\.md\.in$
+^README\.yml$
