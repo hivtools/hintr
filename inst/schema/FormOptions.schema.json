@@ -35,14 +35,21 @@
       },
       "additionalProperties": false,
       "required": [ "controls" ]
+    },
+    "controlSection": {
+      "properties": {
+        "label": { "type": "string" },
+        "description": { "type": "string" },
+        "controlGroups": { "$ref": "#/definitions/controlGroup" }
+      },
+      "additionalProperties": false,
+      "required": [ "label", "controlGroups" ]
     }
   },
   "type": "object",
   "properties": {
-    "label": { "type": "string" },
-    "description": { "type": "string" },
-    "controlGroups": { "$ref": "#/definitions/controlGroup" }
+    "controlSections": { "type": "array", "items": { "$ref": "#/definitions/controlSection" }}
   },
   "additionalProperties": false,
-  "required": [ "label", "controlGroups" ]
+  "required": [ "label", "controlSections" ]
 }
