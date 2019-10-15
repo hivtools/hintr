@@ -1,3 +1,7 @@
+# hintr 0.0.7
+
+* New `GET /hintr/version` and `GET /hintr/worker/status` endpoints, the first in a series of hintr informational endpoints
+
 # hintr 0.0.6
 
 * Fix plotting metadata for output dataset
