@@ -5,7 +5,7 @@ HERE=$(dirname $0)
 
 cat << EOF > $HERE/Dockerfile.worker
 FROM $TAG_SHA
-ENTRYPOINT ["/src/inst/worker.R"]
+ENTRYPOINT ["/usr/local/bin/hintr_worker"]
 EOF
 
 docker build --pull \
@@ -21,3 +21,5 @@ docker build \
        -t $TAG_WORKER_VERSION \
        -f docker/Dockerfile.worker \
        .
+
+rm -f docker/Dockerfile.worker

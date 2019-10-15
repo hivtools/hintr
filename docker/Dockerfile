@@ -39,4 +39,4 @@ RUN R CMD INSTALL /src
 EXPOSE 8888
 ENV HINTR_QUEUE_ID=hintr
 
-ENTRYPOINT ["/src/inst/entrypoint.R"]
+ENTRYPOINT ["/usr/local/bin/hintr_api"]
