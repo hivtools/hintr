@@ -25,7 +25,7 @@ get_age_labels <- function(age_group_ids) {
 }
 
 get_survey_filters <- function(data) {
-  survey_ids <- sort(unique(data$survey_id), decreasing = TRUE)
+  survey_ids <- read_surveys(data)
   lapply(survey_ids, function(survey_id) {
     list(id = scalar(survey_id),
          name = scalar(survey_id))
@@ -100,7 +100,7 @@ get_model_output_filters <- function(data) {
 }
 
 get_quarter_filters <- function(data) {
-  quarter_ids <- unique(data$quarter_id)
+  quarter_ids <- read_quarters(data)
   lapply(quarter_ids, function(quarter_id) {
     list(id = scalar(as.character(quarter_id)),
          name = scalar(get_quarter_name(quarter_id)))
