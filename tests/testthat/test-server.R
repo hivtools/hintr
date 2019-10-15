@@ -241,9 +241,9 @@ test_that("model run options are exposed", {
     response$data$controlSections[[1]]$controlGroups[[2]]$controls[[1]]$options[[1]],
     "Country")
   expect_equal(
-    json$data$controlSections[[2]]$controlGroups[[1]]$controls[[1]]$options[[1]],
+    response$data$controlSections[[2]]$controlGroups[[1]]$controls[[1]]$options[[1]],
     "Jan-Mar 2011")
   expect_equal(
-    json$data$controlSections[[2]]$controlGroups[[1]]$controls[[2]]$options[[1]],
+    response$data$controlSections[[2]]$controlGroups[[1]]$controls[[2]]$options[[1]],
     "Jan-Mar 2011")
 })

@@ -13,21 +13,17 @@
 #' @keywords internal
 do_endpoint_model_options <- function(options_template, shape, survey,
                                       programme, anc) {
-  params <- list()
   regions <- read_geojson_regions(shape)
-  params$area_scope_options <- regions
   parent_region <- regions[!grepl("\\.", regions)]
   if (length(parent_region) != 1) {
     stop(sprintf("Should have located one parent regions but found regions %s.",
                  collapse(regions)))
   }
-  params$area_scope_default <- parent_region
-  params$area_level_options <- read_level_labels(shape)
+  area_level_options <- read_level_labels(shape)
+  art_quarter_options <- NULL
   if (!is.null(programme)) {
     art_quarter_options <-
       naomi::quarter_year_labels(read_quarters(programme))
-    params$art_t1_options <- art_quarter_options
-    params$art_t2_options <- art_quarter_options
   }
   ## We will need these when we move to full spec of UI - leaving in for now
   survey_options <- read_surveys(survey)
@@ -36,6 +32,13 @@ do_endpoint_model_options <- function(options_template, shape, survey,
     ## TODO: write these into appropriate part of naomi template when avaialble
   }
 
+  params <- list(
+    area_scope_options = regions,
+    area_scope_default = parent_region,
+    area_level_options = area_level_options,
+    art_t1_options = art_quarter_options,
+    art_t2_options = art_quarter_options
+  )
   build_json(options_template, params)
 }
 
