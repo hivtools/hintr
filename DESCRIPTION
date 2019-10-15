@@ -15,6 +15,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
 Additional_repositories: https://mrc-ide.github.io/drat
 Imports:
+    docopt,
     geojsonio,
     ids,
     jsonlite (>= 1.2.2),

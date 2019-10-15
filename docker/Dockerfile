@@ -16,6 +16,7 @@ RUN apt-get update && apt-get -y install \
 COPY docker/bin /usr/local/bin/
 
 RUN install_packages --repo=https://mrc-ide.github.io/drat \
+        docopt \
         geojsonio \
         jsonlite \
         plumber \
@@ -38,4 +39,4 @@ RUN R CMD INSTALL /src
 EXPOSE 8888
 ENV HINTR_QUEUE_ID=hintr
 
-ENTRYPOINT ["/src/inst/entrypoint.R"]
+ENTRYPOINT ["/usr/local/bin/hintr_api"]

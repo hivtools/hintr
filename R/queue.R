@@ -6,14 +6,15 @@ Queue <- R6::R6Class(
     cleanup_on_exit = NULL,
     queue = NULL,
 
-    initialize = function(workers = 2, cleanup_on_exit = workers > 0) {
+    initialize = function(queue_id = NULL, workers = 2,
+                          cleanup_on_exit = workers > 0) {
       self$cleanup_on_exit <- cleanup_on_exit
 
       message("connecting to redis at ", redux::redis_config()$url)
       con <- redux::hiredis()
 
       message("Starting queue")
-      self$queue <- rrq::rrq_controller(hintr_queue_id(), con)
+      self$queue <- rrq::rrq_controller(hintr_queue_id(queue_id), con)
 
       self$start(workers)
     },
@@ -73,7 +74,10 @@ Queue <- R6::R6Class(
   )
 )
 
-hintr_queue_id <- function(worker = FALSE) {
+hintr_queue_id <- function(queue_id, worker = FALSE) {
+  if (!is.null(queue_id)) {
+    return(queue_id)
+  }
   id <- Sys.getenv("HINTR_QUEUE_ID", "")
   if (!nzchar(id)) {
     if (worker) {

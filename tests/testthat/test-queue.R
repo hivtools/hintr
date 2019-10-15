@@ -61,16 +61,22 @@ test_that("queue works as intended", {
 test_that("queue_id is generated if not supplied", {
   withr::with_envvar(
     c("HINTR_QUEUE_ID" = NA),
-    expect_match(hintr_queue_id(), "^hintr:[[:xdigit:]]+$"))
+    expect_match(hintr_queue_id(NULL), "^hintr:[[:xdigit:]]+$"))
   withr::with_envvar(
     c("HINTR_QUEUE_ID" = "myqueue"),
-    expect_equal(hintr_queue_id(), "myqueue"))
+    expect_equal(hintr_queue_id(NULL), "myqueue"))
 })
 
 
 test_that("queue_id is required for workers", {
   withr::with_envvar(
     c("HINTR_QUEUE_ID" = NA),
-    expect_error(hintr_queue_id(TRUE),
+    expect_error(hintr_queue_id(NULL, TRUE),
                  "Environment variable 'HINTR_QUEUE_ID' is not set"))
+})
+
+test_that("queue_id is returned if supplied", {
+  withr::with_envvar(
+    c("HINTR_QUEUE_ID" = NA),
+    expect_equal(hintr_queue_id("myqueue", TRUE), "myqueue"))
 })
