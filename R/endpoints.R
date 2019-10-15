@@ -15,7 +15,6 @@ api_build <- function(queue) {
   pr$handle("GET", "/meta/plotting/<country>", endpoint_plotting_metadata,
             serializer = serializer_json_hintr())
   pr$handle("GET", "/hintr/version", endpoint_hintr_version)
-  pr$handle("GET", "/hintr/workers", endpoint_hintr_workers(queue))
   pr$handle("GET", "/", api_root)
   pr
 }
