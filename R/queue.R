@@ -76,7 +76,6 @@ Queue <- R6::R6Class(
 
 hintr_queue_id <- function(queue_id, worker = FALSE) {
   if (!is.null(queue_id)) {
-    assert_scalar_character(queue_id)
     return(queue_id)
   }
   id <- Sys.getenv("HINTR_QUEUE_ID", "")
