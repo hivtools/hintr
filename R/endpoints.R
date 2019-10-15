@@ -15,6 +15,7 @@ api_build <- function(queue) {
   pr$handle("GET", "/meta/plotting/<country>", endpoint_plotting_metadata,
             serializer = serializer_json_hintr())
   pr$handle("GET", "/hintr/version", endpoint_hintr_version)
+  pr$handle("GET", "/hintr/workers", endpoint_hintr_workers(queue))
   pr$handle("GET", "/", api_root)
   pr
 }
@@ -243,10 +244,10 @@ with_success <- function(expr) {
   )
 }
 
-endpoint_hintr_version <- function() {
+endpoint_hintr_version <- function(req, res) {
   packages <- c("hintr", "naomi", "rrq")
   value <- lapply(packages, function(p)
-    scalar(as.character(packageVersion(p))))
+    scalar(as.character(utils::packageVersion(p))))
   names(value) <- packages
   hintr_response(list(success = TRUE, value = value), "HintrVersionResponse")
 }
