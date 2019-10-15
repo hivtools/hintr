@@ -17,6 +17,7 @@ COPY docker/bin /usr/local/bin/
 
 RUN install_packages --repo=https://mrc-ide.github.io/drat \
         docopt \
+        glue \
         geojsonio \
         jsonlite \
         plumber \
