@@ -8,7 +8,7 @@
     http://localhost:8888/validate/baseline-individual
 
 - comment: Validate shape file and return serialised data
-  command: > 
+  command: >
     -X POST -H 'Content-Type: application/json'
     --data @example/docker_validate_shape_payload.json
     http://localhost:8888/validate/baseline-individual
@@ -42,6 +42,13 @@
     -X POST -H 'Content-Type: application/json'
     --data @example/docker_validate_survey_payload.json
     http://localhost:8888/validate/survey-and-programme
+
+- comment: Get model run options
+  command: >
+    -X POST -H 'Content-Type: application/json'
+    --data @example/docker_model_run_options.json
+    http://localhost:8888/model/options
+
 
 - comment: Run a model
   command: >
