@@ -2,11 +2,12 @@
 set -e
 HERE=$(dirname $0)
 . $HERE/common
-docker push $TAG_SHA
+
+# Push the human-readable tagged versions here (the SHA versions were
+# pushed during build)
 docker push $TAG_BRANCH
 docker push $TAG_VERSION
 
-docker push $TAG_WORKER_SHA
 docker push $TAG_WORKER_BRANCH
 docker push $TAG_WORKER_VERSION
 
