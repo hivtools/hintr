@@ -13,6 +13,7 @@ docker build --pull \
        -t $TAG_BRANCH \
        -t $TAG_VERSION \
        -f docker/Dockerfile \
+       --no-cache \
        .
 
 docker build \
