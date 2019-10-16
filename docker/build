@@ -23,3 +23,8 @@ docker build \
        .
 
 rm -f docker/Dockerfile.worker
+
+# We always push the SHA tagged versions, for debugging if the tests
+# after this step fail
+docker push $TAG_SHA
+docker push $TAG_WORKER_SHA
