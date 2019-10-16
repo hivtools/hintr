@@ -247,3 +247,23 @@ test_that("model run options are exposed", {
     response$data$controlSections[[2]]$controlGroups[[1]]$controls[[2]]$options[[1]],
     "Jan-Mar 2011")
 })
+
+test_that("version information is returned", {
+  server <- hintr_server()
+  r <- httr::GET(paste0(server$url, "/hintr/version"))
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+  expect_setequal(names(response$data),
+                  c("hintr", "naomi", "rrq"))
+})
+
+test_that("worker information is returned", {
+  server <- hintr_server()
+  r <- httr::GET(paste0(server$url, "/hintr/worker/status"))
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+  expect_match(names(response$data), "^[a-z]+_[a-z]+_[12]$")
+  expect_equivalent(response$data, list("IDLE", "IDLE"))
+})

@@ -16,6 +16,10 @@ api_build <- function(queue, options_template) {
             serializer = serializer_json_hintr())
   pr$handle("GET", "/meta/plotting/<country>", endpoint_plotting_metadata,
             serializer = serializer_json_hintr())
+  pr$handle("GET", "/hintr/version", endpoint_hintr_version,
+            serializer = serializer_json_hintr())
+  pr$handle("GET", "/hintr/worker/status", endpoint_hintr_worker_status(queue),
+            serializer = serializer_json_hintr())
   pr$handle("GET", "/", api_root)
   pr
 }
@@ -274,9 +278,25 @@ with_success <- function(expr) {
   )
 }
 
+endpoint_hintr_version <- function(req, res) {
+  packages <- c("hintr", "naomi", "rrq")
+  value <- lapply(packages, function(p)
+    scalar(as.character(utils::packageVersion(p))))
+  names(value) <- packages
+  hintr_response(list(success = TRUE, value = value), "HintrVersionResponse")
+}
+
+endpoint_hintr_worker_status <- function(queue) {
+  function(req, res) {
+    response <- with_success(lapply(queue$queue$worker_status(), scalar))
+    hintr_response(response, "HintrWorkerStatus")
+  }
+}
+
 api_root <- function() {
   scalar("Welcome to hintr")
 }
+
 
 # This serialiser allows us to splice in objects with a class "json"
 # into list structures, without converting these structures into
