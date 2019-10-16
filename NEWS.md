@@ -1,3 +1,7 @@
+# hintr 0.0.8
+
+* Add endpoint for retrieving model run options
+
 # hintr 0.0.7
 
 * New `GET /hintr/version` and `GET /hintr/worker/status` endpoints, the first in a series of hintr informational endpoints
