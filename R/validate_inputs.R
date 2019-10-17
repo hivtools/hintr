@@ -45,6 +45,7 @@ do_validate_shape <- function(shape) {
   # is going to lock things up enough we might need to do it
   # asynchronously.
   json <- hintr_geojson_read(shape)
+  assert_single_parent_region(json)
   assert_single_country(json, "shape")
   assert_area_id_exists(json)
   # Then we have to *reread* the file now that we know that it is

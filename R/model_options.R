@@ -15,10 +15,6 @@ do_endpoint_model_options <- function(options_template, shape, survey,
                                       programme, anc) {
   regions <- read_geojson_regions(shape)
   parent_region <- regions[!grepl(".", regions, fixed = TRUE)]
-  if (length(parent_region) != 1) {
-    stop(sprintf("Should have located one parent regions but found regions %s.",
-                 collapse(regions)))
-  }
   area_level_options <- read_level_labels(shape)
   art_quarter_options <- NULL
   if (!is.null(programme)) {
