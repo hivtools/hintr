@@ -1,4 +1,4 @@
-api_build <- function(queue, options_template) {
+api_build <- function(queue) {
   pr <- plumber::plumber$new()
   pr$handle("POST", "/validate/baseline-individual", endpoint_validate_baseline,
             serializer = serializer_json_hintr())
@@ -6,6 +6,7 @@ api_build <- function(queue, options_template) {
             serializer = serializer_json_hintr())
   pr$handle("POST", "/validate/survey-and-programme", endpoint_validate_survey_programme,
             serializer = serializer_json_hintr())
+  options_template <- naomi::get_model_options_template()
   pr$handle("POST", "/model/options", endpoint_model_options(options_template),
             serializer = serializer_json_hintr())
   pr$handle("POST", "/model/submit", endpoint_model_submit(queue),
@@ -30,8 +31,7 @@ api_run <- function(pr, port = 8888) {
 
 api <- function(port = 8888, queue_id = NULL, workers = 2) {
   queue <- Queue$new(queue_id, workers) # nocov
-  options_template <- naomi::get_model_options_template()
-  api_run(api_build(queue, options_template), port) # nocov
+  api_run(api_build(queue), port) # nocov
 }
 
 #' Get function to generate model options from Naomi template and input files

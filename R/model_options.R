@@ -14,7 +14,7 @@
 do_endpoint_model_options <- function(options_template, shape, survey,
                                       programme, anc) {
   regions <- read_geojson_regions(shape)
-  parent_region <- regions[!grepl("\\.", regions)]
+  parent_region <- regions[!grepl(".", regions, fixed = TRUE)]
   if (length(parent_region) != 1) {
     stop(sprintf("Should have located one parent regions but found regions %s.",
                  collapse(regions)))
@@ -29,7 +29,8 @@ do_endpoint_model_options <- function(options_template, shape, survey,
   survey_options <- read_surveys(survey)
   if (!is.null(anc)) {
     anc_quarter_options <- naomi::quarter_year_labels(read_quarters(anc))
-    ## TODO: write these into appropriate part of naomi template when avaialble
+    ## TODO: anc quarter options not used as a param list but they will
+    ## be needed when full naomi template is available. See mrc-574
   }
 
   params <- list(
@@ -70,7 +71,7 @@ build_json <- function(options_template, params) {
 }
 
 collapse_and_quote_transformer <- function(text, envir) {
-  res <- eval(parse(text = text, keep.source = FALSE), envir)
+  res <- get(text, envir = envir, inherits = FALSE)
   res <- glue::glue_collapse(res, sep = '", "')
   paste0('"', res, '"')
 }
