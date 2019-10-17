@@ -218,6 +218,36 @@ test_that("plotting metadata is exposed", {
                "Prevalence")
 })
 
+test_that("model run options are exposed", {
+  server <- hintr_server()
+  options <- file.path("payload", "model_run_options_payload.json")
+  r <- httr::POST(paste0(server$url, "/model/options"),
+                  body = httr::upload_file(options),
+                  encode = "json")
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+  expect_equal(response$errors, list())
+  expect_equal(names(response$data), "controlSections")
+  expect_length(response$data$controlSections, 3)
+  ## Check some options have been added
+  expect_equal(
+    response$data$controlSections[[1]]$controlGroups[[1]]$controls[[1]]$options[[1]],
+    "MWI")
+  expect_equal(
+    response$data$controlSections[[1]]$controlGroups[[1]]$controls[[1]]$default,
+    "MWI")
+  expect_equal(
+    response$data$controlSections[[1]]$controlGroups[[2]]$controls[[1]]$options[[1]],
+    "Country")
+  expect_equal(
+    response$data$controlSections[[2]]$controlGroups[[1]]$controls[[1]]$options[[1]],
+    "Jan-Mar 2011")
+  expect_equal(
+    response$data$controlSections[[2]]$controlGroups[[1]]$controls[[2]]$options[[1]],
+    "Jan-Mar 2011")
+})
+
 test_that("version information is returned", {
   server <- hintr_server()
   r <- httr::GET(paste0(server$url, "/hintr/version"))

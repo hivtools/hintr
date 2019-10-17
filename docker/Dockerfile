@@ -16,24 +16,42 @@ RUN apt-get update && apt-get -y install \
 COPY docker/bin /usr/local/bin/
 
 RUN install_packages --repo=https://mrc-ide.github.io/drat \
+        Matrix \
+        TMB \
+        assertthat \
+        data.tree \
         docopt \
+        dplyr \
+        forcats \
         geojsonio \
+        ggplot2 \
+        glue \
+        gridExtra \
+        here \
         jsonlite \
+        magrittr \
+        methods \
+        mvtnorm \
         plumber \
         ps \
         remotes \
+        rlang \
+        sf \
+        spdep \
         specio \
-        testthat
+        testthat \
+        tidyr \
+        zoo
 
 RUN install_packages --repo=https://inla.r-inla-download.org/R/stable \
         INLA
 
 RUN install_remote \
         mrc-ide/eppasm \
-        mrc-ide/naomi \
         mrc-ide/rrq
 
 COPY . /src
+RUN R CMD INSTALL /src/naomi
 RUN R CMD INSTALL /src
 
 EXPOSE 8888

@@ -1,6 +1,6 @@
 Package: hintr
 Title: R API for calling naomi district level HIV model
-Version: 0.0.7
+Version: 0.0.8
 Authors@R: 
     person(given = "Robert",
            family = "Ashton",
@@ -17,9 +17,10 @@ Additional_repositories: https://mrc-ide.github.io/drat
 Imports:
     docopt,
     geojsonio,
+    glue,
     ids,
     jsonlite (>= 1.2.2),
-    naomi (>= 0.0.6),
+    naomi (>= 0.0.7),
     plumber,
     R6,
     redux,

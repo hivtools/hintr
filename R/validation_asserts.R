@@ -9,6 +9,18 @@ assert_column_names <- function(names, expected_names) {
   invisible(TRUE)
 }
 
+assert_single_parent_region <- function(json) {
+  regions <- vapply(json$features, function(x) {
+    x$properties$area_id
+  }, character(1))
+  parent_region <- regions[!grepl("\\.", regions)]
+  if (length(parent_region) != 1) {
+    stop(sprintf("Should have located one parent regions but found regions %s.",
+                 collapse(parent_region)))
+  }
+  invisible(TRUE)
+}
+
 assert_single_country <- function(data, type) {
   UseMethod("assert_single_country", data)
 }

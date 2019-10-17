@@ -227,6 +227,37 @@ $ curl -X POST -H 'Content-Type: application/json' \
                 "est": 0.021,
 ... truncated 302428 lines of output
 ```
+Get model run options
+
+```
+$ curl -X POST -H 'Content-Type: application/json' \
+    --data @example/docker_model_run_options.json \
+    http://localhost:8888/model/options
+```
+
+```json
+{
+    "status": "success",
+    "errors": [
+
+    ],
+    "data": {
+        "controlSections": [
+            {
+                "label": "General",
+                "description": "Select general model options:",
+                "controlGroups": [
+                    {
+                        "label": "Area scope",
+                        "controls": [
+                            {
+                                "name": "area_scope",
+                                "type": "multiselect",
+                                "options": [
+                                    "MWI",
+                                    "MWI.1",
+... truncated 215 lines of output
+```
 Run a model
 
 ```
@@ -242,7 +273,7 @@ $ curl -X POST -H 'Content-Type: application/json' \
 
     ],
     "data": {
-        "id": "cf076bcca3685330fdab35fa6b709cb9"
+        "id": "2c8108bcb6353ee6e3fcc9b00d6b469e"
     }
 }
 ```
@@ -263,7 +294,7 @@ $ curl http://localhost:8888/model/status/{id}
         "status": "RUNNING",
         "success": null,
         "queue": 0,
-        "id": "cf076bcca3685330fdab35fa6b709cb9",
+        "id": "2c8108bcb6353ee6e3fcc9b00d6b469e",
         "progress": "50%",
         "timeRemaining": "10s"
     }
@@ -341,7 +372,7 @@ $ curl http://localhost:8888/hintr/version
     ],
     "data": {
         "hintr": "0.0.7",
-        "naomi": "0.0.6",
+        "naomi": "0.0.7",
         "rrq": "0.2.0"
     }
 }
@@ -359,8 +390,8 @@ $ curl http://localhost:8888/hintr/worker/status
 
     ],
     "data": {
-        "uncontrollable_jaeger_1": "IDLE",
-        "uncontrollable_jaeger_2": "IDLE"
+        "heedful_wildebeast_2": "IDLE",
+        "heedful_wildebeast_1": "IDLE"
     }
 }
 ```

@@ -9,37 +9,12 @@ do_validate_pjnz <- function(pjnz) {
   )
 }
 
-read_country <- function(pjnz) {
-  ## TODO: Add function to specio to just extract metadata from the PJN and
-  ## use this here instead to avoid getting unnecessary data. See mrc-388.
-  hiv_params <- specio::read_hivproj_param(pjnz)
-  hiv_params$country
-}
-
 read_iso3 <- function(file, type) {
   func <- switch(type,
     "pjnz" = read_pjnz_iso3,
     "shape" = read_geojson_iso3,
     stop(sprintf("Can't read country from data of type %s.", type)))
   func(file)
-}
-
-read_pjnz_iso3 <- function(pjnz_file) {
-  hiv_params <- specio::read_hivproj_param(pjnz_file)
-  iso_numeric_to_alpha_3(hiv_params$iso3)
-}
-
-## Convert numeric iso3 country code to the alpha-3 code
-iso_numeric_to_alpha_3 <- function(numeric_iso) {
-  spectrum5_countrylist[which(spectrum5_countrylist$Code == numeric_iso),
-                        "iso3"]
-}
-
-read_geojson_iso3 <- function(geojson_file) {
-  json <- hintr_geojson_read(geojson_file)
-  ## At this point we have validated there is only data for 1 country so we can
-  ## just take the first.
-  substr(json$features[[1]]$properties$area_id, 1, 3)
 }
 
 read_regions <- function(file, type) {
@@ -52,19 +27,6 @@ read_regions <- function(file, type) {
     stop(sprintf("Can't read regions from data of type %s.", type)))
   func(file)
 }
-
-read_geojson_regions <- function(geojson_file) {
-  json <- hintr_geojson_read(geojson_file)
-  vapply(json$features, function(x) {
-    x$properties$area_id
-  }, character(1))
-}
-
-read_csv_regions <- function(csv_file) {
-  data <- read_csv(csv_file, header = TRUE)
-  unique(data$area_id)
-}
-
 
 #' Validate shape file and return geojson for plotting.
 #'
@@ -83,6 +45,7 @@ do_validate_shape <- function(shape) {
   # is going to lock things up enough we might need to do it
   # asynchronously.
   json <- hintr_geojson_read(shape)
+  assert_single_parent_region(json)
   assert_single_country(json, "shape")
   assert_area_id_exists(json)
   # Then we have to *reread* the file now that we know that it is

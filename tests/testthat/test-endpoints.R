@@ -103,7 +103,8 @@ test_that("plumber api can be built", {
                c("validate", "model", "meta", "hintr", ""))
   expect_equal(names(api$routes$validate),
                c("baseline-individual", "baseline-combined", "survey-and-programme"))
-  expect_equal(names(api$routes$model), c("submit", "status", "result"))
+  expect_equal(names(api$routes$model),
+               c("options", "submit", "status", "result"))
   expect_equal(names(api$routes$meta), "plotting")
 })
 
@@ -327,4 +328,75 @@ test_that("endpoint_plotting_metadata returns useful error", {
   expect_equal(response$errors[[1]]$error, "FAILED_TO_GET_METADATA")
   expect_equal(response$errors[[1]]$detail,
                "Can't retrieve colour scale for country Missing Country. Country not found in configuration.")
+})
+
+test_that("endpoint_model_options returns model options", {
+  res <- MockPlumberResponse$new()
+  options_template <- naomi::get_model_options_template()
+  shape <- file.path("testdata", "malawi.geojson")
+  survey <- file.path("testdata", "survey.csv")
+  programme <- file.path("testdata", "programme.csv")
+  anc <- file.path("testdata", "anc.csv")
+  shape_file <- list(path = shape, hash = "12345", filename = "original")
+  survey_file <- list(path = survey, hash = "12345", filename = "original")
+  programme_file <- list(path = programme, hash = "12345", filename = "original")
+  anc_file <- list(path = anc, hash = "12345", filename = "original")
+
+  model_options <- endpoint_model_options(options_template)
+  response <- model_options(NULL, res, shape_file, survey_file, programme_file,
+                            anc_file)
+  json <- jsonlite::parse_json(response)
+
+  expect_equal(res$status, 200)
+  expect_equal(names(json$data), "controlSections")
+  expect_length(json$data$controlSections, 3)
+  ## Check some options have been added
+  expect_equal(
+    json$data$controlSections[[1]]$controlGroups[[1]]$controls[[1]]$options[[1]],
+    "MWI")
+  expect_equal(
+    json$data$controlSections[[1]]$controlGroups[[1]]$controls[[1]]$default,
+    "MWI")
+  expect_equal(
+    json$data$controlSections[[1]]$controlGroups[[2]]$controls[[1]]$options[[1]],
+    "Country")
+  expect_equal(
+    json$data$controlSections[[2]]$controlGroups[[1]]$controls[[1]]$options[[1]],
+    "Jan-Mar 2011")
+  expect_equal(
+    json$data$controlSections[[2]]$controlGroups[[1]]$controls[[2]]$options[[1]],
+    "Jan-Mar 2011")
+})
+
+test_that("endpoint_model_options can be run without programme data", {
+  res <- MockPlumberResponse$new()
+  options_template <- naomi::get_model_options_template()
+  shape <- file.path("testdata", "malawi.geojson")
+  survey <- file.path("testdata", "survey.csv")
+  shape_file <- list(path = shape, hash = "12345", filename = "original")
+  survey_file <- list(path = survey, hash = "12345", filename = "original")
+
+  model_options <- endpoint_model_options(options_template)
+  response <- model_options(NULL, res, shape_file, survey_file, NULL, NULL)
+  json <- jsonlite::parse_json(response)
+
+  expect_equal(res$status, 200)
+  expect_equal(names(json$data), "controlSections")
+  expect_length(json$data$controlSections, 3)
+  ## Check some options have been added
+  expect_equal(
+    json$data$controlSections[[1]]$controlGroups[[1]]$controls[[1]]$options[[1]],
+    "MWI")
+  expect_equal(
+    json$data$controlSections[[1]]$controlGroups[[1]]$controls[[1]]$default,
+    "MWI")
+  expect_equal(
+    json$data$controlSections[[1]]$controlGroups[[2]]$controls[[1]]$options[[1]],
+    "Country")
+  expect_equal(
+    json$data$controlSections[[2]]$controlGroups[[1]]$controls[[1]]$options[[1]],
+    "")
+  expect_equal(
+    json$data$controlSections[[2]]$controlGroups[[1]]$controls[[2]]$options[[1]],
+    "")
 })

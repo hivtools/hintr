@@ -66,3 +66,59 @@ test_that("assert_file_exists throws error if file doesn't exist", {
   expect_error(assert_file_exists("file.path"),
                "File at path file.path does not exist. Create it, or fix the path.")
 })
+
+test_that("assert_single_parent_region fails if more than one parent region", {
+  data <- list(
+    features = list(
+      list(
+        properties = list(
+          area_id = "MWI"
+        )
+      ),
+      list(
+        properties = list(
+          area_id = "MWI.1"
+        )
+      ),
+      list(
+        properties = list(
+          area_id = "MWI.2"
+        )
+      ),
+      list(
+        properties = list(
+          area_id = "MWI.1.1"
+        )
+      )
+    )
+  )
+
+  expect_true(assert_single_parent_region(data))
+
+  data <- list(
+    features = list(
+      list(
+        properties = list(
+          area_id = "MWI"
+        )
+      ),
+      list(
+        properties = list(
+          area_id = "MWI"
+        )
+      ),
+      list(
+        properties = list(
+          area_id = "MWI.2"
+        )
+      ),
+      list(
+        properties = list(
+          area_id = "MWI.1.1"
+        )
+      )
+    )
+  )
+  expect_error(assert_single_parent_region(data),
+    "Should have located one parent regions but found regions MWI, MWI.")
+})

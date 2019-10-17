@@ -1,0 +1,22 @@
+{
+  "shape": {
+    "path": "testdata/malawi.geojson",
+    "filename": "original.geojson",
+    "hash": "12345"
+  },
+  "survey": {
+    "path": "testdata/survey.csv",
+    "filename": "original.csv",
+    "hash": "12345"
+  },
+  "programme": {
+    "path": "testdata/programme.csv",
+    "filename": "original.csv",
+    "hash": "12345"
+  },
+  "anc": {
+    "path": "testdata/anc.csv",
+    "filename": "original.csv",
+    "hash": "12345"
+  }
+}
