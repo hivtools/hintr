@@ -25,8 +25,8 @@ Queue <- R6::R6Class(
       }
     },
 
-    submit = function(data, parameters) {
-      self$queue$enqueue_(quote(hintr:::run_model(data, parameters)))
+    submit = function(data, options, advanced) {
+      self$queue$enqueue_(quote(hintr:::run_model(data, options, advanced)))
     },
 
     status = function(id) {
