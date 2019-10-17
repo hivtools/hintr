@@ -9,11 +9,7 @@
   },
   "options": {
     "t_1": "q1",
-    "t_2": "q2"
-  },
-  "advanced": {
-    "max_iterations": 100,
-    "no_of_simulations": 3000,
+    "t_2": "q2",
     "sleep": 1
   }
 }

@@ -11,14 +11,10 @@ test_that("endpoint model run queues a model run", {
     programme = "path",
     anc = "path"
   )
-  advanced <- list(
-    max_iterations = 250,
-    no_of_simulations = 3000,
-    sleep = 3
-  )
   options = list(
     programme = TRUE,
-    anc = FALSE
+    anc = FALSE,
+    sleep = 3
   )
   req <- list(postBody = '
               {
@@ -32,11 +28,7 @@ test_that("endpoint model run queues a model run", {
               },
               "options": {
               "programme": true,
-              "anc": false
-              },
-              "advanced": {
-              "max_iterations" : 250,
-              "no_of_simulations": 3000,
+              "anc": false,
               "sleep": 3
               }
               }')
@@ -47,7 +39,7 @@ test_that("endpoint model run queues a model run", {
   ## Call the endpoint
   queue <- Queue$new()
   model_submit <- endpoint_model_submit(queue)
-  response <- model_submit(req, res, data, options, advanced)
+  response <- model_submit(req, res, data, options)
   response <- jsonlite::parse_json(response)
   str(response$errors)
   expect_equal(response$status, "success")
@@ -109,10 +101,6 @@ test_that("endpoint_run_model returns error if queueing fails", {
     programme = "path",
     anc = "path"
   )
-  advanced <- list(
-    max_iterations = 250,
-    no_of_simulations = 3000
-  )
   options = list(
   programme = TRUE,
   anc = FALSE
@@ -132,12 +120,12 @@ test_that("endpoint_run_model returns error if queueing fails", {
   ## Create mocks
   res <- MockPlumberResponse$new()
   queue <- Queue$new()
-  mock_submit <- function(data, options, advanced) { stop("Failed to queue") }
+  mock_submit <- function(data, options) { stop("Failed to queue") }
 
   ## Call the endpoint
   model_submit <- endpoint_model_submit(queue)
   mockery::stub(model_submit, "queue$submit", mock_submit)
-  response <- model_submit(req, res, data, options, advanced)
+  response <- model_submit(req, res, data, options)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "failure")
   expect_length(response$errors, 1)
@@ -208,14 +196,10 @@ test_that("querying for result of incomplete jobs returns useful error", {
     programme = "path",
     anc = "path"
   )
-  advanced <- list(
-    max_iterations = 250,
-    no_of_simulations = 3000,
-    sleep = 10
-  )
   options = list(
     programme = TRUE,
-    anc = FALSE
+    anc = FALSE,
+    sleep = 10
   )
   req <- list(postBody = '
               {
@@ -229,11 +213,7 @@ test_that("querying for result of incomplete jobs returns useful error", {
               },
               "options": {
               "programme": true,
-              "anc": false
-              },
-              "advanced": {
-              "max_iterations" : 250,
-              "no_of_simulations": 3000,
+              "anc": false,
               "sleep": 10
               }
               }')
@@ -244,7 +224,7 @@ test_that("querying for result of incomplete jobs returns useful error", {
   ## Call the endpoint
   queue <- Queue$new()
   model_submit <- endpoint_model_submit(queue)
-  response <- model_submit(req, res, data, options, advanced)
+  response <- model_submit(req, res, data, options)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
 
@@ -268,7 +248,7 @@ test_that("erroring model run returns useful messages", {
   ## Call the endpoint
   queue <- Queue$new()
   model_submit <- endpoint_model_submit(queue)
-  response <- model_submit(req, res, NULL, NULL, NULL)
+  response <- model_submit(req, res, NULL, NULL)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
 
@@ -292,5 +272,5 @@ test_that("erroring model run returns useful messages", {
   expect_length(result$data, 0)
   expect_length(result$errors, 1)
   expect_equal(result$errors[[1]]$error, "MODEL_RUN_FAILED")
-  expect_equal(result$errors[[1]]$detail, "Error in Sys.sleep(advanced$sleep): invalid 'time' value\n")
+  expect_equal(result$errors[[1]]$detail, "Error in Sys.sleep(options$sleep): invalid 'time' value\n")
 })

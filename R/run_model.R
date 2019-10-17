@@ -1,5 +1,5 @@
-run_model <- function(data, options, advanced) {
-  Sys.sleep(advanced$sleep)
+run_model <- function(data, options) {
+  Sys.sleep(options$sleep)
   data <- read_csv(
     system_file("output", "malawi_output.csv", package = "hintr")
   )
