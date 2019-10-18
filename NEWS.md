@@ -1,3 +1,7 @@
+# hintr 0.0.9
+
+* Add stub endpoints for downloading key indicators and spectrum digest
+
 # hintr 0.0.8
 
 * Add endpoint for retrieving model run options
