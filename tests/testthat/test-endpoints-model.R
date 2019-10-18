@@ -11,13 +11,9 @@ test_that("endpoint model run queues a model run", {
     programme = "path",
     anc = "path"
   )
-  parameters <- list(
-    max_iterations = 250,
-    no_of_simulations = 3000,
-    input_data = list(
-      programme = TRUE,
-      anc = FALSE
-    ),
+  options = list(
+    programme = TRUE,
+    anc = FALSE,
     sleep = 3
   )
   req <- list(postBody = '
@@ -30,13 +26,9 @@ test_that("endpoint model run queues a model run", {
               "programme": "path/to/file",
               "anc": "path/to/file"
               },
-              "parameters": {
-              "max_iterations" : 250,
-              "no_of_simulations": 3000,
               "options": {
               "programme": true,
-              "anc": false
-              },
+              "anc": false,
               "sleep": 3
               }
               }')
@@ -47,7 +39,7 @@ test_that("endpoint model run queues a model run", {
   ## Call the endpoint
   queue <- Queue$new()
   model_submit <- endpoint_model_submit(queue)
-  response <- model_submit(req, res, data, parameters)
+  response <- model_submit(req, res, data, options)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
   expect_true("id" %in% names(response$data))
@@ -108,13 +100,9 @@ test_that("endpoint_run_model returns error if queueing fails", {
     programme = "path",
     anc = "path"
   )
-  parameters <- list(
-    max_iterations = 250,
-    no_of_simulations = 3000,
-    options = list(
-      programme = TRUE,
-      anc = FALSE
-    )
+  options = list(
+  programme = TRUE,
+  anc = FALSE
   )
   req <- list(postBody = '
               {
@@ -125,26 +113,18 @@ test_that("endpoint_run_model returns error if queueing fails", {
               "survey": "path/to/file",
               "programme": "path/to/file",
               "anc": "path/to/file"
-              },
-              "options": {
-              "max_iterations" : 250,
-              "no_of_simulations": 3000,
-              "input_data": {
-              "programme": true,
-              "anc": false
-              }
               }
               }')
 
   ## Create mocks
   res <- MockPlumberResponse$new()
   queue <- Queue$new()
-  mock_submit <- function(data, parameters) { stop("Failed to queue") }
+  mock_submit <- function(data, options) { stop("Failed to queue") }
 
   ## Call the endpoint
   model_submit <- endpoint_model_submit(queue)
   mockery::stub(model_submit, "queue$submit", mock_submit)
-  response <- model_submit(req, res, data, parameters)
+  response <- model_submit(req, res, data, options)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "failure")
   expect_length(response$errors, 1)
@@ -215,13 +195,9 @@ test_that("querying for result of incomplete jobs returns useful error", {
     programme = "path",
     anc = "path"
   )
-  parameters <- list(
-    max_iterations = 250,
-    no_of_simulations = 3000,
-    input_data = list(
-      programme = TRUE,
-      anc = FALSE
-    ),
+  options = list(
+    programme = TRUE,
+    anc = FALSE,
     sleep = 10
   )
   req <- list(postBody = '
@@ -234,13 +210,9 @@ test_that("querying for result of incomplete jobs returns useful error", {
               "programme": "path/to/file",
               "anc": "path/to/file"
               },
-              "parameters": {
-              "max_iterations" : 250,
-              "no_of_simulations": 3000,
               "options": {
               "programme": true,
-              "anc": false
-              },
+              "anc": false,
               "sleep": 10
               }
               }')
@@ -251,7 +223,7 @@ test_that("querying for result of incomplete jobs returns useful error", {
   ## Call the endpoint
   queue <- Queue$new()
   model_submit <- endpoint_model_submit(queue)
-  response <- model_submit(req, res, data, parameters)
+  response <- model_submit(req, res, data, options)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
 
@@ -299,5 +271,5 @@ test_that("erroring model run returns useful messages", {
   expect_length(result$data, 0)
   expect_length(result$errors, 1)
   expect_equal(result$errors[[1]]$error, "MODEL_RUN_FAILED")
-  expect_equal(result$errors[[1]]$detail, "Error in Sys.sleep(parameters$sleep): invalid 'time' value\n")
+  expect_equal(result$errors[[1]]$detail, "Error in Sys.sleep(options$sleep): invalid 'time' value\n")
 })

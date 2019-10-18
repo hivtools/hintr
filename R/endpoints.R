@@ -68,9 +68,9 @@ endpoint_model_options <- function(options_template) {
 }
 
 endpoint_model_submit <- function(queue) {
-  function(req, res, data, parameters) {
+  function(req, res, data, options) {
     response <- with_success(
-      queue$submit(data, parameters))
+      queue$submit(data, options))
     if (response$success) {
       response$value <- list(id = scalar(response$value))
     } else {

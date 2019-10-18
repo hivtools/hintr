@@ -7,13 +7,11 @@
     "programme": "path/to/file",
     "anc": "path/to/file"
   },
-  "parameters": {
+  "options": {
+    "programme": true,
+    "anc": false,
     "max_iterations": 100,
     "no_of_simulations": 3000,
-    "options": {
-      "programme": true,
-      "anc": false
-    },
     "sleep": 1
   }
 }

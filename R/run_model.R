@@ -1,5 +1,5 @@
-run_model <- function(data, parameters) {
-  Sys.sleep(parameters$sleep)
+run_model <- function(data, options) {
+  Sys.sleep(options$sleep)
   data <- read_csv(
     system_file("output", "malawi_output.csv")
   )
