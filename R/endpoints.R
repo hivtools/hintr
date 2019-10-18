@@ -364,7 +364,6 @@ serializer_json_hintr <- function() {
 
 serializer_zip <- function() {
   function(val, req, res, errorHandler) {
-    browser()
     tryCatch({
       res$setHeader("Content-Type", "application/octet-stream")
       res$body <- val
