@@ -162,7 +162,7 @@ $ curl -X POST -H 'Content-Type: application/json' \
                 "area_id": "MWI.3.4.18.20",
                 "sex": "both",
                 "age_group_id": 24,
-... truncated 14435 lines of output
+... truncated 14429 lines of output
 ```
 Validate ANC data
 
@@ -193,7 +193,7 @@ $ curl -X POST -H 'Content-Type: application/json' \
                 "ancrt_tested": 3482,
                 "ancrt_test_pos": 266,
                 "prevalence": 0.1017,
-... truncated 12122 lines of output
+... truncated 12112 lines of output
 ```
 Validate survey data
 
@@ -225,7 +225,7 @@ $ curl -X POST -H 'Content-Type: application/json' \
                 "n_cluster": 392,
                 "n_obs": 1000,
                 "est": 0.021,
-... truncated 302428 lines of output
+... truncated 302410 lines of output
 ```
 Get model run options
 
@@ -237,26 +237,10 @@ $ curl -X POST -H 'Content-Type: application/json' \
 
 ```json
 {
-    "status": "success",
-    "errors": [
-
-    ],
-    "data": {
-        "controlSections": [
-            {
-                "label": "General",
-                "description": "Select general model options:",
-                "controlGroups": [
-                    {
-                        "label": "Area scope",
-                        "controls": [
-                            {
-                                "name": "area_scope",
-                                "type": "multiselect",
-                                "options": [
-                                    "MWI",
-                                    "MWI.1",
-... truncated 215 lines of output
+    "error": [
+        "404 - Resource Not Found"
+    ]
+}
 ```
 Run a model
 
@@ -273,7 +257,7 @@ $ curl -X POST -H 'Content-Type: application/json' \
 
     ],
     "data": {
-        "id": "2c8108bcb6353ee6e3fcc9b00d6b469e"
+        "id": "ff817d2d375e15220d57cc2deba10534"
     }
 }
 ```
@@ -294,7 +278,7 @@ $ curl http://localhost:8888/model/status/{id}
         "status": "RUNNING",
         "success": null,
         "queue": 0,
-        "id": "2c8108bcb6353ee6e3fcc9b00d6b469e",
+        "id": "ff817d2d375e15220d57cc2deba10534",
         "progress": "50%",
         "timeRemaining": "10s"
     }
@@ -329,6 +313,32 @@ $ curl http://localhost:8888/model/result/{id}
                 "area_id": "MWI",
 ... truncated 462377 lines of output
 ```
+Get the key indicators download
+
+```
+$ curl http://localhost:8888/download/indicators/{id}
+```
+
+```json
+{
+    "error": [
+        "404 - Resource Not Found"
+    ]
+}
+```
+Get the spectrum digest download
+
+```
+$ curl http://localhost:8888/download/spectrum/{id}
+```
+
+```json
+{
+    "error": [
+        "404 - Resource Not Found"
+    ]
+}
+```
 Get plotting metadata for Malawi
 
 ```
@@ -344,9 +354,8 @@ $ curl http://localhost:8888/meta/plotting/Malawi
     "data": {
         "anc": {
             "choropleth": {
-                "indicators": [
-                    {
-                        "indicator": "art_coverage",
+                "indicators": {
+                    "art_coverage": {
                         "value_column": "art_coverage",
                         "indicator_column": "",
                         "indicator_value": "",
@@ -356,7 +365,8 @@ $ curl http://localhost:8888/meta/plotting/Malawi
                         "colour": "interpolateViridis",
                         "invert_scale": false
                     },
-... truncated 166 lines of output
+                    "prevalence": {
+... truncated 82 lines of output
 ```
 Get information about hintr versions
 
@@ -366,15 +376,9 @@ $ curl http://localhost:8888/hintr/version
 
 ```json
 {
-    "status": "success",
-    "errors": [
-
-    ],
-    "data": {
-        "hintr": "0.0.7",
-        "naomi": "0.0.7",
-        "rrq": "0.2.0"
-    }
+    "error": [
+        "404 - Resource Not Found"
+    ]
 }
 ```
 Get information about hintr's workers
@@ -385,14 +389,9 @@ $ curl http://localhost:8888/hintr/worker/status
 
 ```json
 {
-    "status": "success",
-    "errors": [
-
-    ],
-    "data": {
-        "heedful_wildebeast_2": "IDLE",
-        "heedful_wildebeast_1": "IDLE"
-    }
+    "error": [
+        "404 - Resource Not Found"
+    ]
 }
 ```
 
