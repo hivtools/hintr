@@ -472,3 +472,22 @@ test_that("endpoint_model_options can be run without programme data", {
     0
   )
 })
+
+test_that("endpoint_model_options fails without shape & survey data", {
+  res <- MockPlumberResponse$new()
+  options_template <- naomi::get_model_options_template()
+  programme <- file.path("testdata", "programme.csv")
+  anc <- file.path("testdata", "anc.csv")
+  programme_file <- list(path = programme, hash = "12345", filename = "original")
+  anc_file <- list(path = anc, hash = "12345", filename = "original")
+
+  model_options <- endpoint_model_options(options_template)
+  response <- model_options(NULL, res, NULL, NULL, programme_file, anc_file)
+  json <- jsonlite::parse_json(response)
+
+  expect_equal(res$status, 400)
+  expect_equal(json$status, "failure")
+  expect_equal(json$errors[[1]]$error, "INVALID_OPTIONS")
+  expect_equal(json$errors[[1]]$detail,
+               "File at path NULL does not exist. Create it, or fix the path.")
+})

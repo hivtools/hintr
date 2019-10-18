@@ -100,8 +100,9 @@ is_superset <- function(super, sub) {
 }
 
 assert_file_exists <- function(file) {
-  if (!file.exists(file)) {
-    stop(sprintf("File at path %s does not exist. Create it, or fix the path.", file))
+  if (is.null(file) || !file.exists(file)) {
+    stop(sprintf("File at path %s does not exist. Create it, or fix the path.",
+                 file %||% "NULL"))
   }
   invisible(TRUE)
 }
