@@ -1,26 +1,38 @@
 context("model-options")
 
 test_that("can build JSON from template", {
-  json <- build_json("test <param1>", list(param1 = "test string"))
+  json <- build_json("test <param1>", list(param1 = scalar("test string")))
   expect_equal(json, 'test "test string"')
 
   json <- build_json("<param1> test, <param_2>",
-                     list(param1 = "x", param_2 = "y"))
+                     list(param1 = scalar("x"), param_2 = scalar("y")))
   expect_equal(json, '"x" test, "y"')
 
-  json <- build_json('{"options": [<options>], "test": <test>}',
-                     list(options = c("MWI", "MWI.1", "MWI.2"),
-                          test = "test_value"))
+  json <- build_json('{"options": <options>, "test": <test>}',
+                     list(options = c(scalar("MWI"), scalar("MWI.1"), scalar("MWI.2")),
+                          test = scalar("test_value")))
   expect_equal(json,
-               '{"options": ["MWI", "MWI.1", "MWI.2"], "test": "test_value"}')
+               '{"options": ["MWI","MWI.1","MWI.2"], "test": "test_value"}')
+
+  json <- build_json('{"options": <options>, "test": <test>}',
+                     list(options = list(
+                       list(id = scalar("MWI"),
+                            label = scalar("Malawi")),
+                       list(id = scalar("MWI.1"),
+                            label = scalar("Northern")),
+                       list(id = scalar("MWI.2"),
+                            label = scalar("Central"))),
+                       test = scalar("test_value")))
+  expect_equal(json,
+               '{"options": [{"id":"MWI","label":"Malawi"},{"id":"MWI.1","label":"Northern"},{"id":"MWI.2","label":"Central"}], "test": "test_value"}')
 
   ## Additional params are ignored
-  json <- build_json("test <param>", list(param = "test", param2 = "test2"))
+  json <- build_json("test <param>", list(param = scalar("test"), param2 = scalar("test2")))
   expect_equal(json, 'test "test"')
 
   ## Null params
-  json <- build_json('{"options": <param>}', list(param = NULL))
-  expect_equal(json, '{"options": ""}')
+  json <- build_json('{"options": <param>}', list(param = scalar(NULL)))
+  expect_equal(json, '{"options": {}}')
 })
 
 test_that("JSON build fails if params are missing", {
@@ -46,15 +58,37 @@ test_that("do_endpoint_model_options correctly builds params list", {
                                      "area_level_options", "art_t1_options",
                                      "art_t2_options"))
 
-    expect_equal(params$area_scope_options[1:5],
-                 c("MWI", "MWI.1", "MWI.2", "MWI.3", "MWI.1.1"))
-    expect_equal(params$area_scope_default, "MWI")
-    expect_equal(params$area_level_options,
-                 c("Country", "Region", "Zone", "District", "District + Metro"))
-    expect_equal(params$art_t1_options[1:3],
-                 c("Jan-Mar 2011", "Apr-Jun 2011", "Jul-Sep 2011"))
-    expect_equal(params$art_t2_options[1:3],
-                 c("Jan-Mar 2011", "Apr-Jun 2011", "Jul-Sep 2011"))
+    expect_equal(names(params$area_scope_options), c("id", "label", "children"))
+    expect_equal(params$area_scope_options$id, scalar("MWI"))
+    expect_equal(params$area_scope_options$label, scalar("Malawi"))
+    expect_length(params$area_scope_options$children, 3)
+    expect_equal(params$area_scope_default$id, scalar("MWI"))
+    expect_equal(params$area_scope_default$label, scalar("Malawi"))
+    expect_equal(params$area_level_options, list(
+      list(
+        id = scalar(0),
+        label = scalar("Country")
+      ),
+      list(
+        id = scalar(1),
+        label = scalar("Region")
+      ),
+      list(
+        id = scalar(2),
+        label = scalar("Zone")
+      ),
+      list(
+        id = scalar(3),
+        label = scalar("District")
+      ),
+      list(
+        id = scalar(4),
+        label = scalar("District + Metro")
+      )))
+    expect_length(params$art_t1_options, 32)
+    expect_equal(params$art_t1_options[[1]]$id, scalar("445"))
+    expect_equal(params$art_t1_options[[1]]$label, scalar("Jan-Mar 2011"))
+    expect_equal(params$art_t2_options, params$art_t1_options)
   })
 })
 
@@ -70,19 +104,92 @@ test_that("can retrieve validated model options", {
   expect_equal(names(json), "controlSections")
   expect_length(json$controlSections, 3)
   ## Check some options have been added
+  expect_length(
+    json$controlSections[[1]]$controlGroups[[1]]$controls[[1]]$options, 1)
   expect_equal(
-    json$controlSections[[1]]$controlGroups[[1]]$controls[[1]]$options[[1]],
+    names(json$controlSections[[1]]$controlGroups[[1]]$controls[[1]]$options[[1]]),
+    c("id", "label", "children")
+  )
+  expect_equal(
+    json$controlSections[[1]]$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
+    "MWI"
+  )
+  expect_equal(
+    json$controlSections[[1]]$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
+    "Malawi"
+  )
+  expect_equal(
+    names(json$controlSections[[1]]$controlGroups[[1]]$controls[[1]]$default),
+    c("id", "label"))
+  expect_equal(
+    json$controlSections[[1]]$controlGroups[[1]]$controls[[1]]$default$id,
     "MWI")
   expect_equal(
-    json$controlSections[[1]]$controlGroups[[1]]$controls[[1]]$default,
-    "MWI")
-  expect_equal(
+    json$controlSections[[1]]$controlGroups[[1]]$controls[[1]]$default$label,
+    "Malawi")
+  expect_length(
     json$controlSections[[1]]$controlGroups[[2]]$controls[[1]]$options[[1]],
+    5
+  )
+  expect_equal(
+    names(json$controlSections[[1]]$controlGroups[[2]]$controls[[1]]$options[[1]][[1]]),
+    c("id", "label")
+  )
+  expect_equal(
+    json$controlSections[[1]]$controlGroups[[2]]$controls[[1]]$options[[1]][[1]]$id,
+    0)
+  expect_equal(
+    json$controlSections[[1]]$controlGroups[[2]]$controls[[1]]$options[[1]][[1]]$label,
     "Country")
-  expect_equal(
+  expect_length(
     json$controlSections[[2]]$controlGroups[[1]]$controls[[1]]$options[[1]],
+    32
+  )
+  expect_equal(
+    names(json$controlSections[[2]]$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]),
+    c("id", "label"))
+  expect_equal(
+    json$controlSections[[2]]$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]$id,
+    "445")
+  expect_equal(
+    json$controlSections[[2]]$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]$label,
     "Jan-Mar 2011")
   expect_equal(
-    json$controlSections[[2]]$controlGroups[[1]]$controls[[2]]$options[[1]],
+    names(json$controlSections[[2]]$controlGroups[[1]]$controls[[2]]$options[[1]][[1]]),
+    c("id", "label"))
+  expect_equal(
+    json$controlSections[[2]]$controlGroups[[1]]$controls[[2]]$options[[1]][[1]]$id,
+    "445")
+  expect_equal(
+    json$controlSections[[2]]$controlGroups[[1]]$controls[[2]]$options[[1]][[1]]$label,
     "Jan-Mar 2011")
+})
+
+
+test_that("can read geojson level labels", {
+  shape <- file.path("testdata", "malawi.geojson")
+  json <- hintr_geojson_read(shape)
+  levels <- get_level_options(json)
+  expect_length(levels, 5)
+  expect_equal(levels, list(
+    list(
+      id = scalar(0),
+      label = scalar("Country")
+    ),
+    list(
+      id = scalar(1),
+      label = scalar("Region")
+    ),
+    list(
+      id = scalar(2),
+      label = scalar("Zone")
+    ),
+    list(
+      id = scalar(3),
+      label = scalar("District")
+    ),
+    list(
+      id = scalar(4),
+      label = scalar("District + Metro")
+    )))
 })

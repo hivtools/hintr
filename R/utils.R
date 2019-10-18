@@ -48,3 +48,7 @@ collapse <- function(vector, collapse = ", ", limit = 150, end = "...") {
 data_frame <- function(...) {
   data.frame(..., stringsAsFactors = FALSE)
 }
+
+vcapply <- function(X, FUN, ...) {
+  vapply(X, FUN, ..., FUN.VALUE = character(1))
+}

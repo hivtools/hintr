@@ -13,18 +13,21 @@
 #' @keywords internal
 do_endpoint_model_options <- function(options_template, shape, survey,
                                       programme, anc) {
-  regions <- read_geojson_regions(shape)
-  parent_region <- regions[!grepl(".", regions, fixed = TRUE)]
-  area_level_options <- read_level_labels(shape)
+  json <- hintr_geojson_read(shape)
+  regions <- get_region_filters(json, name_column_label = "label",
+                                options = "children")
+  parent_region <- list(id = regions$id,
+                        label = regions$label)
+  area_level_options <- get_level_options(json)
   art_quarter_options <- NULL
   if (!is.null(programme)) {
-    art_quarter_options <-
-      naomi::quarter_year_labels(read_quarters(programme))
+    art_quarter_options <- get_quarter_filters(read_csv(programme),
+                                               name = "label")
   }
   ## We will need these when we move to full spec of UI - leaving in for now
-  survey_options <- read_surveys(survey)
+  survey_options <- get_survey_filters(read_csv(survey), name = "label")
   if (!is.null(anc)) {
-    anc_quarter_options <- naomi::quarter_year_labels(read_quarters(anc))
+    anc_quarter_options <- get_quarter_filters(read_csv(anc), name = "label")
     ## TODO: anc quarter options not used as a param list but they will
     ## be needed when full naomi template is available. See mrc-574
   }
@@ -56,7 +59,7 @@ build_json <- function(options_template, params) {
   param_env <- list2env(params, parent = .GlobalEnv)
   tryCatch(
     glue::glue(options_template, .envir = param_env, .open = "<", .close = ">",
-               .transformer = collapse_and_quote_transformer),
+               .transformer = json_transformer),
     error = function(e) {
       e$message <- paste0(
         "Failed to construct model options from template and params:\n",
@@ -66,8 +69,21 @@ build_json <- function(options_template, params) {
   )
 }
 
-collapse_and_quote_transformer <- function(text, envir) {
+json_transformer <- function(text, envir) {
   res <- get(text, envir = envir, inherits = FALSE)
-  res <- glue::glue_collapse(res, sep = '", "')
-  paste0('"', res, '"')
+  to_json(res)
+}
+
+get_level_options <- function(json) {
+  levels <- lapply(json$features, function(feature) {
+    level <- NULL
+    if (as.logical(feature$properties$display)) {
+      level <- list(
+        id = scalar(feature$properties$area_level),
+        label = scalar(feature$properties$area_level_label)
+      )
+    }
+    level
+  })
+  unique(levels)
 }

@@ -351,20 +351,65 @@ test_that("endpoint_model_options returns model options", {
   expect_equal(names(json$data), "controlSections")
   expect_length(json$data$controlSections, 3)
   ## Check some options have been added
+  control_sections <- json$data$controlSections
+  expect_length(
+    control_sections[[1]]$controlGroups[[1]]$controls[[1]]$options, 1)
   expect_equal(
-    json$data$controlSections[[1]]$controlGroups[[1]]$controls[[1]]$options[[1]],
+    names(control_sections[[1]]$controlGroups[[1]]$controls[[1]]$options[[1]]),
+    c("id", "label", "children")
+  )
+  expect_equal(
+    control_sections[[1]]$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
+    "MWI"
+  )
+  expect_equal(
+    control_sections[[1]]$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
+    "Malawi"
+  )
+  expect_equal(
+    names(control_sections[[1]]$controlGroups[[1]]$controls[[1]]$default),
+    c("id", "label"))
+  expect_equal(
+    control_sections[[1]]$controlGroups[[1]]$controls[[1]]$default$id,
     "MWI")
   expect_equal(
-    json$data$controlSections[[1]]$controlGroups[[1]]$controls[[1]]$default,
-    "MWI")
+    control_sections[[1]]$controlGroups[[1]]$controls[[1]]$default$label,
+    "Malawi")
+  expect_length(
+    control_sections[[1]]$controlGroups[[2]]$controls[[1]]$options[[1]],
+    5
+  )
   expect_equal(
-    json$data$controlSections[[1]]$controlGroups[[2]]$controls[[1]]$options[[1]],
+    names(control_sections[[1]]$controlGroups[[2]]$controls[[1]]$options[[1]][[1]]),
+    c("id", "label")
+  )
+  expect_equal(
+    control_sections[[1]]$controlGroups[[2]]$controls[[1]]$options[[1]][[1]]$id,
+    0)
+  expect_equal(
+    control_sections[[1]]$controlGroups[[2]]$controls[[1]]$options[[1]][[1]]$label,
     "Country")
+  expect_length(
+    control_sections[[2]]$controlGroups[[1]]$controls[[1]]$options[[1]],
+    32
+  )
   expect_equal(
-    json$data$controlSections[[2]]$controlGroups[[1]]$controls[[1]]$options[[1]],
+    names(control_sections[[2]]$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]),
+    c("id", "label"))
+  expect_equal(
+    control_sections[[2]]$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]$id,
+    "445")
+  expect_equal(
+    control_sections[[2]]$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]$label,
     "Jan-Mar 2011")
   expect_equal(
-    json$data$controlSections[[2]]$controlGroups[[1]]$controls[[2]]$options[[1]],
+    names(control_sections[[2]]$controlGroups[[1]]$controls[[2]]$options[[1]][[1]]),
+    c("id", "label"))
+  expect_equal(
+    control_sections[[2]]$controlGroups[[1]]$controls[[2]]$options[[1]][[1]]$id,
+    "445")
+  expect_equal(
+    control_sections[[2]]$controlGroups[[1]]$controls[[2]]$options[[1]][[1]]$label,
     "Jan-Mar 2011")
 })
 
@@ -384,19 +429,46 @@ test_that("endpoint_model_options can be run without programme data", {
   expect_equal(names(json$data), "controlSections")
   expect_length(json$data$controlSections, 3)
   ## Check some options have been added
+  control_sections <- json$data$controlSections
+  expect_length(
+    control_sections[[1]]$controlGroups[[1]]$controls[[1]]$options, 1)
   expect_equal(
-    json$data$controlSections[[1]]$controlGroups[[1]]$controls[[1]]$options[[1]],
+    names(control_sections[[1]]$controlGroups[[1]]$controls[[1]]$options[[1]]),
+    c("id", "label", "children")
+  )
+  expect_equal(
+    control_sections[[1]]$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
+    "MWI"
+  )
+  expect_equal(
+    control_sections[[1]]$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
+    "Malawi"
+  )
+  expect_equal(
+    names(control_sections[[1]]$controlGroups[[1]]$controls[[1]]$default),
+    c("id", "label"))
+  expect_equal(
+    control_sections[[1]]$controlGroups[[1]]$controls[[1]]$default$id,
     "MWI")
   expect_equal(
-    json$data$controlSections[[1]]$controlGroups[[1]]$controls[[1]]$default,
-    "MWI")
+    control_sections[[1]]$controlGroups[[1]]$controls[[1]]$default$label,
+    "Malawi")
+  expect_length(
+    control_sections[[1]]$controlGroups[[2]]$controls[[1]]$options[[1]],
+    5
+  )
   expect_equal(
-    json$data$controlSections[[1]]$controlGroups[[2]]$controls[[1]]$options[[1]],
+    names(control_sections[[1]]$controlGroups[[2]]$controls[[1]]$options[[1]][[1]]),
+    c("id", "label")
+  )
+  expect_equal(
+    control_sections[[1]]$controlGroups[[2]]$controls[[1]]$options[[1]][[1]]$id,
+    0)
+  expect_equal(
+    control_sections[[1]]$controlGroups[[2]]$controls[[1]]$options[[1]][[1]]$label,
     "Country")
-  expect_equal(
-    json$data$controlSections[[2]]$controlGroups[[1]]$controls[[1]]$options[[1]],
-    "")
-  expect_equal(
-    json$data$controlSections[[2]]$controlGroups[[1]]$controls[[2]]$options[[1]],
-    "")
+  expect_length(
+    control_sections[[2]]$controlGroups[[1]]$controls[[1]]$options[[1]],
+    0
+  )
 })
