@@ -35,7 +35,11 @@ setup <- function() {
 run_command <- function(x, env) {
   cmd <- paste("curl -s", glue::glue(x$command, .envir = env))
   x$output <- system(cmd, intern = TRUE)
-  parsed <- jsonlite::fromJSON(x$output)
+  if (x$format == "json") {
+    parsed <- jsonlite::fromJSON(x$output)
+  } else {
+    parsed <- x$output
+  }
   if (!is.null(x$collect)) {
     for (i in seq_along(x$collect)) {
       env[[names(x$collect)[[i]]]] <- parsed$data[[x$collect[[i]]]]
@@ -49,8 +53,12 @@ run_command <- function(x, env) {
   x
 }
 
-pretty_truncate <- function(x, max = 20) {
-  str <- strsplit(jsonlite::prettify(x), "\n", fixed = TRUE)[[1]]
+pretty_truncate <- function(x, format = "json", max = 20) {
+  if (format == "json") {
+    str <- strsplit(jsonlite::prettify(x), "\n", fixed = TRUE)[[1]]
+  } else if (format == "bytes") {
+    str <- sprintf("Hidden %d bytes of output", length(x))
+  }
 
   if (length(str) > max) {
     str <- c(str[seq_len(max)],
@@ -78,7 +86,7 @@ render <- function(x) {
     "```",
     "",
     "```json",
-    pretty_truncate(x$output),
+    pretty_truncate(x$output, x$format),
     "```")
 }
 
@@ -87,6 +95,9 @@ process <- function() {
   dat <- yaml::read_yaml("README.yml")
   for (i in seq_along(dat)) {
     message(sprintf("%2d: %s", i, dat[[i]]$command))
+    if (is.null(dat[[i]]$format)) {
+      dat[[i]]$format <- "json"
+    }
     dat[[i]] <- run_command(dat[[i]], env)
   }
   res <- lapply(dat, render)
