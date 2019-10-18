@@ -273,7 +273,7 @@ $ curl -X POST -H 'Content-Type: application/json' \
 
     ],
     "data": {
-        "id": "2c8108bcb6353ee6e3fcc9b00d6b469e"
+        "id": "c732f1f27e8ec525886274e86f39115c"
     }
 }
 ```
@@ -294,7 +294,7 @@ $ curl http://localhost:8888/model/status/{id}
         "status": "RUNNING",
         "success": null,
         "queue": 0,
-        "id": "2c8108bcb6353ee6e3fcc9b00d6b469e",
+        "id": "c732f1f27e8ec525886274e86f39115c",
         "progress": "50%",
         "timeRemaining": "10s"
     }
@@ -328,6 +328,24 @@ $ curl http://localhost:8888/model/result/{id}
             {
                 "area_id": "MWI",
 ... truncated 462377 lines of output
+```
+Get the key indicators download
+
+```
+$ curl http://localhost:8888/download/indicators/{id}
+```
+
+```json
+Hidden 8193 bytes of output
+```
+Get the spectrum digest download
+
+```
+$ curl http://localhost:8888/download/spectrum/{id}
+```
+
+```json
+Hidden 8193 bytes of output
 ```
 Get plotting metadata for Malawi
 
@@ -371,7 +389,7 @@ $ curl http://localhost:8888/hintr/version
 
     ],
     "data": {
-        "hintr": "0.0.7",
+        "hintr": "0.0.9",
         "naomi": "0.0.7",
         "rrq": "0.2.0"
     }
@@ -390,8 +408,8 @@ $ curl http://localhost:8888/hintr/worker/status
 
     ],
     "data": {
-        "heedful_wildebeast_2": "IDLE",
-        "heedful_wildebeast_1": "IDLE"
+        "delightful_affenpinscher_2": "IDLE",
+        "delightful_affenpinscher_1": "IDLE"
     }
 }
 ```

@@ -1,6 +1,6 @@
 system_file <- function(...) {
   tryCatch({
-    system.file(..., mustWork = TRUE)
+    system.file(..., mustWork = TRUE, package = "hintr")
   }, error = function(e) {
     stop(sprintf("Failed to locate file from args\n%s",
                  paste(list(...), collapse = " ")))

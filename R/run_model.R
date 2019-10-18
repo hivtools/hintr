@@ -1,7 +1,7 @@
 run_model <- function(data, parameters) {
   Sys.sleep(parameters$sleep)
   data <- read_csv(
-    system_file("output", "malawi_output.csv", package = "hintr")
+    system_file("output", "malawi_output.csv")
   )
   list(data = select_data(data),
        filters = get_model_output_filters(data))
