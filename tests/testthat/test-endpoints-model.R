@@ -41,7 +41,6 @@ test_that("endpoint model run queues a model run", {
   model_submit <- endpoint_model_submit(queue)
   response <- model_submit(req, res, data, options)
   response <- jsonlite::parse_json(response)
-  str(response$errors)
   expect_equal(response$status, "success")
   expect_true("id" %in% names(response$data))
   expect_equal(res$status, 200)
