@@ -4,11 +4,9 @@
 \alias{do_endpoint_model_options}
 \title{Get model options declarative UI from naomi and input data}
 \usage{
-do_endpoint_model_options(options_template, shape, survey, programme, anc)
+do_endpoint_model_options(shape, survey, programme, anc)
 }
 \arguments{
-\item{options_template}{Naomi template}
-
 \item{shape}{Path to shape file}
 
 \item{survey}{Path to survey file}

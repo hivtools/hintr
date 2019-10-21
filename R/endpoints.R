@@ -6,8 +6,7 @@ api_build <- function(queue) {
             serializer = serializer_json_hintr())
   pr$handle("POST", "/validate/survey-and-programme", endpoint_validate_survey_programme,
             serializer = serializer_json_hintr())
-  options_template <- naomi::get_model_options_template()
-  pr$handle("POST", "/model/options", endpoint_model_options(options_template),
+  pr$handle("POST", "/model/options", endpoint_model_options,
             serializer = serializer_json_hintr())
   pr$handle("POST", "/model/submit", endpoint_model_submit(queue),
             serializer = serializer_json_hintr())
@@ -38,29 +37,32 @@ api <- function(port = 8888, queue_id = NULL, workers = 2) {
 #'
 #' This is used to build the model run options UI in the front end.
 #'
-#' @param options_template The naomi options template.
+#' @param req The request object.
+#' @param res The response object.
+#' @param shape The shape file.
+#' @param survey The survey file.
+#' @param programme The optional programme ART file.
+#' @param anc The optional programme ANC file.
 #'
 #' @return Function to generate model options from input data.
 #' @keywords internal
-endpoint_model_options <- function(options_template) {
-  function(req, res, shape, survey, programme, anc) {
-    response <- with_success({
-      ## Shape and survey must exist
-      assert_file_exists(shape$path)
-      assert_file_exists(survey$path)
-      do_endpoint_model_options(options_template, shape$path, survey$path,
-                                programme$path, anc$path)
-    })
-    if (response$success) {
-      response$value <- json_verbatim(response$value)
-    } else {
-      response$errors <- hintr_errors(list(
-        "INVALID_OPTIONS" = response$message))
-      res$status <- 400
-    }
-
-    hintr_response(response, "ModelRunOptions")
+endpoint_model_options <- function(req, res, shape, survey, programme, anc) {
+  response <- with_success({
+    ## Shape and survey must exist
+    assert_file_exists(shape$path)
+    assert_file_exists(survey$path)
+    do_endpoint_model_options(shape$path, survey$path,
+                              programme$path, anc$path)
+  })
+  if (response$success) {
+    response$value <- json_verbatim(response$value)
+  } else {
+    response$errors <- hintr_errors(list(
+      "INVALID_OPTIONS" = response$message))
+    res$status <- 400
   }
+
+  hintr_response(response, "ModelRunOptions")
 }
 
 endpoint_model_submit <- function(queue) {

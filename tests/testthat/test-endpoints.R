@@ -332,7 +332,6 @@ test_that("endpoint_plotting_metadata returns useful error", {
 
 test_that("endpoint_model_options returns model options", {
   res <- MockPlumberResponse$new()
-  options_template <- naomi::get_model_options_template()
   shape <- file.path("testdata", "malawi.geojson")
   survey <- file.path("testdata", "survey.csv")
   programme <- file.path("testdata", "programme.csv")
@@ -342,147 +341,187 @@ test_that("endpoint_model_options returns model options", {
   programme_file <- list(path = programme, hash = "12345", filename = "original")
   anc_file <- list(path = anc, hash = "12345", filename = "original")
 
-  model_options <- endpoint_model_options(options_template)
-  response <- model_options(NULL, res, shape_file, survey_file, programme_file,
-                            anc_file)
+  response <- endpoint_model_options(NULL, res, shape_file, survey_file,
+                                     programme_file, anc_file)
   json <- jsonlite::parse_json(response)
 
   expect_equal(res$status, 200)
   expect_equal(names(json$data), "controlSections")
-  expect_length(json$data$controlSections, 3)
-  ## Check some options have been added
-  control_sections <- json$data$controlSections
+  expect_length(json$data$controlSections, 4)
+
+  general_section <- json$data$controlSections[[1]]
   expect_length(
-    control_sections[[1]]$controlGroups[[1]]$controls[[1]]$options, 1)
+    general_section$controlGroups[[1]]$controls[[1]]$options, 1)
   expect_equal(
-    names(control_sections[[1]]$controlGroups[[1]]$controls[[1]]$options[[1]]),
+    names(general_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
     c("id", "label", "children")
   )
   expect_equal(
-    control_sections[[1]]$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
+    general_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
     "MWI"
   )
   expect_equal(
-    control_sections[[1]]$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
+    general_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
     "Malawi"
   )
   expect_equal(
-    names(control_sections[[1]]$controlGroups[[1]]$controls[[1]]$default),
+    names(general_section$controlGroups[[1]]$controls[[1]]$default),
     c("id", "label"))
   expect_equal(
-    control_sections[[1]]$controlGroups[[1]]$controls[[1]]$default$id,
+    general_section$controlGroups[[1]]$controls[[1]]$default$id,
     "MWI")
   expect_equal(
-    control_sections[[1]]$controlGroups[[1]]$controls[[1]]$default$label,
+    general_section$controlGroups[[1]]$controls[[1]]$default$label,
     "Malawi")
   expect_length(
-    control_sections[[1]]$controlGroups[[2]]$controls[[1]]$options[[1]],
+    general_section$controlGroups[[2]]$controls[[1]]$options[[1]],
     5
   )
   expect_equal(
-    names(control_sections[[1]]$controlGroups[[2]]$controls[[1]]$options[[1]][[1]]),
+    names(general_section$controlGroups[[2]]$controls[[1]]$options[[1]][[1]]),
     c("id", "label")
   )
   expect_equal(
-    control_sections[[1]]$controlGroups[[2]]$controls[[1]]$options[[1]][[1]]$id,
+    general_section$controlGroups[[2]]$controls[[1]]$options[[1]][[1]]$id,
     0)
   expect_equal(
-    control_sections[[1]]$controlGroups[[2]]$controls[[1]]$options[[1]][[1]]$label,
+    general_section$controlGroups[[2]]$controls[[1]]$options[[1]][[1]]$label,
     "Country")
+
+  survey_section <- json$data$controlSections[[2]]
   expect_length(
-    control_sections[[2]]$controlGroups[[1]]$controls[[1]]$options[[1]],
+    survey_section$controlGroups[[1]]$controls[[1]]$options[[1]],
+    4
+  )
+  expect_equal(
+    names(survey_section$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]),
+    c("id", "label"))
+  expect_equal(
+    survey_section$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]$id,
+    "MWI2016PHIA")
+  expect_equal(
+    survey_section$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]$label,
+    "MWI2016PHIA")
+
+  art_section <- json$data$controlSections[[3]]
+  expect_length(
+    art_section$controlGroups[[1]]$controls[[1]]$options[[1]],
     32
   )
   expect_equal(
-    names(control_sections[[2]]$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]),
+    names(art_section$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]),
     c("id", "label"))
   expect_equal(
-    control_sections[[2]]$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]$id,
+    art_section$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]$id,
     "445")
   expect_equal(
-    control_sections[[2]]$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]$label,
+    art_section$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]$label,
     "Jan-Mar 2011")
   expect_equal(
-    names(control_sections[[2]]$controlGroups[[1]]$controls[[2]]$options[[1]][[1]]),
+    names(art_section$controlGroups[[1]]$controls[[2]]$options[[1]][[1]]),
     c("id", "label"))
   expect_equal(
-    control_sections[[2]]$controlGroups[[1]]$controls[[2]]$options[[1]][[1]]$id,
+    art_section$controlGroups[[1]]$controls[[2]]$options[[1]][[1]]$id,
     "445")
   expect_equal(
-    control_sections[[2]]$controlGroups[[1]]$controls[[2]]$options[[1]][[1]]$label,
+    art_section$controlGroups[[1]]$controls[[2]]$options[[1]][[1]]$label,
     "Jan-Mar 2011")
+
+  anc_section <- json$data$controlSections[[4]]
+  expect_length(
+    anc_section$controlGroups[[1]]$controls[[1]]$options[[1]],
+    29
+  )
+  expect_equal(
+    names(anc_section$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]),
+    c("id", "label"))
+  expect_equal(
+    anc_section$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]$id,
+    "447")
+  expect_equal(
+    anc_section$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]$label,
+    "Jul-Sep 2011")
 })
 
 test_that("endpoint_model_options can be run without programme data", {
   res <- MockPlumberResponse$new()
-  options_template <- naomi::get_model_options_template()
   shape <- file.path("testdata", "malawi.geojson")
   survey <- file.path("testdata", "survey.csv")
   shape_file <- list(path = shape, hash = "12345", filename = "original")
   survey_file <- list(path = survey, hash = "12345", filename = "original")
 
-  model_options <- endpoint_model_options(options_template)
-  response <- model_options(NULL, res, shape_file, survey_file, NULL, NULL)
+  response <- endpoint_model_options(NULL, res, shape_file, survey_file, NULL,
+                                     NULL)
   json <- jsonlite::parse_json(response)
 
   expect_equal(res$status, 200)
   expect_equal(names(json$data), "controlSections")
-  expect_length(json$data$controlSections, 3)
-  ## Check some options have been added
-  control_sections <- json$data$controlSections
+  expect_length(json$data$controlSections, 2)
+
+  general_section <- json$data$controlSections[[1]]
   expect_length(
-    control_sections[[1]]$controlGroups[[1]]$controls[[1]]$options, 1)
+    general_section$controlGroups[[1]]$controls[[1]]$options, 1)
   expect_equal(
-    names(control_sections[[1]]$controlGroups[[1]]$controls[[1]]$options[[1]]),
+    names(general_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
     c("id", "label", "children")
   )
   expect_equal(
-    control_sections[[1]]$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
+    general_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
     "MWI"
   )
   expect_equal(
-    control_sections[[1]]$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
+    general_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
     "Malawi"
   )
   expect_equal(
-    names(control_sections[[1]]$controlGroups[[1]]$controls[[1]]$default),
+    names(general_section$controlGroups[[1]]$controls[[1]]$default),
     c("id", "label"))
   expect_equal(
-    control_sections[[1]]$controlGroups[[1]]$controls[[1]]$default$id,
+    general_section$controlGroups[[1]]$controls[[1]]$default$id,
     "MWI")
   expect_equal(
-    control_sections[[1]]$controlGroups[[1]]$controls[[1]]$default$label,
+    general_section$controlGroups[[1]]$controls[[1]]$default$label,
     "Malawi")
   expect_length(
-    control_sections[[1]]$controlGroups[[2]]$controls[[1]]$options[[1]],
+    general_section$controlGroups[[2]]$controls[[1]]$options[[1]],
     5
   )
   expect_equal(
-    names(control_sections[[1]]$controlGroups[[2]]$controls[[1]]$options[[1]][[1]]),
+    names(general_section$controlGroups[[2]]$controls[[1]]$options[[1]][[1]]),
     c("id", "label")
   )
   expect_equal(
-    control_sections[[1]]$controlGroups[[2]]$controls[[1]]$options[[1]][[1]]$id,
+    general_section$controlGroups[[2]]$controls[[1]]$options[[1]][[1]]$id,
     0)
   expect_equal(
-    control_sections[[1]]$controlGroups[[2]]$controls[[1]]$options[[1]][[1]]$label,
+    general_section$controlGroups[[2]]$controls[[1]]$options[[1]][[1]]$label,
     "Country")
+
+  survey_section <- json$data$controlSections[[2]]
   expect_length(
-    control_sections[[2]]$controlGroups[[1]]$controls[[1]]$options[[1]],
-    0
+    survey_section$controlGroups[[1]]$controls[[1]]$options[[1]],
+    4
   )
+  expect_equal(
+    names(survey_section$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]),
+    c("id", "label"))
+  expect_equal(
+    survey_section$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]$id,
+    "MWI2016PHIA")
+  expect_equal(
+    survey_section$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]$label,
+    "MWI2016PHIA")
 })
 
 test_that("endpoint_model_options fails without shape & survey data", {
   res <- MockPlumberResponse$new()
-  options_template <- naomi::get_model_options_template()
   programme <- file.path("testdata", "programme.csv")
   anc <- file.path("testdata", "anc.csv")
   programme_file <- list(path = programme, hash = "12345", filename = "original")
   anc_file <- list(path = anc, hash = "12345", filename = "original")
 
-  model_options <- endpoint_model_options(options_template)
-  response <- model_options(NULL, res, NULL, NULL, programme_file, anc_file)
+  response <- endpoint_model_options(NULL, res, NULL, NULL, programme_file,
+                                     anc_file)
   json <- jsonlite::parse_json(response)
 
   expect_equal(res$status, 400)
