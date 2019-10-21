@@ -1,3 +1,7 @@
+# hintr 0.0.9
+
+* Iterate model run option endpoint to return complete options, to always return an ID and label for each option and to return regions as a hierarchy
+
 # hintr 0.0.8
 
 * Add endpoint for retrieving model run options
