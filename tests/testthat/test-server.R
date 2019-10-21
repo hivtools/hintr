@@ -22,7 +22,8 @@ test_that("validate pjnz", {
          errors = list(),
          data = list(hash = "12345",
                      type = "pjnz",
-                     data = list(country = "Botswana"),
+                     data = list(country = "Botswana",
+                                 iso3 = "BWA"),
                      filename = "original.PJNZ",
                      filters = NULL)))
 })

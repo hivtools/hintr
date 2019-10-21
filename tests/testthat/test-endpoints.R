@@ -321,16 +321,27 @@ test_that("endpoint_plotting_metadata gets metadata", {
                "Prevalence")
 })
 
-test_that("endpoint_plotting_metadata returns useful error", {
+test_that("endpoint_plotting_metadata returns default data for missing country", {
   res <- MockPlumberResponse$new()
   response <- endpoint_plotting_metadata(NULL, res, "Missing Country")
   response <- jsonlite::parse_json(response)
 
-  expect_equal(res$status, 400)
-  expect_length(response$errors, 1)
-  expect_equal(response$errors[[1]]$error, "FAILED_TO_GET_METADATA")
-  expect_equal(response$errors[[1]]$detail,
-               "Can't retrieve colour scale for country Missing Country. Country not found in configuration.")
+  expect_equal(res$status, 200)
+  expect_true(all(names(response$data) %in%
+                    c("survey", "anc", "output", "programme")))
+  expect_equal(names(response$data$survey), "choropleth")
+  expect_equal(names(response$data$anc), "choropleth")
+  expect_equal(names(response$data$output), "choropleth")
+  expect_equal(names(response$data$programme), "choropleth")
+  expect_length(response$data$anc$choropleth$indicators, 2)
+  expect_equal(response$data$anc$choropleth$indicators[[1]]$indicator,
+               "art_coverage")
+  expect_equal(response$data$anc$choropleth$indicators[[2]]$indicator,
+               "prevalence")
+  expect_equal(response$data$anc$choropleth$indicators[[1]]$name,
+               "ART coverage")
+  expect_equal(response$data$anc$choropleth$indicators[[2]]$name,
+               "Prevalence")
 })
 
 test_that("endpoint_model_options returns model options", {
