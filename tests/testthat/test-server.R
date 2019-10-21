@@ -196,7 +196,7 @@ test_that("model interactions", {
 
 test_that("plotting metadata is exposed", {
   server <- hintr_server()
-  r <- httr::GET(paste0(server$url, "/meta/plotting/", "Malawi"))
+  r <- httr::GET(paste0(server$url, "/meta/plotting/", "MWI"))
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
   expect_equal(response$status, "success")
