@@ -16,6 +16,10 @@ api_build <- function(queue) {
             serializer = serializer_json_hintr())
   pr$handle("GET", "/meta/plotting/<country>", endpoint_plotting_metadata,
             serializer = serializer_json_hintr())
+  pr$handle("GET", "/download/spectrum/<id>", endpoint_download_spectrum(queue),
+            serializer = serializer_zip())
+  pr$handle("GET", "/download/indicators/<id>", endpoint_download_indicators(queue),
+            serializer = serializer_zip())
   pr$handle("GET", "/hintr/version", endpoint_hintr_version,
             serializer = serializer_json_hintr())
   pr$handle("GET", "/hintr/worker/status", endpoint_hintr_worker_status(queue),
@@ -66,9 +70,9 @@ endpoint_model_options <- function(req, res, shape, survey, programme, anc) {
 }
 
 endpoint_model_submit <- function(queue) {
-  function(req, res, data, parameters) {
+  function(req, res, data, options) {
     response <- with_success(
-      queue$submit(data, parameters))
+      queue$submit(data, options))
     if (response$success) {
       response$value <- list(id = scalar(response$value))
     } else {
@@ -220,6 +224,42 @@ endpoint_validate_baseline_combined <- function(req, res, pjnz, shape, populatio
   hintr_response(response, "ValidateBaselineResponse")
 }
 
+#' Download spectrum digest file.
+#'
+#' Returns a function which returns bytes of zip.
+#'
+#' @param queue The queue used to retrieve download from task id.
+#'
+#' @return Bytes of zip file.
+#' @keywords internal
+endpoint_download_spectrum <- function(queue) {
+  function(res, result, id) {
+    download(res, result, id, "spectrum")
+  }
+}
+
+#' Download indicator zip file.
+#'
+#' Returns a function which returns bytes of zip.
+#'
+#' @param queue The queue used to retrieve download from task id.
+#'
+#' @return Bytes of zip file.
+#' @keywords internal
+endpoint_download_indicators <- function(queue) {
+  function(res, result, id) {
+    download(res, result, id, "indicators")
+  }
+}
+
+download <- function(res, result, id, file) {
+  ## TODO: Get path to download from the queue using ID and file type
+  ## stream this back mrc-624
+  ## with_success(queue$result(id)[[file]])
+  path <- system_file("output", "malawi.zip")
+  readBin(path, "raw", n = file.info(path)$size)
+}
+
 endpoint_plotting_metadata <- function(req, res, country) {
   response <- with_success(do_plotting_metadata(country))
   if (!response$success) {
@@ -317,6 +357,18 @@ serializer_json_hintr <- function() {
     tryCatch({
       res$setHeader("Content-Type", "application/json")
       res$body <- to_json(val)
+      return(res$toResponse())
+    }, error = function(e) {
+      errorHandler(req, res, e)
+    })
+  }
+}
+
+serializer_zip <- function() {
+  function(val, req, res, errorHandler) {
+    tryCatch({
+      res$setHeader("Content-Type", "application/octet-stream")
+      res$body <- val
       return(res$toResponse())
     }, error = function(e) {
       errorHandler(req, res, e)

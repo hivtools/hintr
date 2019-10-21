@@ -3,11 +3,11 @@
   "type": "object",
   "properties": {
     "data" : { "$ref": "ModelSubmitData.schema.json" },
-    "parameters" : { "$ref": "ModelSubmitParameters.schema.json" }
+    "options" : { "type": "object" }
   },
   "additionalProperties": false,
   "required": [
     "data",
-    "parameters"
+    "options"
   ]
 }

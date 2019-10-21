@@ -344,3 +344,21 @@ test_that("worker information is returned", {
   expect_match(names(response$data), "^[a-z]+_[a-z]+_[12]$")
   expect_equivalent(response$data, list("IDLE", "IDLE"))
 })
+
+test_that("spectrum file download streams bytes", {
+  server <- hintr_server()
+  r <- httr::GET(paste0(server$url, "/download/spectrum/", "id123"))
+  expect_equal(httr::status_code(r), 200)
+  expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
+  expect_equal(httr::headers(r)$`content-length`,
+               as.character(file.size(system_file("output", "malawi.zip"))))
+})
+
+test_that("indicators file download streams bytes", {
+  server <- hintr_server()
+  r <- httr::GET(paste0(server$url, "/download/indicators/", "id123"))
+  expect_equal(httr::status_code(r), 200)
+  expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
+  expect_equal(httr::headers(r)$`content-length`,
+               as.character(file.size(system_file("output", "malawi.zip"))))
+})

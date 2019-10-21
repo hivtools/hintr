@@ -10,10 +10,10 @@ test_that("can check for empty", {
 })
 
 test_that("system file returns useful message when file cannot be located ", {
-  args <- list("testdata", "missing_file.txt", package = "hintr")
-  expect_error(system_file("testdata", "missing_file.txt", package = "hintr"),
+  args <- list("testdata", "missing_file.txt")
+  expect_error(system_file("testdata", "missing_file.txt"),
 "Failed to locate file from args
-testdata missing_file.txt hintr")
+testdata missing_file.txt")
 })
 
 test_that("collapse prepares vector for printing", {

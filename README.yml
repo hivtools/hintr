@@ -65,6 +65,14 @@
 - comment: Get the result of a model run
   command: http://localhost:8888/model/result/{id}
 
+- comment: Get the key indicators download
+  command: http://localhost:8888/download/indicators/{id}
+  format: bytes
+
+- comment: Get the spectrum digest download
+  command: http://localhost:8888/download/spectrum/{id}
+  format: bytes
+
 - comment: Get plotting metadata for Malawi
   command: http://localhost:8888/meta/plotting/Malawi
 
