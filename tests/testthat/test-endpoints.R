@@ -7,7 +7,8 @@ test_that("hintr_response correctly prepares response", {
       filename = scalar("original.pjnz"),
       hash = scalar("12345"),
       type = scalar("pjnz"),
-      data = list(country = scalar("Botswana"))
+      data = list(country = scalar("Botswana"),
+                  iso3 = scalar("BWA"))
     )
   )
 
@@ -20,6 +21,7 @@ test_that("hintr_response correctly prepares response", {
   expect_equal(response$data$hash, "12345")
   expect_equal(response$data$filename, "original.pjnz")
   expect_equal(response$data$data$country, "Botswana")
+  expect_equal(response$data$data$iso3, "BWA")
   expect_equal(response$errors, list())
 
   value <- list(
@@ -52,7 +54,8 @@ test_that("hintr_response distinguishes incorrect data schema", {
       type = scalar("pjnz"),
       hash = scalar("12345"),
       data = list(
-        country = scalar("Botswana"))
+        country = scalar("Botswana"),
+        iso3 = scalar("BWA"))
     )
   )
 

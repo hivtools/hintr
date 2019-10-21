@@ -4,7 +4,8 @@ do_validate_pjnz <- function(pjnz) {
     stop("Invalid country")
   }
   list(
-    data = list(country = scalar(country)),
+    data = list(country = scalar(country),
+                iso3 = scalar(read_pjnz_iso3(pjnz))),
     filters = scalar(NA)
   )
 }
