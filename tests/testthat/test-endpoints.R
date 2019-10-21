@@ -300,7 +300,7 @@ test_that("possible filters are returned for data", {
 
 test_that("endpoint_plotting_metadata gets metadata", {
   res <- MockPlumberResponse$new()
-  response <- endpoint_plotting_metadata(NULL, res, "Malawi")
+  response <- endpoint_plotting_metadata(NULL, res, "MWI")
   response <- jsonlite::parse_json(response)
 
   expect_equal(res$status, 200)
