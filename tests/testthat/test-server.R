@@ -229,23 +229,100 @@ test_that("model run options are exposed", {
   expect_equal(response$status, "success")
   expect_equal(response$errors, list())
   expect_equal(names(response$data), "controlSections")
-  expect_length(response$data$controlSections, 3)
-  ## Check some options have been added
+  expect_length(response$data$controlSections, 4)
+
+  general_section <- response$data$controlSections[[1]]
+  expect_length(
+    general_section$controlGroups[[1]]$controls[[1]]$options, 1)
   expect_equal(
-    response$data$controlSections[[1]]$controlGroups[[1]]$controls[[1]]$options[[1]],
+    names(general_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
+    c("id", "label", "children")
+  )
+  expect_equal(
+    general_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
+    "MWI"
+  )
+  expect_equal(
+    general_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
+    "Malawi"
+  )
+  expect_equal(
+    names(general_section$controlGroups[[1]]$controls[[1]]$default),
+    c("id", "label"))
+  expect_equal(
+    general_section$controlGroups[[1]]$controls[[1]]$default$id,
     "MWI")
   expect_equal(
-    response$data$controlSections[[1]]$controlGroups[[1]]$controls[[1]]$default,
-    "MWI")
+    general_section$controlGroups[[1]]$controls[[1]]$default$label,
+    "Malawi")
+  expect_length(
+    general_section$controlGroups[[2]]$controls[[1]]$options[[1]],
+    5
+  )
   expect_equal(
-    response$data$controlSections[[1]]$controlGroups[[2]]$controls[[1]]$options[[1]],
+    names(general_section$controlGroups[[2]]$controls[[1]]$options[[1]][[1]]),
+    c("id", "label")
+  )
+  expect_equal(
+    general_section$controlGroups[[2]]$controls[[1]]$options[[1]][[1]]$id,
+    0)
+  expect_equal(
+    general_section$controlGroups[[2]]$controls[[1]]$options[[1]][[1]]$label,
     "Country")
+
+  survey_section <- response$data$controlSections[[2]]
+  expect_length(
+    survey_section$controlGroups[[1]]$controls[[1]]$options[[1]],
+    4
+  )
   expect_equal(
-    response$data$controlSections[[2]]$controlGroups[[1]]$controls[[1]]$options[[1]],
+    names(survey_section$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]),
+    c("id", "label"))
+  expect_equal(
+    survey_section$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]$id,
+    "MWI2016PHIA")
+  expect_equal(
+    survey_section$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]$label,
+    "MWI2016PHIA")
+
+  art_section <- response$data$controlSections[[3]]
+  expect_length(
+    art_section$controlGroups[[1]]$controls[[1]]$options[[1]],
+    32
+  )
+  expect_equal(
+    names(art_section$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]),
+    c("id", "label"))
+  expect_equal(
+    art_section$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]$id,
+    "445")
+  expect_equal(
+    art_section$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]$label,
     "Jan-Mar 2011")
   expect_equal(
-    response$data$controlSections[[2]]$controlGroups[[1]]$controls[[2]]$options[[1]],
+    names(art_section$controlGroups[[1]]$controls[[2]]$options[[1]][[1]]),
+    c("id", "label"))
+  expect_equal(
+    art_section$controlGroups[[1]]$controls[[2]]$options[[1]][[1]]$id,
+    "445")
+  expect_equal(
+    art_section$controlGroups[[1]]$controls[[2]]$options[[1]][[1]]$label,
     "Jan-Mar 2011")
+
+  anc_section <- response$data$controlSections[[4]]
+  expect_length(
+    anc_section$controlGroups[[1]]$controls[[1]]$options[[1]],
+    29
+  )
+  expect_equal(
+    names(anc_section$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]),
+    c("id", "label"))
+  expect_equal(
+    anc_section$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]$id,
+    "447")
+  expect_equal(
+    anc_section$controlGroups[[1]]$controls[[1]]$options[[1]][[1]]$label,
+    "Jul-Sep 2011")
 })
 
 test_that("version information is returned", {

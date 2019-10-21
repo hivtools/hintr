@@ -57,6 +57,22 @@ test_that("get_survey_filters gets available filter options and sorts them", {
     )
   ))
 
+  filters <- get_survey_filters(data, "label")
+  expect_equal(filters, list(
+    list(
+      id = scalar("test"),
+      label = scalar("test")
+    ),
+    list(
+      id = scalar("surv2"),
+      label = scalar("surv2")
+    ),
+    list(
+      id = scalar("MWI2004DHS"),
+      label = scalar("MWI2004DHS")
+    )
+  ))
+
   expect_equal(get_survey_filters(NULL), list())
   expect_equal(get_age_filters(data.frame(survey_id = NULL)), list())
 })
@@ -94,6 +110,18 @@ test_that("get_quarter_filters gets quarter names from ids", {
     )
   )
   expect_equal(get_quarter_filters(data), expected_filters)
+
+  expected_filters <- list(
+    list(
+      id = scalar("465"),
+      label = scalar("Jan-Mar 2016")
+    ),
+    list(
+      id = scalar("454"),
+      label = scalar("Apr-Jun 2013")
+    )
+  )
+  expect_equal(get_quarter_filters(data, "label"), expected_filters)
 })
 
 test_that("can construct sorted tree from data frame", {
@@ -161,6 +189,46 @@ test_that("can construct sorted tree from data frame", {
   )
   expect_equal(
     construct_tree(data, parent_id_column = 3, sort_order_column = 4),
+    expected_tree)
+})
+
+test_that("can specify tree names in function", {
+  data <- data_frame(
+    id = c("MWI", "MWI.1", "MWI.2", "MWI.1.1", "MWI.1.2"),
+    label = c("Malawi", "Northern", "Central", "Chitipa", "Karonga"),
+    parent_id = c(NA, "MWI", "MWI", "MWI.1", "MWI.1"),
+    sort_order = c(1, 2, 3, 4, 5)
+  )
+  expected_tree <- list(
+    id = scalar("MWI"),
+    label = scalar("Malawi"),
+    children = list(
+      list(
+        id = scalar("MWI.1"),
+        label = scalar("Northern"),
+        children = list(
+          list(
+            id = scalar("MWI.1.1"),
+            label = scalar("Chitipa"),
+            children = list()
+          ),
+          list(
+            id = scalar("MWI.1.2"),
+            label = scalar("Karonga"),
+            children = list()
+          )
+        )
+      ),
+      list(
+        id = scalar("MWI.2"),
+        label = scalar("Central"),
+        children = list()
+      )
+    )
+  )
+  expect_equal(
+    construct_tree(data, parent_id_column = 3, sort_order_column = 4,
+                   options = "children"),
     expected_tree)
 })
 

@@ -1,3 +1,7 @@
+# hintr 0.0.10
+
+* Iterate model run option endpoint to return complete options, to always return an ID and label for each option and to return regions as a hierarchy
+
 # hintr 0.0.9
 
 * Add stub endpoints for downloading key indicators and spectrum digest
