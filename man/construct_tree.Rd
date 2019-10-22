@@ -5,7 +5,7 @@
 \title{Create an ordered tree from a data frame.}
 \usage{
 construct_tree(data, id_column = 1, parent_id_column = 2,
-  sort_order_column = 3, options = "options")
+  sort_order_column = 3)
 }
 \arguments{
 \item{data}{Data frame with at minimum id, parent id and sort order columns
@@ -16,9 +16,6 @@ to construct tree from.}
 \item{parent_id_column}{Index of column containing parent IDs.}
 
 \item{sort_order_column}{Index of column containing sort orders.}
-
-\item{options}{The field name to use in the constructed tree for the
-suboptions.}
 }
 \value{
 The tree represented as a list.

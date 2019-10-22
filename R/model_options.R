@@ -18,15 +18,14 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
 
   ## General options
   json <- hintr_geojson_read(shape)
-  regions <- get_region_filters(json, name_column_label = "label",
-                                options = "children")
+  regions <- get_region_filters(json)
   parent_region <- list(id = regions$id,
                         label = regions$label)
   area_level_options <- get_level_options(json)
   time_options <- get_time_options()
 
   ## Survey options
-  survey_options <- get_survey_filters(read_csv(survey), name = "label")
+  survey_options <- get_survey_filters(read_csv(survey))
   survey_art_or_vls_options <- list(
     list(
       id = scalar("art_coverage"),
@@ -41,14 +40,13 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
   ## ART options
   art_quarter_options <- NULL
   if (has_art) {
-    art_quarter_options <- get_quarter_filters(read_csv(programme),
-                                               name = "label")
+    art_quarter_options <- get_quarter_filters(read_csv(programme))
   }
 
   ## ANC options
   anc_quarter_options <- NULL
   if (has_anc) {
-    anc_quarter_options <- get_quarter_filters(read_csv(anc), name = "label")
+    anc_quarter_options <- get_quarter_filters(read_csv(anc))
   }
 
 

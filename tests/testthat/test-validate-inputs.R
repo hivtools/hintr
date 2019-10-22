@@ -52,13 +52,13 @@ test_that("do_validate_shape validates shape and returns geojson as list", {
                scalar("Country"))
   expect_equal(json$filters$level_labels[[1]]$display, scalar(TRUE))
 
-  expect_equal(names(json$filters$regions), c("id", "name", "options"))
+  expect_equal(names(json$filters$regions), c("id", "label", "children"))
   expect_equal(json$filters$regions$id, scalar("MWI"))
-  expect_equal(json$filters$regions$name, scalar("Malawi"))
-  expect_length(json$filters$regions$options, 3)
-  expect_equal(json$filters$regions$options[[1]]$name, scalar("Northern"))
-  expect_equal(json$filters$regions$options[[2]]$name, scalar("Central"))
-  expect_equal(json$filters$regions$options[[3]]$name, scalar("Southern"))
+  expect_equal(json$filters$regions$label, scalar("Malawi"))
+  expect_length(json$filters$regions$children, 3)
+  expect_equal(json$filters$regions$children[[1]]$label, scalar("Northern"))
+  expect_equal(json$filters$regions$children[[2]]$label, scalar("Central"))
+  expect_equal(json$filters$regions$children[[3]]$label, scalar("Southern"))
 })
 
 test_that("do_validate_population validates population file", {
@@ -80,24 +80,24 @@ test_that("do_validate_programme validates programme file", {
   expect_equal(names(data$filters), c("age", "quarter", "indicators"))
   expected_age_filters <- list(
     list(id = scalar("20"),
-         name = scalar("15+")),
+         label = scalar("15+")),
     list(id = scalar("24"),
-         name = scalar("0-14"))
+         label = scalar("0-14"))
   )
   expect_equal(data$filters$age, expected_age_filters)
   expect_quarter_filters <- list(
     list(id = scalar("20"),
-         name = scalar("15+")),
+         label = scalar("15+")),
     list(id = scalar("24"),
-         name = scalar("0-14"))
+         label = scalar("0-14"))
   )
   expect_length(data$filters$quarter, 32)
   expect_equal(data$filters$quarter[[1]]$id, scalar("445"))
-  expect_equal(data$filters$quarter[[1]]$name, scalar("Jan-Mar 2011"))
+  expect_equal(data$filters$quarter[[1]]$label, scalar("Jan-Mar 2011"))
 
   expect_length(data$filters$indicators, 1)
   expect_equal(data$filters$indicators[[1]]$id, scalar("current_art"))
-  expect_equal(data$filters$indicators[[1]]$name, scalar("ART number"))
+  expect_equal(data$filters$indicators[[1]]$label, scalar("ART number"))
 })
 
 test_that("do_validate_anc validates ANC file and gets data for plotting", {
@@ -112,16 +112,16 @@ test_that("do_validate_anc validates ANC file and gets data for plotting", {
   expect_equal(names(data$filters), c("quarter", "indicators"))
   expected_filters <- list(
     list(id = scalar("18"),
-         name = scalar("15-49")))
+         label = scalar("15-49")))
   expect_length(data$filters$quarter, 29)
   expect_equal(data$filters$quarter[[1]]$id, scalar("447"))
-  expect_equal(data$filters$quarter[[1]]$name, scalar("Jul-Sep 2011"))
+  expect_equal(data$filters$quarter[[1]]$label, scalar("Jul-Sep 2011"))
 
   expect_length(data$filters$indicators, 2)
   expect_equal(data$filters$indicators[[1]]$id, scalar("prevalence"))
-  expect_equal(data$filters$indicators[[1]]$name, scalar("Prevalence"))
+  expect_equal(data$filters$indicators[[1]]$label, scalar("Prevalence"))
   expect_equal(data$filters$indicators[[2]]$id, scalar("art_coverage"))
-  expect_equal(data$filters$indicators[[2]]$name, scalar("ART coverage"))
+  expect_equal(data$filters$indicators[[2]]$label, scalar("ART coverage"))
 })
 
 test_that("do_validate_survey validates survey file", {
@@ -133,16 +133,16 @@ test_that("do_validate_survey validates survey file", {
   expect_equal(typeof(data$data$est), "double")
   expect_equal(names(data$filters), c("age", "surveys", "indicators"))
   expected_ages <- list(id = scalar("18"),
-         name = scalar("15-49"))
+                        label = scalar("15-49"))
   expected_survey <- list(
     list(id = scalar("MWI2016PHIA"),
-         name = scalar("MWI2016PHIA")),
+         label = scalar("MWI2016PHIA")),
     list(id = scalar("MWI2015DHS"),
-         name = scalar("MWI2015DHS")),
+         label = scalar("MWI2015DHS")),
     list(id = scalar("MWI2010DHS"),
-         name = scalar("MWI2010DHS")),
+         label = scalar("MWI2010DHS")),
     list(id = scalar("MWI2004DHS"),
-         name = scalar("MWI2004DHS"))
+         label = scalar("MWI2004DHS"))
   )
   expect_equal(data$filters$age[[1]], expected_ages)
   expect_length(data$filters$age, 21)
@@ -150,14 +150,14 @@ test_that("do_validate_survey validates survey file", {
 
   expect_length(data$filters$indicators, 4)
   expect_equal(data$filters$indicators[[1]]$id, scalar("prevalence"))
-  expect_equal(data$filters$indicators[[1]]$name, scalar("Prevalence"))
+  expect_equal(data$filters$indicators[[1]]$label, scalar("Prevalence"))
   expect_equal(data$filters$indicators[[2]]$id, scalar("art_coverage"))
-  expect_equal(data$filters$indicators[[2]]$name, scalar("ART coverage"))
+  expect_equal(data$filters$indicators[[2]]$label, scalar("ART coverage"))
   expect_equal(data$filters$indicators[[3]]$id, scalar("vls"))
-  expect_equal(data$filters$indicators[[3]]$name,
+  expect_equal(data$filters$indicators[[3]]$label,
                scalar("Viral load suppression"))
   expect_equal(data$filters$indicators[[4]]$id, scalar("recent"))
-  expect_equal(data$filters$indicators[[4]]$name,
+  expect_equal(data$filters$indicators[[4]]$label,
                scalar("Proportion recently infected"))
 })
 
