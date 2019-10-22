@@ -10,9 +10,9 @@ assert_column_names <- function(names, expected_names) {
 }
 
 assert_single_parent_region <- function(json) {
-  regions <- vapply(json$features, function(x) {
+  regions <- vcapply(json$features, function(x) {
     x$properties$area_id
-  }, character(1))
+  })
   parent_region <- regions[!grepl("\\.", regions)]
   if (length(parent_region) != 1) {
     stop(sprintf("Should have located one parent regions but found regions %s.",
@@ -29,9 +29,9 @@ assert_single_country.geojson <- function(data, type) {
   ## TODO: geojson will contain the spectrum ID perhaps that will make a more
   ## appropriate check of single country? See once geojson has been updated by
   ## Jeff mrc-501
-  country <- vapply(data$features, function(x) {
+  country <- vcapply(data$features, function(x) {
     substr(x$properties$area_id, 1, 3)
-  }, character(1))
+  })
   assert_single_country(country, type)
 }
 
@@ -100,8 +100,9 @@ is_superset <- function(super, sub) {
 }
 
 assert_file_exists <- function(file) {
-  if (!file.exists(file)) {
-    stop(sprintf("File at path %s does not exist. Create it, or fix the path.", file))
+  if (is.null(file) || !file.exists(file)) {
+    stop(sprintf("File at path %s does not exist. Create it, or fix the path.",
+                 file %||% "NULL"))
   }
   invisible(TRUE)
 }

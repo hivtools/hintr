@@ -1,13 +1,3 @@
-read_surveys <- function(survey_file_path) {
-  data <- read_csv(survey_file_path)
-  sort(unique(data$survey_id), decreasing = TRUE)
-}
-
-read_quarters <- function(file_path) {
-  data <- read_csv(file_path)
-  sort(unique(data$quarter_id))
-}
-
 ## Read json and apply a class so we can use method dispatching for json
 hintr_geojson_read <- function(path) {
   json <- geojsonio::geojson_read(path, method = "local")
@@ -17,21 +7,9 @@ hintr_geojson_read <- function(path) {
 
 read_geojson_regions <- function(geojson_file) {
   json <- hintr_geojson_read(geojson_file)
-  vapply(json$features, function(x) {
+  vcapply(json$features, function(x) {
     x$properties$area_id
-  }, character(1))
-}
-
-read_level_labels <- function(geojson_file) {
-  json <- hintr_geojson_read(geojson_file)
-  labels <- c()
-  for (feature in json$features) {
-    if (as.logical(feature$properties$display) &&
-        !(feature$properties$area_level_label %in% labels)) {
-      labels <- c(labels, feature$properties$area_level_label)
-    }
-  }
-  labels
+  })
 }
 
 read_csv_regions <- function(csv_file) {

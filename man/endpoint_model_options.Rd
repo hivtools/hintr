@@ -4,10 +4,20 @@
 \alias{endpoint_model_options}
 \title{Get function to generate model options from Naomi template and input files}
 \usage{
-endpoint_model_options(options_template)
+endpoint_model_options(req, res, shape, survey, programme, anc)
 }
 \arguments{
-\item{options_template}{The naomi options template.}
+\item{req}{The request object.}
+
+\item{res}{The response object.}
+
+\item{shape}{The shape file.}
+
+\item{survey}{The survey file.}
+
+\item{programme}{The optional programme ART file.}
+
+\item{anc}{The optional programme ANC file.}
 }
 \value{
 Function to generate model options from input data.
