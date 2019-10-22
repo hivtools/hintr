@@ -85,7 +85,7 @@ test_that("endpoint model run queues a model run", {
   expect_equal(names(result$data$filters), c("age", "quarter", "indicators"))
   expect_length(result$data$filters$age, 29)
   expect_length(result$data$filters$quarter, 1)
-  expect_equal(result$data$filters$quarter[[1]]$name, "Jan-Mar 2016")
+  expect_equal(result$data$filters$quarter[[1]]$label, "Jan-Mar 2016")
   expect_length(result$data$filters$indicators, 7)
 })
 

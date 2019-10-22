@@ -191,7 +191,7 @@ test_that("model interactions", {
   expect_equal(names(response$data$filters), c("age", "quarter", "indicators"))
   expect_length(response$data$filters$age, 29)
   expect_length(response$data$filters$quarter, 1)
-  expect_equal(response$data$filters$quarter[[1]]$name, "Jan-Mar 2016")
+  expect_equal(response$data$filters$quarter[[1]]$label, "Jan-Mar 2016")
   expect_length(response$data$filters$indicators, 7)
 })
 

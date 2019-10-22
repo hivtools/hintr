@@ -2,13 +2,13 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "name": {
+    "label": {
       "type": "string"
     },
     "id": {
       "type": "string"
     },
-    "options": {
+    "children": {
       "type": "array",
       "items": {
         "type": "object"
@@ -17,6 +17,6 @@
   },
   "additionalProperties": false,
   "required": [
-    "name", "id"
+    "label", "id"
   ]
 }

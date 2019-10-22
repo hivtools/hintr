@@ -8,7 +8,7 @@ get_age_filters <- function(data) {
 construct_filter <- function(data, id, name) {
   lapply(rownames(data), function(row_number) {
     list(id = scalar(as.character(data[row_number, id])),
-         name = scalar(data[row_number, name]))
+         label = scalar(data[row_number, name]))
   })
 }
 
@@ -24,13 +24,11 @@ get_age_labels <- function(age_group_ids) {
              c("age_group_id", "age_group_label", "age_group_sort_order")]
 }
 
-get_survey_filters <- function(data, name = "name") {
+get_survey_filters <- function(data) {
   survey_ids <- sort(unique(data$survey_id), decreasing = TRUE)
   lapply(survey_ids, function(survey_id) {
-    filter <- list()
-    filter$id <- scalar(survey_id)
-    filter[[name]] <- scalar(survey_id)
-    filter
+    list(id = scalar(survey_id),
+         label = scalar(survey_id))
   })
 }
 
@@ -98,16 +96,14 @@ read_long_indicator_filters <- function(data, type) {
 get_model_output_filters <- function(data) {
   list(age = get_age_filters(data),
        quarter = get_quarter_filters(data),
-       indicators = get_id_name_map(data, "indicator_id"))
+       indicators = get_id_label_map(data, "indicator_id"))
 }
 
-get_quarter_filters <- function(data, name = "name") {
+get_quarter_filters <- function(data) {
   quarter_ids <- unique(data$quarter_id)
   lapply(quarter_ids, function(quarter_id) {
-    filter <- list()
-    filter$id <- scalar(as.character(quarter_id))
-    filter[[name]] <- scalar(get_quarter_name(quarter_id))
-    filter
+    list(id = scalar(as.character(quarter_id)),
+         label = scalar(get_quarter_name(quarter_id)))
   })
 }
 
@@ -115,12 +111,12 @@ get_quarter_name <- function(quarter_id) {
   naomi::quarter_year_labels(quarter_id)
 }
 
-get_id_name_map <- function(data, id_column) {
+get_id_label_map <- function(data, id_column) {
   ids <- unique(data[, c(id_column)])
   build_list <- function(id) {
     hint_id <- get_hint_id(id)
     list(id = scalar(as.character(hint_id)),
-         name = scalar(get_indicator_display_name(hint_id)))
+         label = scalar(get_indicator_display_name(hint_id)))
   }
   id_name_pairs <- lapply(ids, build_list)
   unique(id_name_pairs)
@@ -144,8 +140,7 @@ get_level_labels <- function(json) {
   unique(labels)
 }
 
-get_region_filters <- function(json, name_column_label = "name",
-                               options = "options") {
+get_region_filters <- function(json) {
   cols <- list(area_id = NA_character_,
                parent_area_id = NA_character_,
                area_sort_order = NA_real_,
@@ -155,10 +150,9 @@ get_region_filters <- function(json, name_column_label = "name",
       x$properties[[name]] %||% default, default)
   }
   hierarchy_table <- data_frame(Map(extract, names(cols), cols))
-  colnames(hierarchy_table) <- c("id", "parent_id", "sort_order",
-                                 name_column_label)
+  colnames(hierarchy_table) <- c("id", "parent_id", "sort_order", "label")
 
-  construct_tree(hierarchy_table, options = options)
+  construct_tree(hierarchy_table)
 }
 
 #' Create an ordered tree from a data frame.
@@ -170,13 +164,11 @@ get_region_filters <- function(json, name_column_label = "name",
 #' @param id_column Index of column containing IDs.
 #' @param parent_id_column Index of column containing parent IDs.
 #' @param sort_order_column Index of column containing sort orders.
-#' @param options The field name to use in the constructed tree for the
-#' suboptions.
 #'
 #' @return The tree represented as a list.
 #' @keywords internal
 construct_tree <- function(data, id_column = 1, parent_id_column = 2,
-                           sort_order_column = 3, options = "options") {
+                           sort_order_column = 3) {
   root_node <- is.na(data[, parent_id_column])
   if (sum(root_node) != 1) {
     stop(sprintf("Got %s root nodes - tree must have 1 root.",
@@ -189,7 +181,7 @@ construct_tree <- function(data, id_column = 1, parent_id_column = 2,
     ordered_ids <- children[order(children$sort_order), id_column]
     tree <- lapply(data[current_node, -c(parent_id_column, sort_order_column),
                         drop = FALSE], scalar)
-    tree[[options]] <- lapply(ordered_ids, build_immediate_children)
+    tree$children <- lapply(ordered_ids, build_immediate_children)
     tree
   }
 

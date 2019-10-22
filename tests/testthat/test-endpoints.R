@@ -214,20 +214,20 @@ test_that("possible filters are returned for data", {
   expect_equal(response$data$filters$age, list(
     list(
       id = "20",
-      name = "15+"
+      label = "15+"
     ),
     list(
       id = "24",
-      name = "0-14"
+      label = "0-14"
     )
   ))
   expect_length(response$data$filters$quarter, 32)
   expect_equal(response$data$filters$quarter[[1]]$id, "445")
-  expect_equal(response$data$filters$quarter[[1]]$name, "Jan-Mar 2011")
+  expect_equal(response$data$filters$quarter[[1]]$label, "Jan-Mar 2011")
 
   expect_length(response$data$filters$indicators, 1)
   expect_equal(response$data$filters$indicators[[1]]$id, "current_art")
-  expect_equal(response$data$filters$indicators[[1]]$name, "ART number")
+  expect_equal(response$data$filters$indicators[[1]]$label, "ART number")
 
 
   anc <- file.path("testdata", "anc.csv")
@@ -244,13 +244,13 @@ test_that("possible filters are returned for data", {
   expect_equal(names(response$data$filters), c("quarter", "indicators"))
   expect_length(response$data$filters$quarter, 29)
   expect_equal(response$data$filters$quarter[[1]]$id, "447")
-  expect_equal(response$data$filters$quarter[[1]]$name, "Jul-Sep 2011")
+  expect_equal(response$data$filters$quarter[[1]]$label, "Jul-Sep 2011")
 
   expect_length(response$data$filters$indicators, 2)
   expect_equal(response$data$filters$indicators[[1]]$id, "prevalence")
-  expect_equal(response$data$filters$indicators[[1]]$name, "Prevalence")
+  expect_equal(response$data$filters$indicators[[1]]$label, "Prevalence")
   expect_equal(response$data$filters$indicators[[2]]$id, "art_coverage")
-  expect_equal(response$data$filters$indicators[[2]]$name, "ART coverage")
+  expect_equal(response$data$filters$indicators[[2]]$label, "ART coverage")
 
   survey <- file.path("testdata", "survey.csv")
   res <- MockPlumberResponse$new()
@@ -269,32 +269,32 @@ test_that("possible filters are returned for data", {
   expect_equal(response$data$filters$surveys, list(
     list(
       id = "MWI2016PHIA",
-      name = "MWI2016PHIA"
+      label = "MWI2016PHIA"
     ),
     list(
       id = "MWI2015DHS",
-      name = "MWI2015DHS"
+      label = "MWI2015DHS"
     ),
     list(
       id = "MWI2010DHS",
-      name = "MWI2010DHS"
+      label = "MWI2010DHS"
     ),
     list(
       id = "MWI2004DHS",
-      name = "MWI2004DHS"
+      label = "MWI2004DHS"
     )
   ))
 
   expect_length(response$data$filters$indicators, 4)
   expect_equal(response$data$filters$indicators[[1]]$id, "prevalence")
-  expect_equal(response$data$filters$indicators[[1]]$name, "Prevalence")
+  expect_equal(response$data$filters$indicators[[1]]$label, "Prevalence")
   expect_equal(response$data$filters$indicators[[2]]$id, "art_coverage")
-  expect_equal(response$data$filters$indicators[[2]]$name, "ART coverage")
+  expect_equal(response$data$filters$indicators[[2]]$label, "ART coverage")
   expect_equal(response$data$filters$indicators[[3]]$id, "vls")
-  expect_equal(response$data$filters$indicators[[3]]$name,
+  expect_equal(response$data$filters$indicators[[3]]$label,
                "Viral load suppression")
   expect_equal(response$data$filters$indicators[[4]]$id, "recent")
-  expect_equal(response$data$filters$indicators[[4]]$name,
+  expect_equal(response$data$filters$indicators[[4]]$label,
                "Proportion recently infected")
 })
 
@@ -323,8 +323,11 @@ test_that("endpoint_plotting_metadata gets metadata", {
 
 test_that("endpoint_plotting_metadata returns default data for missing country", {
   res <- MockPlumberResponse$new()
-  response <- endpoint_plotting_metadata(NULL, res, "Missing Country")
-  response <- jsonlite::parse_json(response)
+  metadata <- testthat::evaluate_promise(
+    endpoint_plotting_metadata(NULL, res, "Missing Country"))
+  expect_equal(metadata$messages,
+    "Country with iso3 code Missing Country not in metadata - returning default colour scales.\n")
+  response <- jsonlite::parse_json(metadata$result)
 
   expect_equal(res$status, 200)
   expect_true(all(names(response$data) %in%
