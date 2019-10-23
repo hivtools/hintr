@@ -104,7 +104,7 @@ endpoint_model_status <- function(queue) {
 endpoint_model_result <- function(queue) {
   function(req, res, id) {
     response <- with_success(
-      queue$result(id))
+      do_process_result(queue$result(id)))
     if (is_error(response$value)) {
       response$success <- FALSE
       response$errors <- hintr_errors(

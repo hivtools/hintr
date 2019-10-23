@@ -12,9 +12,7 @@ test_that("endpoint model run queues a model run", {
     anc = "path"
   )
   options = list(
-    programme = TRUE,
-    anc = FALSE,
-    sleep = 3
+    use_mock_model = TRUE
   )
   req <- list(postBody = '
               {
@@ -27,9 +25,7 @@ test_that("endpoint model run queues a model run", {
               "anc": "path/to/file"
               },
               "options": {
-              "programme": true,
-              "anc": false,
-              "sleep": 3
+              "use_mock_model": true
               }
               }')
 
@@ -196,9 +192,7 @@ test_that("querying for result of incomplete jobs returns useful error", {
     anc = "path"
   )
   options = list(
-    programme = TRUE,
-    anc = FALSE,
-    sleep = 10
+    use_mock_model = TRUE
   )
   req <- list(postBody = '
               {
@@ -211,9 +205,7 @@ test_that("querying for result of incomplete jobs returns useful error", {
               "anc": "path/to/file"
               },
               "options": {
-              "programme": true,
-              "anc": false,
-              "sleep": 10
+              "use_mock_model": true
               }
               }')
 
