@@ -1,5 +1,3 @@
-mock_model <- list(output_path = file.path("testdata", "output.RDS"),
-                   spectrum_path = file.path("testdata", "spectrum_download.zip"),
-                   summary_path = file.path("testdata", "summary_download.zip"))
-
-mock_run_model <- mockery::mock(mock_model, cycle = TRUE)
+mock_model <- list(output_path = system_file("output", "malawi_output.RDS"),
+                   spectrum_path = system_file("output", "malawi_spectrum_download.zip"),
+                   summary_path = system_file("output", "malawi_summary_download.zip"))

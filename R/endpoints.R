@@ -103,8 +103,7 @@ endpoint_model_status <- function(queue) {
 
 endpoint_model_result <- function(queue) {
   function(req, res, id) {
-    response <- with_success(
-      do_process_result(queue$result(id)))
+    response <- with_success(queue$result(id))
     if (is_error(response$value)) {
       response$success <- FALSE
       response$errors <- hintr_errors(
@@ -116,6 +115,8 @@ endpoint_model_result <- function(queue) {
       response$errors <- hintr_errors(
         list("FAILED_TO_RETRIEVE_RESULT" = response$message))
       res$status <- 400
+    } else {
+      response$value <- process_result(response$value)
     }
     hintr_response(response, "ModelResultResponse")
   }

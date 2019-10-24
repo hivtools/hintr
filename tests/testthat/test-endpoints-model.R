@@ -239,7 +239,7 @@ test_that("erroring model run returns useful messages", {
   ## Call the endpoint
   queue <- Queue$new()
   model_submit <- endpoint_model_submit(queue)
-  response <- model_submit(req, res, NULL, NULL)
+  response <- model_submit(req, res, NULL, list(use_mock_model = "fail"))
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
 
@@ -263,5 +263,6 @@ test_that("erroring model run returns useful messages", {
   expect_length(result$data, 0)
   expect_length(result$errors, 1)
   expect_equal(result$errors[[1]]$error, "MODEL_RUN_FAILED")
-  expect_equal(result$errors[[1]]$detail, "Error in Sys.sleep(options$sleep): invalid 'time' value\n")
+  expect_equal(result$errors[[1]]$detail,
+    "Error in if (options$use_mock_model) {: argument is not interpretable as logical\n")
 })
