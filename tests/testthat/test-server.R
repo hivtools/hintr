@@ -348,18 +348,48 @@ test_that("worker information is returned", {
 
 test_that("spectrum file download streams bytes", {
   server <- hintr_server()
-  r <- httr::GET(paste0(server$url, "/download/spectrum/", "id123"))
+
+  ## Run a model
+  submit <- file.path("payload", "model_submit_payload.json")
+  r <- httr::POST(paste0(server$url, "/model/submit"),
+                  body = httr::upload_file(submit),
+                  encode = "json")
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+  expect_equal(response$errors, list())
+  expect_equal(names(response$data), c("id"))
+
+  ## Get the download
+  Sys.sleep(5)
+  r <- httr::GET(paste0(server$url, "/download/spectrum/", response$data$id))
   expect_equal(httr::status_code(r), 200)
   expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
-  expect_equal(httr::headers(r)$`content-length`,
-               as.character(file.size(system_file("output", "malawi.zip"))))
+  expect_equal(
+    httr::headers(r)$`content-length`,
+    as.character(file.size(system_file("output", "malawi_spectrum_download.zip"))))
 })
 
-test_that("indicators file download streams bytes", {
+test_that("summary file download streams bytes", {
   server <- hintr_server()
-  r <- httr::GET(paste0(server$url, "/download/indicators/", "id123"))
+
+  ## Run a model
+  submit <- file.path("payload", "model_submit_payload.json")
+  r <- httr::POST(paste0(server$url, "/model/submit"),
+                  body = httr::upload_file(submit),
+                  encode = "json")
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+  expect_equal(response$errors, list())
+  expect_equal(names(response$data), c("id"))
+
+  ## Get the download
+  Sys.sleep(5)
+  r <- httr::GET(paste0(server$url, "/download/summary/", response$data$id))
   expect_equal(httr::status_code(r), 200)
   expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
-  expect_equal(httr::headers(r)$`content-length`,
-               as.character(file.size(system_file("output", "malawi.zip"))))
+  expect_equal(
+    httr::headers(r)$`content-length`,
+    as.character(file.size(system_file("output", "malawi_summary_download.zip"))))
 })
