@@ -239,7 +239,7 @@ test_that("erroring model run returns useful messages", {
   ## Call the endpoint
   queue <- Queue$new()
   model_submit <- endpoint_model_submit(queue)
-  response <- model_submit(req, res, NULL, NULL)
+  response <- model_submit(req, res, NULL, list(use_mock_model = "error"))
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
 
