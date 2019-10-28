@@ -51,7 +51,7 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
 
 
   params <- list(
-    area_scope_options = regions,
+    area_scope_options = list(regions),
     area_scope_default = parent_region,
     area_level_options = area_level_options,
     t1_options = time_options,
