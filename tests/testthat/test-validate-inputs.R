@@ -3,7 +3,8 @@ context("validate-inputs")
 test_that("PJNZ can be validated and return data", {
   pjnz <- file.path("testdata", "Botswana2018.PJNZ")
   expect_equal(do_validate_pjnz(pjnz),
-               list(data = list(country = scalar("Botswana")),
+               list(data = list(country = scalar("Botswana"),
+                                iso3 = scalar("BWA")),
                     filters = scalar(NA)))
   mock_read_country <- mockery::mock("GBR")
   with_mock("hintr:::read_country" = mock_read_country, {

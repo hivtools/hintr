@@ -1,3 +1,8 @@
+# hintr 0.0.11
+
+* Return iso3 code from PJNZ upload
+* Use iso3 to locate plotting metadata instead of country name
+
 # hintr 0.0.10
 
 * Iterate model run option endpoint to return complete options, to always return an ID and label for each option and to return regions as a hierarchy

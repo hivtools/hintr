@@ -2,12 +2,11 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "country": {
-      "type": "string"
-    }
+    "country": { "type": "string" },
+    "iso3": { "type": "string" }
   },
   "additionalProperties": false,
   "required": [
-    "country"
+    "country", "iso3"
   ]
 }

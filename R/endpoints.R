@@ -14,7 +14,7 @@ api_build <- function(queue) {
             serializer = serializer_json_hintr())
   pr$handle("GET", "/model/result/<id>", endpoint_model_result(queue),
             serializer = serializer_json_hintr())
-  pr$handle("GET", "/meta/plotting/<country>", endpoint_plotting_metadata,
+  pr$handle("GET", "/meta/plotting/<iso3>", endpoint_plotting_metadata,
             serializer = serializer_json_hintr())
   pr$handle("GET", "/download/spectrum/<id>", endpoint_download_spectrum(queue),
             serializer = serializer_zip())
@@ -260,8 +260,8 @@ download <- function(res, result, id, file) {
   readBin(path, "raw", n = file.info(path)$size)
 }
 
-endpoint_plotting_metadata <- function(req, res, country) {
-  response <- with_success(do_plotting_metadata(country))
+endpoint_plotting_metadata <- function(req, res, iso3) {
+  response <- with_success(do_plotting_metadata(iso3))
   if (!response$success) {
     response$errors <- hintr_errors(
       list("FAILED_TO_GET_METADATA" = response$message))

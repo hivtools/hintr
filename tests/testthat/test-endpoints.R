@@ -7,7 +7,8 @@ test_that("hintr_response correctly prepares response", {
       filename = scalar("original.pjnz"),
       hash = scalar("12345"),
       type = scalar("pjnz"),
-      data = list(country = scalar("Botswana"))
+      data = list(country = scalar("Botswana"),
+                  iso3 = scalar("BWA"))
     )
   )
 
@@ -20,6 +21,7 @@ test_that("hintr_response correctly prepares response", {
   expect_equal(response$data$hash, "12345")
   expect_equal(response$data$filename, "original.pjnz")
   expect_equal(response$data$data$country, "Botswana")
+  expect_equal(response$data$data$iso3, "BWA")
   expect_equal(response$errors, list())
 
   value <- list(
@@ -52,7 +54,8 @@ test_that("hintr_response distinguishes incorrect data schema", {
       type = scalar("pjnz"),
       hash = scalar("12345"),
       data = list(
-        country = scalar("Botswana"))
+        country = scalar("Botswana"),
+        iso3 = scalar("BWA"))
     )
   )
 
@@ -297,7 +300,7 @@ test_that("possible filters are returned for data", {
 
 test_that("endpoint_plotting_metadata gets metadata", {
   res <- MockPlumberResponse$new()
-  response <- endpoint_plotting_metadata(NULL, res, "Malawi")
+  response <- endpoint_plotting_metadata(NULL, res, "MWI")
   response <- jsonlite::parse_json(response)
 
   expect_equal(res$status, 200)
@@ -318,15 +321,30 @@ test_that("endpoint_plotting_metadata gets metadata", {
                "Prevalence")
 })
 
-test_that("endpoint_plotting_metadata returns default for a missing country", {
+test_that("endpoint_plotting_metadata returns default data for missing country", {
   res <- MockPlumberResponse$new()
   metadata <- testthat::evaluate_promise(
     endpoint_plotting_metadata(NULL, res, "Missing Country"))
   expect_equal(metadata$messages,
-    "Country Missing Country not in metadata - returning default colour scales.\n")
+    "Country with iso3 code Missing Country not in metadata - returning default colour scales.\n")
   response <- jsonlite::parse_json(metadata$result)
 
   expect_equal(res$status, 200)
+  expect_true(all(names(response$data) %in%
+                    c("survey", "anc", "output", "programme")))
+  expect_equal(names(response$data$survey), "choropleth")
+  expect_equal(names(response$data$anc), "choropleth")
+  expect_equal(names(response$data$output), "choropleth")
+  expect_equal(names(response$data$programme), "choropleth")
+  expect_length(response$data$anc$choropleth$indicators, 2)
+  expect_equal(response$data$anc$choropleth$indicators[[1]]$indicator,
+               "art_coverage")
+  expect_equal(response$data$anc$choropleth$indicators[[2]]$indicator,
+               "prevalence")
+  expect_equal(response$data$anc$choropleth$indicators[[1]]$name,
+               "ART coverage")
+  expect_equal(response$data$anc$choropleth$indicators[[2]]$name,
+               "Prevalence")
 })
 
 test_that("endpoint_model_options returns model options", {

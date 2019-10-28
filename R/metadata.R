@@ -1,5 +1,5 @@
-do_plotting_metadata <- function(country) {
-  metadata <- naomi::get_plotting_metadata(country)
+do_plotting_metadata <- function(iso3) {
+  metadata <- naomi::get_plotting_metadata(iso3)
   lapply(split(metadata, metadata$data_type), build_data_type_metadata)
 }
 
