@@ -1,0 +1,12 @@
+{
+  "data": {
+    "pjnz": "tests/testthat/testdata/Malawi2019.PJNZ",
+    "shape": "tests/testhtat/testdata/malawi.geojson",
+    "population": "tests/testthat/testdata/population.csv",
+    "survey": "tests/testthat/testdata/survey.csv",
+    "programme": "tests/testthat/testdata/programme.csv",
+    "anc": "tests/testthat/testdata/anc.csv"
+  },
+  "options": {
+  }
+}

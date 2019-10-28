@@ -1,0 +1,24 @@
+#!/usr/bin/env Rscript
+"Usage:
+  run_model [options]
+
+Options:
+  -h --help        Show this screen.
+  --payload        Path to model run payload
+  --output_path    Path to output data RDS
+  --spectrum_path  Path to spectrum zip download
+  --summary_path   Path to summary zip download
+" -> usage
+
+dat <- docopt::docopt(usage, args)
+print(dat)
+
+#payload <- jsonlite::fromJSON(dat$payload)
+#output <- naomi::hintr_run_model(payload$data,
+#                                payload$options,
+#                                 dat$output_path,
+#                                 dat$spectrum_path,
+#                                 dat$summary_path)
+
+#message(sprintf("doing at path %s %s %s", dat$output_path, dat$spectrum_path, dat$summary_path))
+#message(sprintf("options are %s and data %s", payload$options, payload$data))
