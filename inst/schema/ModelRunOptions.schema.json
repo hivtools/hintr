@@ -7,7 +7,7 @@
         "label": { "type": "string" },
         "type": { "enum": [ "select", "multiselect" ] },
         "required": { "type": "boolean" },
-        "default": { "type": "string" },
+        "value": { "type": "string" },
         "helpText": { "type": "string" },
         "options": { "type":  "array", "items": { "type": "string" }}
       },
@@ -20,7 +20,7 @@
         "label": { "type": "string" },
         "type": { "enum": [ "number" ] },
         "required": { "type": "boolean" },
-        "default": { "type": "number" },
+        "value": { "type": "number" },
         "helpText": { "type": "string" },
         "min": { "type": "number" },
         "max": { "type": "number" }
