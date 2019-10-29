@@ -179,7 +179,6 @@ test_that("Schemas are draft-04", {
 
 test_that("Schemas do not use const", {
   path <- system.file("schema", package = "hintr", mustWork = TRUE)
-  files <- dir(path, full.names = TRUE, pattern = "\\.schema\\.json$")
 
   check1 <- function(x) {
     if ("const" %in% names(x)) {
@@ -193,6 +192,54 @@ test_that("Schemas do not use const", {
   files <- dir(path, full.names = TRUE, pattern = "\\.schema\\.json$")
   for (f in files) {
     expect_error(check1(jsonlite::fromJSON(f)), NA, label = f)
+  }
+})
+
+test_that("schemas always contain a type", {
+  ## This added to fix bugs caused by missing types in schema marking query
+  ## json as valid. See mrc-652 for example.
+  path <- system.file("schema", package = "hintr", mustWork = TRUE)
+
+  has_properties <- function(x) {
+    "properties" %in% names(x)
+  }
+
+  has_items <- function(x) {
+    "items" %in% names(x)
+  }
+
+  has_definitions <- function(x) {
+    "definitions" %in% names(x)
+  }
+
+  is_valid <- function(x) {
+    ## For schema to be valid it must either be:
+    ## * A reference - $ref
+    ## * A combined schema - oneOf, allOf, anyOf
+    ## * An enum - enum
+    ## * or declare a type - type
+    required_names <- c("type", "$ref", "oneOf", "allOf", "anyOf", "enum")
+    any(required_names %in% names(x))
+  }
+
+  check_types <- function(schema, path) {
+    if (!is_valid(schema)) {
+      stop(sprintf("Missing type, reference or enum for node in schema %s", path))
+    }
+    if (has_properties(schema)) {
+      lapply(schema$properties, function(x) check_types(x, path))
+    }
+    if (has_items(schema)) {
+      check_types(schema$items, path)
+    }
+    if (has_definitions(schema)) {
+      lapply(schema$definitions, function(x) check_types(x, path))
+    }
+  }
+
+  files <- dir(path, full.names = TRUE, pattern = "\\.schema\\.json$")
+  for (f in files) {
+    expect_error(check_types(jsonlite::fromJSON(f), f), NA, label = f)
   }
 })
 

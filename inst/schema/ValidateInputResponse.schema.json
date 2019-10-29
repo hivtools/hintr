@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "definitions": {
     "pjnz_response": {
+      "type": "object",
       "properties": {
         "hash": { "$ref": "FileName.schema.json" },
         "filename" : { "type": "string" },
@@ -17,6 +18,7 @@
     },
 
     "shape_response": {
+      "type": "object",
       "properties": {
         "hash": { "$ref": "FileName.schema.json" },
         "filename" : { "type": "string" },
@@ -41,6 +43,7 @@
     },
 
     "population_response": {
+      "type": "object",
       "properties": {
         "hash": { "$ref": "FileName.schema.json" },
         "filename" : { "type": "string" },
@@ -56,6 +59,7 @@
     },
 
     "programme_response": {
+      "type": "object",
       "properties": {
         "hash": { "$ref": "FileName.schema.json" },
         "filename" : { "type": "string" },
@@ -71,6 +75,7 @@
     },
 
     "anc_response": {
+      "type": "object",
       "properties": {
         "hash": { "$ref": "FileName.schema.json" },
         "filename" : { "type": "string" },
@@ -86,6 +91,7 @@
     },
 
     "survey_response": {
+      "type": "object",
       "properties": {
         "hash": { "$ref": "FileName.schema.json" },
         "filename" : { "type": "string" },
