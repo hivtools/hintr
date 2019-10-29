@@ -108,7 +108,7 @@ get_level_options <- function(json) {
     level <- NULL
     if (as.logical(feature$properties$display)) {
       level <- list(
-        id = scalar(feature$properties$area_level),
+        id = scalar(as.character(feature$properties$area_level)),
         label = scalar(feature$properties$area_level_label)
       )
     }

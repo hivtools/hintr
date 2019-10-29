@@ -73,23 +73,23 @@ test_that("do_endpoint_model_options correctly builds params list", {
     expect_equal(params$area_scope_default$label, scalar("Malawi"))
     expect_equal(params$area_level_options, list(
       list(
-        id = scalar(0),
+        id = scalar("0"),
         label = scalar("Country")
       ),
       list(
-        id = scalar(1),
+        id = scalar("1"),
         label = scalar("Region")
       ),
       list(
-        id = scalar(2),
+        id = scalar("2"),
         label = scalar("Zone")
       ),
       list(
-        id = scalar(3),
+        id = scalar("3"),
         label = scalar("District")
       ),
       list(
-        id = scalar(4),
+        id = scalar("4"),
         label = scalar("District + Metro")
       )))
     expect_equal(params$t1_options[[length(params$t1_options)]]$id,
@@ -164,23 +164,23 @@ test_that("do_endpoint_model_options without programme data", {
     expect_equal(params$area_scope_default$label, scalar("Malawi"))
     expect_equal(params$area_level_options, list(
       list(
-        id = scalar(0),
+        id = scalar("0"),
         label = scalar("Country")
       ),
       list(
-        id = scalar(1),
+        id = scalar("1"),
         label = scalar("Region")
       ),
       list(
-        id = scalar(2),
+        id = scalar("2"),
         label = scalar("Zone")
       ),
       list(
-        id = scalar(3),
+        id = scalar("3"),
         label = scalar("District")
       ),
       list(
-        id = scalar(4),
+        id = scalar("4"),
         label = scalar("District + Metro")
       )))
     expect_equal(params$t1_options[[length(params$t1_options)]]$id,
@@ -261,7 +261,7 @@ test_that("can retrieve validated model options", {
   )
   expect_equal(
     general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
-    0)
+    "0")
   expect_equal(
     general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
     "Country")
@@ -329,23 +329,23 @@ test_that("can read geojson level labels", {
   expect_length(levels, 5)
   expect_equal(levels, list(
     list(
-      id = scalar(0),
+      id = scalar("0"),
       label = scalar("Country")
     ),
     list(
-      id = scalar(1),
+      id = scalar("1"),
       label = scalar("Region")
     ),
     list(
-      id = scalar(2),
+      id = scalar("2"),
       label = scalar("Zone")
     ),
     list(
-      id = scalar(3),
+      id = scalar("3"),
       label = scalar("District")
     ),
     list(
-      id = scalar(4),
+      id = scalar("4"),
       label = scalar("District + Metro")
     )))
 })

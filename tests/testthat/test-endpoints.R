@@ -447,7 +447,7 @@ test_that("endpoint_model_options returns model options", {
   )
   expect_equal(
     general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
-    0)
+    "0")
   expect_equal(
     general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
     "Country")
@@ -556,7 +556,7 @@ test_that("endpoint_model_options can be run without programme data", {
   )
   expect_equal(
     general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
-    0)
+    "0")
   expect_equal(
     general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
     "Country")

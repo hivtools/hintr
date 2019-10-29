@@ -266,7 +266,7 @@ test_that("model run options are exposed", {
   )
   expect_equal(
     general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
-    0)
+    "0")
   expect_equal(
     general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
     "Country")
