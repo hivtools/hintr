@@ -18,7 +18,7 @@ test_that("queue works as intended", {
   expect_length(queue$queue$task_list(), 0)
 
   ## jobs can be pushed to queue
-  job_id <- queue$submit(NULL, list(use_mock_model = TRUE))
+  job_id <- queue$submit(NULL, list())
   expect_length(queue$queue$task_list(), 1)
 
   ## status can be retireved

@@ -8,6 +8,5 @@
     "anc": "path/to/file"
   },
   "options": {
-    "use_mock_model": true
   }
 }

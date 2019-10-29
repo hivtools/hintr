@@ -11,9 +11,7 @@ test_that("endpoint model run queues a model run", {
     programme = "path",
     anc = "path"
   )
-  options = list(
-    use_mock_model = TRUE
-  )
+  options = list()
   req <- list(postBody = '
               {
               "data": {
@@ -24,9 +22,7 @@ test_that("endpoint model run queues a model run", {
               "programme": "path/to/file",
               "anc": "path/to/file"
               },
-              "options": {
-              "use_mock_model": true
-              }
+              "options": {}
               }')
 
   ## Create mock response
@@ -191,9 +187,7 @@ test_that("querying for result of incomplete jobs returns useful error", {
     programme = "path",
     anc = "path"
   )
-  options = list(
-    use_mock_model = TRUE
-  )
+  options = list()
   req <- list(postBody = '
               {
               "data": {
@@ -237,9 +231,9 @@ test_that("erroring model run returns useful messages", {
   res <- MockPlumberResponse$new()
 
   ## Call the endpoint
-  queue <- Queue$new()
+  queue <- MockQueue$new()
   model_submit <- endpoint_model_submit(queue)
-  response <- model_submit(req, res, NULL, list(use_mock_model = "fail"))
+  response <- model_submit(req, res, NULL, list())
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
 
@@ -264,5 +258,5 @@ test_that("erroring model run returns useful messages", {
   expect_length(result$errors, 1)
   expect_equal(result$errors[[1]]$error, "MODEL_RUN_FAILED")
   expect_equal(result$errors[[1]]$detail,
-    "Error in if (options$use_mock_model) {: argument is not interpretable as logical\n")
+    "Error in eval(expr, envir): test error\n")
 })

@@ -11,8 +11,7 @@ test_that("indicator download returns bytes", {
     programme = "path",
     anc = "path"
   )
-  options = list(
-  )
+  options = list()
   req <- list(postBody = '
               {
               "data": {
@@ -23,9 +22,7 @@ test_that("indicator download returns bytes", {
               "programme": "path/to/file",
               "anc": "path/to/file"
               },
-              "options": {
-              "use_mock_model": true
-              }
+              "options": {}
               }')
 
   ## Create mock response
@@ -59,9 +56,7 @@ test_that("spectrum download returns bytes", {
     programme = "path",
     anc = "path"
   )
-  options = list(
-    use_mock_model = TRUE
-  )
+  options = list()
   req <- list(postBody = '
               {
               "data": {
@@ -72,9 +67,7 @@ test_that("spectrum download returns bytes", {
               "programme": "path/to/file",
               "anc": "path/to/file"
               },
-              "options": {
-              "use_mock_model": true
-              }
+              "options": {}
               }')
 
   ## Create mock response
