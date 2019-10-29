@@ -150,6 +150,7 @@ test_that("validate baseline", {
 })
 
 test_that("model interactions", {
+  test_mock_model_available()
   server <- hintr_server()
 
   ## Submit a model run
@@ -341,6 +342,7 @@ test_that("worker information is returned", {
 })
 
 test_that("spectrum file download streams bytes", {
+  test_mock_model_available()
   server <- hintr_server()
 
   ## Run a model
@@ -365,6 +367,7 @@ test_that("spectrum file download streams bytes", {
 })
 
 test_that("summary file download streams bytes", {
+  test_mock_model_available()
   server <- hintr_server()
 
   ## Run a model

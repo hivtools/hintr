@@ -2,6 +2,7 @@ context("endpoints-download")
 
 test_that("indicator download returns bytes", {
   test_redis_available()
+  test_mock_model_available()
 
   data <- list(
     pjnz = "path/to/pjnz",
@@ -47,6 +48,7 @@ test_that("indicator download returns bytes", {
 
 test_that("spectrum download returns bytes", {
   test_redis_available()
+  test_mock_model_available()
 
   data <- list(
     pjnz = "path/to/pjnz",

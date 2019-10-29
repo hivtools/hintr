@@ -2,6 +2,7 @@ context("endpoints-model")
 
 test_that("endpoint model run queues a model run", {
   test_redis_available()
+  test_mock_model_available()
   ## Create request data
   data <- list(
     pjnz = "path/to/pjnz",

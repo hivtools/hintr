@@ -1,6 +1,7 @@
 context("run-model")
 
 test_that("model can be run and filters extracted", {
+  test_mock_model_available()
   model_run <- process_result(mock_model)
   expect_equal(names(model_run), c("data", "filters"))
   expect_equal(names(model_run$data),
