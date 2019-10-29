@@ -467,8 +467,7 @@ test_that("endpoint_model_options can be run without programme data", {
   shape_file <- list(path = shape, hash = "12345", filename = "original")
   survey_file <- list(path = survey, hash = "12345", filename = "original")
 
-  response <- endpoint_model_options(NULL, res, shape_file, survey_file, NULL,
-                                     NULL)
+  response <- endpoint_model_options(NULL, res, shape_file, survey_file)
   json <- jsonlite::parse_json(response)
 
   expect_equal(res$status, 200)
