@@ -9,7 +9,7 @@
       "type": "string",
       "enum": [ "FeatureCollection" ] },
     "crs": { "type": "object" },
-    "name": { "tyep": "string" },
+    "name": { "type": "string" },
     "features": {
       "type": "array",
       "items": { "type": "object" }
