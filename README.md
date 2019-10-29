@@ -11,6 +11,10 @@ R API for Naomi app
 
 App to show district level estimates of HIV indicators
 
+## Running tests with mock data
+
+Run script `./scripts/build_test_data` to create test data which will then be used to mock out the model run response in local tests.
+
 ## Running in docker
 
 Docker images are built on travis, if on master branch run via:
