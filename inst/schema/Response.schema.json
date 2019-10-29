@@ -5,7 +5,9 @@
     "status": {
       "enum": [ "success", "failure" ]
     },
-    "data": {},
+    "data": {
+      "type": "object"
+    },
     "errors": {
       "type": "array",
       "items": { "$ref": "Error.schema.json" }
