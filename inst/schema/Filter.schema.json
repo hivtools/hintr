@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "id": { 
+      "type": "string"
+    },
+    "column_id": { 
+      "type": "string"
+    },
+    "label": { 
+      "type": "string"
+    },
+    "options": {
+      "type": "array",
+      "items": { "$ref": "FilterOption.schema.json" }
+    }
+  },
+  "additonalProperties": "false",
+  "required": [ "id", "column_id", "label", "options" ]
+}
