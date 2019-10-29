@@ -50,7 +50,7 @@ api <- function(port = 8888, queue_id = NULL, workers = 2) {
 #'
 #' @return Function to generate model options from input data.
 #' @keywords internal
-endpoint_model_options <- function(req, res, shape, survey, programme, anc) {
+endpoint_model_options <- function(req, res, shape, survey, programme =  NULL, anc = NULL) {
   response <- with_success({
     ## Shape and survey must exist
     assert_file_exists(shape$path)
