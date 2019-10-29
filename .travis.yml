@@ -20,8 +20,7 @@ before_script:
   - R CMD INSTALL .
 cache: packages
 env:
-  - VALIDATE_JSON_SCHEMAS=true
-  - USE_MOCK_MODEL=true
+  - VALIDATE_JSON_SCHEMAS=true USE_MOCK_MODEL=true
 r_packages:
   - covr
 r_github_packages:
