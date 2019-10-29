@@ -1,24 +1,32 @@
 #!/usr/bin/env Rscript
-"Usage:
-  run_model [options]
+"Run a model and save outputs at specified paths
+Usage:
+  run_model (--payload=<payload> --output_path=<output_path> --spectrum_path=<spectrum_path> --summary_path=<summary_path>)
 
 Options:
-  -h --help        Show this screen.
-  --payload        Path to model run payload
-  --output_path    Path to output data RDS
-  --spectrum_path  Path to spectrum zip download
-  --summary_path   Path to summary zip download
+  -h --help                        Show this screen.
+  --payload=<payload>              Path to model run payload.
+  --output_path=<output_path>      Path to output data RDS.
+  --spectrum_path=<spectrum_path>  Path to spectrum zip download.
+  --summary_path=<summary_path>    Path to summary zip download.
 " -> usage
 
-dat <- docopt::docopt(usage, args)
-print(dat)
+dat <- docopt::docopt(usage)
 
-#payload <- jsonlite::fromJSON(dat$payload)
-#output <- naomi::hintr_run_model(payload$data,
-#                                payload$options,
-#                                 dat$output_path,
-#                                 dat$spectrum_path,
-#                                 dat$summary_path)
+payload <- jsonlite::fromJSON(dat$payload)
+invisible(lapply(payload$data, function(x) {
+  if (!file.exists(x)) {
+    stop(sprintf("Input file %s doesn't exist.", x))
+  }
+}))
 
-#message(sprintf("doing at path %s %s %s", dat$output_path, dat$spectrum_path, dat$summary_path))
-#message(sprintf("options are %s and data %s", payload$options, payload$data))
+output <- naomi::hintr_run_model(payload$data,
+                                 payload$options,
+                                 dat$output_path,
+                                 dat$spectrum_path,
+                                 dat$summary_path)
+
+message(sprintf("Saving output at %s", normalizePath(dat$output_path)))
+message(
+  sprintf("Saving spectrum download at %s", normalizePath(dat$spectrum_path)))
+message(sprintf("Saving output at %s", normalizePath(dat$summary_path)))

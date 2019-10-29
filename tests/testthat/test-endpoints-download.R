@@ -12,7 +12,6 @@ test_that("indicator download returns bytes", {
     anc = "path"
   )
   options = list(
-    use_mock_model = TRUE
   )
   req <- list(postBody = '
               {
@@ -46,7 +45,7 @@ test_that("indicator download returns bytes", {
   bytes <- download_summary(NULL, res, response$data$id)
   expect_type(bytes, "raw")
   expect_length(bytes,
-                file.size(system_file("output", "malawi_summary_download.zip")))
+                file.size(file.path("testdata", "malawi_summary_download.zip")))
 })
 
 test_that("spectrum download returns bytes", {
@@ -95,5 +94,5 @@ test_that("spectrum download returns bytes", {
   bytes <- download_spectrum(NULL, res, response$data$id)
   expect_type(bytes, "raw")
   expect_length(bytes,
-                file.size(system_file("output", "malawi_spectrum_download.zip")))
+                file.size(file.path("testdata", "malawi_spectrum_download.zip")))
 })

@@ -3,14 +3,17 @@
 paths <- list(output_path = "tests/testthat/testdata/malawi_output.RDS",
               spectrum_path = "tests/testthat/testdata/malawi_spectrum_download.zip",
               summary_path = "tests/testthat/testdata/malawi_summary_download.zip")
-lapply(paths, function(path) {
+invisible(lapply(paths, function(path) {
   if (file.exists(path)) {
     stop(sprintf("%s already exists - remove file if you want to regenerate test data.", path))
   }
-})
+}))
 
-./scripts/create_mock_data
-  -payload payload.json
-  -output_path paths$output_path
-  -spectrum_path paths$spectrum_path
-  -summary_path paths$summary_path
+system2("./scripts/run_model",
+  args = c(
+    "--payload ./scripts/payload.json",
+    sprintf("--output_path %s", paths$output_path),
+    sprintf("--spectrum_path %s", paths$spectrum_path),
+    sprintf("--summary_path %s", paths$summary_path)))
+
+

@@ -6,3 +6,6 @@
 .idea
 *.~lock.*
 docker/Dockerfile.worker
+tests/testthat/testdata/malawi_output.RDS
+tests/testthat/testdata/malawi_spectrum_download.zip
+tests/testthat/testdata/malawi_summary_download.zip

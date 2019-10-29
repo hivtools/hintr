@@ -1,11 +1,11 @@
 run_model <- function(data, options) {
-  if (options$use_mock_model) {
+  if (use_mock_model()) {
     Sys.sleep(5)
-    return(list(output_path = system_file("output", "malawi_output.RDS"),
-         spectrum_path = system_file("output", "malawi_spectrum_download.zip"),
-         summary_path = system_file("output", "malawi_summary_download.zip")))
+    return(list(output_path = file.path("testdata", "malawi_output.RDS"),
+         spectrum_path = file.path("testdata", "malawi_spectrum_download.zip"),
+         summary_path = file.path("testdata", "malawi_summary_download.zip")))
   }
-  naomi::run_model(data, options, tempfile(), tempfile(), tempfile())
+  naomi::hintr_run_model(data, options, tempfile(), tempfile(), tempfile())
 }
 
 select_data <- function(data) {
@@ -18,4 +18,8 @@ process_result <- function(model_output) {
   output <- readRDS(model_output$output_path)
   list(data = select_data(output),
        filters = get_model_output_filters(output))
+}
+
+use_mock_model <- function() {
+  Sys.getenv("USE_MOCK_MODEL") == "true"
 }
