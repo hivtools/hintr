@@ -8,13 +8,7 @@
         "label": { "type": "string" },
         "type": { "enum": [ "select", "multiselect" ] },
         "required": { "type": "boolean" },
-        "value": { 
-          "type": "object",
-          "properties": {
-            "id": { "type": "string" },
-            "label": { "type": "string" }
-          }
-        },
+        "value": { "type": "string" },
         "helpText": { "type": "string" },
         "options": { 
           "type":  "array", 

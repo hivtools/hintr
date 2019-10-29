@@ -429,14 +429,8 @@ test_that("endpoint_model_options returns model options", {
     "Malawi"
   )
   expect_equal(
-    names(general_section$controlGroups[[1]]$controls[[1]]$value),
-    c("id", "label"))
-  expect_equal(
-    general_section$controlGroups[[1]]$controls[[1]]$value$id,
+    general_section$controlGroups[[1]]$controls[[1]]$value,
     "MWI")
-  expect_equal(
-    general_section$controlGroups[[1]]$controls[[1]]$value$label,
-    "Malawi")
   expect_length(
     general_section$controlGroups[[2]]$controls[[1]]$options,
     5
@@ -538,14 +532,8 @@ test_that("endpoint_model_options can be run without programme data", {
     "Malawi"
   )
   expect_equal(
-    names(general_section$controlGroups[[1]]$controls[[1]]$value),
-    c("id", "label"))
-  expect_equal(
-    general_section$controlGroups[[1]]$controls[[1]]$value$id,
+    general_section$controlGroups[[1]]$controls[[1]]$value,
     "MWI")
-  expect_equal(
-    general_section$controlGroups[[1]]$controls[[1]]$value$label,
-    "Malawi")
   expect_length(
     general_section$controlGroups[[2]]$controls[[1]]$options,
     5
