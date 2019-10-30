@@ -16,7 +16,6 @@ addons:
 services:
   - redis-server
 before_script:
-  - ./scripts/build_test_data
   - R CMD INSTALL .
 cache: packages
 env:
