@@ -270,7 +270,7 @@ download <- function(queue, type) {
     path <- switch(type,
                    "spectrum" = response$value$spectrum_path,
                    "summary" = response$value$summary_path)
-    readBin(path, "raw", n = file.info(path)$size)
+    readBin(path, "raw", n = file.size(path))
   }
 }
 
