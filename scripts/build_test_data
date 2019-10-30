@@ -11,9 +11,9 @@ invisible(lapply(paths, function(path) {
 
 system2("./scripts/run_model",
   args = c(
-    "--payload ./scripts/payload.json",
-    sprintf("--output_path %s", paths$output_path),
-    sprintf("--spectrum_path %s", paths$spectrum_path),
-    sprintf("--summary_path %s", paths$summary_path)))
+    "--payload", "./scripts/payload.json",
+    "--output-path", paths$output_path,
+    "--spectrum-path", paths$spectrum_path,
+    "--summary-path", paths$summary_path))
 
 
