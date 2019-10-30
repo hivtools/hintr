@@ -10,7 +10,7 @@ test_that("endpoint_validate_baseline correctly validates data", {
   expect_equal(response$status, "success")
   expect_equal(response$data$hash, "12345")
   expect_equal(response$data$data$country, "Botswana")
-  expect_equal(response$data$data$iso, "BWA")
+  expect_equal(response$data$data$iso3, "BWA")
   expect_equal(response$data$filename, "original")
   expect_equal(res$status, 200)
 })

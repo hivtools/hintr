@@ -1,6 +1,6 @@
 ## Read json and apply a class so we can use method dispatching for json
 hintr_geojson_read <- function(path) {
-  json <- geojsonio::geojson_read(path, method = "local")
+  json <- geojsonio::geojson_read(path)
   class(json) <- "geojson"
   json
 }
