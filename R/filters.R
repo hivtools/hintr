@@ -112,8 +112,7 @@ get_quarter_name <- function(quarter_id) {
 }
 
 get_id_label_map <- function(data, id_column) {
-  ## Note we must unlist here for the case that we have a tibble
-  ids <- unlist(unique(data[, c(id_column)]), use.names = FALSE)
+  ids <- unique(data[[id_column]])
   build_list <- function(id) {
     hint_id <- get_hint_id(id)
     list(id = scalar(as.character(hint_id)),

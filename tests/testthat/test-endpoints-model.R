@@ -258,6 +258,5 @@ test_that("erroring model run returns useful messages", {
   expect_length(result$data, 0)
   expect_length(result$errors, 1)
   expect_equal(result$errors[[1]]$error, "MODEL_RUN_FAILED")
-  expect_equal(result$errors[[1]]$detail,
-    "Error in eval(expr, envir): test error\n")
+  expect_equal(result$errors[[1]]$detail, "test error")
 })
