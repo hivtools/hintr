@@ -107,7 +107,7 @@ endpoint_model_result <- function(queue) {
     if (is_error(response$value)) {
       response$success <- FALSE
       response$errors <- hintr_errors(
-        list("MODEL_RUN_FAILED" = scalar(toString(response$value)))
+        list("MODEL_RUN_FAILED" = scalar(response$value$message))
       )
       response$value <- NULL
       res$status <- 400
@@ -255,7 +255,7 @@ download <- function(queue, type) {
     if (is_error(response$value)) {
       response$success <- FALSE
       response$errors <- hintr_errors(
-        list("MODEL_RUN_FAILED" = scalar(toString(response$value)))
+        list("MODEL_RUN_FAILED" = scalar(response$value$message))
       )
       response$value <- NULL
       res$status <- 400
