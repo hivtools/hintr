@@ -1,9 +1,9 @@
 run_model <- function(data, options) {
   if (use_mock_model()) {
     Sys.sleep(5)
-    return(list(output_path = file.path("testdata", "malawi_output.RDS"),
-         spectrum_path = file.path("testdata", "malawi_spectrum_download.zip"),
-         summary_path = file.path("testdata", "malawi_summary_download.zip")))
+    return(list(output_path = system_file("output", "malawi_output.RDS"),
+         spectrum_path = system_file("output", "malawi_spectrum_download.zip"),
+         summary_path = system_file("output", "malawi_summary_download.zip")))
   }
   naomi::hintr_run_model(data, options, tempfile(), tempfile(), tempfile())
 }

@@ -366,7 +366,7 @@ test_that("spectrum file download streams bytes", {
     expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
     expect_equal(
       httr::headers(r)$`content-length`,
-      as.character(file.size(file.path("testdata", "malawi_spectrum_download.zip"))))
+      as.character(file.size(system_file("output", "malawi_spectrum_download.zip"))))
   })
 })
 
@@ -393,6 +393,7 @@ test_that("summary file download streams bytes", {
     expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
     expect_equal(
       httr::headers(r)$`content-length`,
-      as.character(file.size(file.path("testdata", "malawi_summary_download.zip"))))
+      as.character(file.size(system_file("output",
+                                         "malawi_summary_download.zip"))))
   })
 })
