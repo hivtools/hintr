@@ -8,6 +8,9 @@ do_validate_anc(anc, shape)
 }
 \arguments{
 \item{anc}{Path to input population file.}
+
+\item{shape}{A file object (path, hash, filename) corresponding to
+the input shape file.}
 }
 \value{
 An error if invalid.

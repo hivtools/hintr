@@ -7,11 +7,14 @@
 do_validate_baseline(pjnz, shape, population)
 }
 \arguments{
-\item{pjnz}{Path to input pjnz file.}
+\item{pjnz}{A file object (path, hash, filename) corresponding to
+the input pjnz file}
 
-\item{shape}{Path to input shape file.}
+\item{shape}{A file object (path, hash, filename) corresponding to
+the input shape file.}
 
-\item{population}{Path to input population file.}
+\item{population}{A file object (path, hash, filename) corresponding to
+the input population file.}
 }
 \value{
 An error if invalid.
