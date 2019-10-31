@@ -1,0 +1,21 @@
+#!/usr/bin/env Rscript
+
+paths <- list(output_path = "inst/output/malawi_output.RDS",
+              spectrum_path = "inst/output/malawi_spectrum_download.zip",
+              summary_path = "inst/output/malawi_summary_download.zip")
+
+dir.create("inst/output", showWarnings = FALSE)
+invisible(lapply(paths, function(path) {
+  if (file.exists(path)) {
+    stop(sprintf("%s already exists - remove file if you want to regenerate test data.", path))
+  }
+}))
+
+system2("./scripts/run_model",
+  args = c(
+    "--payload", "./scripts/payload.json",
+    "--output-path", paths$output_path,
+    "--spectrum-path", paths$spectrum_path,
+    "--summary-path", paths$summary_path))
+
+

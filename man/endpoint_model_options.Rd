@@ -4,7 +4,8 @@
 \alias{endpoint_model_options}
 \title{Get function to generate model options from Naomi template and input files}
 \usage{
-endpoint_model_options(req, res, shape, survey, programme, anc)
+endpoint_model_options(req, res, shape, survey, programme = NULL,
+  anc = NULL)
 }
 \arguments{
 \item{req}{The request object.}

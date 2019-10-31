@@ -18,7 +18,7 @@ api_build <- function(queue) {
             serializer = serializer_json_hintr())
   pr$handle("GET", "/download/spectrum/<id>", endpoint_download_spectrum(queue),
             serializer = serializer_zip())
-  pr$handle("GET", "/download/indicators/<id>", endpoint_download_indicators(queue),
+  pr$handle("GET", "/download/summary/<id>", endpoint_download_summary(queue),
             serializer = serializer_zip())
   pr$handle("GET", "/hintr/version", endpoint_hintr_version,
             serializer = serializer_json_hintr())
@@ -103,12 +103,11 @@ endpoint_model_status <- function(queue) {
 
 endpoint_model_result <- function(queue) {
   function(req, res, id) {
-    response <- with_success(
-      queue$result(id))
+    response <- with_success(queue$result(id))
     if (is_error(response$value)) {
       response$success <- FALSE
       response$errors <- hintr_errors(
-        list("MODEL_RUN_FAILED" = scalar(toString(response$value)))
+        list("MODEL_RUN_FAILED" = scalar(response$value$message))
       )
       response$value <- NULL
       res$status <- 400
@@ -116,6 +115,8 @@ endpoint_model_result <- function(queue) {
       response$errors <- hintr_errors(
         list("FAILED_TO_RETRIEVE_RESULT" = response$message))
       res$status <- 400
+    } else {
+      response$value <- process_result(response$value)
     }
     hintr_response(response, "ModelResultResponse")
   }
@@ -233,12 +234,10 @@ endpoint_validate_baseline_combined <- function(req, res, pjnz, shape, populatio
 #' @return Bytes of zip file.
 #' @keywords internal
 endpoint_download_spectrum <- function(queue) {
-  function(res, result, id) {
-    download(res, result, id, "spectrum")
-  }
+  download(queue, "spectrum")
 }
 
-#' Download indicator zip file.
+#' Download summary zip file.
 #'
 #' Returns a function which returns bytes of zip.
 #'
@@ -246,18 +245,33 @@ endpoint_download_spectrum <- function(queue) {
 #'
 #' @return Bytes of zip file.
 #' @keywords internal
-endpoint_download_indicators <- function(queue) {
-  function(res, result, id) {
-    download(res, result, id, "indicators")
-  }
+endpoint_download_summary <- function(queue) {
+  download(queue, "summary")
 }
 
-download <- function(res, result, id, file) {
-  ## TODO: Get path to download from the queue using ID and file type
-  ## stream this back mrc-624
-  ## with_success(queue$result(id)[[file]])
-  path <- system_file("output", "malawi.zip")
-  readBin(path, "raw", n = file.info(path)$size)
+download <- function(queue, type) {
+  function(req, res, id) {
+    response <- with_success(queue$result(id))
+    if (is_error(response$value)) {
+      response$success <- FALSE
+      response$errors <- hintr_errors(
+        list("MODEL_RUN_FAILED" = scalar(response$value$message))
+      )
+      response$value <- NULL
+      res$status <- 400
+      return(hintr_response(response, "ModelResultResponse"))
+    } else if (!response$success) {
+      response$errors <- hintr_errors(
+        list("FAILED_TO_RETRIEVE_RESULT" = response$message))
+      res$status <- 400
+      return(hintr_response(response, "ModelResultResponse"))
+    }
+
+    path <- switch(type,
+                   "spectrum" = response$value$spectrum_path,
+                   "summary" = response$value$summary_path)
+    readBin(path, "raw", n = file.size(path))
+  }
 }
 
 endpoint_plotting_metadata <- function(req, res, iso3) {

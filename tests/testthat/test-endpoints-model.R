@@ -2,6 +2,7 @@ context("endpoints-model")
 
 test_that("endpoint model run queues a model run", {
   test_redis_available()
+  test_mock_model_available()
   ## Create request data
   data <- list(
     pjnz = "path/to/pjnz",
@@ -11,11 +12,7 @@ test_that("endpoint model run queues a model run", {
     programme = "path",
     anc = "path"
   )
-  options = list(
-    programme = TRUE,
-    anc = FALSE,
-    sleep = 3
-  )
+  options = list()
   req <- list(postBody = '
               {
               "data": {
@@ -26,11 +23,7 @@ test_that("endpoint model run queues a model run", {
               "programme": "path/to/file",
               "anc": "path/to/file"
               },
-              "options": {
-              "programme": true,
-              "anc": false,
-              "sleep": 3
-              }
+              "options": {}
               }')
 
   ## Create mock response
@@ -195,11 +188,7 @@ test_that("querying for result of incomplete jobs returns useful error", {
     programme = "path",
     anc = "path"
   )
-  options = list(
-    programme = TRUE,
-    anc = FALSE,
-    sleep = 10
-  )
+  options = list()
   req <- list(postBody = '
               {
               "data": {
@@ -211,9 +200,7 @@ test_that("querying for result of incomplete jobs returns useful error", {
               "anc": "path/to/file"
               },
               "options": {
-              "programme": true,
-              "anc": false,
-              "sleep": 10
+              "use_mock_model": true
               }
               }')
 
@@ -245,9 +232,9 @@ test_that("erroring model run returns useful messages", {
   res <- MockPlumberResponse$new()
 
   ## Call the endpoint
-  queue <- Queue$new()
+  queue <- MockQueue$new()
   model_submit <- endpoint_model_submit(queue)
-  response <- model_submit(req, res, NULL, NULL)
+  response <- model_submit(req, res, NULL, list())
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
 
@@ -271,5 +258,5 @@ test_that("erroring model run returns useful messages", {
   expect_length(result$data, 0)
   expect_length(result$errors, 1)
   expect_equal(result$errors[[1]]$error, "MODEL_RUN_FAILED")
-  expect_equal(result$errors[[1]]$detail, "Error in Sys.sleep(options$sleep): invalid 'time' value\n")
+  expect_equal(result$errors[[1]]$detail, "test error")
 })

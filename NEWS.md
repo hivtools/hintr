@@ -1,3 +1,10 @@
+# hintr 0.0.12
+
+* Update model download endpoint from indicators to summary
+* Get downloads from model run
+* Replace model run code with a mock that returns expected format
+* Allow running up hintr docker container with env var USE_MOCK_MODEL to mock a model response
+
 # hintr 0.0.11
 
 * Return iso3 code from PJNZ upload

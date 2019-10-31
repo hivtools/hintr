@@ -52,6 +52,7 @@ RUN install_remote \
 
 COPY . /src
 RUN R CMD INSTALL /src/naomi
+RUN cd /src && ./scripts/build_test_data
 RUN R CMD INSTALL /src
 
 EXPOSE 8888
