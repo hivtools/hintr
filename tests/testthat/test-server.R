@@ -199,6 +199,7 @@ test_that("model interactions", {
 })
 
 test_that("real model can be run by API", {
+  testthat::skip("")
   withr::with_envvar(c("USE_MOCK_MODEL" = "false"), {
     server <- hintr_server()
 
