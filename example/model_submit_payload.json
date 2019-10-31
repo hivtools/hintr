@@ -1,15 +1,26 @@
 {
   "data": {
-    "pjnz": "path/to/file",
-    "shape": "path/to/file",
-    "population": "path/to.file",
-    "survey": "path/to/file",
-    "programme": "path/to/file",
-    "anc": "path/to/file"
+    "pjnz": "src/tests/testthat/testdata/Malawi2019.PJNZ",
+    "shape": "src/tests/testthat/testdata/malawi.geojson",
+    "population": "src/tests/testthat/testdata/population.csv",
+    "survey": "src/tests/testthat/testdata/survey.csv",
+    "programme": "src/tests/testthat/testdata/programme.csv",
+    "anc": "src/tests/testthat/testdata/anc.csv"
   },
   "options": {
-    "t_1": "q1",
-    "t_2": "q2",
-    "sleep": 1
+    "area_scope": "MWI",
+    "area_level": 4,
+    "t1": 465,
+    "t2": 475,
+    "survey_prevalence": [ "MWI2016PHIA", "MWI2015DHS" ],
+    "survey_art_coverage": "MWI2016PHIA",
+    "survey_recently_infected": "MWI2016PHIA",
+    "survey_art_or_vls": "art_coverage",
+    "art_t1": 465,
+    "art_t2": 475,
+    "anc_prevalence_t1": 464,
+    "anc_prevalence_t2": 475,
+    "anc_art_coverage_t1": 464,
+    "anc_art_coverage_t2": 475
   }
 }

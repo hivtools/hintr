@@ -32,14 +32,14 @@ test_that("endpoint_validate_baseline_combined returns error on invalid data", {
     response <- endpoint_validate_baseline_combined(req, res, pjnz, shape,
                                                     population)
     response <- jsonlite::parse_json(response)
-    expect_equal(response$status, "failure")
-    expect_length(response$errors, 1)
-    expect_equal(response$errors[[1]]$error, "INVALID_BASELINE")
-    expect_equal(response$errors[[1]]$detail,
-                 "Countries aren't consistent got BLZ from pjnz and MWI from shape.")
-    expect_equal(response$data, structure(list(), names = character(0)))
-    expect_equal(res$status, 400)
   })
+  expect_equal(response$status, "failure")
+  expect_length(response$errors, 1)
+  expect_equal(response$errors[[1]]$error, "INVALID_BASELINE")
+  expect_equal(response$errors[[1]]$detail,
+               "Countries aren't consistent got BLZ from pjnz and MWI from shape.")
+  expect_equal(response$data, structure(list(), names = character(0)))
+  expect_equal(res$status, 400)
 })
 
 

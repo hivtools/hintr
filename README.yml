@@ -60,13 +60,13 @@
 
 - comment: Query status of model run
   command: http://localhost:8888/model/status/{id}
-  sleep: 2
+  sleep: 8
 
 - comment: Get the result of a model run
   command: http://localhost:8888/model/result/{id}
 
-- comment: Get the key indicators download
-  command: http://localhost:8888/download/indicators/{id}
+- comment: Get the summary download
+  command: http://localhost:8888/download/summary/{id}
   format: bytes
 
 - comment: Get the spectrum digest download

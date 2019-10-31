@@ -8,10 +8,5 @@
     "anc": "path/to/file"
   },
   "options": {
-    "programme": true,
-    "anc": false,
-    "max_iterations": 100,
-    "no_of_simulations": 3000,
-    "sleep": 1
   }
 }

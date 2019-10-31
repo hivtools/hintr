@@ -1,0 +1,36 @@
+#!/usr/bin/env Rscript
+"Run a model and save outputs at specified paths
+Usage:
+  run_model (--payload=<payload> --output-path=<output-path> --spectrum-path=<spectrum-path> --summary-path=<summary-path>)
+
+Options:
+  -h --help                        Show this screen.
+  --payload=<payload>              Path to model run payload.
+  --output-path=<output-path>      Path to output data RDS.
+  --spectrum-path=<spectrum-path>  Path to spectrum zip download.
+  --summary-path=<summary-path>    Path to summary zip download.
+" -> usage
+
+dat <- docopt::docopt(usage)
+
+payload <- jsonlite::fromJSON(dat$payload)
+invisible(lapply(payload$data, function(x) {
+  if (!file.exists(x)) {
+    stop(sprintf("Input file %s doesn't exist.", x))
+  }
+}))
+
+## Don't use dynamic libaries as these don't currently work on travis with
+## up to date INLA build
+INLA:::inla.dynload.workaround()
+
+output <- naomi::hintr_run_model(payload$data,
+                                 payload$options,
+                                 dat$`output-path`,
+                                 dat$`spectrum-path`,
+                                 dat$`summary-path`)
+
+message(sprintf("Saving output at %s", normalizePath(dat$`output-path`)))
+message(
+  sprintf("Saving spectrum download at %s", normalizePath(dat$`spectrum-path`)))
+message(sprintf("Saving output at %s", normalizePath(dat$`summary-path`)))

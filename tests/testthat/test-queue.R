@@ -18,7 +18,7 @@ test_that("queue works as intended", {
   expect_length(queue$queue$task_list(), 0)
 
   ## jobs can be pushed to queue
-  job_id <- queue$submit(NULL, list(sleep = 1))
+  job_id <- queue$submit(NULL, list())
   expect_length(queue$queue$task_list(), 1)
 
   ## status can be retireved
@@ -41,7 +41,7 @@ test_that("queue works as intended", {
 
   ## Result can be retrieved after task has completed
   res <- queue$result(job_id)
-  expect_equal(names(res), c("data", "filters"))
+  expect_equal(names(res), c("output_path", "spectrum_path", "summary_path"))
   expect_length(queue$queue$task_list(), 1)
 
   ## task can be cleaned up
