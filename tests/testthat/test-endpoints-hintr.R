@@ -10,6 +10,7 @@ test_that("endpoint hintr works", {
 })
 
 test_that("endpoint worker status works", {
+  test_redis_available()
   queue <- Queue$new()
   endpoint <- endpoint_hintr_worker_status(queue)
 

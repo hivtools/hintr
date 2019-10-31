@@ -52,3 +52,12 @@ data_frame <- function(...) {
 vcapply <- function(X, FUN, ...) {
   vapply(X, FUN, ..., FUN.VALUE = character(1))
 }
+
+# This utility will not be needed once all endpoints use file objects
+# rather than paths, at which point this could be moved into the test
+# helpers.
+file_object <- function(path) {
+  list(path = path,
+       filename = path,
+       hash = unname(tools::md5sum(path)))
+}
