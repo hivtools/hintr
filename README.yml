@@ -60,7 +60,7 @@
 
 - comment: Query status of model run
   command: http://localhost:8888/model/status/{id}
-  sleep: 2
+  sleep: 8
 
 - comment: Get the result of a model run
   command: http://localhost:8888/model/result/{id}

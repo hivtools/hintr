@@ -11,17 +11,13 @@ R API for Naomi app
 
 App to show district level estimates of HIV indicators
 
-## Running tests with mock data
-
-Run script `./scripts/build_test_data` to create test data which will then be used to mock out the model run response in local tests.
-
 ## Running in docker
 
 Docker images are built on travis, if on master branch run via:
 ```
 docker run --rm -d --network=host --name hintr_redis redis
 docker run --rm -d --network=host --mount type=volume,src=upload_volume,dst=/uploads \
-  --name hintr mrcide/hintr:master
+  -e USE_MOCK_MODEL=true --name hintr mrcide/hintr:master
 ```
 
 For a more complete example of running on a network see [docker test script](https://github.com/mrc-ide/hintr/blob/master/docker/test).
@@ -53,7 +49,8 @@ $ curl -X POST -H 'Content-Type: application/json' \
         "hash": "12345",
         "type": "pjnz",
         "data": {
-            "country": "Botswana"
+            "country": "Botswana",
+            "iso3": "BWA"
         },
         "filename": "Botswana2018.PJNZ",
         "filters": null
@@ -258,9 +255,9 @@ $ curl -X POST -H 'Content-Type: application/json' \
                                 "name": "area_scope",
                                 "type": "multiselect",
                                 "options": [
-                                    "MWI",
-                                    "MWI.1",
-... truncated 215 lines of output
+                                    {
+                                        "id": "MWI",
+... truncated 1706 lines of output
 ```
 Run a model
 
@@ -277,7 +274,7 @@ $ curl -X POST -H 'Content-Type: application/json' \
 
     ],
     "data": {
-        "id": "c732f1f27e8ec525886274e86f39115c"
+        "id": "b96e7ca64d5b559067a9bed205bf1c4c"
     }
 }
 ```
@@ -298,7 +295,7 @@ $ curl http://localhost:8888/model/status/{id}
         "status": "RUNNING",
         "success": null,
         "queue": 0,
-        "id": "c732f1f27e8ec525886274e86f39115c",
+        "id": "b96e7ca64d5b559067a9bed205bf1c4c",
         "progress": "50%",
         "timeRemaining": "10s"
     }
@@ -333,14 +330,14 @@ $ curl http://localhost:8888/model/result/{id}
                 "area_id": "MWI",
 ... truncated 462377 lines of output
 ```
-Get the key indicators download
+Get the summary download
 
 ```
-$ curl http://localhost:8888/download/indicators/{id}
+$ curl http://localhost:8888/download/summary/{id}
 ```
 
 ```json
-Hidden 8193 bytes of output
+Hidden 11770 bytes of output
 ```
 Get the spectrum digest download
 
@@ -349,7 +346,7 @@ $ curl http://localhost:8888/download/spectrum/{id}
 ```
 
 ```json
-Hidden 8193 bytes of output
+Hidden 11770 bytes of output
 ```
 Get plotting metadata for Malawi
 
@@ -393,9 +390,9 @@ $ curl http://localhost:8888/hintr/version
 
     ],
     "data": {
-        "hintr": "0.0.9",
-        "naomi": "0.0.7",
-        "rrq": "0.2.0"
+        "hintr": "0.0.12",
+        "naomi": "0.0.12",
+        "rrq": "0.2.1"
     }
 }
 ```
@@ -412,8 +409,8 @@ $ curl http://localhost:8888/hintr/worker/status
 
     ],
     "data": {
-        "delightful_affenpinscher_2": "IDLE",
-        "delightful_affenpinscher_1": "IDLE"
+        "dramatisable_cuttlefish_2": "IDLE",
+        "dramatisable_cuttlefish_1": "IDLE"
     }
 }
 ```
@@ -442,8 +439,8 @@ To turn on validation of requests and responses you need to set the environmenta
 ## Running tests
 
 To run tests locally:
- 
-1. Install all dependencies with `devtools::install_deps(".")`. You may be prompted to install some operating system 
+
+1. Install all dependencies with `devtools::install_deps(".")`. You may be prompted to install some operating system
     packages; these should be available via your package manager but for `protoc` you may need the following instructions:
    https://askubuntu.com/questions/1072683/how-can-i-install-protoc-on-ubuntu-16-04
 1. Some packages need to be installed from GitHub:

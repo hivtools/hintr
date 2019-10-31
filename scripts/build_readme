@@ -6,7 +6,8 @@ setup <- function() {
                                 network = nw, detach = TRUE, rm = TRUE)
   hintr <- docker$container$run("mrcide/hintr:master", name = "hintr",
                                 ports = "8888:8888",
-                                env = c(REDIS_URL = "redis://redis:6379"),
+                                env = c(REDIS_URL = "redis://redis:6379",
+                                        USE_MOCK_MODEL = "true"),
                                 network = nw, detach = TRUE, rm = TRUE)
 
   url <- "http://localhost:8888"
