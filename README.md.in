@@ -16,7 +16,7 @@ Docker images are built on travis, if on master branch run via:
 ```
 docker run --rm -d --network=host --name hintr_redis redis
 docker run --rm -d --network=host --mount type=volume,src=upload_volume,dst=/uploads \
-  --name hintr mrcide/hintr:master
+  -e USE_MOCK_MODEL=true --name hintr mrcide/hintr:master
 ```
 
 For a more complete example of running on a network see [docker test script](https://github.com/mrc-ide/hintr/blob/master/docker/test).
@@ -47,8 +47,8 @@ To turn on validation of requests and responses you need to set the environmenta
 ## Running tests
 
 To run tests locally:
- 
-1. Install all dependencies with `devtools::install_deps(".")`. You may be prompted to install some operating system 
+
+1. Install all dependencies with `devtools::install_deps(".")`. You may be prompted to install some operating system
     packages; these should be available via your package manager but for `protoc` you may need the following instructions:
    https://askubuntu.com/questions/1072683/how-can-i-install-protoc-on-ubuntu-16-04
 1. Some packages need to be installed from GitHub:
