@@ -51,8 +51,8 @@ RUN install_remote \
         mrc-ide/rrq
 
 COPY . /src
-RUN cd /src && ./scripts/build_test_data
 RUN R CMD INSTALL /src/naomi
+RUN cd /src && ./scripts/build_test_data
 RUN R CMD INSTALL /src
 
 EXPOSE 8888
