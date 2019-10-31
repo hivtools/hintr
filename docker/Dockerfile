@@ -50,6 +50,7 @@ RUN install_remote \
         mrc-ide/eppasm \
         mrc-ide/rrq
 
+RUN ./scripts/build_test_data
 COPY . /src
 RUN R CMD INSTALL /src/naomi
 RUN R CMD INSTALL /src
