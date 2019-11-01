@@ -87,6 +87,7 @@ endpoint_model_status <- function(queue) {
     response <- with_success(
       queue$status(id))
     if (response$success) {
+      response$value <- progress()
       response$value <- lapply(response$value, scalar)
       response$value$id <- scalar(id)
     } else {

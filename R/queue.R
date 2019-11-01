@@ -30,7 +30,6 @@ Queue <- R6::R6Class(
     },
 
     status = function(id) {
-      browser()
       status <- unname(self$queue$task_status(id))
       done <- c("ERROR", "COMPLETE")
       incomplete <- c("MISSING")

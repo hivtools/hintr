@@ -6,6 +6,8 @@
     "complete": "boolean",
     "value": "number",
     "name": "string",
-    "help_text"
-  }
+    "helpText": "string"
+  },
+  "additionalProperties": false,
+  "required": [ "started", "complete", "name" ]
 }
