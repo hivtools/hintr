@@ -9,8 +9,8 @@
     "queue": { "type": "integer" },
     "progress": { 
       "type": "array",
-      "items": "ProgressPhase.schema.json" 
-    },
+      "items": { "$ref": "ProgressPhase.schema.json" }
+    }
   },
   "additionalProperties": false,
   "required": [
@@ -19,6 +19,6 @@
     "status",
     "success",
     "queue",
-    "progress",
+    "progress"
   ]
 }

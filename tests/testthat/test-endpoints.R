@@ -581,3 +581,46 @@ test_that("endpoint_model_options fails without shape & survey data", {
   expect_equal(json$errors[[1]]$detail,
                "File at path NULL does not exist. Create it, or fix the path.")
 })
+
+test_that("can convert model status to scalar", {
+  progress <- list(
+    list(
+      started = TRUE,
+      complete = FALSE,
+      name = "Started mock model"
+    ),
+    list(
+      started = FALSE,
+      complete = FALSE,
+      name = "Finished mock model"
+    )
+  )
+  model_status <- list(
+    done = FALSE,
+    status = "RUNNING",
+    success = TRUE,
+    queue = 0,
+    progress = progress
+  )
+  response <- prepare_status_response(model_status, "id")
+  expected_response <- list(
+    done = scalar(FALSE),
+    status = scalar("RUNNING"),
+    success = scalar(TRUE),
+    queue = scalar(0),
+    progress = list(
+      list(
+        started = scalar(TRUE),
+        complete = scalar(FALSE),
+        name = scalar("Started mock model")
+      ),
+      list(
+        started = scalar(FALSE),
+        complete = scalar(FALSE),
+        name = scalar("Finished mock model")
+      )
+    ),
+    id = scalar("id")
+  )
+  expect_equal(response, expected_response)
+})

@@ -19,12 +19,12 @@ run_model <- function(data, options) {
     progress_complete <- list(
       list(
         started = TRUE,
-        completed = TRUE,
+        complete = TRUE,
         name = "Started mock model"
       ),
       list(
         started = TRUE,
-        completed = FALSE,
+        complete = FALSE,
         name = "Finished mock model"
       )
     )

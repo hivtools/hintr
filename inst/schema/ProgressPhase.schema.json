@@ -2,11 +2,11 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "started": "boolean",
-    "complete": "boolean",
-    "value": "number",
-    "name": "string",
-    "helpText": "string"
+    "started": { "type": "boolean" },
+    "complete": { "type": "boolean" },
+    "value": { "type": "number" },
+    "name": { "type": "string" },
+    "helpText": { "type": "string" }
   },
   "additionalProperties": false,
   "required": [ "started", "complete", "name" ]
