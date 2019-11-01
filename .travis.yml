@@ -26,7 +26,7 @@ r_packages:
 r_github_packages:
   - ropensci/jsonvalidate
   - mrc-ide/eppasm
-  - mrc-ide/naomi@mrc-587
+  - mrc-ide/naomi@mrc-667
   - mrc-ide/rrq
 after_success:
   - Rscript -e 'covr::codecov(quiet = FALSE)'
