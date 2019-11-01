@@ -14,10 +14,10 @@ mock_model <- list(
                              package = "hintr"))
 
 test_mock_model_available <- function() {
-  lapply(mock_model, function(x) {
+  invisible(lapply(mock_model, function(x) {
     if(!file.exists(x)) {
       testthat::skip(sprintf(
         "Test data %s is missing - run ./scripts/build_test_data to create test data.", x))
     }
-  })
+  }))
 }

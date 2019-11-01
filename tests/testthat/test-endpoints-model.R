@@ -38,7 +38,7 @@ test_that("endpoint model run queues a model run", {
   expect_true("id" %in% names(response$data))
   expect_equal(res$status, 200)
 
-  ## Query for status
+  ## Query for status returns arbitrary R data
   res <- MockPlumberResponse$new()
   model_status <- endpoint_model_status(queue)
   status <- model_status(NULL, res, response$data$id)
