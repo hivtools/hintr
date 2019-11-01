@@ -7,7 +7,11 @@
 do_validate_programme(programme, shape)
 }
 \arguments{
-\item{programme}{Path to input population file.}
+\item{programme}{A file object (path, hash, filename) corresponding to
+the input population file.}
+
+\item{shape}{A file object (path, hash, filename) corresponding to
+the input shape file.}
 }
 \value{
 An error if invalid.

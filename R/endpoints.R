@@ -55,8 +55,7 @@ endpoint_model_options <- function(req, res, shape, survey, programme =  NULL, a
     ## Shape and survey must exist
     assert_file_exists(shape$path)
     assert_file_exists(survey$path)
-    do_endpoint_model_options(shape$path, survey$path,
-                              programme$path, anc$path)
+    do_endpoint_model_options(shape, survey, programme, anc)
   })
   if (response$success) {
     response$value <- json_verbatim(response$value)
@@ -145,7 +144,7 @@ endpoint_validate_baseline <- function(req, res, type, file) {
                           population = do_validate_population)
   response <- with_success({
     assert_file_exists(file$path)
-    validate_func(file$path)
+    validate_func(file)
   })
   if (response$success) {
     response$value <- input_response(response$value, type, file)
@@ -176,10 +175,12 @@ endpoint_validate_survey_programme <- function(req, res, type, file, shape) {
                           programme = do_validate_programme,
                           anc = do_validate_anc,
                           survey = do_validate_survey)
+  # mrc-663
+  shape <- file_object(shape)
   response <- with_success({
     assert_file_exists(file$path)
-    assert_file_exists(shape)
-    validate_func(file$path, shape)
+    assert_file_exists(shape$path)
+    validate_func(file, shape)
   })
   if (response$success) {
     response$value <- input_response(response$value, type, file)
@@ -217,6 +218,16 @@ input_response <- function(value, type, file) {
 #' @keywords internal
 endpoint_validate_baseline_combined <- function(req, res, pjnz, shape, population) {
   validate_json_schema(req$postBody, "ValidateBaselineRequest")
+  # TODO (mrc-663): we should require file objects here.
+  if (!is.null(pjnz)) {
+    pjnz <- file_object(pjnz)
+  }
+  if (!is.null(shape)) {
+    shape <- file_object(shape)
+  }
+  if (!is.null(population)) {
+    population <- file_object(population)
+  }
   response <- with_success(do_validate_baseline(pjnz, shape, population))
   if (!response$success) {
     response$errors <- hintr_errors(list("INVALID_BASELINE" = response$message))

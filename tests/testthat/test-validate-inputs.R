@@ -1,7 +1,7 @@
 context("validate-inputs")
 
 test_that("PJNZ can be validated and return data", {
-  pjnz <- file.path("testdata", "Botswana2018.PJNZ")
+  pjnz <- file_object(file.path("testdata", "Botswana2018.PJNZ"))
   expect_equal(do_validate_pjnz(pjnz),
                list(data = list(country = scalar("Botswana"),
                                 iso3 = scalar("BWA")),
@@ -13,12 +13,12 @@ test_that("PJNZ can be validated and return data", {
 })
 
 test_that("country can be read", {
-  pjnz <- file.path("testdata", "Botswana2018.PJNZ")
+  pjnz <- file_object(file.path("testdata", "Botswana2018.PJNZ"))
   expect_equal(read_country(pjnz), "Botswana")
 })
 
 test_that("assert fails if more than once country in json", {
-  shape <- file.path("testdata", "malawi.geojson")
+  shape <- file_object(file.path("testdata", "malawi.geojson"))
   json <- hintr_geojson_read(shape)
   expect_true(assert_single_country(json, "shape"))
 
@@ -29,7 +29,7 @@ test_that("assert fails if more than once country in json", {
 })
 
 test_that("assert fails if a feature is missing an area id", {
-  shape <- file.path("testdata", "malawi.geojson")
+  shape <- file_object(file.path("testdata", "malawi.geojson"))
   json <- hintr_geojson_read(shape)
   expect_true(assert_area_id_exists(json))
 
@@ -40,7 +40,7 @@ test_that("assert fails if a feature is missing an area id", {
 })
 
 test_that("do_validate_shape validates shape and returns geojson as list", {
-  shape <- file.path("testdata", "malawi.geojson")
+  shape <- file_object(file.path("testdata", "malawi.geojson"))
   json <- do_validate_shape(shape)
   expect_s3_class(json$data, "json")
   expect_equal(names(json$filters), c("regions", "level_labels"))
@@ -63,7 +63,7 @@ test_that("do_validate_shape validates shape and returns geojson as list", {
 })
 
 test_that("do_validate_population validates population file", {
-  population <- file.path("testdata", "population.csv")
+  population <- file_object(file.path("testdata", "population.csv"))
   pop <- do_validate_population(population)
   ## No actual data to return but has been validated
   expect_true(is.na(pop$data))
@@ -71,8 +71,8 @@ test_that("do_validate_population validates population file", {
 })
 
 test_that("do_validate_programme validates programme file", {
-  programme <- file.path("testdata", "programme.csv")
-  shape <- file.path("testdata", "malawi.geojson")
+  programme <- file_object(file.path("testdata", "programme.csv"))
+  shape <- file_object(file.path("testdata", "malawi.geojson"))
   data <- do_validate_programme(programme, shape)
   ## Some arbitrary test that the data has actually been returned
   expect_true(nrow(data$data) > 1400)
@@ -102,8 +102,8 @@ test_that("do_validate_programme validates programme file", {
 })
 
 test_that("do_validate_anc validates ANC file and gets data for plotting", {
-  anc <- file.path("testdata", "anc.csv")
-  shape <- file.path("testdata", "malawi.geojson")
+  anc <- file_object(file.path("testdata", "anc.csv"))
+  shape <- file_object(file.path("testdata", "malawi.geojson"))
   data <- do_validate_anc(anc, shape)
 
   expect_true(nrow(data$data) > 800)
@@ -126,8 +126,8 @@ test_that("do_validate_anc validates ANC file and gets data for plotting", {
 })
 
 test_that("do_validate_survey validates survey file", {
-  survey <- file.path("testdata", "survey.csv")
-  shape <- file.path("testdata", "malawi.geojson")
+  survey <- file_object(file.path("testdata", "survey.csv"))
+  shape <- file_object(file.path("testdata", "malawi.geojson"))
   data <- do_validate_survey(survey, shape)
   ## Some arbitrary test that the data has actually been returned
   expect_true(nrow(data$data) > 20000)
@@ -163,22 +163,22 @@ test_that("do_validate_survey validates survey file", {
 })
 
 test_that("do_validate_programme returns useful error from shapefile comparison", {
-  programme <- file.path("testdata", "programme.csv")
-  shape <- file.path("testdata", "malawi_missing_regions.geojson")
+  programme <- file_object(file.path("testdata", "programme.csv"))
+  shape <- file_object(file.path("testdata", "malawi_missing_regions.geojson"))
   expect_error(do_validate_programme(programme, shape),
     "Regions aren't consistent programme file contains 32 regions missing from shape file including:\n\\w+")
 })
 
 test_that("do_validate_anc returns useful error from shapefile comparison", {
-  anc <- file.path("testdata", "anc.csv")
-  shape <- file.path("testdata", "malawi_missing_regions.geojson")
+  anc <- file_object(file.path("testdata", "anc.csv"))
+  shape <- file_object(file.path("testdata", "malawi_missing_regions.geojson"))
   expect_error(do_validate_anc(anc, shape),
     "Regions aren't consistent ANC file contains 32 regions missing from shape file including:\n\\w+")
 })
 
 test_that("do_validate_survey returns useful error from shapefile comparison", {
-  survey <- file.path("testdata", "survey.csv")
-  shape <- file.path("testdata", "malawi_missing_regions.geojson")
+  survey <- file_object(file.path("testdata", "survey.csv"))
+  shape <- file_object(file.path("testdata", "malawi_missing_regions.geojson"))
   expect_error(do_validate_survey(survey, shape),
     "Regions aren't consistent survey file contains 64 regions missing from shape file including:\n\\w+")
 })
@@ -189,25 +189,25 @@ test_that("converting from numeric to iso3 works", {
 })
 
 test_that("can read iso3", {
-  pjnz <- file.path("testdata", "Malawi2019.PJNZ")
+  pjnz <- file_object(file.path("testdata", "Malawi2019.PJNZ"))
   expect_equal(read_iso3(pjnz, "pjnz"), "MWI")
-  shape <- file.path("testdata", "malawi.geojson")
+  shape <- file_object(file.path("testdata", "malawi.geojson"))
   expect_equal(read_iso3(shape, "shape"), "MWI")
 })
 
 test_that("can read regions", {
-  shape <- file.path("testdata", "malawi.geojson")
+  shape <- file_object(file.path("testdata", "malawi.geojson"))
   expect_true(all(grepl(
     "^MWI[\\.\\d]*$", read_regions(shape, "shape"), perl = TRUE)))
-  population <- file.path("testdata", "population.csv")
+  population <- file_object(file.path("testdata", "population.csv"))
   expect_true(all(grepl(
     "^MWI[\\.\\d]*$", read_regions(population, "population"), perl = TRUE)))
 })
 
 test_that("baseline data can be validated as a collection", {
-  pjnz <- file.path("testdata", "Malawi2019.PJNZ")
-  shape <- file.path("testdata", "malawi.geojson")
-  population <- file.path("testdata", "population.csv")
+  pjnz <- file_object(file.path("testdata", "Malawi2019.PJNZ"))
+  shape <- file_object(file.path("testdata", "malawi.geojson"))
+  population <- file_object(file.path("testdata", "population.csv"))
   response <- do_validate_baseline(pjnz, shape, population)
   expect_true(response$consistent)
   expect_true(response$complete)

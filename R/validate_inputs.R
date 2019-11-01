@@ -34,7 +34,8 @@ read_regions <- function(file, type) {
 #' This checks that the geojson is for a single country and that each
 #' feature has an area id associated with it.
 #'
-#' @param shape Path to input shape file.
+#' @param shape A file object (path, hash, filename) corresponding to
+#'   the input shape file.
 #'
 #' @return An error if invalid or the geojson if valid.
 #' @keywords internal
@@ -52,7 +53,7 @@ do_validate_shape <- function(shape) {
   # Then we have to *reread* the file now that we know that it is
   # valid, but but this is not too slow, especially as the file is now
   # in cache (but still ~1/20s)
-  list(data = json_verbatim(read_string(shape)),
+  list(data = json_verbatim(read_string(shape$path)),
        filters = list("regions" = get_region_filters(json),
                       "level_labels" = get_level_labels(json)))
 }
@@ -66,7 +67,7 @@ do_validate_shape <- function(shape) {
 #' @return An error if invalid.
 #' @keywords internal
 do_validate_population <- function(population) {
-  population <- read_csv(population, header = TRUE)
+  population <- read_csv(population$path, header = TRUE)
   assert_single_country(population, "population")
   assert_column_names(
     colnames(population),
@@ -79,12 +80,16 @@ do_validate_population <- function(population) {
 #'
 #' Check that programme ART data file can be read and return serialised data.
 #'
-#' @param programme Path to input population file.
+#' @param programme A file object (path, hash, filename) corresponding to
+#'   the input population file.
+#'
+#' @param shape A file object (path, hash, filename) corresponding to
+#'   the input shape file.
 #'
 #' @return An error if invalid.
 #' @keywords internal
 do_validate_programme <- function(programme, shape) {
-  data <- read_csv(programme, header = TRUE)
+  data <- read_csv(programme$path, header = TRUE)
   assert_single_country(data, "programme")
   assert_column_names(
     colnames(data),
@@ -104,10 +109,13 @@ do_validate_programme <- function(programme, shape) {
 #'
 #' @param anc Path to input population file.
 #'
+#' @param shape A file object (path, hash, filename) corresponding to
+#'   the input shape file.
+#'
 #' @return An error if invalid.
 #' @keywords internal
 do_validate_anc <- function(anc, shape) {
-  data <- read_csv(anc, header = TRUE)
+  data <- read_csv(anc$path, header = TRUE)
   assert_single_country(data, "anc")
   assert_column_names(
     colnames(data),
@@ -132,7 +140,7 @@ do_validate_anc <- function(anc, shape) {
 #' @return An error if invalid.
 #' @keywords internal
 do_validate_survey <- function(survey, shape) {
-  data <- read_csv(survey, header = TRUE)
+  data <- read_csv(survey$path, header = TRUE)
   assert_single_country(data, "survey")
   assert_column_names(
     colnames(data),
@@ -149,9 +157,12 @@ do_validate_survey <- function(survey, shape) {
 
 #' Validate collection of baseline data for consistency.
 #'
-#' @param pjnz Path to input pjnz file.
-#' @param shape Path to input shape file.
-#' @param population Path to input population file.
+#' @param pjnz A file object (path, hash, filename) corresponding to
+#'   the input pjnz file
+#' @param shape A file object (path, hash, filename) corresponding to
+#'   the input shape file.
+#' @param population A file object (path, hash, filename) corresponding to
+#' the input population file.
 #'
 #' @return An error if invalid.
 #' @keywords internal

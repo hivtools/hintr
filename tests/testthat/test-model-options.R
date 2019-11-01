@@ -41,10 +41,10 @@ test_that("JSON build fails if params are missing", {
 })
 
 test_that("do_endpoint_model_options correctly builds params list", {
-  shape <- file.path("testdata", "malawi.geojson")
-  survey <- file.path("testdata", "survey.csv")
-  art <- file.path("testdata", "programme.csv")
-  anc <- file.path("testdata", "anc.csv")
+  shape <- file_object(file.path("testdata", "malawi.geojson"))
+  survey <- file_object(file.path("testdata", "survey.csv"))
+  art <- file_object(file.path("testdata", "programme.csv"))
+  anc <- file_object(file.path("testdata", "anc.csv"))
 
   mock_build_json <- mockery::mock('"{"test"}')
   with_mock("hintr:::build_json" = mock_build_json,  {
@@ -133,8 +133,8 @@ test_that("do_endpoint_model_options correctly builds params list", {
 })
 
 test_that("do_endpoint_model_options without programme data", {
-  shape <- file.path("testdata", "malawi.geojson")
-  survey <- file.path("testdata", "survey.csv")
+  shape <- file_object(file.path("testdata", "malawi.geojson"))
+  survey <- file_object(file.path("testdata", "survey.csv"))
 
   mock_build_json <- mockery::mock('"{"test"}')
   with_mock("hintr:::build_json" = mock_build_json,  {
@@ -215,10 +215,10 @@ test_that("do_endpoint_model_options without programme data", {
 })
 
 test_that("can retrieve validated model options", {
-  shape <- file.path("testdata", "malawi.geojson")
-  survey <- file.path("testdata", "survey.csv")
-  art <- file.path("testdata", "programme.csv")
-  anc <- file.path("testdata", "anc.csv")
+  shape <- file_object(file.path("testdata", "malawi.geojson"))
+  survey <- file_object(file.path("testdata", "survey.csv"))
+  art <- file_object(file.path("testdata", "programme.csv"))
+  anc <- file_object(file.path("testdata", "anc.csv"))
   json <- do_endpoint_model_options(shape, survey, art, anc)
 
   json <- jsonlite::parse_json(json)
@@ -315,7 +315,7 @@ test_that("can retrieve validated model options", {
 
 
 test_that("can read geojson level labels", {
-  shape <- file.path("testdata", "malawi.geojson")
+  shape <- file_object(file.path("testdata", "malawi.geojson"))
   json <- hintr_geojson_read(shape)
   levels <- get_level_options(json)
   expect_length(levels, 5)

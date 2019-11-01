@@ -1,7 +1,7 @@
 context("validation-asserts")
 
 test_that("assert fails if more than once country in json", {
-  shape <- file.path("testdata", "malawi.geojson")
+  shape <- file_object(file.path("testdata", "malawi.geojson"))
   json <- hintr_geojson_read(shape)
   expect_true(assert_single_country(json, "shape"))
 
@@ -23,7 +23,7 @@ test_that("assert fails if more than once country in json", {
 })
 
 test_that("assert fails if a feature is missing an area id", {
-  shape <- file.path("testdata", "malawi.geojson")
+  shape <- file_object(file.path("testdata", "malawi.geojson"))
   json <- hintr_geojson_read(shape)
   expect_true(assert_area_id_exists(json))
 
