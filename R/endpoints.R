@@ -24,6 +24,8 @@ api_build <- function(queue) {
             serializer = serializer_json_hintr())
   pr$handle("GET", "/hintr/worker/status", endpoint_hintr_worker_status(queue),
             serializer = serializer_json_hintr())
+  pr$handle("GET", "/hintr/sleep/<time>", endpoint_hintr_sleep,
+            serializer = serializer_json_hintr())
   pr$handle("GET", "/", api_root)
   pr
 }
@@ -399,4 +401,9 @@ serializer_zip <- function() {
       errorHandler(req, res, e)
     })
   }
+}
+
+endpoint_hintr_sleep <- function(req, res, time) {
+  Sys.sleep(as.numeric(time))
+  endpoint_hintr_version(req, res)
 }
