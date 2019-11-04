@@ -1,7 +1,7 @@
 ## Read json and apply a class so we can use method dispatching for json
 hintr_geojson_read <- function(shape, cache = NULL) {
   with_cache(shape$hash, "geojson", cache, {
-    json <- geojsonio::geojson_read(shape$path, method = "local")
+    json <- geojsonio::geojson_read(shape$path)
     class(json) <- "geojson"
     json
   })
