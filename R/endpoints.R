@@ -370,7 +370,7 @@ prepare_status_response <- function(value, id) {
     }
   }
 
-  response_value <- lapply(value[-which(names(value) == "progress")], scalar)
+  response_value <- lapply(value[names(value) != "progress"], scalar)
   response_value$progress <- lapply(value$progress, set_scalar)
   response_value$id <- scalar(id)
   response_value
