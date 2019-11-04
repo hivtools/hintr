@@ -40,9 +40,8 @@ test_that("can read country from PJNZ", {
 
 test_that("geojson read applies can use cache", {
   cache <- new_cache()
-  path <- file.path("testdata", "malawi.geojson")
+  path <- file_object(file.path("testdata", "malawi.geojson"))
   value <- hintr_geojson_read(path, cache)
-  h <- unname(tools::md5sum(path))
-  expect_equal(cache$list("geojson"), h)
+  expect_equal(cache$list("geojson"), path$hash)
   expect_identical(hintr_geojson_read(path, cache), value)
 })
