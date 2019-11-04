@@ -87,10 +87,7 @@ endpoint_model_status <- function(queue) {
     response <- with_success(
       queue$status(id))
     if (response$success) {
-      response$value <- lapply(response$value, scalar)
-      response$value$id <- scalar(id)
-      response$value$progress <- scalar("50%")
-      response$value$timeRemaining <- scalar("10s")
+      response$value <- prepare_status_response(response$value, id)
     } else {
       response$errors <- hintr_errors(
         list("FAILED_TO_RETRIEVE_STATUS" = response$message))
@@ -362,6 +359,21 @@ endpoint_hintr_worker_status <- function(queue) {
 
 api_root <- function() {
   scalar("Welcome to hintr")
+}
+
+prepare_status_response <- function(value, id) {
+  set_scalar <- function(x) {
+    if (length(names(x)) > 1) {
+      lapply(x, set_scalar)
+    } else {
+      scalar(x)
+    }
+  }
+
+  response_value <- lapply(value[names(value) != "progress"], scalar)
+  response_value$progress <- lapply(value$progress, set_scalar)
+  response_value$id <- scalar(id)
+  response_value
 }
 
 

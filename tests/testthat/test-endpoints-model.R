@@ -38,7 +38,7 @@ test_that("endpoint model run queues a model run", {
   expect_true("id" %in% names(response$data))
   expect_equal(res$status, 200)
 
-  ## Query for status
+  ## Query for status returns arbitrary R data
   res <- MockPlumberResponse$new()
   model_status <- endpoint_model_status(queue)
   status <- model_status(NULL, res, response$data$id)
@@ -49,6 +49,11 @@ test_that("endpoint model run queues a model run", {
   expect_equal(status$data$done, FALSE)
   expect_equal(status$data$status, "RUNNING")
   expect_equal(status$data$queue, 0)
+  expect_length(status$data$progress, 2)
+  expect_equal(status$data$progress[[1]]$name, "Started mock model")
+  expect_false(status$data$progress[[1]]$complete)
+  expect_equal(status$data$progress[[2]]$name, "Finished mock model")
+  expect_false(status$data$progress[[2]]$complete)
 
   ## Wait for complete and query for status
   ## Query for status
@@ -63,6 +68,11 @@ test_that("endpoint model run queues a model run", {
   expect_equal(status$data$status, "COMPLETE")
   expect_equal(status$data$queue, 0)
   expect_equal(status$data$success, TRUE)
+  expect_length(status$data$progress, 2)
+  expect_equal(status$data$progress[[1]]$name, "Started mock model")
+  expect_true(status$data$progress[[1]]$complete)
+  expect_equal(status$data$progress[[2]]$name, "Finished mock model")
+  expect_false(status$data$progress[[2]]$complete)
 
   ## Get the result
   res <- MockPlumberResponse$new()
