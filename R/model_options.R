@@ -3,7 +3,8 @@
 #' Get's UI template from Naomi and substitutes any params within the
 #' template with real values.
 #'
-#' @param shape Path to shape file
+#' @param shape A file object (path, hash, filename) corresponding to
+#'   the input shape file
 #' @param survey Path to survey file
 #' @param programme Path to optional programme file
 #' @param anc Path to optional ANC file
@@ -24,7 +25,7 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
   time_options <- get_time_options()
 
   ## Survey options
-  survey_options <- get_survey_filters(read_csv(survey))
+  survey_options <- get_survey_filters(read_csv(survey$path))
   survey_art_or_vls_options <- list(
     list(
       id = scalar("art_coverage"),
@@ -39,13 +40,13 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
   ## ART options
   art_quarter_options <- NULL
   if (has_art) {
-    art_quarter_options <- get_quarter_filters(read_csv(programme))
+    art_quarter_options <- get_quarter_filters(read_csv(programme$path))
   }
 
   ## ANC options
   anc_quarter_options <- NULL
   if (has_anc) {
-    anc_quarter_options <- get_quarter_filters(read_csv(anc))
+    anc_quarter_options <- get_quarter_filters(read_csv(anc$path))
   }
 
 

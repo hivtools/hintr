@@ -16,7 +16,7 @@ RoxygenNote: 6.1.1
 Additional_repositories: https://mrc-ide.github.io/drat
 Imports:
     docopt,
-    geojsonio,
+    geojsonio (>= 0.8.0),
     glue,
     ids,
     jsonlite (>= 1.2.2),
@@ -24,7 +24,7 @@ Imports:
     plumber,
     R6,
     redux,
-    rrq (>= 0.2.0),
+    rrq (>= 0.2.1),
     specio
 Suggests:
     callr,

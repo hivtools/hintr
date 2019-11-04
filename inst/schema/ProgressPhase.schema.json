@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "started": { "type": "boolean" },
+    "complete": { "type": "boolean" },
+    "value": { "type": "number" },
+    "name": { "type": "string" },
+    "helpText": { "type": "string" }
+  },
+  "additionalProperties": false,
+  "required": [ "started", "complete", "name" ]
+}

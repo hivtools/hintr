@@ -7,8 +7,10 @@
     "status": { "type": "string" },
     "success": { "type": [ "boolean", "null" ] },
     "queue": { "type": "integer" },
-    "progress": { "type": "string" },
-    "timeRemaining": { "type": "string" }
+    "progress": { 
+      "type": "array",
+      "items": { "$ref": "ProgressPhase.schema.json" }
+    }
   },
   "additionalProperties": false,
   "required": [
@@ -17,7 +19,6 @@
     "status",
     "success",
     "queue",
-    "progress",
-    "timeRemaining"
+    "progress"
   ]
 }

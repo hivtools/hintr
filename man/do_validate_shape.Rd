@@ -7,7 +7,8 @@
 do_validate_shape(shape)
 }
 \arguments{
-\item{shape}{Path to input shape file.}
+\item{shape}{A file object (path, hash, filename) corresponding to
+the input shape file.}
 }
 \value{
 An error if invalid or the geojson if valid.

@@ -7,7 +7,8 @@
 do_endpoint_model_options(shape, survey, programme, anc)
 }
 \arguments{
-\item{shape}{Path to shape file}
+\item{shape}{A file object (path, hash, filename) corresponding to
+the input shape file}
 
 \item{survey}{Path to survey file}
 
