@@ -41,3 +41,29 @@ test_that("with_cache calls target expression if cache is missing", {
   expect_equal(with_cache(key, namespace, NULL, fn()), 2)
   mockery::expect_called(fn, 2)
 })
+
+test_that("Global cache interaction", {
+  id <- ids::random_id()
+  set_cache(id)
+
+  cache <- hintenv$cache[[id]]
+  fn <- mockery::mock(1, 2, 3)
+  unlockBinding("get", cache)
+  cache$get <- mockery::mock(-1, -2, -3)
+
+  expect_identical(get_cache(NULL), cache)
+  expect_identical(get_cache(TRUE), TRUE)
+
+  expect_equal(with_cache("aaa", "ns", NULL, fn()), 1)
+  expect_equal(with_cache("aaa", "ns", NULL, fn()), -1)
+
+  mockery::expect_called(fn, 1)
+  mockery::expect_called(cache$get, 1)
+
+  clear_cache(id)
+  expect_null(get_cache(NULL))
+  expect_equal(with_cache("aaa", "ns", NULL, fn()), 2)
+
+  mockery::expect_called(fn, 2)
+  mockery::expect_called(cache$get, 1)
+})
