@@ -220,11 +220,12 @@ test_that("real model can be run by API", {
   expect_equal(names(response$data), c("id"))
 
   ## Get the status
-  testthat::try_again(10, {
+  testthat::try_again(5, {
     Sys.sleep(30)
     r <- httr::GET(paste0(server$url, "/model/status/", response$data$id))
     expect_equal(httr::status_code(r), 200)
     response <- response_from_json(r)
+    message(response)
     expect_equal(response$status, "success")
     expect_equal(response$errors, list())
     expect_equal(response$data$done, TRUE)
@@ -232,6 +233,11 @@ test_that("real model can be run by API", {
     expect_equal(response$data$success, TRUE)
     expect_equal(response$data$queue, 0)
     expect_true("id" %in% names(response$data))
+    expect_length(response$data$progress, 4)
+    expect_true(response$data$progress[[1]]$complete)
+    expect_true(response$data$progress[[2]]$complete)
+    expect_true(response$data$progress[[3]]$complete)
+    expect_true(response$data$progress[[4]]$complete)
   })
 
   ## Get the result
