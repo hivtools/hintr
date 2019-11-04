@@ -216,7 +216,7 @@ test_that("real model can be run by API", {
 
   ## Get the status
   testthat::try_again(10, {
-    Sys.sleep(60)
+    Sys.sleep(30)
     r <- httr::GET(paste0(server$url, "/model/status/", response$data$id))
     expect_equal(httr::status_code(r), 200)
     response <- response_from_json(r)

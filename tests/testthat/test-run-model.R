@@ -40,7 +40,8 @@ test_that("real model can be run", {
     anc_prevalence_t1 = 464,
     anc_prevalence_t2 = 475,
     anc_art_coverage_t1 = 464,
-    anc_art_coverage_t2 = 475
+    anc_art_coverage_t2 = 475,
+    no_of_samples = 20
   )
   withr::with_envvar(c("USE_MOCK_MODEL" = "false"), {
     model_run <- run_model(data, options)
