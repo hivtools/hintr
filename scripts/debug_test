@@ -109,14 +109,14 @@ withr::with_dir("tests/testthat", {
       message(sprintf("===== TRY %s =====", try))
       Sys.sleep(30)
       r <- httr::GET(paste0(server$url, "/model/status/", response$data$id))
-      response <- response_from_json(r)
-      message(response)
+      status_response <- response_from_json(r)
+      message(status_response)
 
       if (!(response$data$status %in% c("RUNNING", "COMPLETE"))) {
         message("==== ERROR RESULT ====")
         r <- httr::GET(paste0(server$url, "/model/result/", response$data$id))
-        response <- response_from_json(r)
-        message(response)
+        result_response <- response_from_json(r)
+        message(result_response)
       }
     }
   })
