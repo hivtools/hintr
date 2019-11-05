@@ -52,12 +52,13 @@ get_free_port <- free_port(9000)
 hintr_server <- function(n_tries = 10, poll = 0.5) {
   test_redis_available()
 
+  queue_id <- ids::random_id()
   port <- get_free_port()
   process <- callr::r_bg(
-    function(port) {
+    function(port, queue_id) {
       hintr:::api(port)
     },
-    args = list(port = port))
+    args = list(port = port, queue_id = queue_id))
   url <- sprintf("http://localhost:%d", port)
 
   for (i in seq_len(n_tries)) {
@@ -67,7 +68,8 @@ hintr_server <- function(n_tries = 10, poll = 0.5) {
       TRUE
     }, error = function(e) FALSE)
     if (ok) {
-      return(list(process = process, url = url, port = port))
+      return(list(process = process, url = url, port = port,
+                  queue_id = queue_id))
     }
     if (!process$is_alive()) {
       break
@@ -105,9 +107,9 @@ withr::with_dir("tests/testthat", {
                     encode = "json")
     response <- response_from_json(r)
 
+    Sys.sleep(3)
     for (try in seq_len(10)) {
       message(sprintf("===== TRY %s =====", try))
-      Sys.sleep(30)
       r <- httr::GET(paste0(server$url, "/model/status/", response$data$id))
       status_response <- response_from_json(r)
       message(status_response)
@@ -118,8 +120,9 @@ withr::with_dir("tests/testthat", {
         result_response <- response_from_json(r)
         message(result_response)
         ## Get trace from the queue
-        queue <- Queue$new(queue_id = server$queue_id, workers = 0)
-        res <- queue$queue$result(response$data$id)
+        queue <- hintr:::Queue$new(queue_id = server$queue_id, workers = 0)
+        browser()
+        res <- queue$result(response$data$id)
         message("ERROR TRACE")
         message(res$trace)
         t <- queue$queue$enqueue(getwd())
@@ -127,6 +130,7 @@ withr::with_dir("tests/testthat", {
         message(queue$queue$task_wait(t, progress = FALSE))
         break
       }
+      Sys.sleep(30)
     }
   })
 })
