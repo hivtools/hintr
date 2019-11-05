@@ -112,7 +112,7 @@ withr::with_dir("tests/testthat", {
       status_response <- response_from_json(r)
       message(status_response)
 
-      if (!(response$data$status %in% c("RUNNING", "COMPLETE"))) {
+      if (!(status_response$data$status %in% c("RUNNING", "COMPLETE"))) {
         message("==== ERROR RESULT ====")
         r <- httr::GET(paste0(server$url, "/model/result/", response$data$id))
         result_response <- response_from_json(r)
