@@ -92,6 +92,14 @@ withr::with_dir("tests/testthat", {
     server <- hintr_server()
     ## Submit a model run
     submit <- file.path("payload", "model_submit_payload.json")
+    message("PAYLOAD EXISTS")
+    message(sprintf("file exists %s", file.exists(submit)))
+    message("WORKING DIR")
+    message(sprintf("working dir is %s", getwd()))
+    message("PAYLOAD TEXT")
+    message(readLines(submit))
+    message("FILES IN CURRENT DIRECTORY")
+    message(paste(list.files(recursive = TRUE), collapse = "\n"))
     r <- httr::POST(paste0(server$url, "/model/submit"),
                     body = httr::upload_file(submit),
                     encode = "json")
