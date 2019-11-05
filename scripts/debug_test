@@ -117,6 +117,15 @@ withr::with_dir("tests/testthat", {
         r <- httr::GET(paste0(server$url, "/model/result/", response$data$id))
         result_response <- response_from_json(r)
         message(result_response)
+        ## Get trace from the queue
+        queue <- Queue$new(queue_id = server$queue_id, workers = 0)
+        res <- queue$queue$result(response$data$id)
+        message("ERROR TRACE")
+        message(res$trace)
+        t <- queue$queue$enqueue(getwd())
+        message("WORKING DIR OF QUEUE")
+        message(queue$queue$task_wait(t, progress = FALSE))
+        break
       }
     }
   })
