@@ -34,7 +34,6 @@ run_model <- function(data, options) {
          spectrum_path = system_file("output", "malawi_spectrum_download.zip"),
          summary_path = system_file("output", "malawi_summary_download.zip")))
   }
-  INLA:::inla.dynload.workaround()
   naomi::hintr_run_model(data, options)
 }
 
