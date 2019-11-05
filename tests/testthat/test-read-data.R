@@ -37,3 +37,11 @@ test_that("can read country from PJNZ", {
   pjnz <- file_object(file.path("testdata", "Botswana2018.PJNZ"))
   expect_equal(read_country(pjnz), "Botswana")
 })
+
+test_that("geojson read applies can use cache", {
+  cache <- new_cache()
+  path <- file_object(file.path("testdata", "malawi.geojson"))
+  value <- hintr_geojson_read(path, cache)
+  expect_equal(cache$list("geojson"), path$hash)
+  expect_identical(hintr_geojson_read(path, cache), value)
+})
