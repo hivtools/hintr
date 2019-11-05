@@ -1,3 +1,7 @@
+# hintr 0.0.13
+
+* Caching enabled for geojson reading
+
 # hintr 0.0.12
 
 * Update model download endpoint from indicators to summary

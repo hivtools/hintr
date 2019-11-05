@@ -14,9 +14,13 @@ Queue <- R6::R6Class(
       con <- redux::hiredis()
 
       message("Starting queue")
-      self$queue <- rrq::rrq_controller(hintr_queue_id(queue_id), con)
+      queue_id <- hintr_queue_id(queue_id)
+      self$queue <- rrq::rrq_controller(queue_id, con)
 
       self$start(workers)
+
+      message("Creating cache")
+      set_cache(queue_id)
     },
 
     start = function(workers) {
@@ -69,6 +73,7 @@ Queue <- R6::R6Class(
     },
 
     finalize = function(queue) {
+      clear_cache(self$queue$keys$queue_id)
       if (self$cleanup_on_exit) {
         message("Stopping workers")
         self$queue$worker_stop()
