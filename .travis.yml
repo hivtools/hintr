@@ -18,7 +18,7 @@ services:
 before_script:
   - ./scripts/build_test_data
   - R CMD INSTALL .
-  - Rscript -e 'testthat::test_file("tests/testthat/test-server.R")'
+  - ./scripts/debug_test
 cache: packages
 env:
   - VALIDATE_JSON_SCHEMAS=true USE_MOCK_MODEL=true
