@@ -46,12 +46,13 @@ hintr_server <- function(n_tries = 10, poll = 0.5) {
   skip_if_not_installed("callr")
   skip_if_not_installed("httr")
 
+  queue_id <- ids::random_id()
   port <- get_free_port()
   process <- callr::r_bg(
-    function(port) {
+    function(port, queue_id) {
       hintr:::api(port)
     },
-    args = list(port = port))
+    args = list(port = port, queue_id = queue_id))
   url <- sprintf("http://localhost:%d", port)
 
   for (i in seq_len(n_tries)) {
@@ -61,7 +62,8 @@ hintr_server <- function(n_tries = 10, poll = 0.5) {
       TRUE
     }, error = function(e) FALSE)
     if (ok) {
-      return(list(process = process, url = url, port = port))
+      return(list(process = process, url = url, port = port,
+                  queue_id = queue_id))
     }
     if (!process$is_alive()) {
       break
