@@ -203,6 +203,61 @@ test_that("model interactions", {
   expect_length(response$data$filters$indicators, 7)
 })
 
+test_that("real model can be run by API", {
+  withr::with_envvar(c("USE_MOCK_MODEL" = "false"), {
+    server <- hintr_server()
+
+    ## Submit a model run
+    submit <- file.path("payload", "model_submit_payload.json")
+    r <- httr::POST(paste0(server$url, "/model/submit"),
+                    body = httr::upload_file(submit),
+                    encode = "json")
+  })
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+  expect_equal(response$errors, list())
+  expect_equal(names(response$data), c("id"))
+
+  ## Get the status
+  testthat::try_again(5, {
+    Sys.sleep(60)
+    r <- httr::GET(paste0(server$url, "/model/status/", response$data$id))
+    expect_equal(httr::status_code(r), 200)
+    response <- response_from_json(r)
+    expect_equal(response$status, "success")
+    expect_equal(response$errors, list())
+    expect_equal(response$data$done, TRUE)
+    expect_equal(response$data$status, "COMPLETE")
+    expect_equal(response$data$success, TRUE)
+    expect_equal(response$data$queue, 0)
+    expect_true("id" %in% names(response$data))
+    expect_length(response$data$progress, 4)
+    expect_true(response$data$progress[[1]]$complete)
+    expect_true(response$data$progress[[2]]$complete)
+    expect_true(response$data$progress[[3]]$complete)
+    expect_true(response$data$progress[[4]]$complete)
+  })
+
+  ## Get the result
+  r <- httr::GET(paste0(server$url, "/model/result/", response$data$id))
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+  expect_equal(response$errors, list())
+  expect_equal(httr::status_code(r), 200)
+  expect_equal(names(response$data), c("data", "filters"))
+  expect_equal(names(response$data$data[[1]]),
+               c("area_id", "sex", "age_group_id", "quarter_id", "indicator_id",
+                 "mode", "mean", "lower", "upper"))
+  expect_length(response$data$data, 42021)
+  expect_equal(names(response$data$filters), c("age", "quarter", "indicators"))
+  expect_length(response$data$filters$age, 29)
+  expect_length(response$data$filters$quarter, 1)
+  expect_equal(response$data$filters$quarter[[1]]$label, "Jan-Mar 2016")
+  expect_length(response$data$filters$indicators, 7)
+})
+
 test_that("plotting metadata is exposed", {
   server <- hintr_server()
   r <- httr::GET(paste0(server$url, "/meta/plotting/", "MWI"))
@@ -369,9 +424,12 @@ test_that("spectrum file download streams bytes", {
     r <- httr::GET(paste0(server$url, "/download/spectrum/", response$data$id))
     expect_equal(httr::status_code(r), 200)
     expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
-    expect_equal(
-      httr::headers(r)$`content-length`,
-      as.character(file.size(system_file("output", "malawi_spectrum_download.zip"))))
+    ## Size of bytes is close to expected
+    size <- as.numeric(httr::headers(r)$`content-length`)
+    expect_true(size - size/10 <
+      file.size(system_file("output", "malawi_spectrum_download.zip")))
+    expect_true(size + size/10 >
+      file.size(system_file("output", "malawi_spectrum_download.zip")))
   })
 })
 
@@ -396,9 +454,12 @@ test_that("summary file download streams bytes", {
     r <- httr::GET(paste0(server$url, "/download/summary/", response$data$id))
     expect_equal(httr::status_code(r), 200)
     expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
-    expect_equal(
-      httr::headers(r)$`content-length`,
-      as.character(file.size(system_file("output",
-                                         "malawi_summary_download.zip"))))
+    ## Size of bytes is close to expected
+    size <- as.numeric(httr::headers(r)$`content-length`)
+    expect_true(size - size/10 <
+      file.size(system_file("output", "malawi_summary_download.zip")))
+    expect_true(size + size/10 >
+      file.size(system_file("output", "malawi_summary_download.zip")))
   })
 })
+
