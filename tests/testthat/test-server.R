@@ -258,7 +258,7 @@ test_that("real model can be run by API", {
   expect_length(response$data$data, 42021)
   expect_equal(names(response$data$plottingMetadata), "barchart")
   barchart <- response$data$plottingMetadata$barchart
-  expect_equal(names(barchart), "indicators", "filters")
+  expect_equal(names(barchart), c("indicators", "filters"))
   expect_length(barchart$filters, 2)
   expect_equal(barchart$filters[[1]]$id, "age")
   expect_equal(barchart$filters[[2]]$id, "quarter")
