@@ -3,6 +3,13 @@
   "type": "object",
   "properties": {
     "data": { "$ref": "ModelResultData.schema.json" },
-    "filters": { "$ref": "ModelResultFilters.schema.json" }
+    "plottingMetadata": { 
+      "type": "object",
+      "properties": {
+        "barchart": { "$ref": "BarchartMetadata.schema.json" }
+      },
+      "additionalProperties": false,
+      "required" : [ "barchart" ]
+    }
   }
 }

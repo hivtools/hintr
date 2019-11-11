@@ -355,7 +355,7 @@ test_that("endpoint_plotting_metadata gets metadata", {
                     c("survey", "anc", "output", "programme")))
   expect_equal(names(response$data$survey), "choropleth")
   expect_equal(names(response$data$anc), "choropleth")
-  expect_equal(names(response$data$output), "choropleth")
+  expect_equal(names(response$data$output), c("barchart", "choropleth"))
   expect_equal(names(response$data$programme), "choropleth")
   expect_length(response$data$anc$choropleth$indicators, 2)
   expect_equal(response$data$anc$choropleth$indicators[[1]]$indicator,
@@ -381,7 +381,7 @@ test_that("endpoint_plotting_metadata returns default data for missing country",
                     c("survey", "anc", "output", "programme")))
   expect_equal(names(response$data$survey), "choropleth")
   expect_equal(names(response$data$anc), "choropleth")
-  expect_equal(names(response$data$output), "choropleth")
+  expect_equal(names(response$data$output), c("barchart", "choropleth"))
   expect_equal(names(response$data$programme), "choropleth")
   expect_length(response$data$anc$choropleth$indicators, 2)
   expect_equal(response$data$anc$choropleth$indicators[[1]]$indicator,
