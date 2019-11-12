@@ -24,6 +24,7 @@ api_build <- function(queue) {
             serializer = serializer_json_hintr())
   pr$handle("GET", "/hintr/worker/status", endpoint_hintr_worker_status(queue),
             serializer = serializer_json_hintr())
+  pr$handle("POST", "/hintr/stop", endpoint_hintr_stop(queue))
   pr$handle("GET", "/", api_root)
   pr
 }
@@ -354,6 +355,16 @@ endpoint_hintr_worker_status <- function(queue) {
   function(req, res) {
     response <- with_success(lapply(queue$queue$worker_status(), scalar))
     hintr_response(response, "HintrWorkerStatus")
+  }
+}
+
+endpoint_hintr_stop <- function(queue) {
+  force(queue)
+  function(req, res) {
+    message("Stopping workers")
+    queue$queue$worker_stop()
+    message("Quitting hintr")
+    quit(save = "no")
   }
 }
 

@@ -25,3 +25,21 @@ test_that("endpoint worker status works", {
   response <- jsonlite::parse_json(endpoint())
   expect_equal(response$data, setNames(list(), character()))
 })
+
+test_that("stop calls quit and stop_workers", {
+  queue <- Queue$new(workers = 0)
+  unlockBinding("worker_stop", queue$queue)
+  queue$queue$worker_stop <- mockery::mock()
+  mock_quit <- mockery::mock()
+  endpoint <- endpoint_hintr_stop(queue)
+  mockery::stub(endpoint, "quit", mock_quit)
+  endpoint(NULL, NULL)
+
+  ## Quit call:
+  mockery::expect_called(mock_quit, 1)
+  expect_equal(mockery::mock_calls(mock_quit)[[1]], quote(quit(save = "no")))
+
+  ## Worker stop:
+  mockery::expect_called(queue$queue$worker_stop, 1)
+  expect_equal(length(mockery::mock_calls(queue$queue$worker_stop)[[1]]), 1)
+})

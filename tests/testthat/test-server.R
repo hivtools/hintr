@@ -463,3 +463,18 @@ test_that("summary file download streams bytes", {
   })
 })
 
+test_that("can quit", {
+  test_mock_model_available()
+  server <- hintr_server()
+
+  expect_true(server$process$is_alive())
+
+  server$process$read_error_lines()
+
+  r <- tryCatch(
+    httr::POST(paste0(server$url, "/hintr/stop")),
+    error = identity)
+  expect_is(r, "error")
+
+  expect_false(server$process$is_alive())
+})
