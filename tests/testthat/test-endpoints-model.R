@@ -283,7 +283,7 @@ test_that("can submit model run with version info", {
 
   ## Call the endpoint
   queue <- Queue$new()
-  with_mock("hintr:::update_options" = mock_update_options, {
+  with_mock("hintr:::do_migrate_options" = mock_update_options, {
     model_submit <- endpoint_model_submit(queue)
     version <- list(
       hintr = "0.0.12",

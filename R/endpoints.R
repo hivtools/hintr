@@ -8,6 +8,8 @@ api_build <- function(queue) {
             serializer = serializer_json_hintr())
   pr$handle("POST", "/model/options", endpoint_model_options,
             serializer = serializer_json_hintr())
+  pr$handle("POST", "/model/options/migrate", endpoint_migrate_options,
+            serializer = serializer_json_hintr())
   pr$handle("POST", "/model/submit", endpoint_model_submit(queue),
             serializer = serializer_json_hintr())
   pr$handle("GET", "/model/status/<id>", endpoint_model_status(queue),
@@ -50,7 +52,8 @@ api <- function(port = 8888, queue_id = NULL, workers = 2) {
 #'
 #' @return Function to generate model options from input data.
 #' @keywords internal
-endpoint_model_options <- function(req, res, shape, survey, programme =  NULL, anc = NULL) {
+endpoint_model_options <- function(req, res, shape, survey, programme = NULL,
+                                   anc = NULL) {
   response <- with_success({
     ## Shape and survey must exist
     assert_file_exists(shape$path)
@@ -68,10 +71,31 @@ endpoint_model_options <- function(req, res, shape, survey, programme =  NULL, a
   hintr_response(response, "ModelRunOptions", include_version = TRUE)
 }
 
+#' Migrate model run options from specified version to current version.
+#'
+#' @param req The request object.
+#' @param res The response object.
+#' @param options The options to migrate.
+#' @param version The current version information.
+#'
+#' @return Migrated model run options.
+#' @keywords internal
+endpoint_migrate_options <- function(req, res, options, version) {
+  response <- with_success({
+    do_migrate_options(options, version)
+  })
+  if (!response$success) {
+    response$errors <- hintr_errors(list(
+      "UNABLE_TO_MIGRATE" = response$message))
+    res$status <- 400
+  }
+  hintr_response(response, "MigrateOptionsResponse", include_version = TRUE)
+}
+
 endpoint_model_submit <- function(queue) {
   function(req, res, data, options, version) {
     if (!is_current_version(version)) {
-      options <- update_options(options, version)
+      options <- do_migrate_options(options, version)
     }
     response <- with_success(
       queue$submit(data, options))
