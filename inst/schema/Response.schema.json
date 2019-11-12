@@ -12,16 +12,7 @@
       "type": "array",
       "items": { "$ref": "Error.schema.json" }
     },
-    "version": {
-      "type": "object",
-      "properties": {
-        "hintr": { "type": "string" },
-        "naomi": { "type": "string" },
-        "rrq": { "type": "string" }
-      },
-      "additionalProperties": true,
-      "required": [ "hintr", "naomi", "rrq" ]
-    }
+    "version": { "$ref": "VersionInfo.schema.json" }
   },
   "additionalProperties": false,
   "required": ["status", "errors", "data" ]

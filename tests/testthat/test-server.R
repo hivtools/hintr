@@ -151,12 +151,12 @@ test_that("validate baseline", {
 
 test_that("model interactions", {
   test_mock_model_available()
+  payload <- setup_submit_payload()
   server <- hintr_server()
 
   ## Submit a model run
-  submit <- file.path("payload", "model_submit_payload.json")
   r <- httr::POST(paste0(server$url, "/model/submit"),
-                  body = httr::upload_file(submit),
+                  body = httr::upload_file(payload),
                   encode = "json")
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
@@ -204,13 +204,13 @@ test_that("model interactions", {
 })
 
 test_that("real model can be run by API", {
+  payload <- setup_submit_payload()
   withr::with_envvar(c("USE_MOCK_MODEL" = "false"), {
     server <- hintr_server()
 
     ## Submit a model run
-    submit <- file.path("payload", "model_submit_payload.json")
     r <- httr::POST(paste0(server$url, "/model/submit"),
-                    body = httr::upload_file(submit),
+                    body = httr::upload_file(payload),
                     encode = "json")
   })
   expect_equal(httr::status_code(r), 200)
@@ -410,11 +410,11 @@ test_that("worker information is returned", {
 test_that("spectrum file download streams bytes", {
   test_mock_model_available()
   server <- hintr_server()
+  payload <- setup_submit_payload()
 
   ## Run a model
-  submit <- file.path("payload", "model_submit_payload.json")
   r <- httr::POST(paste0(server$url, "/model/submit"),
-                  body = httr::upload_file(submit),
+                  body = httr::upload_file(payload),
                   encode = "json")
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
@@ -440,11 +440,11 @@ test_that("spectrum file download streams bytes", {
 test_that("summary file download streams bytes", {
   test_mock_model_available()
   server <- hintr_server()
+  payload <- setup_submit_payload()
 
   ## Run a model
-  submit <- file.path("payload", "model_submit_payload.json")
   r <- httr::POST(paste0(server$url, "/model/submit"),
-                  body = httr::upload_file(submit),
+                  body = httr::upload_file(payload),
                   encode = "json")
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)

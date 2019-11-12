@@ -32,7 +32,7 @@ test_that("endpoint model run queues a model run", {
   ## Call the endpoint
   queue <- Queue$new()
   model_submit <- endpoint_model_submit(queue)
-  response <- model_submit(req, res, data, options)
+  response <- model_submit(req, res, data, options, cfg$version_info)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
   expect_true("id" %in% names(response$data))
@@ -114,7 +114,7 @@ test_that("endpoint_run_model returns error if queueing fails", {
   ## Call the endpoint
   model_submit <- endpoint_model_submit(queue)
   mockery::stub(model_submit, "queue$submit", mock_submit)
-  response <- model_submit(req, res, data, options)
+  response <- model_submit(req, res, data, options, cfg$version_info)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "failure")
   expect_length(response$errors, 1)
@@ -207,7 +207,7 @@ test_that("querying for result of incomplete jobs returns useful error", {
   ## Call the endpoint
   queue <- Queue$new()
   model_submit <- endpoint_model_submit(queue)
-  response <- model_submit(req, res, data, options)
+  response <- model_submit(req, res, data, options, cfg$version_info)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
 
@@ -231,7 +231,7 @@ test_that("erroring model run returns useful messages", {
   ## Call the endpoint
   queue <- MockQueue$new()
   model_submit <- endpoint_model_submit(queue)
-  response <- model_submit(req, res, NULL, list())
+  response <- model_submit(req, res, NULL, list(), cfg$version_info)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
 
@@ -256,4 +256,55 @@ test_that("erroring model run returns useful messages", {
   expect_length(result$errors, 1)
   expect_equal(result$errors[[1]]$error, "MODEL_RUN_FAILED")
   expect_equal(result$errors[[1]]$detail, "test error")
+})
+
+test_that("can submit model run with version info", {
+  test_redis_available()
+
+  ## Setup mocks
+  res <- MockPlumberResponse$new()
+  options <- list(
+    area_scope = "MWI",
+    area_level = 4,
+    t1 = 465,
+    t2 = 475,
+    survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
+    survey_art_coverage = "MWI2016PHIA",
+    survey_recently_infected = "MWI2016PHIA",
+    survey_art_or_vls = "art_coverage",
+    art_t1 = 465,
+    art_t2 = 475,
+    anc_prevalence_t1 = 464,
+    anc_prevalence_t2 = 475,
+    anc_art_coverage_t1 = 464,
+    anc_art_coverage_t2 = 475
+  )
+  mock_update_options <- mockery::mock(options)
+
+  ## Call the endpoint
+  queue <- Queue$new()
+  with_mock("hintr:::update_options" = mock_update_options, {
+    model_submit <- endpoint_model_submit(queue)
+    version <- list(
+      hintr = "0.0.12",
+      naomi = "0.0.15",
+      rrq = "0.2.1"
+    )
+    response <- model_submit(req, res, NULL, list(), version)
+  })
+  response <- jsonlite::parse_json(response)
+  expect_equal(response$status, "success")
+
+  ## Check interactions
+  mockery::expect_called(mock_update_options, 1)
+  mockery::expect_args(mock_update_options, 1, list(), version)
+
+  ## Get the status
+  model_status <- endpoint_model_status(queue)
+  status <- model_status(req, res, response$data$id)
+  status <- jsonlite::parse_json(status)
+  expect_equal(status$status, "success")
+  expect_length(status$errors, 0)
+  expect_equal(status$data$done, FALSE)
+  expect_equal(status$data$status, "RUNNING")
 })

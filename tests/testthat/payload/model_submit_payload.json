@@ -23,5 +23,6 @@
     "anc_art_coverage_t1": 464,
     "anc_art_coverage_t2": 475,
     "no_of_samples": 20
-  }
+  },
+  "version": <version_info>
 }

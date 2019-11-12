@@ -69,7 +69,10 @@ endpoint_model_options <- function(req, res, shape, survey, programme =  NULL, a
 }
 
 endpoint_model_submit <- function(queue) {
-  function(req, res, data, options) {
+  function(req, res, data, options, version) {
+    if (!is_current_version(version)) {
+      options <- update_options(options, version)
+    }
     response <- with_success(
       queue$submit(data, options))
     if (response$success) {
