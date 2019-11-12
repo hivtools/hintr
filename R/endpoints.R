@@ -343,11 +343,8 @@ with_success <- function(expr) {
 }
 
 endpoint_hintr_version <- function(req, res) {
-  packages <- c("hintr", "naomi", "rrq")
-  value <- lapply(packages, function(p)
-    scalar(as.character(utils::packageVersion(p))))
-  names(value) <- packages
-  hintr_response(list(success = TRUE, value = value), "HintrVersionResponse")
+  hintr_response(list(success = TRUE, value = cfg$version_info),
+                 "HintrVersionResponse")
 }
 
 endpoint_hintr_worker_status <- function(queue) {

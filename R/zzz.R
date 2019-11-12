@@ -5,3 +5,13 @@
 #' @importFrom naomi get_metadata
 #' @importFrom rrq rrq_controller
 NULL
+
+
+cfg <- new.env(parent = emptyenv())
+.onLoad <- function(...) {
+  packages <- c("hintr", "naomi", "rrq")
+  value <- lapply(packages, function(p)
+    scalar(as.character(utils::packageVersion(p))))
+  names(value) <- packages
+  cfg$version_info <- value
+}
