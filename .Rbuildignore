@@ -7,3 +7,4 @@
 ^docker$
 ^README\.md\.in$
 ^README\.yml$
+^scripts$

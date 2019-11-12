@@ -1,0 +1,7 @@
+#!/usr/bin/env Rscript
+
+## Designed to work from the docker container so we assume hintr on
+## http://localhost:8888 for the conection. Because this will
+## terminate the process and stop the underlying docker exec there's
+## not a lot of point trying to sanitise anything here.
+tryCatch(httr::POST("http://localhost:8888/hintr/stop"), error = identity)
