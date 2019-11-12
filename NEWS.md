@@ -1,7 +1,7 @@
 # hintr 0.0.14
 
 * Return version info from model run options response
-* Expect version info in model run submit endpoint
+* Require version info in model run submit endpoint
 
 # hintr 0.0.13
 
