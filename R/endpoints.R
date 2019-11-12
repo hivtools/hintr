@@ -65,7 +65,7 @@ endpoint_model_options <- function(req, res, shape, survey, programme =  NULL, a
     res$status <- 400
   }
 
-  hintr_response(response, "ModelRunOptions")
+  hintr_response(response, "ModelRunOptions", include_version = TRUE)
 }
 
 endpoint_model_submit <- function(queue) {
@@ -298,10 +298,13 @@ endpoint_plotting_metadata <- function(req, res, iso3) {
 #'
 #' @param value List containing an indication of success, any errors and the
 #' value to return.
+#' @param schema The name of data subschema to validate response against.
+#' @param include_version If TRUE the package version information is included
+#' in the response.
 #'
 #' @return Formatted hintr response.
 #' @keywords internal
-hintr_response <- function(value, schema) {
+hintr_response <- function(value, schema, include_version = FALSE) {
   if (value$success) {
     status <- "success"
   } else {
@@ -313,10 +316,14 @@ hintr_response <- function(value, schema) {
   else {
     errors = value$errors
   }
-  ret <- to_json(list(
+  ret <- list(
     status = scalar(status),
     errors = errors,
-    data = value$value))
+    data = value$value)
+  if (include_version) {
+    ret$version <- cfg$version_info
+  }
+  ret <- to_json(ret)
   if (value$success) {
     validate_json_schema(ret, schema, query = "data")
   }

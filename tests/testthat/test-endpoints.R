@@ -499,6 +499,10 @@ test_that("endpoint_model_options returns model options", {
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
     "Jul-Sep 2011")
+
+  expect_true(!is.null(json$version))
+  expect_equal(names(json$version), c("hintr", "naomi", "rrq"))
+  expect_true(all(grepl("^(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$", json$version)))
 })
 
 test_that("endpoint_model_options can be run without programme data", {
@@ -562,6 +566,10 @@ test_that("endpoint_model_options can be run without programme data", {
   expect_equal(
     survey_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
     "MWI2016PHIA")
+
+  expect_true(!is.null(json$version))
+  expect_equal(names(json$version), c("hintr", "naomi", "rrq"))
+  expect_true(all(grepl("^(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$", json$version)))
 })
 
 test_that("endpoint_model_options fails without shape & survey data", {

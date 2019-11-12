@@ -381,6 +381,10 @@ test_that("model run options are exposed", {
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
     "Jul-Sep 2011")
+
+  expect_true(!is.null(response$version))
+  expect_equal(names(response$version), c("hintr", "naomi", "rrq"))
+  expect_true(all(grepl("^(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$", response$version)))
 })
 
 test_that("version information is returned", {

@@ -4,11 +4,16 @@
 \alias{hintr_response}
 \title{Format a hintr response and validate against schema.}
 \usage{
-hintr_response(value, schema)
+hintr_response(value, schema, include_version = FALSE)
 }
 \arguments{
 \item{value}{List containing an indication of success, any errors and the
 value to return.}
+
+\item{schema}{The name of data subschema to validate response against.}
+
+\item{include_version}{If TRUE the package version information is included
+in the response.}
 }
 \value{
 Formatted hintr response.
