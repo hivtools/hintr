@@ -94,9 +94,20 @@ read_long_indicator_filters <- function(data, type) {
 }
 
 get_model_output_filters <- function(data) {
-  list(age = get_age_filters(data),
-       quarter = get_quarter_filters(data),
-       indicators = get_id_label_map(data, "indicator_id"))
+  list(
+    list(
+      id = scalar("age"),
+      column_id = scalar("age_group_id"),
+      label = scalar("Age"),
+      options = get_age_filters(data)
+    ),
+    list(
+      id = scalar("quarter"),
+      column_id = scalar("Quarter"),
+      label = scalar("quarter_id"),
+      options = get_quarter_filters(data)
+    )
+  )
 }
 
 get_quarter_filters <- function(data) {
@@ -109,17 +120,6 @@ get_quarter_filters <- function(data) {
 
 get_quarter_name <- function(quarter_id) {
   naomi::quarter_year_labels(quarter_id)
-}
-
-get_id_label_map <- function(data, id_column) {
-  ids <- unique(data[[id_column]])
-  build_list <- function(id) {
-    hint_id <- get_hint_id(id)
-    list(id = scalar(as.character(hint_id)),
-         label = scalar(get_indicator_display_name(hint_id)))
-  }
-  id_name_pairs <- lapply(ids, build_list)
-  unique(id_name_pairs)
 }
 
 get_indicator_display_name <- function(indicator_id) {

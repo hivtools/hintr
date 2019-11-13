@@ -31,3 +31,11 @@ Check each combination is unique in configuration.")
     invert_scale = scalar(metadata$invert_scale)
   )
 }
+
+get_barchart_metadata <- function(output) {
+  metadata <- naomi::get_metadata()
+  metadata[
+    metadata$data_type == "output" & metadata$plot_type == "barchart",
+    c("indicator", "value_column", "error_low_column", "error_high_column",
+      "indicator_column", "indicator_value", "name")]
+}

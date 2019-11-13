@@ -1,7 +1,11 @@
-# hintr 0.0.14
+# hintr 0.0.15
 
 * Return version info from model run options response
 * Require version info in model run submit endpoint
+
+# hintr 0.0.14
+
+* Return plotting metadata for barchart with the model result response
 
 # hintr 0.0.13
 
