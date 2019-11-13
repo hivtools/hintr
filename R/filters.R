@@ -205,5 +205,5 @@ get_hint_id <- function(naomi_id) {
   } else {
     stop(sprintf("Failed to locate hint ID from naomi_id %s.", naomi_id))
   }
-  hint_id
+  hint_id[[1]]
 }
