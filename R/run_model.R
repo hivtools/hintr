@@ -45,8 +45,14 @@ select_data <- function(data) {
 
 process_result <- function(model_output) {
   output <- readRDS(model_output$output_path)
+  metadata <- list(
+    barchart = list(
+      indicators = get_barchart_metadata(output),
+      filters = get_model_output_filters(output)
+    )
+  )
   list(data = select_data(output),
-       filters = get_model_output_filters(output))
+       plottingMetadata = metadata)
 }
 
 use_mock_model <- function() {

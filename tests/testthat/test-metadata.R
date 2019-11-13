@@ -6,7 +6,7 @@ test_that("can build metadata response", {
                     c("survey", "anc", "output", "programme")))
   expect_equal(names(metadata$survey), "choropleth")
   expect_equal(names(metadata$anc), "choropleth")
-  expect_equal(names(metadata$output), "choropleth")
+  expect_equal(names(metadata$output), c("barchart", "choropleth"))
   expect_equal(names(metadata$programme), "choropleth")
   expect_length(metadata$anc$choropleth$indicators, 2)
   expect_equal(metadata$anc$choropleth$indicators[[1]]$indicator,

@@ -190,16 +190,21 @@ test_that("model interactions", {
   expect_equal(response$status, "success")
   expect_equal(response$errors, list())
   expect_equal(httr::status_code(r), 200)
-  expect_equal(names(response$data), c("data", "filters"))
+  expect_equal(names(response$data), c("data", "plottingMetadata"))
   expect_equal(names(response$data$data[[1]]),
                c("area_id", "sex", "age_group_id", "quarter_id", "indicator_id",
                  "mode", "mean", "lower", "upper"))
   expect_length(response$data$data, 42021)
-  expect_equal(names(response$data$filters), c("age", "quarter", "indicators"))
-  expect_length(response$data$filters$age, 29)
-  expect_length(response$data$filters$quarter, 1)
-  expect_equal(response$data$filters$quarter[[1]]$label, "Jan-Mar 2016")
-  expect_length(response$data$filters$indicators, 7)
+  expect_equal(names(response$data$plottingMetadata), "barchart")
+  barchart <- response$data$plottingMetadata$barchart
+  expect_equal(names(barchart), c("indicators", "filters"))
+  expect_length(barchart$filters, 2)
+  expect_equal(barchart$filters[[1]]$id, "age")
+  expect_equal(barchart$filters[[2]]$id, "quarter")
+  expect_length(barchart$filters[[1]]$options, 29)
+  expect_length(barchart$filters[[2]]$options, 1)
+  expect_equal(barchart$filters[[2]]$options[[1]]$label, "Jan-Mar 2016")
+  expect_length(barchart$indicators, 7)
 })
 
 test_that("real model can be run by API", {
@@ -246,16 +251,21 @@ test_that("real model can be run by API", {
   expect_equal(response$status, "success")
   expect_equal(response$errors, list())
   expect_equal(httr::status_code(r), 200)
-  expect_equal(names(response$data), c("data", "filters"))
+  expect_equal(names(response$data), c("data", "plottingMetadata"))
   expect_equal(names(response$data$data[[1]]),
                c("area_id", "sex", "age_group_id", "quarter_id", "indicator_id",
                  "mode", "mean", "lower", "upper"))
   expect_length(response$data$data, 42021)
-  expect_equal(names(response$data$filters), c("age", "quarter", "indicators"))
-  expect_length(response$data$filters$age, 29)
-  expect_length(response$data$filters$quarter, 1)
-  expect_equal(response$data$filters$quarter[[1]]$label, "Jan-Mar 2016")
-  expect_length(response$data$filters$indicators, 7)
+  expect_equal(names(response$data$plottingMetadata), "barchart")
+  barchart <- response$data$plottingMetadata$barchart
+  expect_equal(names(barchart), c("indicators", "filters"))
+  expect_length(barchart$filters, 2)
+  expect_equal(barchart$filters[[1]]$id, "age")
+  expect_equal(barchart$filters[[2]]$id, "quarter")
+  expect_length(barchart$filters[[1]]$options, 29)
+  expect_length(barchart$filters[[2]]$options, 1)
+  expect_equal(barchart$filters[[2]]$options[[1]]$label, "Jan-Mar 2016")
+  expect_length(barchart$indicators, 7)
 })
 
 test_that("plotting metadata is exposed", {
@@ -269,7 +279,7 @@ test_that("plotting metadata is exposed", {
                     c("survey", "anc", "output", "programme")))
   expect_equal(names(response$data$survey), "choropleth")
   expect_equal(names(response$data$anc), "choropleth")
-  expect_equal(names(response$data$output), "choropleth")
+  expect_equal(names(response$data$output), c("barchart", "choropleth"))
   expect_equal(names(response$data$programme), "choropleth")
   expect_length(response$data$anc$choropleth$indicators, 2)
   expect_equal(response$data$anc$choropleth$indicators[[1]]$indicator,

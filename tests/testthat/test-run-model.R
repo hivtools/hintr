@@ -3,18 +3,26 @@ context("run-model")
 test_that("model can be run and filters extracted", {
   test_mock_model_available()
   model_run <- process_result(mock_model)
-  expect_equal(names(model_run), c("data", "filters"))
+  expect_equal(names(model_run), c("data", "plottingMetadata"))
   expect_equal(names(model_run$data),
                c("area_id", "sex", "age_group_id", "quarter_id", "indicator_id",
                  "mode", "mean", "lower", "upper"))
   expect_equal(nrow(model_run$data), 42021)
-  expect_equal(names(model_run$filters), c("age", "quarter", "indicators"))
-  expect_length(model_run$filters$age, 29)
-  expect_length(model_run$filters$quarter, 1)
-  expect_equal(model_run$filters$quarter[[1]]$label, scalar("Jan-Mar 2016"))
-  expect_length(model_run$filters$indicators, 7)
-  expect_equal(model_run$filters$indicators[[1]]$id, scalar("population"))
-  expect_equal(model_run$filters$indicators[[1]]$label, scalar("Population"))
+  expect_equal(names(model_run$plottingMetadata), "barchart")
+  expect_equal(names(model_run$plottingMetadata$barchart),
+               c("indicators", "filters"))
+  expect_length(model_run$plottingMetadata$barchart$filters, 2)
+  expect_equal(names(model_run$plottingMetadata$barchart$filters[[1]]),
+               c("id", "column_id", "label", "options"))
+  expect_equal(model_run$plottingMetadata$barchart$filters[[1]]$id,
+               scalar("age"))
+  expect_equal(model_run$plottingMetadata$barchart$filters[[2]]$id,
+               scalar("quarter"))
+  expect_length(model_run$plottingMetadata$barchart$filters[[1]]$options, 29)
+  expect_length(model_run$plottingMetadata$barchart$filters[[2]]$options, 1)
+  expect_equal(model_run$plottingMetadata$barchart$filters[[2]]$options[[1]]$label,
+               scalar("Jan-Mar 2016"))
+  expect_length(model_run$plottingMetadata$barchart$indicators, 7)
 })
 
 test_that("real model can be run", {
