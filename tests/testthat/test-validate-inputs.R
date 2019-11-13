@@ -210,24 +210,19 @@ test_that("baseline data can be validated as a collection", {
   population <- file_object(file.path("testdata", "population.csv"))
   response <- do_validate_baseline(pjnz, shape, population)
   expect_true(response$consistent)
-  expect_true(response$complete)
 
   response <- do_validate_baseline(NULL, shape, population)
   expect_true(response$consistent)
-  expect_false(response$complete)
 
   response <- do_validate_baseline(pjnz, NULL, population)
   expect_true(response$consistent)
-  expect_false(response$complete)
 
   response <- do_validate_baseline(pjnz, shape, NULL)
   expect_true(response$consistent)
-  expect_false(response$complete)
 
   botswana_pjnz <- file.path("testdata", "Botswana2018.PJNZ")
   expect_error(do_validate_baseline(botswana_pjnz, shape, NULL))
 
   response <- do_validate_baseline(botswana_pjnz, NULL, population)
   expect_true(response$consistent)
-  expect_false(response$complete)
 })
