@@ -67,16 +67,21 @@ test_that("endpoint model run queues a model run", {
   result <- model_result(NULL, res, status$data$id)
   result <- jsonlite::parse_json(result)
   expect_equal(res$status, 200)
-  expect_equal(names(result$data), c("data", "filters"))
+  expect_equal(names(result$data), c("data", "plottingMetadata"))
   expect_equal(names(result$data$data[[1]]),
                c("area_id", "sex", "age_group_id", "quarter_id", "indicator_id",
                  "mode", "mean", "lower", "upper"))
   expect_length(result$data$data, 42021)
-  expect_equal(names(result$data$filters), c("age", "quarter", "indicators"))
-  expect_length(result$data$filters$age, 29)
-  expect_length(result$data$filters$quarter, 1)
-  expect_equal(result$data$filters$quarter[[1]]$label, "Jan-Mar 2016")
-  expect_length(result$data$filters$indicators, 7)
+  expect_equal(names(result$data$plottingMetadata), "barchart")
+  barchart <- result$data$plottingMetadata$barchart
+  expect_equal(names(barchart), c("indicators", "filters"))
+  expect_length(barchart$filters, 2)
+  expect_equal(barchart$filters[[1]]$id, "age")
+  expect_equal(barchart$filters[[2]]$id, "quarter")
+  expect_length(barchart$filters[[1]]$options, 29)
+  expect_length(barchart$filters[[2]]$options, 1)
+  expect_equal(barchart$filters[[2]]$options[[1]]$label, "Jan-Mar 2016")
+  expect_length(barchart$indicators, 7)
 })
 
 test_that("endpoint_run_model returns error if queueing fails", {

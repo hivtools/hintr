@@ -1,3 +1,7 @@
+# hintr 0.0.14
+
+* Return plotting metadata for barchart with the model result response
+
 # hintr 0.0.13
 
 * Caching enabled for geojson reading

@@ -61,26 +61,6 @@ test_that("get_survey_filters gets available filter options and sorts them", {
   expect_equal(get_age_filters(data.frame(survey_id = NULL)), list())
 })
 
-test_that("get_id_label_map correctly builds map", {
-  data <- data.frame(id = c(1, 1, 2, "prev", "art_coverage"),
-                     stringsAsFactors = FALSE)
-  expected_map <- list(
-    list(
-      id = scalar("population"),
-      label = scalar("Population")
-    ),
-    list(
-      id = scalar("prevalence"),
-      label = scalar("Prevalence")
-    ),
-    list(
-      id = scalar("art_coverage"),
-      label = scalar("ART coverage")
-    )
-  )
-  expect_equal(get_id_label_map(data, "id"), expected_map)
-})
-
 test_that("get_quarter_filters gets quarter names from ids", {
   data <- data.frame(quarter_id = c(465, 454))
   expected_filters <- list(
