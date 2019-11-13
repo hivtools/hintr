@@ -70,15 +70,22 @@ endpoint_model_options <- function(req, res, shape, survey, programme =  NULL, a
 
 endpoint_model_submit <- function(queue) {
   function(req, res, data, options, version) {
-    if (!is_current_version(version)) {
-      options <- update_options(options, version)
+    model_submit <- function() {
+      if (!is_current_version(version)) {
+        stop("Trying to run model with old version of options. Update model run options")
+      }
+      queue$submit(data, options)
     }
-    response <- with_success(
-      queue$submit(data, options))
+    response <- with_success(model_submit())
     if (response$success) {
       response$value <- list(id = scalar(response$value))
     } else {
-      response$errors <- hintr_errors(list("FAILED_TO_QUEUE" = response$message))
+      if (!is_current_version(version)) {
+        errors <- list("VERSION_OUT_OF_DATE" = response$message)
+      } else {
+        errors <- list("FAILED_TO_QUEUE" = response$message)
+      }
+      response$errors <- hintr_errors(errors)
       res$status <- 400
     }
     hintr_response(response, "ModelSubmitResponse")
