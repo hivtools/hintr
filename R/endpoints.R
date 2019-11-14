@@ -17,13 +17,13 @@ api_build <- function(queue) {
   pr$handle("GET", "/meta/plotting/<iso3>", endpoint_plotting_metadata,
             serializer = serializer_json_hintr())
   pr$handle("GET", "/download/spectrum/<id>", endpoint_download_spectrum(queue),
-            serializer = serializer_zip())
+            serializer = serializer_zip("naomi_spectrum_digest.zip"))
   pr$handle("HEAD", "/download/spectrum/<id>", endpoint_download_spectrum(queue),
-            serializer = serializer_zip())
+            serializer = serializer_zip("naomi_spectrum_digest.zip"))
   pr$handle("GET", "/download/summary/<id>", endpoint_download_summary(queue),
-            serializer = serializer_zip())
+            serializer = serializer_zip("naomi_summary.zip"))
   pr$handle("HEAD", "/download/summary/<id>", endpoint_download_summary(queue),
-            serializer = serializer_zip())
+            serializer = serializer_zip("naomi_summary.zip"))
   pr$handle("GET", "/hintr/version", endpoint_hintr_version,
             serializer = serializer_json_hintr())
   pr$handle("GET", "/hintr/worker/status", endpoint_hintr_worker_status(queue),
@@ -416,10 +416,12 @@ serializer_json_hintr <- function() {
   }
 }
 
-serializer_zip <- function() {
+serializer_zip <- function(filename) {
   function(val, req, res, errorHandler) {
     tryCatch({
       res$setHeader("Content-Type", "application/octet-stream")
+      res$setHeader("Content-Disposition",
+                    sprintf('attachment; filename="%s"', filename))
       res$body <- val
       return(res$toResponse())
     }, error = function(e) {
