@@ -274,7 +274,7 @@ $ curl -X POST -H 'Content-Type: application/json' \
 
     ],
     "data": {
-        "id": "9e9533716ae1ef229936a5175f9eda91"
+        "id": "fff14fcb70529a45668cddf8fab99bd3"
     }
 }
 ```
@@ -298,7 +298,7 @@ $ curl http://localhost:8888/model/status/{id}
         "progress": [
 
         ],
-        "id": "9e9533716ae1ef229936a5175f9eda91"
+        "id": "fff14fcb70529a45668cddf8fab99bd3"
     }
 }
 ```
@@ -339,11 +339,12 @@ $ curl -I http://localhost:8888/download/summary/{id}
 
 ```json
 HTTP/1.1 200 OK
-Date: Thu, 14 Nov 2019 15:39:06 GMT
+Date: Thu, 14 Nov 2019 16:04:02 GMT
 Content-Type: application/octet-stream
-Date: Thu, 14 Nov 2019 03:39:06 PM GMT
+Content-Disposition: attachment; filename="naomi_summary.zip"
+Date: Thu, 14 Nov 2019 04:04:02 PM GMT
 Connection: close
-Content-Length: 2530557
+Content-Length: 2530508
 
 ```
 Get the summary download
@@ -353,7 +354,7 @@ $ curl http://localhost:8888/download/summary/{id}
 ```
 
 ```json
-Hidden 11666 bytes of output
+Hidden 11632 bytes of output
 ```
 Headers for spectrum digest download
 
@@ -363,11 +364,12 @@ $ curl -I http://localhost:8888/download/spectrum/{id}
 
 ```json
 HTTP/1.1 200 OK
-Date: Thu, 14 Nov 2019 15:39:07 GMT
+Date: Thu, 14 Nov 2019 16:04:02 GMT
 Content-Type: application/octet-stream
-Date: Thu, 14 Nov 2019 03:39:07 PM GMT
+Content-Disposition: attachment; filename="naomi_spectrum_digest.zip"
+Date: Thu, 14 Nov 2019 04:04:02 PM GMT
 Connection: close
-Content-Length: 2530557
+Content-Length: 2530508
 
 ```
 Get the spectrum digest download
@@ -377,7 +379,7 @@ $ curl http://localhost:8888/download/spectrum/{id}
 ```
 
 ```json
-Hidden 11666 bytes of output
+Hidden 11632 bytes of output
 ```
 Get plotting metadata for Malawi
 
@@ -421,7 +423,7 @@ $ curl http://localhost:8888/hintr/version
 
     ],
     "data": {
-        "hintr": "0.0.14",
+        "hintr": "0.0.15",
         "naomi": "0.0.16",
         "rrq": "0.2.1"
     }
@@ -440,8 +442,8 @@ $ curl http://localhost:8888/hintr/worker/status
 
     ],
     "data": {
-        "vaccinated_indianabat_2": "IDLE",
-        "vaccinated_indianabat_1": "IDLE"
+        "unacknowledged_pilchard_2": "IDLE",
+        "unacknowledged_pilchard_1": "IDLE"
     }
 }
 ```
