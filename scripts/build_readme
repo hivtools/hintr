@@ -59,6 +59,10 @@ pretty_truncate <- function(x, format = "json", max = 20) {
     str <- strsplit(jsonlite::prettify(x), "\n", fixed = TRUE)[[1]]
   } else if (format == "bytes") {
     str <- sprintf("Hidden %d bytes of output", length(x))
+  } else if (format == "header") {
+    str <- paste(x, collapse = "\n")
+  } else {
+    stop(sprintf("Unknown format type %s", format))
   }
 
   if (length(str) > max) {

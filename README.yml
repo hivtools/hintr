@@ -65,9 +65,17 @@
 - comment: Get the result of a model run
   command: http://localhost:8888/model/result/{id}
 
+- comment: Headers for summary download
+  command: -I http://localhost:8888/download/summary/{id}
+  format: header
+
 - comment: Get the summary download
   command: http://localhost:8888/download/summary/{id}
   format: bytes
+
+- comment: Headers for spectrum digest download
+  command: -I http://localhost:8888/download/spectrum/{id}
+  format: header
 
 - comment: Get the spectrum digest download
   command: http://localhost:8888/download/spectrum/{id}

@@ -274,7 +274,7 @@ $ curl -X POST -H 'Content-Type: application/json' \
 
     ],
     "data": {
-        "id": "b96e7ca64d5b559067a9bed205bf1c4c"
+        "id": "9e9533716ae1ef229936a5175f9eda91"
     }
 }
 ```
@@ -295,9 +295,10 @@ $ curl http://localhost:8888/model/status/{id}
         "status": "RUNNING",
         "success": null,
         "queue": 0,
-        "id": "b96e7ca64d5b559067a9bed205bf1c4c",
-        "progress": "50%",
-        "timeRemaining": "10s"
+        "progress": [
+
+        ],
+        "id": "9e9533716ae1ef229936a5175f9eda91"
     }
 }
 ```
@@ -328,7 +329,22 @@ $ curl http://localhost:8888/model/result/{id}
             },
             {
                 "area_id": "MWI",
-... truncated 462377 lines of output
+... truncated 462426 lines of output
+```
+Headers for summary download
+
+```
+$ curl -I http://localhost:8888/download/summary/{id}
+```
+
+```json
+HTTP/1.1 200 OK
+Date: Thu, 14 Nov 2019 15:39:06 GMT
+Content-Type: application/octet-stream
+Date: Thu, 14 Nov 2019 03:39:06 PM GMT
+Connection: close
+Content-Length: 2530557
+
 ```
 Get the summary download
 
@@ -337,7 +353,22 @@ $ curl http://localhost:8888/download/summary/{id}
 ```
 
 ```json
-Hidden 11770 bytes of output
+Hidden 11666 bytes of output
+```
+Headers for spectrum digest download
+
+```
+$ curl -I http://localhost:8888/download/spectrum/{id}
+```
+
+```json
+HTTP/1.1 200 OK
+Date: Thu, 14 Nov 2019 15:39:07 GMT
+Content-Type: application/octet-stream
+Date: Thu, 14 Nov 2019 03:39:07 PM GMT
+Connection: close
+Content-Length: 2530557
+
 ```
 Get the spectrum digest download
 
@@ -346,7 +377,7 @@ $ curl http://localhost:8888/download/spectrum/{id}
 ```
 
 ```json
-Hidden 11770 bytes of output
+Hidden 11666 bytes of output
 ```
 Get plotting metadata for Malawi
 
@@ -375,7 +406,7 @@ $ curl http://localhost:8888/meta/plotting/Malawi
                         "colour": "interpolateViridis",
                         "invert_scale": false
                     },
-... truncated 166 lines of output
+... truncated 247 lines of output
 ```
 Get information about hintr versions
 
@@ -390,8 +421,8 @@ $ curl http://localhost:8888/hintr/version
 
     ],
     "data": {
-        "hintr": "0.0.12",
-        "naomi": "0.0.12",
+        "hintr": "0.0.14",
+        "naomi": "0.0.16",
         "rrq": "0.2.1"
     }
 }
@@ -409,8 +440,8 @@ $ curl http://localhost:8888/hintr/worker/status
 
     ],
     "data": {
-        "dramatisable_cuttlefish_2": "IDLE",
-        "dramatisable_cuttlefish_1": "IDLE"
+        "vaccinated_indianabat_2": "IDLE",
+        "vaccinated_indianabat_1": "IDLE"
     }
 }
 ```
