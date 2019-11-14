@@ -1,4 +1,4 @@
-# 0.0.15
+# hintr 0.0.15
 
 * Add HEAD endpoints for summary and spectrum downloads
 
