@@ -26,7 +26,6 @@ test_that("model can be run and filters extracted", {
 })
 
 test_that("real model can be run", {
-  testthat::skip("test")
   data <- list(
     pjnz = file.path("testdata", "Malawi2019.PJNZ"),
     shape = file.path("testdata", "malawi.geojson"),
