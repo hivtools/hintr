@@ -184,6 +184,5 @@ do_validate_baseline <- function(pjnz, shape, population) {
     consistent_regions <- assert_consistent_regions(
       shape_regions, population_regions, "population")
   }
-  list(complete = scalar(check_country && check_regions),
-       consistent = scalar(consistent_country && consistent_regions))
+  list(consistent = scalar(consistent_country && consistent_regions))
 }
