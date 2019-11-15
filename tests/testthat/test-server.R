@@ -145,7 +145,6 @@ test_that("validate baseline", {
   response <- response_from_json(r)
   expect_equal(response$status, "success")
   expect_equal(response$errors, list())
-  expect_equal(response$data$complete, TRUE)
   expect_equal(response$data$consistent, TRUE)
 })
 

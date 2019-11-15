@@ -14,7 +14,6 @@ test_that("endpoint_validate_baseline_combined correctly validates data", {
   expect_equal(response$status, "success")
   expect_equal(response$errors, list())
   expect_equal(response$data$consistent, TRUE)
-  expect_equal(response$data$complete, TRUE)
   expect_equal(res$status, 200)
 })
 

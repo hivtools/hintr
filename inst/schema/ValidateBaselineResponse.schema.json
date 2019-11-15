@@ -2,12 +2,10 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "complete": { "type": "boolean" },
     "consistent": { "type": "boolean" }
   },
   "additionalProperties": false,
   "required": [
-    "complete",
     "consistent"
   ]
 }
