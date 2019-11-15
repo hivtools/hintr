@@ -27,11 +27,13 @@ build_validate_request <- function(pjnz) {
 MockPlumberResponse <- R6::R6Class("PlumberResponse", list(
   body = NULL,
   status = 200,
-  header = NULL,
-  setHeader = function(...) {
-    self$header <- paste(..., sep = ": ")
+  headers = list(),
+  setHeader = function(name, value) {
+    he <- list()
+    he[[name]] <- value
+    self$headers <- c(self$headers, he)
   },
   toResponse = function() {
-    list(header = self$header, body = self$body)
+    list(headers = self$headers, body = self$body)
   }
 ))
