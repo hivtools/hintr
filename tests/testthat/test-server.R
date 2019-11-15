@@ -433,8 +433,8 @@ test_that("spectrum file download streams bytes", {
     r <- httr::GET(paste0(server$url, "/download/spectrum/", response$data$id))
     expect_equal(httr::status_code(r), 200)
     expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
-    expect_equal(httr::headers(r)$`content-disposition`,
-                 'attachment; filename="naomi_spectrum_digest.zip"')
+    expect_match(httr::headers(r)$`content-disposition`,
+                 'attachment; filename="naomi_spectrum_digest_\\w+.zip"')
     ## Size of bytes is close to expected
     size <- as.numeric(httr::headers(r)$`content-length`)
     expect_true(size - size/10 <
@@ -472,8 +472,8 @@ test_that("summary file download streams bytes", {
     r <- httr::GET(paste0(server$url, "/download/summary/", response$data$id))
     expect_equal(httr::status_code(r), 200)
     expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
-    expect_equal(httr::headers(r)$`content-disposition`,
-                 'attachment; filename="naomi_summary.zip"')
+    expect_match(httr::headers(r)$`content-disposition`,
+                 'attachment; filename="naomi_summary\\w+.zip"')
     ## Size of bytes is close to expected
     size <- as.numeric(httr::headers(r)$`content-length`)
     expect_true(size - size/10 <
