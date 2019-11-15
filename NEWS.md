@@ -1,3 +1,7 @@
+# hintr 0.0.15
+
+* Add HEAD endpoints for summary and spectrum downloads
+
 # hintr 0.0.14
 
 * Return plotting metadata for barchart with the model result response

@@ -440,6 +440,11 @@ test_that("spectrum file download streams bytes", {
     expect_true(size + size/10 >
       file.size(system_file("output", "malawi_spectrum_download.zip")))
   })
+
+  ## Headers can be retrieved
+  r <- httr::HEAD(paste0(server$url, "/download/spectrum/", response$data$id))
+  expect_equal(httr::status_code(r), 200)
+  expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
 })
 
 test_that("summary file download streams bytes", {
@@ -470,6 +475,11 @@ test_that("summary file download streams bytes", {
     expect_true(size + size/10 >
       file.size(system_file("output", "malawi_summary_download.zip")))
   })
+
+  ## Headers can be retrieved
+  r <- httr::HEAD(paste0(server$url, "/download/summary/", response$data$id))
+  expect_equal(httr::status_code(r), 200)
+  expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
 })
 
 test_that("can quit", {
