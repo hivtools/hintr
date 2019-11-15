@@ -41,10 +41,11 @@ test_that("indicator download returns bytes", {
   testthat::try_again(4, {
     Sys.sleep(2)
     download_summary <- endpoint_download_summary(queue)
-    bytes <- download_summary(NULL, res, response$data$id)
-    expect_type(bytes, "raw")
-    expect_length(bytes, file.size(system_file("output",
+    download <- download_summary(NULL, res, response$data$id)
+    expect_type(download$data, "raw")
+    expect_length(download$data, file.size(system_file("output",
                                                "malawi_summary_download.zip")))
+    expect_equal(download$id, response$data$id)
   })
 })
 
@@ -89,9 +90,10 @@ test_that("spectrum download returns bytes", {
   testthat::try_again(4, {
     Sys.sleep(2)
     download_spectrum <- endpoint_download_spectrum(queue)
-    bytes <- download_spectrum(NULL, res, response$data$id)
-    expect_type(bytes, "raw")
-    expect_length(bytes, file.size(system_file("output",
+    download <- download_spectrum(NULL, res, response$data$id)
+    expect_type(download$bytes, "raw")
+    expect_length(download$bytes, file.size(system_file("output",
                                                "malawi_spectrum_download.zip")))
+    expect_equal(download$id, response$data$id)
   })
 })

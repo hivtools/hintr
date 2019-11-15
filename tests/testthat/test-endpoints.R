@@ -180,14 +180,15 @@ test_that("serializer_zip sets headers and streams bytes", {
     e$message
   }
 
-  serializer <- serializer_zip("test_filename.zip")
+  serializer <- serializer_zip("test")
 
-  output <- serializer("value", req, res, errorHandler)
+  output <- serializer(list(bytes = "value", id = "1234567"), req, res,
+                       errorHandler)
   expect_equal(output$body, "value")
   expect_equal(names(output$headers), c("Content-Type", "Content-Disposition"))
   expect_equal(output$headers$`Content-Type`, "application/octet-stream")
   expect_equal(output$headers$`Content-Disposition`,
-               'attachment; filename="test_filename.zip"')
+               'attachment; filename="test_12345.zip"')
 })
 
 test_that("Schemas are draft-04", {
