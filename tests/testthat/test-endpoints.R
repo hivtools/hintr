@@ -256,21 +256,21 @@ test_that("possible filters are returned for data", {
     shape)
   response <- jsonlite::parse_json(response)
 
-  expect_equal(names(response$data$filters), c("age", "quarter", "indicators"))
+  expect_equal(names(response$data$filters), c("age", "year", "indicators"))
   expect_length(response$data$filters$age, 2)
   expect_equal(response$data$filters$age, list(
     list(
-      id = "20",
+      id = "15+",
       label = "15+"
     ),
     list(
-      id = "24",
+      id = "00-14",
       label = "0-14"
     )
   ))
-  expect_length(response$data$filters$quarter, 32)
-  expect_equal(response$data$filters$quarter[[1]]$id, "445")
-  expect_equal(response$data$filters$quarter[[1]]$label, "Jan-Mar 2011")
+  expect_length(response$data$filters$year, 8)
+  expect_equal(response$data$filters$year[[1]]$id, "2011")
+  expect_equal(response$data$filters$year[[1]]$label, "2011")
 
   expect_length(response$data$filters$indicators, 1)
   expect_equal(response$data$filters$indicators[[1]]$id, "current_art")
@@ -288,10 +288,10 @@ test_that("possible filters are returned for data", {
     shape)
   response <- jsonlite::parse_json(response)
 
-  expect_equal(names(response$data$filters), c("quarter", "indicators"))
-  expect_length(response$data$filters$quarter, 29)
-  expect_equal(response$data$filters$quarter[[1]]$id, "447")
-  expect_equal(response$data$filters$quarter[[1]]$label, "Jul-Sep 2011")
+  expect_equal(names(response$data$filters), c("year", "indicators"))
+  expect_length(response$data$filters$year, 8)
+  expect_equal(response$data$filters$year[[1]]$id, "2011")
+  expect_equal(response$data$filters$year[[1]]$label, "2011")
 
   expect_length(response$data$filters$indicators, 2)
   expect_equal(response$data$filters$indicators[[1]]$id, "prevalence")

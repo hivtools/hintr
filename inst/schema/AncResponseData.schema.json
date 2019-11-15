@@ -7,10 +7,10 @@
       "area_id": {
         "type": "string"
       },
-      "age_group_id": {
-        "type": "number"
+      "age_group": {
+        "type": "string"
       },
-      "quarter_id": {
+      "year": {
         "type": "number"
       },
       "anc_clients": {

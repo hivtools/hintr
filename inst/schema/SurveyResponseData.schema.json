@@ -4,9 +4,6 @@
   "items": {
     "type": "object",
     "properties": {
-      "iso3": {
-        "type": "string"
-      },
       "area_id": {
         "type": "string"
       },
@@ -15,6 +12,6 @@
       }
     },
     "additonalProperties": "true",
-    "required": [ "iso3", "area_id", "survey_id" ]
+    "required": [ "area_id", "survey_id" ]
   }
 }
