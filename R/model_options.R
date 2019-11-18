@@ -38,15 +38,15 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
   )
 
   ## ART options
-  art_quarter_options <- NULL
+  art_year_options <- NULL
   if (has_art) {
-    art_quarter_options <- get_quarter_filters(read_csv(programme$path))
+    art_year_options <- get_year_filters(read_csv(programme$path))
   }
 
   ## ANC options
-  anc_quarter_options <- NULL
+  anc_year_options <- NULL
   if (has_anc) {
-    anc_quarter_options <- get_quarter_filters(read_csv(anc$path))
+    anc_year_options <- get_year_filters(read_csv(anc$path))
   }
 
 
@@ -61,12 +61,12 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
     survey_vls_options = survey_options,
     survey_recently_infected_options = survey_options,
     survey_art_or_vls_options = survey_art_or_vls_options,
-    art_t1_options = art_quarter_options,
-    art_t2_options = art_quarter_options,
-    anc_prevalence_t1_options = anc_quarter_options,
-    anc_prevalence_t2_options = anc_quarter_options,
-    anc_art_coverage_t1_options = anc_quarter_options,
-    anc_art_coverage_t2_options = anc_quarter_options
+    art_t1_options = art_year_options,
+    art_t2_options = art_year_options,
+    anc_prevalence_t1_options = anc_year_options,
+    anc_prevalence_t2_options = anc_year_options,
+    anc_art_coverage_t1_options = anc_year_options,
+    anc_art_coverage_t2_options = anc_year_options
   )
   build_json(options_stitched, params)
 }
@@ -118,10 +118,10 @@ get_level_options <- function(json) {
 }
 
 get_time_options <- function() {
-  start_date <- naomi::convert_quarter_id(1, 2012)
+  start_date <- naomi::convert_quarter_id(2012, 1)
   current_quarter <- substr(quarters(Sys.Date()), 2, 2)
-  end_date <- naomi::convert_quarter_id(as.integer(current_quarter),
-                                        as.integer(format(Sys.Date(), "%Y")))
+  end_date <- naomi::convert_quarter_id(as.integer(format(Sys.Date(), "%Y")),
+                                        as.integer(current_quarter))
   times <- seq.int(end_date, start_date, -1)
   lapply(times, function(time) {
     list(

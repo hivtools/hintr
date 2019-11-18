@@ -116,14 +116,13 @@ test_that("do_endpoint_model_options correctly builds params list", {
   expect_equal(params$survey_art_or_vls_options[[1]]$id,
                scalar("art_coverage"))
   expect_equal(params$survey_art_or_vls_options[[2]]$id, scalar("vls"))
-  expect_length(params$art_t1_options, 32)
-  expect_equal(params$art_t1_options[[1]]$id, scalar("445"))
-  expect_equal(params$art_t1_options[[1]]$label, scalar("Jan-Mar 2011"))
+  expect_length(params$art_t1_options, 8)
+  expect_equal(params$art_t1_options[[1]]$id, scalar("2011"))
+  expect_equal(params$art_t1_options[[1]]$label, scalar("2011"))
   expect_equal(params$art_t2_options, params$art_t1_options)
-  expect_length(params$anc_prevalence_t1_options, 29)
-  expect_equal(params$anc_prevalence_t1_options[[1]]$id, scalar("447"))
-  expect_equal(params$anc_prevalence_t1_options[[1]]$label,
-               scalar("Jul-Sep 2011"))
+  expect_length(params$anc_prevalence_t1_options, 8)
+  expect_equal(params$anc_prevalence_t1_options[[1]]$id, scalar("2011"))
+  expect_equal(params$anc_prevalence_t1_options[[1]]$label, scalar("2011"))
   expect_equal(params$anc_prevalence_t1_options,
                params$anc_prevalence_t2_options)
   expect_equal(params$anc_prevalence_t1_options,
@@ -276,41 +275,41 @@ test_that("can retrieve validated model options", {
   art_section <- json$controlSections[[3]]
   expect_length(
     art_section$controlGroups[[1]]$controls[[1]]$options,
-    32
+    8
   )
   expect_equal(
     names(art_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
     c("id", "label"))
   expect_equal(
     art_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
-    "445")
+    "2011")
   expect_equal(
     art_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
-    "Jan-Mar 2011")
+    "2011")
   expect_equal(
     names(art_section$controlGroups[[1]]$controls[[2]]$options[[1]]),
     c("id", "label"))
   expect_equal(
     art_section$controlGroups[[1]]$controls[[2]]$options[[1]]$id,
-    "445")
+    "2011")
   expect_equal(
     art_section$controlGroups[[1]]$controls[[2]]$options[[1]]$label,
-    "Jan-Mar 2011")
+    "2011")
 
   anc_section <- json$controlSections[[4]]
   expect_length(
     anc_section$controlGroups[[1]]$controls[[1]]$options,
-    29
+    8
   )
   expect_equal(
     names(anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
     c("id", "label"))
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
-    "447")
+    "2011")
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
-    "Jul-Sep 2011")
+    "2011")
 })
 
 

@@ -10,15 +10,15 @@ test_that("can read geojson regions", {
   shape <- file_object(file.path("testdata", "malawi.geojson"))
   regions <- read_geojson_regions(shape)
   expect_length(regions, 69)
-  expect_equal(regions[1:5], c("MWI", "MWI.1", "MWI.2", "MWI.3", "MWI.1.1"))
+  expect_equal(regions[1:5], c("MWI", "MWI_1", "MWI_2", "MWI_3", "MWI_1_1"))
 })
 
 test_that("can read regions from csv file", {
   programme <- file_object(file.path("testdata", "programme.csv"))
   regions <- read_csv_regions(programme)
   expect_length(regions, 32)
-  expect_equal(regions[1:3], c("MWI.3.4.18.20", "MWI.3.5.23.26",
-                               "MWI.3.5.23.29"))
+  expect_equal(regions[1:3], c("MWI_3_4_18_20", "MWI_3_5_23_26",
+                               "MWI_3_5_23_29"))
 })
 
 test_that("can read iso3 from PJNZ", {

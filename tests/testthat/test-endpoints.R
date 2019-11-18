@@ -464,41 +464,41 @@ test_that("endpoint_model_options returns model options", {
   art_section <- json$data$controlSections[[3]]
   expect_length(
     art_section$controlGroups[[1]]$controls[[1]]$options,
-    32
+    8
   )
   expect_equal(
     names(art_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
     c("id", "label"))
   expect_equal(
     art_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
-    "445")
+    "2011")
   expect_equal(
     art_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
-    "Jan-Mar 2011")
+    "2011")
   expect_equal(
     names(art_section$controlGroups[[1]]$controls[[2]]$options[[1]]),
     c("id", "label"))
   expect_equal(
     art_section$controlGroups[[1]]$controls[[2]]$options[[1]]$id,
-    "445")
+    "2011")
   expect_equal(
     art_section$controlGroups[[1]]$controls[[2]]$options[[1]]$label,
-    "Jan-Mar 2011")
+    "2011")
 
   anc_section <- json$data$controlSections[[4]]
   expect_length(
     anc_section$controlGroups[[1]]$controls[[1]]$options,
-    29
+    8
   )
   expect_equal(
     names(anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
     c("id", "label"))
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
-    "447")
+    "2011")
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
-    "Jul-Sep 2011")
+    "2011")
 })
 
 test_that("endpoint_model_options can be run without programme data", {
