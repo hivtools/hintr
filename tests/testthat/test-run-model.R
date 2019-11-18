@@ -37,18 +37,18 @@ test_that("real model can be run", {
   options <- list(
     area_scope = "MWI",
     area_level = 4,
-    t1 = 465,
-    t2 = 475,
+    calendar_quarter_t1 = "CY2016Q1",
+    calendar_quarter_t2 = "CY2018Q3",
     survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
     survey_art_coverage = "MWI2016PHIA",
     survey_recently_infected = "MWI2016PHIA",
     survey_art_or_vls = "art_coverage",
-    art_t1 = 465,
-    art_t2 = 475,
-    anc_prevalence_t1 = 464,
-    anc_prevalence_t2 = 475,
-    anc_art_coverage_t1 = 464,
-    anc_art_coverage_t2 = 475,
+    art_calendar_quarter1 = "CY2016Q1",
+    art_calendar_quarter2 = "CY2018Q3",
+    anc_prevalence_year1 = 2016,
+    anc_prevalence_year2 = 2018,
+    anc_art_coverage_year1 = 2016,
+    anc_art_coverage_year2 = 2018,
     no_of_samples = 20
   )
   withr::with_envvar(c("USE_MOCK_MODEL" = "false"), {

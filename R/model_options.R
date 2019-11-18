@@ -54,19 +54,17 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
     area_scope_options = list(regions),
     area_scope_default = parent_region_id,
     area_level_options = area_level_options,
-    t1_options = time_options,
-    t2_options = time_options,
+    calendar_quarter_t1_options = time_options,
+    calendar_quarter_t2_options = time_options,
     survey_prevalence_options = survey_options,
     survey_art_coverage_options = survey_options,
     survey_vls_options = survey_options,
     survey_recently_infected_options = survey_options,
     survey_art_or_vls_options = survey_art_or_vls_options,
-    art_t1_options = art_year_options,
-    art_t2_options = art_year_options,
-    anc_prevalence_t1_options = anc_year_options,
-    anc_prevalence_t2_options = anc_year_options,
-    anc_art_coverage_t1_options = anc_year_options,
-    anc_art_coverage_t2_options = anc_year_options
+    anc_prevalence_year1_options = anc_year_options,
+    anc_prevalence_year2_options = anc_year_options,
+    anc_art_coverage_year1_options = anc_year_options,
+    anc_art_coverage_year2_options = anc_year_options
   )
   build_json(options_stitched, params)
 }
@@ -125,7 +123,7 @@ get_time_options <- function() {
   times <- seq.int(end_date, start_date, -1)
   lapply(times, function(time) {
     list(
-      id = scalar(as.character(time)),
+      id = scalar(naomi::quarter_id_to_calendar_quarter(time)),
       label = scalar(naomi::quarter_year_labels(time))
     )
   })
