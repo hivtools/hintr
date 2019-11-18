@@ -448,7 +448,7 @@ test_that("spectrum file download streams bytes", {
   expect_equal(httr::status_code(r), 200)
   expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
   expect_equal(httr::headers(r)$`content-disposition`,
-    'attachment; filename="naomi_spectrum_digest.zip"')
+    'attachment; filename="naomi_spectrum_digest_\\w+.zip"')
 })
 
 test_that("summary file download streams bytes", {
@@ -487,7 +487,7 @@ test_that("summary file download streams bytes", {
   expect_equal(httr::status_code(r), 200)
   expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
   expect_equal(httr::headers(r)$`content-disposition`,
-               'attachment; filename="naomi_summary.zip"')
+               'attachment; filename="naomi_summary_\\w+.zip"')
 })
 
 test_that("can quit", {
