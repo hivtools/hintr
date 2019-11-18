@@ -42,8 +42,8 @@ test_that("indicator download returns bytes", {
     Sys.sleep(2)
     download_summary <- endpoint_download_summary(queue)
     download <- download_summary(NULL, res, response$data$id)
-    expect_type(download$data, "raw")
-    expect_length(download$data, file.size(system_file("output",
+    expect_type(download$bytes, "raw")
+    expect_length(download$bytes, file.size(system_file("output",
                                                "malawi_summary_download.zip")))
     expect_equal(download$id, response$data$id)
   })
