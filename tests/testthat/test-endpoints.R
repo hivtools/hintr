@@ -652,7 +652,7 @@ test_that("404 handler", {
   res <- MockPlumberResponse$new()
   req <- list(REQUEST_METHOD = "POST",
               PATH_INFO = "/my/path")
-  ans <- hintr_404(req, res)
+  ans <- hintr_404_handler(req, res)
   expect_is(ans, "list") # not json
   expect_equal(ans$status, scalar("failure"))
   expect_equal(ans$errors,
@@ -660,4 +660,22 @@ test_that("404 handler", {
                  error = scalar("NOT_FOUND"),
                  detail = scalar("POST /my/path is not a valid hintr path"))))
   expect_identical(res$status, 404L)
+})
+
+test_that("error handler", {
+  err <- simpleCondition("some error", quote(f(x)))
+  res <- MockPlumberResponse$new()
+  req <- list(REQUEST_METHOD = "POST",
+              PATH_INFO = "/my/path")
+  ans <- hintr_error_handler(req, res, err)
+  expect_is(ans, "PlumberResponse")
+  expect_is(ans$body, "json")
+  validate_json_schema(ans$body, "Response")
+  dat <- jsonlite::fromJSON(ans$body, simplifyVector = FALSE)
+  expect_equal(dat$status, "failure")
+  detail <- paste("Unexpected server error in 'f(x)' :",
+                  "'some error' while doing 'POST /my/path'")
+  expect_equal(dat$errors,
+               list(list(error = "SERVER_ERROR", detail = detail)))
+  expect_identical(res$status, 500L)
 })
