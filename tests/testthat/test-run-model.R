@@ -43,8 +43,7 @@ test_that("real model can be run", {
     survey_art_coverage = "MWI2016PHIA",
     survey_recently_infected = "MWI2016PHIA",
     survey_art_or_vls = "art_coverage",
-    art_calendar_quarter1 = "CY2016Q1",
-    art_calendar_quarter2 = "CY2018Q3",
+    include_art = "true",
     anc_prevalence_year1 = 2016,
     anc_prevalence_year2 = 2018,
     anc_art_coverage_year1 = 2016,
@@ -60,8 +59,9 @@ test_that("real model can be run", {
   output <- readRDS(model_run$output_path)
   expect_equal(colnames(output),
                c("area_level", "area_level_label", "area_id", "area_name",
-                 "sex", "age_group_id", "age_group_label", "quarter_id",
-                 "quarter_label", "indicator_id", "indicator_label", "mode",
+                 "sex", "age_group", "age_group_id", "age_group_label",
+                 "calendar_quarter", "quarter_id", "quarter_label", "indicator"
+                 "indicator_id", "indicator_label", "mode",
                  "mean", "se", "median", "lower", "upper"))
   expect_true(nrow(output) == 42021)
 
