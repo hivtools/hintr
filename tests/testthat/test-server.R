@@ -531,7 +531,7 @@ test_that("Error handler is triggered", {
   expect_equal(dat$status, "failure")
   expect_equal(dat$errors[[1]]$error,
                "SERVER_ERROR")
-  detail <- paste("Unexpected server error in 'val$id' :",
+  detail <- paste("Unexpected server error in '<call missing>' :",
                   "'$ operator is invalid for atomic vectors' while doing",
                   "'GET /download/summary/asdfasdfa'")
   expect_equal(dat$errors[[1]]$detail, detail)
