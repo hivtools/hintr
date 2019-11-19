@@ -505,3 +505,15 @@ test_that("can quit", {
 
   expect_false(server$process$is_alive())
 })
+
+test_that("404 pages have sensible schema", {
+  server <- hintr_server()
+  r <- httr::GET(paste0(server$url, "/meaning-of-life"))
+  dat <- httr::content(r, "parsed", encoding = "UTF-8")
+  expect_equal(dat$status, "failure")
+  expect_equal(dat$errors[[1]]$error,
+               "NOT_FOUND")
+  expect_equal(dat$errors[[1]]$detail,
+               "GET /meaning-of-life is not a valid hintr path")
+  dat$status_code <- 404
+})

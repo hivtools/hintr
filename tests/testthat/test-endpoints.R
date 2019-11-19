@@ -647,3 +647,17 @@ test_that("can convert model status to scalar", {
   )
   expect_equal(response, expected_response)
 })
+
+test_that("404 handler", {
+  res <- MockPlumberResponse$new()
+  req <- list(REQUEST_METHOD = "POST",
+              PATH_INFO = "/my/path")
+  ans <- hintr_404(req, res)
+  expect_is(ans, "list") # not json
+  expect_equal(ans$status, scalar("failure"))
+  expect_equal(ans$errors,
+               list(list(
+                 error = scalar("NOT_FOUND"),
+                 detail = scalar("POST /my/path is not a valid hintr path"))))
+  expect_identical(res$status, 404L)
+})
