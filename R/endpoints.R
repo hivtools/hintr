@@ -484,13 +484,15 @@ hintr_404_handler <- function(req, res) {
 # It's not possible to get the traceback at this point
 hintr_error_handler <- function(req, res, error) {
   res$status <- 500L
+  if (is.null(error$call)) {
+    call <- "<call missing>"
+  } else {
+    call <- paste(deparse(error$call), collapse = " ")
+  }
   detail <- sprintf(
     "Unexpected server error in '%s' : '%s' while doing '%s %s'",
-    paste(deparse(error$call) %||% "<call missing>", collapse = " "),
-    error$message,
-    req$REQUEST_METHOD,
-    req$PATH_INFO)
-  message(detail)
+    call, error$message, req$REQUEST_METHOD, req$PATH_INFO)
+  api_log("ERROR: %s", detail)
   errors <- hintr_errors(list("SERVER_ERROR" = detail))
   # This seems at odds with the default handler present in the plumber
   # package, and it also seems entirely undocumented.

@@ -679,3 +679,21 @@ test_that("error handler", {
                list(list(error = "SERVER_ERROR", detail = detail)))
   expect_identical(res$status, 500L)
 })
+
+test_that("error handler with no call", {
+  err <- simpleCondition("some error", NULL)
+  res <- MockPlumberResponse$new()
+  req <- list(REQUEST_METHOD = "POST",
+              PATH_INFO = "/my/path")
+  ans <- hintr_error_handler(req, res, err)
+  expect_is(ans, "PlumberResponse")
+  expect_is(ans$body, "json")
+  validate_json_schema(ans$body, "Response")
+  dat <- jsonlite::fromJSON(ans$body, simplifyVector = FALSE)
+  expect_equal(dat$status, "failure")
+  detail <- paste("Unexpected server error in '<call missing>' :",
+                  "'some error' while doing 'POST /my/path'")
+  expect_equal(dat$errors,
+               list(list(error = "SERVER_ERROR", detail = detail)))
+  expect_identical(res$status, 500L)
+})
