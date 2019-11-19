@@ -30,6 +30,10 @@ api_build <- function(queue) {
             serializer = serializer_json_hintr())
   pr$handle("POST", "/hintr/stop", endpoint_hintr_stop(queue))
   pr$handle("GET", "/", api_root)
+
+  pr$registerHook("preroute", api_log_start)
+  pr$registerHook("postserialize", api_log_end)
+
   pr
 }
 
@@ -40,6 +44,25 @@ api_run <- function(pr, port = 8888) {
 api <- function(port = 8888, queue_id = NULL, workers = 2) {
   queue <- Queue$new(queue_id, workers) # nocov
   api_run(api_build(queue), port) # nocov
+}
+
+api_log_start <- function(data, req, res) {
+  api_log("%s %s", req$REQUEST_METHOD, req$PATH_INFO)
+}
+
+api_log_end <- function(data, req, res, value) {
+  if (is.raw(value$body)) {
+    size <- length(value$body)
+  } else {
+    size <- nchar(value$body)
+  }
+  api_log("`--> %d (%d bytes)", value$status, size)
+  value
+}
+
+# We can route this via some check for enabling/disabling logging later
+api_log <- function(fmt, ...) {
+  message(sprintf("[%s] %s", Sys.time(), sprintf(fmt, ...)))
 }
 
 #' Get function to generate model options from Naomi template and input files
