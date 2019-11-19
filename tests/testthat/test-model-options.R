@@ -141,12 +141,13 @@ test_that("do_endpoint_model_options without programme data", {
   params <- args[[1]][[2]]
   expect_equal(names(params),
                c("area_scope_options", "area_scope_default", "area_level_options",
-                 "t1_options", "t2_options", "survey_prevalence_options",
-                 "survey_art_coverage_options", "survey_vls_options",
-                 "survey_recently_infected_options", "survey_art_or_vls_options",
-                 "art_t1_options", "art_t2_options", "anc_prevalence_t1_options",
-                 "anc_prevalence_t2_options", "anc_art_coverage_t1_options",
-                 "anc_art_coverage_t2_options"))
+                 "calendar_quarter_t1_options", "calendar_quarter_t2_options",
+                 "survey_prevalence_options", "survey_art_coverage_options",
+                 "survey_vls_options", "survey_recently_infected_options",
+                 "survey_art_or_vls_options", "anc_prevalence_year1_options",
+                 "anc_prevalence_year2_options",
+                 "anc_art_coverage_year1_options",
+                 "anc_art_coverage_year2_options"))
 
   expect_length(params$area_scope_options, 1)
   expect_equal(names(params$area_scope_options[[1]]),
@@ -176,16 +177,14 @@ test_that("do_endpoint_model_options without programme data", {
       id = scalar("4"),
       label = scalar("District + Metro")
     )))
-  expect_equal(params$t1_options[[length(params$t1_options)]]$id,
-               scalar("449"))
-  expect_equal(params$t1_options[[length(params$t1_options)]]$label,
-               scalar("Jan-Mar 2012"))
-  expect_true(length(params$t1_options) >= 32)
-  expect_equal(params$t1_options[[length(params$t1_options)]]$id,
-               scalar("449"))
-  expect_equal(params$t1_options[[length(params$t2_options)]]$label,
-               scalar("Jan-Mar 2012"))
-  expect_true(length(params$t2_options) >= 32)
+  t1 <- params$calendar_quarter_t1_options
+  expect_equal(t1[[length(t1)]]$id, scalar("CY2012Q1"))
+  expect_equal(t1[[length(t1)]]$label, scalar("Jan-Mar 2012"))
+  expect_true(length(t1) >= 32)
+  t2 <- params$calendar_quarter_t2_options
+  expect_equal(t2[[length(t2)]]$id, scalar("CY2012Q1"))
+  expect_equal(t2[[length(t2)]]$label, scalar("Jan-Mar 2012"))
+  expect_true(length(t2) >= 32)
   expect_length(params$survey_prevalence_options, 4)
   expect_equal(params$survey_prevalence_options[[1]]$id,
                scalar("MWI2016PHIA"))
@@ -200,12 +199,6 @@ test_that("do_endpoint_model_options without programme data", {
   expect_equal(params$survey_art_or_vls_options[[1]]$id,
                scalar("art_coverage"))
   expect_equal(params$survey_art_or_vls_options[[2]]$id, scalar("vls"))
-  expect_null(params$art_t1_options)
-  expect_null(params$art_t2_options)
-  expect_null(params$anc_prevalence_t1_options)
-  expect_null(params$anc_prevalence_t2_options)
-  expect_null(params$anc_art_coverage_t1_options)
-  expect_null(params$anc_art_coverage_t2_options)
 })
 
 test_that("can retrieve validated model options", {
@@ -270,26 +263,23 @@ test_that("can retrieve validated model options", {
   art_section <- json$controlSections[[3]]
   expect_length(
     art_section$controlGroups[[1]]$controls[[1]]$options,
-    8
+    2
   )
   expect_equal(
     names(art_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
     c("id", "label"))
   expect_equal(
     art_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
-    "2011")
+    "true")
   expect_equal(
     art_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
-    "2011")
+    "yes")
   expect_equal(
-    names(art_section$controlGroups[[1]]$controls[[2]]$options[[1]]),
-    c("id", "label"))
+    art_section$controlGroups[[1]]$controls[[1]]$options[[2]]$id,
+    "false")
   expect_equal(
-    art_section$controlGroups[[1]]$controls[[2]]$options[[1]]$id,
-    "2011")
-  expect_equal(
-    art_section$controlGroups[[1]]$controls[[2]]$options[[1]]$label,
-    "2011")
+    art_section$controlGroups[[1]]$controls[[1]]$options[[2]]$label,
+    "no")
 
   anc_section <- json$controlSections[[4]]
   expect_length(

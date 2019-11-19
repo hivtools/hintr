@@ -464,26 +464,23 @@ test_that("endpoint_model_options returns model options", {
   art_section <- json$data$controlSections[[3]]
   expect_length(
     art_section$controlGroups[[1]]$controls[[1]]$options,
-    8
+    2
   )
   expect_equal(
     names(art_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
     c("id", "label"))
   expect_equal(
     art_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
-    "2011")
+    "true")
   expect_equal(
     art_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
-    "2011")
+    "yes")
   expect_equal(
-    names(art_section$controlGroups[[1]]$controls[[2]]$options[[1]]),
-    c("id", "label"))
+    art_section$controlGroups[[1]]$controls[[1]]$options[[2]]$id,
+    "false")
   expect_equal(
-    art_section$controlGroups[[1]]$controls[[2]]$options[[1]]$id,
-    "2011")
-  expect_equal(
-    art_section$controlGroups[[1]]$controls[[2]]$options[[1]]$label,
-    "2011")
+    art_section$controlGroups[[1]]$controls[[1]]$options[[2]]$label,
+    "no")
 
   anc_section <- json$data$controlSections[[4]]
   expect_length(
