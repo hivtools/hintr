@@ -332,8 +332,12 @@ endpoint_plotting_metadata <- function(req, res, iso3) {
 #' @param value List containing an indication of success, any errors and the
 #' value to return.
 #'
+#' @param as_json Logical, indicating if the response should be
+#'   converted into a json string
+#'
 #' @return Formatted hintr response.
 #' @keywords internal
+#' @noRd
 hintr_response <- function(value, schema, as_json = TRUE) {
   if (value$success) {
     status <- "success"
