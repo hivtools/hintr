@@ -33,6 +33,7 @@ api_build <- function(queue) {
 
   pr$registerHook("preroute", api_log_start)
   pr$registerHook("postserialize", api_log_end)
+  pr$set404Handler(hintr_404)
 
   pr
 }
@@ -331,9 +332,13 @@ endpoint_plotting_metadata <- function(req, res, iso3) {
 #' @param value List containing an indication of success, any errors and the
 #' value to return.
 #'
+#' @param as_json Logical, indicating if the response should be
+#'   converted into a json string
+#'
 #' @return Formatted hintr response.
 #' @keywords internal
-hintr_response <- function(value, schema) {
+#' @noRd
+hintr_response <- function(value, schema, as_json = TRUE) {
   if (value$success) {
     status <- "success"
   } else {
@@ -345,15 +350,16 @@ hintr_response <- function(value, schema) {
   else {
     errors = value$errors
   }
-  ret <- to_json(list(
+  response <- list(
     status = scalar(status),
     errors = errors,
-    data = value$value))
+    data = value$value)
+  ret <- to_json(response)
   if (value$success) {
     validate_json_schema(ret, schema, query = "data")
   }
   validate_json_schema(ret, "Response")
-  ret
+  if (as_json) ret else response
 }
 
 hintr_errors <- function(errors) {
@@ -457,4 +463,19 @@ serializer_zip <- function(filename) {
       errorHandler(req, res, e)
     })
   }
+}
+
+hintr_404 <- function(req, res) {
+  res$status <- 404L
+  detail <- sprintf("%s %s is not a valid hintr path",
+                    req$REQUEST_METHOD, req$PATH_INFO)
+  errors <- hintr_errors(list("NOT_FOUND" = detail))
+  value <- list(success = FALSE,
+                errors = errors)
+  # We get no control over how plumber will serialise this - so we
+  # can't return json or it gets wrapped as if it was a json string
+  # (we ordinarily get around this by using json_verbatim = TRUE).  So
+  # here we return the object that will be passed into
+  # jsonlite::toJSON (all scalars being appropriately treated).
+  hintr_response(value, as_json = FALSE)
 }
