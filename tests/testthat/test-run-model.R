@@ -60,7 +60,7 @@ test_that("real model can be run", {
   expect_equal(colnames(output),
                c("area_level", "area_level_label", "area_id", "area_name",
                  "sex", "age_group", "age_group_id", "age_group_label",
-                 "calendar_quarter", "quarter_id", "quarter_label", "indicator"
+                 "calendar_quarter", "quarter_id", "quarter_label", "indicator",
                  "indicator_id", "indicator_label", "mode",
                  "mean", "se", "median", "lower", "upper"))
   expect_true(nrow(output) == 42021)
