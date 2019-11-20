@@ -273,7 +273,7 @@ $ curl -X POST -H 'Content-Type: application/json' \
 
     ],
     "data": {
-        "id": "d75a5fde7f06377d0c31ef5ba791f294"
+        "id": "76bed22993c3012ac90347343b8d7f45"
     }
 }
 ```
@@ -297,7 +297,7 @@ $ curl http://localhost:8888/model/status/{id}
         "progress": [
 
         ],
-        "id": "d75a5fde7f06377d0c31ef5ba791f294"
+        "id": "76bed22993c3012ac90347343b8d7f45"
     }
 }
 ```
@@ -338,9 +338,9 @@ $ curl -I http://localhost:8888/download/summary/{id}
 
 ```json
 HTTP/1.1 200 OK
-Date: Wed, 20 Nov 2019 12:47:05 GMT
+Date: Wed, 20 Nov 2019 14:13:30 GMT
 Content-Type: application/octet-stream
-Date: Wed, 20 Nov 2019 12:47:05 PM GMT
+Date: Wed, 20 Nov 2019 02:13:30 PM GMT
 Connection: close
 Content-Length: 2552891
 
@@ -362,9 +362,9 @@ $ curl -I http://localhost:8888/download/spectrum/{id}
 
 ```json
 HTTP/1.1 200 OK
-Date: Wed, 20 Nov 2019 12:47:05 GMT
+Date: Wed, 20 Nov 2019 14:13:30 GMT
 Content-Type: application/octet-stream
-Date: Wed, 20 Nov 2019 12:47:05 PM GMT
+Date: Wed, 20 Nov 2019 02:13:30 PM GMT
 Connection: close
 Content-Length: 2552891
 
@@ -376,11 +376,7 @@ $ curl http://localhost:8888/download/spectrum/{id}
 ```
 
 ```json
-<<<<<<< HEAD
 Hidden 11915 bytes of output
-=======
-Hidden 11632 bytes of output
->>>>>>> master
 ```
 Get plotting metadata for Malawi
 
@@ -425,11 +421,7 @@ $ curl http://localhost:8888/hintr/version
     ],
     "data": {
         "hintr": "0.0.15",
-<<<<<<< HEAD
         "naomi": "0.0.17",
-=======
-        "naomi": "0.0.16",
->>>>>>> master
         "rrq": "0.2.1"
     }
 }
@@ -447,13 +439,8 @@ $ curl http://localhost:8888/hintr/worker/status
 
     ],
     "data": {
-<<<<<<< HEAD
-        "womanly_stingray_1": "IDLE",
-        "womanly_stingray_2": "IDLE"
-=======
-        "unacknowledged_pilchard_2": "IDLE",
-        "unacknowledged_pilchard_1": "IDLE"
->>>>>>> master
+        "supersecretive_sanderling_1": "IDLE",
+        "supersecretive_sanderling_2": "IDLE"
     }
 }
 ```
