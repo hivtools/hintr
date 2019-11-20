@@ -26,5 +26,8 @@ hintr_worker [<queue_id>]"
 }
 
 main_worker <- function(args = commandArgs(TRUE)) {
-  rrq::rrq_worker(hintr_queue_id(main_worker_args(args)$queue_id, TRUE)) # nocov
+  # nocov start
+  rrq::rrq_worker(hintr_queue_id(main_worker_args(args)$queue_id, TRUE),
+                  heartbeat_period = 10)
+  # nocov end
 }
