@@ -63,14 +63,14 @@ test_that("get_survey_filters gets available filter options and sorts them", {
 })
 
 test_that("get_quarter_filters gets quarter names from ids", {
-  data <- data.frame(quarter_id = c(465, 454))
+  data <- data.frame(calendar_quarter = c("CY2016Q1", "CY2013Q2"))
   expected_filters <- list(
     list(
-      id = scalar("465"),
+      id = scalar("CY2016Q1"),
       label = scalar("Jan-Mar 2016")
     ),
     list(
-      id = scalar("454"),
+      id = scalar("CY2013Q2"),
       label = scalar("Apr-Jun 2013")
     )
   )
@@ -98,28 +98,28 @@ test_that("get_year_filters returns year labels and ids", {
 
 test_that("can construct sorted tree from data frame", {
   data <- data_frame(
-    id = c("MWI", "MWI.1", "MWI.2", "MWI.1.1", "MWI.1.2"),
-    parent_id = c(NA, "MWI", "MWI", "MWI.1", "MWI.1"),
+    id = c("MWI", "MWI_1_1", "MWI_1_2", "MWI_2_1", "MWI_2_2"),
+    parent_id = c(NA, "MWI", "MWI", "MWI_1_1", "MWI_1_1"),
     sort_order = c(1, 2, 3, 4, 5)
   )
   expected_tree <- list(
     id = scalar("MWI"),
     children = list(
       list(
-        id = scalar("MWI.1"),
+        id = scalar("MWI_1_1"),
         children = list(
           list(
-            id = scalar("MWI.1.1"),
+            id = scalar("MWI_2_1"),
             children = list()
           ),
           list(
-            id = scalar("MWI.1.2"),
+            id = scalar("MWI_2_2"),
             children = list()
           )
         )
       ),
       list(
-        id = scalar("MWI.2"),
+        id = scalar("MWI_1_2"),
         children = list()
       )
     )
@@ -127,9 +127,9 @@ test_that("can construct sorted tree from data frame", {
   expect_equal(construct_tree(data), expected_tree)
 
   data <- data_frame(
-    id = c("MWI", "MWI.1", "MWI.2", "MWI.1.1", "MWI.1.2"),
+    id = c("MWI", "MWI_1_1", "MWI_1_2", "MWI_2_1", "MWI_2_2"),
     label = c("Malawi", "Northern", "Central", "Chitipa", "Karonga"),
-    parent_id = c(NA, "MWI", "MWI", "MWI.1", "MWI.1"),
+    parent_id = c(NA, "MWI", "MWI", "MWI_1_1", "MWI_1_1"),
     sort_order = c(1, 2, 3, 4, 5)
   )
   expected_tree <- list(
@@ -137,23 +137,23 @@ test_that("can construct sorted tree from data frame", {
     label = scalar("Malawi"),
     children = list(
       list(
-        id = scalar("MWI.1"),
+        id = scalar("MWI_1_1"),
         label = scalar("Northern"),
         children = list(
           list(
-            id = scalar("MWI.1.1"),
+            id = scalar("MWI_2_1"),
             label = scalar("Chitipa"),
             children = list()
           ),
           list(
-            id = scalar("MWI.1.2"),
+            id = scalar("MWI_2_2"),
             label = scalar("Karonga"),
             children = list()
           )
         )
       ),
       list(
-        id = scalar("MWI.2"),
+        id = scalar("MWI_1_2"),
         label = scalar("Central"),
         children = list()
       )
@@ -166,24 +166,24 @@ test_that("can construct sorted tree from data frame", {
 
 test_that("construct tree creates tree in correct order", {
   data <- data_frame(
-    id = c("MWI", "MWI.1", "MWI.2", "MWI.1.1", "MWI.1.2"),
+    id = c("MWI", "MWI_1_1", "MWI_1_2", "MWI_2_1", "MWI_2_2"),
     label = c("Malawi", "Northern", "Central", "Chitipa", "Karonga"),
-    parent_id = c(NA, "MWI", "MWI", "MWI.1", "MWI.1"),
+    parent_id = c(NA, "MWI", "MWI", "MWI_1_1", "MWI_1_1"),
     sort_order = c(2, 3, 5, 4, 1)
   )
   tree <- construct_tree(data, parent_id_column = 3)
   ## Ordering is respected within the level
   expect_equal(tree$id, scalar("MWI"))
-  expect_equal(tree$children[[1]]$id, scalar("MWI.1"))
-  expect_equal(tree$children[[2]]$id, scalar("MWI.2"))
-  expect_equal(tree$children[[1]]$children[[1]]$id, scalar("MWI.1.2"))
-  expect_equal(tree$children[[1]]$children[[2]]$id, scalar("MWI.1.1"))
+  expect_equal(tree$children[[1]]$id, scalar("MWI_1_1"))
+  expect_equal(tree$children[[2]]$id, scalar("MWI_1_2"))
+  expect_equal(tree$children[[1]]$children[[1]]$id, scalar("MWI_2_2"))
+  expect_equal(tree$children[[1]]$children[[2]]$id, scalar("MWI_2_1"))
 })
 
 test_that("error thrown when tree can't be constructed", {
   data <- data_frame(
-    id = c("MWI", "MWI.1", "MWI.2", "MWI.1.1", "MWI.1.2"),
-    parent_id = c(NA, NA, "MWI", "MWI.1", "MWI.1")
+    id = c("MWI", "MWI_1_1", "MWI_1_2", "MWI_2_1", "MWI_2_2"),
+    parent_id = c(NA, NA, "MWI", "MWI_1_1", "MWI_1_1")
   )
   expect_error(construct_tree(data),
                "Got 2 root nodes - tree must have 1 root.")

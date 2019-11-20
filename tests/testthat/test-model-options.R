@@ -9,22 +9,24 @@ test_that("can build JSON from template", {
   expect_equal(json, '"x" test, "y"')
 
   json <- build_json('{"options": <options>, "test": <test>}',
-                     list(options = c(scalar("MWI"), scalar("MWI.1"), scalar("MWI.2")),
+                     list(options = c(scalar("MWI"),
+                                      scalar("MWI_1_1"),
+                                      scalar("MWI_1_2")),
                           test = scalar("test_value")))
   expect_equal(json,
-               '{"options": ["MWI","MWI.1","MWI.2"], "test": "test_value"}')
+               '{"options": ["MWI","MWI_1_1","MWI_1_2"], "test": "test_value"}')
 
   json <- build_json('{"options": <options>, "test": <test>}',
                      list(options = list(
                        list(id = scalar("MWI"),
                             label = scalar("Malawi")),
-                       list(id = scalar("MWI.1"),
+                       list(id = scalar("MWI_1_1"),
                             label = scalar("Northern")),
-                       list(id = scalar("MWI.2"),
+                       list(id = scalar("MWI_1_2"),
                             label = scalar("Central"))),
                        test = scalar("test_value")))
   expect_equal(json,
-               '{"options": [{"id":"MWI","label":"Malawi"},{"id":"MWI.1","label":"Northern"},{"id":"MWI.2","label":"Central"}], "test": "test_value"}')
+               '{"options": [{"id":"MWI","label":"Malawi"},{"id":"MWI_1_1","label":"Northern"},{"id":"MWI_1_2","label":"Central"}], "test": "test_value"}')
 
   ## Additional params are ignored
   json <- build_json("test <param>", list(param = scalar("test"), param2 = scalar("test2")))

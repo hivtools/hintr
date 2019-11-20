@@ -10,11 +10,11 @@
       "sex": {
         "type": "string"
       },
-      "age_group_id": {
-        "type": "number"
+      "age_group": {
+        "type": "string"
       },
-      "quarter_id": {
-        "type": "number"
+      "calendar_quarter": {
+        "type": "string"
       },
       "indicator_id": {
         "type": "number"
@@ -33,7 +33,7 @@
       }
     },
     "additonalProperties": "true",
-    "required": [ "area_id", "sex", "age_group_id", "quarter_id", "indicator_id",
+    "required": [ "area_id", "sex", "age_group", "calendar_quarter", "indicator_id",
     "mode", "mean", "lower", "upper" ]
   }
 }

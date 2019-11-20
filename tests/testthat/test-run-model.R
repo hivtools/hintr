@@ -5,8 +5,8 @@ test_that("model can be run and filters extracted", {
   model_run <- process_result(mock_model)
   expect_equal(names(model_run), c("data", "plottingMetadata"))
   expect_equal(names(model_run$data),
-               c("area_id", "sex", "age_group_id", "quarter_id", "indicator_id",
-                 "mode", "mean", "lower", "upper"))
+               c("area_id", "sex", "age_group", "calendar_quarter",
+                 "indicator_id", "mode", "mean", "lower", "upper"))
   expect_equal(nrow(model_run$data), 42021)
   expect_equal(names(model_run$plottingMetadata), "barchart")
   expect_equal(names(model_run$plottingMetadata$barchart),
@@ -20,6 +20,8 @@ test_that("model can be run and filters extracted", {
                scalar("quarter"))
   expect_length(model_run$plottingMetadata$barchart$filters[[1]]$options, 29)
   expect_length(model_run$plottingMetadata$barchart$filters[[2]]$options, 1)
+  expect_equal(model_run$plottingMetadata$barchart$filters[[2]]$options[[1]]$id,
+               scalar("CY2016Q1"))
   expect_equal(model_run$plottingMetadata$barchart$filters[[2]]$options[[1]]$label,
                scalar("Jan-Mar 2016"))
   expect_length(model_run$plottingMetadata$barchart$indicators, 7)

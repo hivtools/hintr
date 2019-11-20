@@ -69,8 +69,8 @@ test_that("endpoint model run queues a model run", {
   expect_equal(res$status, 200)
   expect_equal(names(result$data), c("data", "plottingMetadata"))
   expect_equal(names(result$data$data[[1]]),
-               c("area_id", "sex", "age_group_id", "quarter_id", "indicator_id",
-                 "mode", "mean", "lower", "upper"))
+               c("area_id", "sex", "age_group", "calendar_quarter",
+                 "indicator_id", "mode", "mean", "lower", "upper"))
   expect_length(result$data$data, 42021)
   expect_equal(names(result$data$plottingMetadata), "barchart")
   barchart <- result$data$plottingMetadata$barchart

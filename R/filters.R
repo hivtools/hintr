@@ -103,23 +103,23 @@ get_model_output_filters <- function(data) {
     ),
     list(
       id = scalar("quarter"),
-      column_id = scalar("Quarter"),
-      label = scalar("quarter_id"),
+      column_id = scalar("calendar_quarter"),
+      label = scalar("Period"),
       options = get_quarter_filters(data)
     )
   )
 }
 
 get_quarter_filters <- function(data) {
-  quarter_ids <- unique(data$quarter_id)
-  lapply(quarter_ids, function(quarter_id) {
-    list(id = scalar(as.character(quarter_id)),
-         label = scalar(get_quarter_name(quarter_id)))
+  calendar_quarters <- unique(data$calendar_quarter)
+  lapply(calendar_quarters, function(quarter) {
+    list(id = scalar(as.character(quarter)),
+         label = scalar(get_quarter_label(quarter)))
   })
 }
 
-get_quarter_name <- function(quarter_id) {
-  naomi::quarter_year_labels(quarter_id)
+get_quarter_label <- function(calendar_quarter) {
+  naomi::calendar_quarter_labels(calendar_quarter)
 }
 
 get_year_filters <- function(data) {

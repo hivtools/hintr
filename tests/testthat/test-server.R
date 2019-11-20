@@ -192,8 +192,8 @@ test_that("model interactions", {
   expect_equal(httr::status_code(r), 200)
   expect_equal(names(response$data), c("data", "plottingMetadata"))
   expect_equal(names(response$data$data[[1]]),
-               c("area_id", "sex", "age_group_id", "quarter_id", "indicator_id",
-                 "mode", "mean", "lower", "upper"))
+               c("area_id", "sex", "age_group", "calendar_quarter",
+                 "indicator_id", "mode", "mean", "lower", "upper"))
   expect_length(response$data$data, 42021)
   expect_equal(names(response$data$plottingMetadata), "barchart")
   barchart <- response$data$plottingMetadata$barchart
@@ -252,8 +252,8 @@ test_that("real model can be run by API", {
   expect_equal(httr::status_code(r), 200)
   expect_equal(names(response$data), c("data", "plottingMetadata"))
   expect_equal(names(response$data$data[[1]]),
-               c("area_id", "sex", "age_group_id", "quarter_id", "indicator_id",
-                 "mode", "mean", "lower", "upper"))
+               c("area_id", "sex", "age_group", "calendar_quarter",
+                 "indicator_id", "mode", "mean", "lower", "upper"))
   expect_length(response$data$data, 42021)
   expect_equal(names(response$data$plottingMetadata), "barchart")
   barchart <- response$data$plottingMetadata$barchart
