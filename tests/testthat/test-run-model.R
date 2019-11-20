@@ -7,7 +7,7 @@ test_that("model can be run and filters extracted", {
   expect_equal(names(model_run$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator_id", "mode", "mean", "lower", "upper"))
-  expect_equal(nrow(model_run$data), 42021)
+  expect_equal(nrow(model_run$data), 84042)
   expect_equal(names(model_run$plottingMetadata), "barchart")
   expect_equal(names(model_run$plottingMetadata$barchart),
                c("indicators", "filters"))
@@ -19,7 +19,7 @@ test_that("model can be run and filters extracted", {
   expect_equal(model_run$plottingMetadata$barchart$filters[[2]]$id,
                scalar("quarter"))
   expect_length(model_run$plottingMetadata$barchart$filters[[1]]$options, 29)
-  expect_length(model_run$plottingMetadata$barchart$filters[[2]]$options, 1)
+  expect_length(model_run$plottingMetadata$barchart$filters[[2]]$options, 2)
   expect_equal(model_run$plottingMetadata$barchart$filters[[2]]$options[[1]]$id,
                scalar("CY2016Q1"))
   expect_equal(model_run$plottingMetadata$barchart$filters[[2]]$options[[1]]$label,
@@ -63,9 +63,9 @@ test_that("real model can be run", {
                c("area_level", "area_level_label", "area_id", "area_name",
                  "sex", "age_group", "age_group_id", "age_group_label",
                  "calendar_quarter", "quarter_id", "quarter_label", "indicator",
-                 "indicator_id", "indicator_label", "mode",
-                 "mean", "se", "median", "lower", "upper"))
-  expect_true(nrow(output) == 42021)
+                 "indicator_id", "indicator_label", "mean",
+                 "se", "median", "mode", "lower", "upper"))
+  expect_true(nrow(output) == 84042)
 
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
   expect_equal(file_list$Name,
