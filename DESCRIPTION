@@ -24,7 +24,7 @@ Imports:
     plumber,
     R6,
     redux,
-    rrq (>= 0.2.1),
+    rrq (>= 0.2.2),
     specio,
     storr
 Suggests:

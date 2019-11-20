@@ -14,6 +14,8 @@ api_build <- function(queue) {
             serializer = serializer_json_hintr())
   pr$handle("GET", "/model/result/<id>", endpoint_model_result(queue),
             serializer = serializer_json_hintr())
+  pr$handle("DELETE", "/model/status/<id>", endpoint_model_cancel(queue),
+            serializer = serializer_json_hintr())
   pr$handle("GET", "/meta/plotting/<iso3>", endpoint_plotting_metadata,
             serializer = serializer_json_hintr())
   pr$handle("GET", "/download/spectrum/<id>", endpoint_download_spectrum(queue),
@@ -145,6 +147,20 @@ endpoint_model_result <- function(queue) {
       response$value <- process_result(response$value)
     }
     hintr_response(response, "ModelResultResponse")
+  }
+}
+
+endpoint_model_cancel <- function(queue) {
+  function(req, res, id) {
+    response <- with_success(queue$cancel(id))
+    if (!response$success) {
+      response$errors <- hintr_errors(
+        list("FAILED_TO_CANCEL" = response$message))
+      res$status <- 400
+    } else {
+      response$value <- scalar(NA)
+    }
+    hintr_response(response, "ModelCancelResponse")
   }
 }
 

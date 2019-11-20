@@ -64,6 +64,11 @@ Queue <- R6::R6Class(
       self$queue$task_result(id)
     },
 
+    cancel = function(id) {
+      self$queue$task_cancel(id)
+    },
+
+    ## Not part of the api exposed functions, used in tests
     remove = function(id) {
       self$queue$task_delete(id)
     },
