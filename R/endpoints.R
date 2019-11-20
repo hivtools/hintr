@@ -33,7 +33,8 @@ api_build <- function(queue) {
 
   pr$registerHook("preroute", api_log_start)
   pr$registerHook("postserialize", api_log_end)
-  pr$set404Handler(hintr_404)
+  pr$set404Handler(hintr_404_handler)
+  pr$setErrorHandler(hintr_error_handler)
 
   pr
 }
@@ -465,7 +466,7 @@ serializer_zip <- function(filename) {
   }
 }
 
-hintr_404 <- function(req, res) {
+hintr_404_handler <- function(req, res) {
   res$status <- 404L
   detail <- sprintf("%s %s is not a valid hintr path",
                     req$REQUEST_METHOD, req$PATH_INFO)
@@ -478,4 +479,27 @@ hintr_404 <- function(req, res) {
   # here we return the object that will be passed into
   # jsonlite::toJSON (all scalars being appropriately treated).
   hintr_response(value, as_json = FALSE)
+}
+
+# It's not possible to get the traceback at this point
+hintr_error_handler <- function(req, res, error) {
+  res$status <- 500L
+  if (is.null(error$call)) {
+    call <- "<call missing>"
+  } else {
+    call <- paste(deparse(error$call), collapse = " ")
+  }
+  detail <- sprintf(
+    "Unexpected server error in '%s' : '%s' while doing '%s %s'",
+    call, error$message, req$REQUEST_METHOD, req$PATH_INFO)
+  api_log("ERROR: %s", detail)
+  errors <- hintr_errors(list("SERVER_ERROR" = detail))
+  # This seems at odds with the default handler present in the plumber
+  # package, and it also seems entirely undocumented.
+  value <- list(success = FALSE,
+                errors = errors)
+  res$body <- hintr_response(value, as_json = TRUE)
+  # Setting a header with setHeader should work, but here messes it up
+  res$headers[["Content-Type"]] <- "application/json"
+  res
 }
