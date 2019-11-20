@@ -1,3 +1,11 @@
+# hintr 0.0.17
+
+* Not found (404) responses now conform to the error schema (mrc-596)
+
+# hintr 0.0.16
+
+* Download endpoints return Content-Disposition headers
+
 # hintr 0.0.15
 
 * Add HEAD endpoints for summary and spectrum downloads

@@ -376,7 +376,11 @@ $ curl http://localhost:8888/download/spectrum/{id}
 ```
 
 ```json
+<<<<<<< HEAD
 Hidden 11915 bytes of output
+=======
+Hidden 11632 bytes of output
+>>>>>>> master
 ```
 Get plotting metadata for Malawi
 
@@ -421,7 +425,11 @@ $ curl http://localhost:8888/hintr/version
     ],
     "data": {
         "hintr": "0.0.15",
+<<<<<<< HEAD
         "naomi": "0.0.17",
+=======
+        "naomi": "0.0.16",
+>>>>>>> master
         "rrq": "0.2.1"
     }
 }
@@ -439,8 +447,13 @@ $ curl http://localhost:8888/hintr/worker/status
 
     ],
     "data": {
+<<<<<<< HEAD
         "womanly_stingray_1": "IDLE",
         "womanly_stingray_2": "IDLE"
+=======
+        "unacknowledged_pilchard_2": "IDLE",
+        "unacknowledged_pilchard_1": "IDLE"
+>>>>>>> master
     }
 }
 ```
