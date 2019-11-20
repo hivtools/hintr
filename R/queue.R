@@ -21,6 +21,7 @@ Queue <- R6::R6Class(
       message("Starting queue")
       queue_id <- hintr_queue_id(queue_id)
       self$queue <- rrq::rrq_controller(queue_id, con)
+      self$queue$worker_config_save("localhost", heartbeat_period = 3)
 
       self$start(workers)
 
@@ -73,6 +74,11 @@ Queue <- R6::R6Class(
       self$queue$task_result(id)
     },
 
+    cancel = function(id) {
+      self$queue$task_cancel(id)
+    },
+
+    ## Not part of the api exposed functions, used in tests
     remove = function(id) {
       self$queue$task_delete(id)
     },

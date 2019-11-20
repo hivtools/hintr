@@ -16,6 +16,8 @@ api_build <- function(queue) {
             serializer = serializer_json_hintr())
   pr$handle("GET", "/model/result/<id>", endpoint_model_result(queue),
             serializer = serializer_json_hintr())
+  pr$handle("POST", "/model/cancel/<id>", endpoint_model_cancel(queue),
+            serializer = serializer_json_hintr())
   pr$handle("GET", "/meta/plotting/<iso3>", endpoint_plotting_metadata,
             serializer = serializer_json_hintr())
   pr$handle("GET", "/download/spectrum/<id>", endpoint_download_spectrum(queue),
