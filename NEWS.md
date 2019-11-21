@@ -1,3 +1,7 @@
+# hintr 0.0.18
+
+* Add advanced model run options
+
 # hintr 0.0.17
 
 * Not found (404) responses now conform to the error schema (mrc-596)
