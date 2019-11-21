@@ -4,14 +4,45 @@
   "items": {
     "type": "object",
     "properties": {
-      "area_id": {
+      "indicator": {
         "type": "string"
       },
       "survey_id": {
         "type": "string"
+      },
+      "survey_year": {
+        "type": "number"
+      },
+      "area_id": {
+        "type": "string"
+      },
+      "sex": {
+        "type": "string"
+      },
+      "age_group": {
+        "type": "string"
+      },
+      "n_cluster": {
+        "type": "number"
+      },
+      "n_obs": {
+        "type": "number"
+      },
+      "est": {
+        "type": "number"
+      },
+      "se": {
+        "type": "number"
+      },
+      "ci_l": {
+        "type": [ "number", "null" ]
+      },
+      "ci_u": {
+        "type": [ "number", "null" ]
       }
     },
     "additonalProperties": "true",
-    "required": [ "area_id", "survey_id" ]
+    "required": [ "indicator", "survey_id", "survey_year", "area_id",
+      "sex", "age_group", "n_cluster", "n_obs", "est", "se", "ci_l", "ci_u" ]
   }
 }
