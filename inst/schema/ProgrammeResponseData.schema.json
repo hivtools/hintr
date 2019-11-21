@@ -1,25 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "array",
-  "items": {
-    "type": "object",
-    "properties": {
-      "area_id": {
-        "type": "string"
-      },
-      "year": {
-        "type": "number"
-      },
-      "sex": {
-        "type": "string"
-      },
-      "age_group": {
-        "type": "string"
-      },
-      "current_art": {
-        "type": "number"
-      }
-    },
-    "required": [ "area_id", "year", "sex", "age_group", "current_art" ]
-  }
+  "items": { "$ref": "ProgrammeDataRow.schema.json" }
 }

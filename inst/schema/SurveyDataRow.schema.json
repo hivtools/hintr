@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "indicator": {
+      "type": "string"
+    },
+    "survey_id": {
+      "type": "string"
+    },
+    "survey_year": {
+      "type": "number"
+    },
+    "area_id": {
+      "type": "string"
+    },
+    "sex": {
+      "type": "string"
+    },
+    "age_group": {
+      "type": "string"
+    },
+    "n_cluster": {
+      "type": "number"
+    },
+    "n_obs": {
+      "type": "number"
+    },
+    "est": {
+      "type": "number"
+    },
+    "se": {
+      "type": "number"
+    },
+    "ci_l": {
+      "type": [ "number", "null" ]
+    },
+    "ci_u": {
+      "type": [ "number", "null" ]
+    }
+  },
+  "additonalProperties": true,
+  "required": [ "indicator", "survey_id", "survey_year", "area_id",
+    "sex", "age_group", "n_cluster", "n_obs", "est", "se", "ci_l", "ci_u" ]
+}
