@@ -8,23 +8,39 @@ test_that("model can be run and filters extracted", {
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator_id", "mode", "mean", "lower", "upper"))
   expect_equal(nrow(model_run$data), 84042)
-  expect_equal(names(model_run$plottingMetadata), "barchart")
-  expect_equal(names(model_run$plottingMetadata$barchart),
-               c("indicators", "filters"))
-  expect_length(model_run$plottingMetadata$barchart$filters, 2)
-  expect_equal(names(model_run$plottingMetadata$barchart$filters[[1]]),
+  expect_equal(names(model_run$plottingMetadata), c("barchart", "choropleth"))
+  barchart <- model_run$plottingMetadata$barchart
+  expect_equal(names(barchart), c("indicators", "filters"))
+  expect_length(barchart$filters, 2)
+  expect_equal(names(barchart$filters[[1]]),
                c("id", "column_id", "label", "options"))
-  expect_equal(model_run$plottingMetadata$barchart$filters[[1]]$id,
-               scalar("age"))
-  expect_equal(model_run$plottingMetadata$barchart$filters[[2]]$id,
-               scalar("quarter"))
-  expect_length(model_run$plottingMetadata$barchart$filters[[1]]$options, 29)
-  expect_length(model_run$plottingMetadata$barchart$filters[[2]]$options, 2)
-  expect_equal(model_run$plottingMetadata$barchart$filters[[2]]$options[[1]]$id,
-               scalar("CY2016Q1"))
-  expect_equal(model_run$plottingMetadata$barchart$filters[[2]]$options[[1]]$label,
+  expect_equal(barchart$filters[[1]]$id, scalar("age"))
+  expect_equal(barchart$filters[[2]]$id, scalar("quarter"))
+  expect_length(barchart$filters[[1]]$options, 29)
+  expect_length(barchart$filters[[2]]$options, 2)
+  expect_equal(barchart$filters[[2]]$options[[1]]$id, scalar("CY2016Q1"))
+  expect_equal(barchart$filters[[2]]$options[[1]]$label, scalar("Jan-Mar 2016"))
+  expect_equal(nrow(barchart$indicators), 7)
+  expect_true(all(c("prevalence", "art_coverage", "current_art", "population",
+                    "plhiv", "incidence", "new_infections") %in%
+                    barchart$indicators$indicator))
+
+  choropleth <- model_run$plottingMetadata$choropleth
+  expect_equal(names(choropleth), c("indicators", "filters"))
+  expect_length(choropleth$filters, 2)
+  expect_equal(names(choropleth$filters[[1]]),
+               c("id", "column_id", "label", "options"))
+  expect_equal(choropleth$filters[[1]]$id, scalar("age"))
+  expect_equal(choropleth$filters[[2]]$id, scalar("quarter"))
+  expect_length(choropleth$filters[[1]]$options, 29)
+  expect_length(choropleth$filters[[2]]$options, 2)
+  expect_equal(choropleth$filters[[2]]$options[[1]]$id, scalar("CY2016Q1"))
+  expect_equal(choropleth$filters[[2]]$options[[1]]$label,
                scalar("Jan-Mar 2016"))
-  expect_length(model_run$plottingMetadata$barchart$indicators, 7)
+  expect_equal(nrow(choropleth$indicators), 7)
+  expect_true(all(c("prevalence", "art_coverage", "current_art", "population",
+                    "plhiv", "incidence", "new_infections") %in%
+                    choropleth$indicators$indicator))
 })
 
 test_that("real model can be run", {

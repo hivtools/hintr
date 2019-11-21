@@ -72,16 +72,43 @@ test_that("endpoint model run queues a model run", {
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator_id", "mode", "mean", "lower", "upper"))
   expect_length(result$data$data, 84042)
-  expect_equal(names(result$data$plottingMetadata), "barchart")
+  expect_equal(names(result$data$plottingMetadata), c("barchart", "choropleth"))
+
   barchart <- result$data$plottingMetadata$barchart
   expect_equal(names(barchart), c("indicators", "filters"))
   expect_length(barchart$filters, 2)
+  expect_equal(names(barchart$filters[[1]]),
+               c("id", "column_id", "label", "options"))
   expect_equal(barchart$filters[[1]]$id, "age")
   expect_equal(barchart$filters[[2]]$id, "quarter")
   expect_length(barchart$filters[[1]]$options, 29)
   expect_length(barchart$filters[[2]]$options, 2)
+  expect_equal(barchart$filters[[2]]$options[[1]]$id, "CY2016Q1")
   expect_equal(barchart$filters[[2]]$options[[1]]$label, "Jan-Mar 2016")
   expect_length(barchart$indicators, 7)
+  out <- lapply(barchart$indicators, function(indicator) {
+    expect_true(indicator$indicator %in%
+                  c("prevalence", "art_coverage", "current_art", "population",
+                    "plhiv", "incidence", "new_infections"))
+  })
+
+  choropleth <- result$data$plottingMetadata$choropleth
+  expect_equal(names(choropleth), c("indicators", "filters"))
+  expect_length(choropleth$filters, 2)
+  expect_equal(names(choropleth$filters[[1]]),
+               c("id", "column_id", "label", "options"))
+  expect_equal(choropleth$filters[[1]]$id, "age")
+  expect_equal(choropleth$filters[[2]]$id, "quarter")
+  expect_length(choropleth$filters[[1]]$options, 29)
+  expect_length(choropleth$filters[[2]]$options, 2)
+  expect_equal(choropleth$filters[[2]]$options[[1]]$id, "CY2016Q1")
+  expect_equal(choropleth$filters[[2]]$options[[1]]$label, "Jan-Mar 2016")
+  expect_length(choropleth$indicators, 7)
+  out <- lapply(choropleth$indicators, function(indicator) {
+    expect_true(indicator$indicator %in%
+                  c("prevalence", "art_coverage", "current_art", "population",
+                    "plhiv", "incidence", "new_infections"))
+  })
 })
 
 test_that("endpoint_run_model returns error if queueing fails", {

@@ -3,13 +3,14 @@
   "type": "object",
   "properties": {
     "data": { "$ref": "ModelResultData.schema.json" },
-    "plottingMetadata": { 
+    "plottingMetadata": {
       "type": "object",
       "properties": {
-        "barchart": { "$ref": "BarchartMetadata.schema.json" }
+        "barchart": { "$ref": "BarchartMetadata.schema.json" },
+        "choropleth": { "$ref": "ChoroplethMetadata.schema.json" }
       },
       "additionalProperties": false,
-      "required" : [ "barchart" ]
+      "required" : [ "barchart", "choropleth" ]
     }
   }
 }

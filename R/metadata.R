@@ -39,3 +39,16 @@ get_barchart_metadata <- function(output) {
     c("indicator", "value_column", "error_low_column", "error_high_column",
       "indicator_column", "indicator_value", "name")]
 }
+
+get_choropleth_metadata <- function(output) {
+  iso3 <- get_root_node(output$area_id)
+  metadata <- naomi::get_plotting_metadata(iso3)
+  metadata[
+    metadata$data_type == "output" & metadata$plot_type == "choropleth",
+    c("indicator", "value_column", "indicator_column", "indicator_value",
+      "name", "min", "max", "colour", "invert_scale")]
+}
+
+get_root_node <- function(area_ids) {
+  unique(area_ids[!grepl("\\_", area_ids)])
+}
