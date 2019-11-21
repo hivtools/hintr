@@ -22,3 +22,13 @@ test_that("validate locates schema and does validation with referenced files", {
   test_json <- '{"type": "pjnz"}'
   expect_error(validate(test_json, "ValidateInputRequest"))
 })
+
+test_that("to_json converts NA values to null", {
+  null <- "null"
+  class(null) <- "json"
+  expect_equal(to_json(scalar(NA)), null)
+  df <- data_frame(x = c("one", "two"), y = c(1, NA))
+  df_json <- to_json(list("test" = df))
+  out <- jsonlite::parse_json(df_json)
+  expect_equal(out$test[[2]]$y, NULL)
+})
