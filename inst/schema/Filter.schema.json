@@ -12,8 +12,11 @@
       "type": "string"
     },
     "options": {
-      "type": "array",
+      "type": [ "array", "null" ],
       "items": { "$ref": "FilterOption.schema.json" }
+    },
+    "use_shape_regions": {
+      "type": [ "boolean", "null" ]
     }
   },
   "additonalProperties": "false",

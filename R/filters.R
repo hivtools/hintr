@@ -109,7 +109,8 @@ get_model_output_filters <- function(data) {
       id = scalar("area"),
       column_id = scalar("area_id"),
       label = scalar("Area"),
-      options =
+      options = scalar(NA),
+      use_shape_regions = scalar(TRUE)
     ),
     list(
       id = scalar("quarter"),
@@ -133,7 +134,9 @@ get_model_output_filters <- function(data) {
 }
 
 get_quarter_filters <- function(data) {
+  browser()
   calendar_quarters <- unique(data$calendar_quarter)
+  calendar_quarters <- sort(calendar_quarters, decreasing = TRUE)
   lapply(calendar_quarters, function(quarter) {
     list(id = scalar(as.character(quarter)),
          label = scalar(get_quarter_label(quarter)))
