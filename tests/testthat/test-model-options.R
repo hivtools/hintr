@@ -223,7 +223,7 @@ test_that("can retrieve validated model options", {
 
   json <- jsonlite::parse_json(json)
   expect_equal(names(json), "controlSections")
-  expect_length(json$controlSections, 4)
+  expect_length(json$controlSections, 5)
 
   general_section <- json$controlSections[[1]]
   expect_length(
@@ -311,6 +311,9 @@ test_that("can retrieve validated model options", {
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
     "Jul-Sep 2011")
+
+  advanced_section <- json$controlSections[[5]]
+  expect_length(advanced_section$label, "Advanced")
 })
 
 
