@@ -63,7 +63,7 @@ test_that("get_survey_filters gets available filter options and sorts them", {
 })
 
 test_that("get_quarter_filters gets quarter names from ids", {
-  data <- data.frame(calendar_quarter = c("CY2016Q1", "CY2013Q2"))
+  data <- data.frame(calendar_quarter = c("CY2013Q2", "CY2016Q1"))
   expected_filters <- list(
     list(
       id = scalar("CY2016Q1"),

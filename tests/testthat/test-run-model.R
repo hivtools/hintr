@@ -11,15 +11,19 @@ test_that("model can be run and filters extracted", {
   expect_equal(names(model_run$plottingMetadata), c("barchart", "choropleth"))
   barchart <- model_run$plottingMetadata$barchart
   expect_equal(names(barchart), c("indicators", "filters"))
-  expect_length(barchart$filters, 2)
+  expect_length(barchart$filters, 4)
   expect_equal(names(barchart$filters[[1]]),
+               c("id", "column_id", "label", "options", "use_shape_regions"))
+  expect_equal(names(barchart$filters[[2]]),
                c("id", "column_id", "label", "options"))
-  expect_equal(barchart$filters[[1]]$id, scalar("age"))
+  expect_equal(barchart$filters[[1]]$id, scalar("area"))
   expect_equal(barchart$filters[[2]]$id, scalar("quarter"))
-  expect_length(barchart$filters[[1]]$options, 29)
+  expect_equal(barchart$filters[[3]]$id, scalar("sex"))
+  expect_equal(barchart$filters[[4]]$id, scalar("age"))
+  expect_length(barchart$filters[[4]]$options, 29)
   expect_length(barchart$filters[[2]]$options, 2)
-  expect_equal(barchart$filters[[2]]$options[[1]]$id, scalar("CY2016Q1"))
-  expect_equal(barchart$filters[[2]]$options[[1]]$label, scalar("Jan-Mar 2016"))
+  expect_equal(barchart$filters[[2]]$options[[1]]$id, scalar("CY2018Q3"))
+  expect_equal(barchart$filters[[2]]$options[[1]]$label, scalar("Jul-Sep 2018"))
   expect_equal(nrow(barchart$indicators), 7)
   expect_true(all(c("prevalence", "art_coverage", "current_art", "population",
                     "plhiv", "incidence", "new_infections") %in%
@@ -27,16 +31,20 @@ test_that("model can be run and filters extracted", {
 
   choropleth <- model_run$plottingMetadata$choropleth
   expect_equal(names(choropleth), c("indicators", "filters"))
-  expect_length(choropleth$filters, 2)
+  expect_length(choropleth$filters, 4)
   expect_equal(names(choropleth$filters[[1]]),
+               c("id", "column_id", "label", "options", "use_shape_regions"))
+  expect_equal(names(choropleth$filters[[2]]),
                c("id", "column_id", "label", "options"))
-  expect_equal(choropleth$filters[[1]]$id, scalar("age"))
+  expect_equal(choropleth$filters[[1]]$id, scalar("area"))
   expect_equal(choropleth$filters[[2]]$id, scalar("quarter"))
-  expect_length(choropleth$filters[[1]]$options, 29)
+  expect_equal(choropleth$filters[[3]]$id, scalar("sex"))
+  expect_equal(choropleth$filters[[4]]$id, scalar("age"))
+  expect_length(choropleth$filters[[4]]$options, 29)
   expect_length(choropleth$filters[[2]]$options, 2)
-  expect_equal(choropleth$filters[[2]]$options[[1]]$id, scalar("CY2016Q1"))
+  expect_equal(choropleth$filters[[2]]$options[[1]]$id, scalar("CY2018Q3"))
   expect_equal(choropleth$filters[[2]]$options[[1]]$label,
-               scalar("Jan-Mar 2016"))
+               scalar("Jul-Sep 2018"))
   expect_equal(nrow(choropleth$indicators), 7)
   expect_true(all(c("prevalence", "art_coverage", "current_art", "population",
                     "plhiv", "incidence", "new_infections") %in%

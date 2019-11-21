@@ -134,7 +134,6 @@ get_model_output_filters <- function(data) {
 }
 
 get_quarter_filters <- function(data) {
-  browser()
   calendar_quarters <- unique(data$calendar_quarter)
   calendar_quarters <- sort(calendar_quarters, decreasing = TRUE)
   lapply(calendar_quarters, function(quarter) {
@@ -149,6 +148,7 @@ get_quarter_label <- function(calendar_quarter) {
 
 get_year_filters <- function(data) {
   years <- unique(data$year)
+  years <- sort(years, decreasing = TRUE)
   lapply(years, function(year) {
     list(id = scalar(as.character(year)),
          label = scalar(as.character(year)))

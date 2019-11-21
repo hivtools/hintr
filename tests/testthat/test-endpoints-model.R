@@ -92,8 +92,8 @@ test_that("endpoint model run queues a model run", {
   expect_equal(filters[[3]], "sex")
   expect_equal(filters[[4]], "age_group")
   expect_length(barchart$filters[[2]]$options, 2)
-  expect_equal(barchart$filters[[2]]$options[[1]]$id, "CY2016Q1")
-  expect_equal(barchart$filters[[2]]$options[[1]]$label, "Jan-Mar 2016")
+  expect_equal(barchart$filters[[2]]$options[[1]]$id, "CY2018Q3")
+  expect_equal(barchart$filters[[2]]$options[[1]]$label, "Jul-Sep 2018")
   expect_length(barchart$filters[[4]]$options, 29)
   expect_length(barchart$indicators, 7)
 
@@ -131,8 +131,8 @@ test_that("endpoint model run queues a model run", {
   expect_equal(filters[[3]], "sex")
   expect_equal(filters[[4]], "age_group")
   expect_length(choropleth$filters[[2]]$options, 2)
-  expect_equal(choropleth$filters[[2]]$options[[1]]$id, "CY2016Q1")
-  expect_equal(choropleth$filters[[2]]$options[[1]]$label, "Jan-Mar 2016")
+  expect_equal(choropleth$filters[[2]]$options[[1]]$id, "CY2018Q3")
+  expect_equal(choropleth$filters[[2]]$options[[1]]$label, "Jul-Sep 2018")
   expect_length(choropleth$filters[[4]]$options, 29)
   expect_length(choropleth$indicators, 7)
 
