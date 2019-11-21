@@ -1,17 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "array",
-  "items": {
-    "type": "object",
-    "properties": {
-      "area_id": {
-        "type": "string"
-      },
-      "survey_id": {
-        "type": "string"
-      }
-    },
-    "additonalProperties": "true",
-    "required": [ "area_id", "survey_id" ]
-  }
+  "items": { "$ref": "SurveyDataRow.schema.json" }
 }

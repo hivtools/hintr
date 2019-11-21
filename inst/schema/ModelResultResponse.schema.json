@@ -12,5 +12,6 @@
       "additionalProperties": false,
       "required" : [ "barchart", "choropleth" ]
     }
-  }
+  },
+  "required": [ "data", "plottingMetadata" ]
 }
