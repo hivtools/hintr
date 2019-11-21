@@ -38,6 +38,7 @@ get_barchart_metadata <- function(output) {
     metadata$data_type == "output" & metadata$plot_type == "barchart",
     c("indicator", "value_column", "error_low_column", "error_high_column",
       "indicator_column", "indicator_value", "name")]
+  metadata[order(metadata$indicator_value), ]
 }
 
 get_choropleth_metadata <- function(output) {
@@ -47,7 +48,9 @@ get_choropleth_metadata <- function(output) {
     metadata$data_type == "output" & metadata$plot_type == "choropleth",
     c("indicator", "value_column", "indicator_column", "indicator_value",
       "name", "min", "max", "colour", "invert_scale")]
+  metadata[order(metadata$indicator_value), ]
 }
+
 
 get_root_node <- function(area_ids) {
   unique(area_ids[!grepl("\\_", area_ids)])
