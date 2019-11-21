@@ -81,16 +81,16 @@ test_that("get_year_filters returns year labels and ids", {
   data <- data.frame(year = c(2010, 2013, 2016))
   expected_filters <- list(
     list(
-      id = scalar("2010"),
-      label = scalar("2010")
+      id = scalar("2016"),
+      label = scalar("2016")
     ),
     list(
       id = scalar("2013"),
       label = scalar("2013")
     ),
     list(
-      id = scalar("2016"),
-      label = scalar("2016")
+      id = scalar("2010"),
+      label = scalar("2010")
     )
   )
   expect_equal(get_year_filters(data), expected_filters)
