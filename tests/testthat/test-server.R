@@ -205,10 +205,10 @@ test_that("model interactions", {
                c("id", "column_id", "label", "options", "use_shape_regions"))
   expect_equal(names(barchart$filters[[2]]),
                c("id", "column_id", "label", "options"))
-  expect_equal(barchart$filters[[1]]$id, "area_id")
-  expect_equal(barchart$filters[[2]]$id, "calendar_quarter")
+  expect_equal(barchart$filters[[1]]$id, "area")
+  expect_equal(barchart$filters[[2]]$id, "quarter")
   expect_equal(barchart$filters[[3]]$id, "sex")
-  expect_equal(barchart$filters[[4]]$id, "age_group")
+  expect_equal(barchart$filters[[4]]$id, "age")
   expect_length(barchart$filters[[4]]$options, 29)
   expect_length(barchart$filters[[2]]$options, 2)
   expect_equal(barchart$filters[[2]]$options[[1]]$id, "CY2018Q3")
@@ -227,10 +227,10 @@ test_that("model interactions", {
                c("id", "column_id", "label", "options", "use_shape_regions"))
   expect_equal(names(choropleth$filters[[2]]),
                c("id", "column_id", "label", "options"))
-  expect_equal(choropleth$filters[[1]]$id, "area_id")
-  expect_equal(choropleth$filters[[2]]$id, "calendar_quarter")
+  expect_equal(choropleth$filters[[1]]$id, "area")
+  expect_equal(choropleth$filters[[2]]$id, "quarter")
   expect_equal(choropleth$filters[[3]]$id, "sex")
-  expect_equal(choropleth$filters[[4]]$id, "age_group")
+  expect_equal(choropleth$filters[[4]]$id, "age")
   expect_length(choropleth$filters[[4]]$options, 29)
   expect_length(choropleth$filters[[2]]$options, 2)
   expect_equal(choropleth$filters[[2]]$options[[1]]$id, "CY2018Q3")
@@ -301,10 +301,10 @@ test_that("real model can be run by API", {
                c("id", "column_id", "label", "options", "use_shape_regions"))
   expect_equal(names(barchart$filters[[2]]),
                c("id", "column_id", "label", "options"))
-  expect_equal(barchart$filters[[1]]$id, "area_id")
-  expect_equal(barchart$filters[[2]]$id, "calendar_quarter")
+  expect_equal(barchart$filters[[1]]$id, "area")
+  expect_equal(barchart$filters[[2]]$id, "quarter")
   expect_equal(barchart$filters[[3]]$id, "sex")
-  expect_equal(barchart$filters[[4]]$id, "age_group")
+  expect_equal(barchart$filters[[4]]$id, "age")
   expect_length(barchart$filters[[4]]$options, 29)
   expect_length(barchart$filters[[2]]$options, 2)
   expect_equal(barchart$filters[[2]]$options[[1]]$id, "CY2018Q3")
@@ -323,10 +323,10 @@ test_that("real model can be run by API", {
                c("id", "column_id", "label", "options", "use_shape_regions"))
   expect_equal(names(choropleth$filters[[2]]),
                c("id", "column_id", "label", "options"))
-  expect_equal(choropleth$filters[[1]]$id, "area_id")
-  expect_equal(choropleth$filters[[2]]$id, "calendar_quarter")
+  expect_equal(choropleth$filters[[1]]$id, "area")
+  expect_equal(choropleth$filters[[2]]$id, "quarter")
   expect_equal(choropleth$filters[[3]]$id, "sex")
-  expect_equal(choropleth$filters[[4]]$id, "age_group")
+  expect_equal(choropleth$filters[[4]]$id, "age")
   expect_length(choropleth$filters[[4]]$options, 29)
   expect_length(choropleth$filters[[2]]$options, 2)
   expect_equal(choropleth$filters[[2]]$options[[1]]$id, "CY2018Q3")
@@ -455,10 +455,10 @@ test_that("model run options are exposed", {
     c("id", "label"))
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
-    "2011")
+    "2018")
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
-    "2011")
+    "2018")
 })
 
 test_that("version information is returned", {
