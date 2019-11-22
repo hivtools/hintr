@@ -313,7 +313,7 @@ test_that("can retrieve validated model options", {
     "Jul-Sep 2011")
 
   advanced_section <- json$controlSections[[5]]
-  expect_length(advanced_section$label, "Advanced")
+  expect_equal(advanced_section$label, "Advanced")
 })
 
 
