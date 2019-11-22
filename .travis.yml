@@ -18,6 +18,8 @@ services:
 before_script:
   - ./scripts/build_test_data
   - R CMD INSTALL .
+  - Rscript -e 'install.packages(c("devtools", "roxygen2"))'
+  - Rscript -e 'devtools::test()'
 cache: packages
 env:
   - VALIDATE_JSON_SCHEMAS=true USE_MOCK_MODEL=true
