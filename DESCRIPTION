@@ -18,6 +18,7 @@ Imports:
     docopt,
     geojsonio (>= 0.8.0),
     glue,
+    heartbeatr,
     ids,
     jsonlite (>= 1.2.2),
     naomi (>= 0.0.16),
