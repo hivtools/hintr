@@ -142,3 +142,15 @@ stitch_options_template <- function(options_template) {
         paste(options_template, collapse = ", ")
         , ']}', collapse = "")
 }
+
+#' Validate model options
+#'
+#' @param options Key value list of model options
+#'
+#' @return TRUE if valid else throws an error
+#' @keywords internal
+do_validate_model_options <- function(options) {
+  list(
+    valid = scalar(naomi::validate_model_options(options))
+  )
+}

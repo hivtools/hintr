@@ -8,6 +8,8 @@ api_build <- function(queue) {
             serializer = serializer_json_hintr())
   pr$handle("POST", "/model/options", endpoint_model_options,
             serializer = serializer_json_hintr())
+  pr$handle("POST", "/model/options/validate", endpoint_model_options_validate,
+            serializer = serialzier_json_hintr())
   pr$handle("POST", "/model/submit", endpoint_model_submit(queue),
             serializer = serializer_json_hintr())
   pr$handle("GET", "/model/status/<id>", endpoint_model_status(queue),
@@ -96,6 +98,27 @@ endpoint_model_options <- function(req, res, shape, survey, programme =  NULL, a
   }
 
   hintr_response(response, "ModelRunOptions")
+}
+
+#' Validate that set of model run options is okay to submit for a model run
+#'
+#' @param req The request object.
+#' @param res The response object.
+#' @param options key-value list of selected options
+#'
+#' @return Response with data valid if true and errors if not valid
+#' @keywords internal
+endpoint_model_options_validate <- function(req, res, options) {
+  response <- with_success({
+    do_validate_model_options(options)
+  })
+  if (!response$success) {
+    response$errors <- hintr_errors(list(
+      "VALIDATION_FAILED" = response$message
+    ))
+    res$status <- 400
+  }
+  hintr_response(respon, "ModelOptionsValidate")
 }
 
 endpoint_model_submit <- function(queue) {
