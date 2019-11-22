@@ -397,7 +397,7 @@ test_that("model options can be validated", {
 
   ## Submit a model run
   submit <- file.path("payload", "model_submit_payload.json")
-  r <- httr::POST(paste0(server$url, "/model/options/validate"),
+  r <- httr::POST(paste0(server$url, "/validate/options"),
                   body = httr::upload_file(submit),
                   encode = "json")
 
