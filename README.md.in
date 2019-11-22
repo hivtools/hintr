@@ -66,3 +66,5 @@ To run tests locally:
     ```
 
 Finally tests can be run with `devtools::test()`.
+
+## Using sensitive data

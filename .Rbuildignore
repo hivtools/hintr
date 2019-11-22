@@ -8,3 +8,5 @@
 ^README\.md\.in$
 ^README\.yml$
 ^scripts$
+^id_rsa\.enc$
+^id_rsa$
