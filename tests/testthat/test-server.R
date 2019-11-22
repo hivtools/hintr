@@ -392,6 +392,23 @@ test_that("model run options are exposed", {
     "Jul-Sep 2011")
 })
 
+test_that("model options can be validated", {
+  server <- hintr_server()
+
+  ## Submit a model run
+  submit <- file.path("payload", "model_submit_payload.json")
+  r <- httr::POST(paste0(server$url, "/model/options/validate"),
+                  body = httr::upload_file(submit),
+                  encode = "json")
+
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+  expect_equal(response$errors, list())
+  expect_equal(names(response$data), "valid")
+  expect_equal(response$data$valid, TRUE)
+})
+
 test_that("version information is returned", {
   server <- hintr_server()
   r <- httr::GET(paste0(server$url, "/hintr/version"))

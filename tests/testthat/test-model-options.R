@@ -341,3 +341,21 @@ test_that("can read geojson level labels", {
       label = scalar("District + Metro")
     )))
 })
+
+test_that("model options can be validated", {
+  data <- list(
+    pjnz = "path/to/pjnz",
+    shape = "path",
+    population = "path",
+    survey = "path",
+    programme = "path",
+    anc = "path"
+  )
+  options <- list(
+    option1 = "one",
+    option2 = "two"
+  )
+  valid <- do_validate_model_options(data, options)
+  expect_equal(names(valid), "valid")
+  expect_equal(valid$valid, scalar(TRUE))
+})

@@ -145,12 +145,13 @@ stitch_options_template <- function(options_template) {
 
 #' Validate model options
 #'
+#' @param data The set of input data for the model run
 #' @param options Key value list of model options
 #'
 #' @return TRUE if valid else throws an error
 #' @keywords internal
-do_validate_model_options <- function(options) {
+do_validate_model_options <- function(data, options) {
   list(
-    valid = scalar(naomi::validate_model_options(options))
+    valid = scalar(naomi::validate_model_options(data, options))
   )
 }
