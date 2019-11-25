@@ -30,7 +30,10 @@ output <- naomi::hintr_run_model(payload$data,
                                  dat$`spectrum-path`,
                                  dat$`summary-path`)
 
-message(sprintf("Saving output at %s", normalizePath(dat$`output-path`)))
+message(sprintf("Saving output at %s", normalizePath(dat$`output-path`,
+                                                     mustWork = TRUE)))
 message(
-  sprintf("Saving spectrum download at %s", normalizePath(dat$`spectrum-path`)))
-message(sprintf("Saving output at %s", normalizePath(dat$`summary-path`)))
+  sprintf("Saving spectrum download at %s", normalizePath(dat$`spectrum-path`,
+                                                          mustWork = TRUE)))
+message(sprintf("Saving output at %s", normalizePath(dat$`summary-path`,
+                                                     mustWork = TRUE)))

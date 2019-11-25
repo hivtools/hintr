@@ -71,7 +71,7 @@ do_validate_population <- function(population) {
   assert_single_country(population, "population")
   assert_column_names(
     colnames(population),
-    c("area_id", "quarter_id", "sex", "age_group_id", "source", "population"))
+    c("area_id", "calendar_quarter", "sex", "age_group", "source", "population"))
   list(data = scalar(NA),
        filters = scalar(NA))
 }
@@ -93,13 +93,13 @@ do_validate_programme <- function(programme, shape) {
   assert_single_country(data, "programme")
   assert_column_names(
     colnames(data),
-    c("area_id", "quarter_id", "sex", "age_group_id", "current_art"))
+    c("area_id", "year", "sex", "age_group", "current_art"))
   assert_consistent_regions(read_regions(shape, "shape"),
                             read_regions(programme, "programme"),
                             "programme")
   list(data = data,
        filters = list("age" = get_age_filters(data),
-                      "quarter" = get_quarter_filters(data),
+                      "year" = get_year_filters(data),
                       "indicators" = get_indicator_filters(data, "programme")))
 }
 
@@ -119,7 +119,7 @@ do_validate_anc <- function(anc, shape) {
   assert_single_country(data, "anc")
   assert_column_names(
     colnames(data),
-    c("area_id", "age_group_id", "quarter_id", "anc_clients",
+    c("area_id", "age_group", "year", "anc_clients",
       "ancrt_hiv_status", "ancrt_known_pos", "ancrt_already_art",
       "ancrt_tested", "ancrt_test_pos"))
   assert_consistent_regions(read_regions(shape, "shape"),
@@ -127,7 +127,7 @@ do_validate_anc <- function(anc, shape) {
                             "ANC")
   data <- naomi::calculate_prevalence_art_coverage(data)
   list(data = data,
-       filters = list("quarter" = get_quarter_filters(data),
+       filters = list("year" = get_year_filters(data),
                       "indicators" = get_indicator_filters(data, "anc")))
 }
 
@@ -144,7 +144,7 @@ do_validate_survey <- function(survey, shape) {
   assert_single_country(data, "survey")
   assert_column_names(
     colnames(data),
-    c("iso3", "area_id", "survey_id", "survey_year", "sex", "age_group_id",
+    c("area_id", "survey_id", "survey_year", "sex", "age_group",
       "indicator", "n_cluster", "n_obs", "est", "se", "ci_l", "ci_u"))
   assert_consistent_regions(read_regions(shape, "shape"),
                             read_regions(survey, "survey"),
