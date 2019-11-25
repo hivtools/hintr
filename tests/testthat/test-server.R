@@ -194,7 +194,7 @@ test_that("model interactions", {
   expect_equal(names(response$data$data[[1]]),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator_id", "mode", "mean", "lower", "upper"))
-  expect_length(response$data$data, 42021)
+  expect_length(response$data$data, 84042)
   expect_equal(names(response$data$plottingMetadata), "barchart")
   barchart <- response$data$plottingMetadata$barchart
   expect_equal(names(barchart), c("indicators", "filters"))
@@ -202,7 +202,7 @@ test_that("model interactions", {
   expect_equal(barchart$filters[[1]]$id, "age")
   expect_equal(barchart$filters[[2]]$id, "quarter")
   expect_length(barchart$filters[[1]]$options, 29)
-  expect_length(barchart$filters[[2]]$options, 1)
+  expect_length(barchart$filters[[2]]$options, 2)
   expect_equal(barchart$filters[[2]]$options[[1]]$label, "Jan-Mar 2016")
   expect_length(barchart$indicators, 7)
 })
@@ -254,7 +254,7 @@ test_that("real model can be run by API", {
   expect_equal(names(response$data$data[[1]]),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator_id", "mode", "mean", "lower", "upper"))
-  expect_length(response$data$data, 42021)
+  expect_length(response$data$data, 84042)
   expect_equal(names(response$data$plottingMetadata), "barchart")
   barchart <- response$data$plottingMetadata$barchart
   expect_equal(names(barchart), c("indicators", "filters"))
@@ -262,7 +262,7 @@ test_that("real model can be run by API", {
   expect_equal(barchart$filters[[1]]$id, "age")
   expect_equal(barchart$filters[[2]]$id, "quarter")
   expect_length(barchart$filters[[1]]$options, 29)
-  expect_length(barchart$filters[[2]]$options, 1)
+  expect_length(barchart$filters[[2]]$options, 2)
   expect_equal(barchart$filters[[2]]$options[[1]]$label, "Jan-Mar 2016")
   expect_length(barchart$indicators, 7)
 })
