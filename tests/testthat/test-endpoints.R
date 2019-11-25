@@ -434,7 +434,7 @@ test_that("endpoint_model_options returns model options", {
 
   expect_equal(res$status, 200)
   expect_equal(names(json$data), "controlSections")
-  expect_length(json$data$controlSections, 4)
+  expect_length(json$data$controlSections, 5)
 
   general_section <- json$data$controlSections[[1]]
   expect_length(
@@ -533,7 +533,7 @@ test_that("endpoint_model_options can be run without programme data", {
 
   expect_equal(res$status, 200)
   expect_equal(names(json$data), "controlSections")
-  expect_length(json$data$controlSections, 2)
+  expect_length(json$data$controlSections, 3)
 
   general_section <- json$data$controlSections[[1]]
   expect_length(

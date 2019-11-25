@@ -302,7 +302,7 @@ test_that("model run options are exposed", {
   expect_equal(response$status, "success")
   expect_equal(response$errors, list())
   expect_equal(names(response$data), "controlSections")
-  expect_length(response$data$controlSections, 4)
+  expect_length(response$data$controlSections, 5)
 
   general_section <- response$data$controlSections[[1]]
   expect_length(
