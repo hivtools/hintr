@@ -360,12 +360,12 @@ test_that("possible filters are returned for data", {
   expect_equal(response$data$filters$indicators[[1]]$label, "Prevalence")
   expect_equal(response$data$filters$indicators[[2]]$id, "art_coverage")
   expect_equal(response$data$filters$indicators[[2]]$label, "ART coverage")
-  expect_equal(response$data$filters$indicators[[3]]$id, "vls")
+  expect_equal(response$data$filters$indicators[[3]]$id, "recent")
   expect_equal(response$data$filters$indicators[[3]]$label,
-               "Viral load suppression")
-  expect_equal(response$data$filters$indicators[[4]]$id, "recent")
-  expect_equal(response$data$filters$indicators[[4]]$label,
                "Proportion recently infected")
+  expect_equal(response$data$filters$indicators[[4]]$id, "vls")
+  expect_equal(response$data$filters$indicators[[4]]$label,
+               "Viral load suppression")
 })
 
 test_that("endpoint_plotting_metadata gets metadata", {

@@ -215,10 +215,10 @@ test_that("can get indicator filters for survey data", {
   expect_equal(filters[[1]]$label, scalar("Prevalence"))
   expect_equal(filters[[2]]$id, scalar("art_coverage"))
   expect_equal(filters[[2]]$label, scalar("ART coverage"))
-  expect_equal(filters[[3]]$id, scalar("vls"))
-  expect_equal(filters[[3]]$label, scalar("Viral load suppression"))
-  expect_equal(filters[[4]]$id, scalar("recent"))
-  expect_equal(filters[[4]]$label, scalar("Proportion recently infected"))
+  expect_equal(filters[[3]]$id, scalar("recent"))
+  expect_equal(filters[[3]]$label, scalar("Proportion recently infected"))
+  expect_equal(filters[[4]]$id, scalar("vls"))
+  expect_equal(filters[[4]]$label, scalar("Viral load suppression"))
 })
 
 test_that("can get indicator filters for programme data", {
