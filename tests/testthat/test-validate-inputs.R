@@ -145,12 +145,12 @@ test_that("do_validate_survey validates survey file", {
   expect_equal(data$filters$indicators[[1]]$label, scalar("Prevalence"))
   expect_equal(data$filters$indicators[[2]]$id, scalar("art_coverage"))
   expect_equal(data$filters$indicators[[2]]$label, scalar("ART coverage"))
-  expect_equal(data$filters$indicators[[3]]$id, scalar("vls"))
+  expect_equal(data$filters$indicators[[3]]$id, scalar("recent"))
   expect_equal(data$filters$indicators[[3]]$label,
-               scalar("Viral load suppression"))
-  expect_equal(data$filters$indicators[[4]]$id, scalar("recent"))
-  expect_equal(data$filters$indicators[[4]]$label,
                scalar("Proportion recently infected"))
+  expect_equal(data$filters$indicators[[4]]$id, scalar("vls"))
+  expect_equal(data$filters$indicators[[4]]$label,
+               scalar("Viral load suppression"))
 })
 
 test_that("do_validate_programme returns useful error from shapefile comparison", {
