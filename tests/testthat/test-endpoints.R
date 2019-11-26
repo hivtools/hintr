@@ -148,24 +148,47 @@ test_that("hintr json serializer supports splicing in json objects", {
 
   test <- '{"example_json":123}'
   response <- serializer(test, req, res, errorHandler)
-  expect_equal(response$header, "Content-Type: application/json")
+  expect_equal(names(response$headers), "Content-Type")
+  expect_equal(response$headers$`Content-Type`, "application/json")
   expect_match(response$body, '["{\\"example_json\\":123}"]', fixed = TRUE)
 
   ## Declaring test as a json object
+  res <- MockPlumberResponse$new()
   response <- serializer(json_verbatim(test), req, res, errorHandler)
-  expect_equal(response$header, "Content-Type: application/json")
+  expect_equal(names(response$headers), "Content-Type")
+  expect_equal(response$headers$`Content-Type`, "application/json")
   expect_match(response$body, test, fixed = TRUE)
 
   ## With a list
+  res <- MockPlumberResponse$new()
   test_list <- list(example_json = scalar(123))
   response <- serializer(test_list, req, res, errorHandler)
-  expect_equal(response$header, "Content-Type: application/json")
+  expect_equal(names(response$headers), "Content-Type")
+  expect_equal(response$headers$`Content-Type`, "application/json")
   expect_match(response$body, test, fixed = TRUE)
 
   ## With error handling
   ## When trying to convert a value to JSON which throws an error
   response <- serializer(stop("Throw error"), req, res, errorHandler)
   expect_equal(response, "Throw error")
+})
+
+test_that("serializer_zip sets headers and streams bytes", {
+  req <- '{"test":"example request"}'
+  res <- MockPlumberResponse$new()
+  errorHandler <- function(req, res, e) {
+    e$message
+  }
+
+  serializer <- serializer_zip("test")
+
+  output <- serializer(list(bytes = "value", id = "1234567"), req, res,
+                       errorHandler)
+  expect_equal(output$body, "value")
+  expect_equal(names(output$headers), c("Content-Type", "Content-Disposition"))
+  expect_equal(output$headers$`Content-Type`, "application/octet-stream")
+  expect_equal(output$headers$`Content-Disposition`,
+               'attachment; filename="test_12345.zip"')
 })
 
 test_that("Schemas are draft-04", {
@@ -631,4 +654,54 @@ test_that("can convert model status to scalar", {
     id = scalar("id")
   )
   expect_equal(response, expected_response)
+})
+
+test_that("404 handler", {
+  res <- MockPlumberResponse$new()
+  req <- list(REQUEST_METHOD = "POST",
+              PATH_INFO = "/my/path")
+  ans <- hintr_404_handler(req, res)
+  expect_is(ans, "list") # not json
+  expect_equal(ans$status, scalar("failure"))
+  expect_equal(ans$errors,
+               list(list(
+                 error = scalar("NOT_FOUND"),
+                 detail = scalar("POST /my/path is not a valid hintr path"))))
+  expect_identical(res$status, 404L)
+})
+
+test_that("error handler", {
+  err <- simpleCondition("some error", quote(f(x)))
+  res <- MockPlumberResponse$new()
+  req <- list(REQUEST_METHOD = "POST",
+              PATH_INFO = "/my/path")
+  ans <- hintr_error_handler(req, res, err)
+  expect_is(ans, "PlumberResponse")
+  expect_is(ans$body, "json")
+  validate_json_schema(ans$body, "Response")
+  dat <- jsonlite::fromJSON(ans$body, simplifyVector = FALSE)
+  expect_equal(dat$status, "failure")
+  detail <- paste("Unexpected server error in 'f(x)' :",
+                  "'some error' while doing 'POST /my/path'")
+  expect_equal(dat$errors,
+               list(list(error = "SERVER_ERROR", detail = detail)))
+  expect_identical(res$status, 500L)
+})
+
+test_that("error handler with no call", {
+  err <- simpleCondition("some error", NULL)
+  res <- MockPlumberResponse$new()
+  req <- list(REQUEST_METHOD = "POST",
+              PATH_INFO = "/my/path")
+  ans <- hintr_error_handler(req, res, err)
+  expect_is(ans, "PlumberResponse")
+  expect_is(ans$body, "json")
+  validate_json_schema(ans$body, "Response")
+  dat <- jsonlite::fromJSON(ans$body, simplifyVector = FALSE)
+  expect_equal(dat$status, "failure")
+  detail <- paste("Unexpected server error in '<call missing>' :",
+                  "'some error' while doing 'POST /my/path'")
+  expect_equal(dat$errors,
+               list(list(error = "SERVER_ERROR", detail = detail)))
+  expect_identical(res$status, 500L)
 })

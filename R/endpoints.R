@@ -17,15 +17,25 @@ api_build <- function(queue) {
   pr$handle("GET", "/meta/plotting/<iso3>", endpoint_plotting_metadata,
             serializer = serializer_json_hintr())
   pr$handle("GET", "/download/spectrum/<id>", endpoint_download_spectrum(queue),
-            serializer = serializer_zip())
+            serializer = serializer_zip("naomi_spectrum_digest"))
+  pr$handle("HEAD", "/download/spectrum/<id>", endpoint_download_spectrum(queue),
+            serializer = serializer_zip("naomi_spectrum_digest"))
   pr$handle("GET", "/download/summary/<id>", endpoint_download_summary(queue),
-            serializer = serializer_zip())
+            serializer = serializer_zip("naomi_summary"))
+  pr$handle("HEAD", "/download/summary/<id>", endpoint_download_summary(queue),
+            serializer = serializer_zip("naomi_summary"))
   pr$handle("GET", "/hintr/version", endpoint_hintr_version,
             serializer = serializer_json_hintr())
   pr$handle("GET", "/hintr/worker/status", endpoint_hintr_worker_status(queue),
             serializer = serializer_json_hintr())
   pr$handle("POST", "/hintr/stop", endpoint_hintr_stop(queue))
   pr$handle("GET", "/", api_root)
+
+  pr$registerHook("preroute", api_log_start)
+  pr$registerHook("postserialize", api_log_end)
+  pr$set404Handler(hintr_404_handler)
+  pr$setErrorHandler(hintr_error_handler)
+
   pr
 }
 
@@ -36,6 +46,25 @@ api_run <- function(pr, port = 8888) {
 api <- function(port = 8888, queue_id = NULL, workers = 2) {
   queue <- Queue$new(queue_id, workers) # nocov
   api_run(api_build(queue), port) # nocov
+}
+
+api_log_start <- function(data, req, res) {
+  api_log("%s %s", req$REQUEST_METHOD, req$PATH_INFO)
+}
+
+api_log_end <- function(data, req, res, value) {
+  if (is.raw(value$body)) {
+    size <- length(value$body)
+  } else {
+    size <- nchar(value$body)
+  }
+  api_log("`--> %d (%d bytes)", value$status, size)
+  value
+}
+
+# We can route this via some check for enabling/disabling logging later
+api_log <- function(fmt, ...) {
+  message(sprintf("[%s] %s", Sys.time(), sprintf(fmt, ...)))
 }
 
 #' Get function to generate model options from Naomi template and input files
@@ -289,7 +318,11 @@ download <- function(queue, type) {
     path <- switch(type,
                    "spectrum" = response$value$spectrum_path,
                    "summary" = response$value$summary_path)
-    readBin(path, "raw", n = file.size(path))
+    out <- list(
+      bytes = readBin(path, "raw", n = file.size(path)),
+      id = id
+    )
+    out
   }
 }
 
@@ -312,10 +345,13 @@ endpoint_plotting_metadata <- function(req, res, iso3) {
 #' @param schema The name of data subschema to validate response against.
 #' @param include_version If TRUE the package version information is included
 #' in the response.
+#' @param as_json Logical, indicating if the response should be
+#'   converted into a json string
 #'
 #' @return Formatted hintr response.
 #' @keywords internal
-hintr_response <- function(value, schema, include_version = FALSE) {
+hintr_response <- function(value, schema, include_version = FALSE,
+                           as_json = TRUE) {
   if (value$success) {
     status <- "success"
   } else {
@@ -323,23 +359,22 @@ hintr_response <- function(value, schema, include_version = FALSE) {
   }
   if (is.null(value$errors)) {
     errors <- list()
-  }
-  else {
+  } else {
     errors = value$errors
   }
-  ret <- list(
+  response <- list(
     status = scalar(status),
     errors = errors,
     data = value$value)
   if (include_version) {
-    ret$version <- cfg$version_info
+    response$version <- cfg$version_info
   }
-  ret <- to_json(ret)
+  ret <- to_json(response)
   if (value$success) {
     validate_json_schema(ret, schema, query = "data")
   }
   validate_json_schema(ret, "Response")
-  ret
+  if (as_json) ret else response
 }
 
 hintr_errors <- function(errors) {
@@ -426,14 +461,56 @@ serializer_json_hintr <- function() {
   }
 }
 
-serializer_zip <- function() {
+serializer_zip <- function(filename) {
   function(val, req, res, errorHandler) {
     tryCatch({
       res$setHeader("Content-Type", "application/octet-stream")
-      res$body <- val
+      short_id <- substr(val$id, 1, 5)
+      res$setHeader("Content-Disposition",
+                    sprintf('attachment; filename="%s_%s.zip"',
+                            filename, short_id))
+      res$body <- val$bytes
       return(res$toResponse())
     }, error = function(e) {
       errorHandler(req, res, e)
     })
   }
+}
+
+hintr_404_handler <- function(req, res) {
+  res$status <- 404L
+  detail <- sprintf("%s %s is not a valid hintr path",
+                    req$REQUEST_METHOD, req$PATH_INFO)
+  errors <- hintr_errors(list("NOT_FOUND" = detail))
+  value <- list(success = FALSE,
+                errors = errors)
+  # We get no control over how plumber will serialise this - so we
+  # can't return json or it gets wrapped as if it was a json string
+  # (we ordinarily get around this by using json_verbatim = TRUE).  So
+  # here we return the object that will be passed into
+  # jsonlite::toJSON (all scalars being appropriately treated).
+  hintr_response(value, as_json = FALSE)
+}
+
+# It's not possible to get the traceback at this point
+hintr_error_handler <- function(req, res, error) {
+  res$status <- 500L
+  if (is.null(error$call)) {
+    call <- "<call missing>"
+  } else {
+    call <- paste(deparse(error$call), collapse = " ")
+  }
+  detail <- sprintf(
+    "Unexpected server error in '%s' : '%s' while doing '%s %s'",
+    call, error$message, req$REQUEST_METHOD, req$PATH_INFO)
+  api_log("ERROR: %s", detail)
+  errors <- hintr_errors(list("SERVER_ERROR" = detail))
+  # This seems at odds with the default handler present in the plumber
+  # package, and it also seems entirely undocumented.
+  value <- list(success = FALSE,
+                errors = errors)
+  res$body <- hintr_response(value, as_json = TRUE)
+  # Setting a header with setHeader should work, but here messes it up
+  res$headers[["Content-Type"]] <- "application/json"
+  res
 }

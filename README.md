@@ -274,7 +274,7 @@ $ curl -X POST -H 'Content-Type: application/json' \
 
     ],
     "data": {
-        "id": "b96e7ca64d5b559067a9bed205bf1c4c"
+        "id": "fff14fcb70529a45668cddf8fab99bd3"
     }
 }
 ```
@@ -295,9 +295,10 @@ $ curl http://localhost:8888/model/status/{id}
         "status": "RUNNING",
         "success": null,
         "queue": 0,
-        "id": "b96e7ca64d5b559067a9bed205bf1c4c",
-        "progress": "50%",
-        "timeRemaining": "10s"
+        "progress": [
+
+        ],
+        "id": "fff14fcb70529a45668cddf8fab99bd3"
     }
 }
 ```
@@ -328,7 +329,23 @@ $ curl http://localhost:8888/model/result/{id}
             },
             {
                 "area_id": "MWI",
-... truncated 462377 lines of output
+... truncated 462426 lines of output
+```
+Headers for summary download
+
+```
+$ curl -I http://localhost:8888/download/summary/{id}
+```
+
+```json
+HTTP/1.1 200 OK
+Date: Thu, 14 Nov 2019 16:04:02 GMT
+Content-Type: application/octet-stream
+Content-Disposition: attachment; filename="naomi_summary.zip"
+Date: Thu, 14 Nov 2019 04:04:02 PM GMT
+Connection: close
+Content-Length: 2530508
+
 ```
 Get the summary download
 
@@ -337,7 +354,23 @@ $ curl http://localhost:8888/download/summary/{id}
 ```
 
 ```json
-Hidden 11770 bytes of output
+Hidden 11632 bytes of output
+```
+Headers for spectrum digest download
+
+```
+$ curl -I http://localhost:8888/download/spectrum/{id}
+```
+
+```json
+HTTP/1.1 200 OK
+Date: Thu, 14 Nov 2019 16:04:02 GMT
+Content-Type: application/octet-stream
+Content-Disposition: attachment; filename="naomi_spectrum_digest.zip"
+Date: Thu, 14 Nov 2019 04:04:02 PM GMT
+Connection: close
+Content-Length: 2530508
+
 ```
 Get the spectrum digest download
 
@@ -346,7 +379,7 @@ $ curl http://localhost:8888/download/spectrum/{id}
 ```
 
 ```json
-Hidden 11770 bytes of output
+Hidden 11632 bytes of output
 ```
 Get plotting metadata for Malawi
 
@@ -375,7 +408,7 @@ $ curl http://localhost:8888/meta/plotting/Malawi
                         "colour": "interpolateViridis",
                         "invert_scale": false
                     },
-... truncated 166 lines of output
+... truncated 247 lines of output
 ```
 Get information about hintr versions
 
@@ -390,8 +423,8 @@ $ curl http://localhost:8888/hintr/version
 
     ],
     "data": {
-        "hintr": "0.0.12",
-        "naomi": "0.0.12",
+        "hintr": "0.0.15",
+        "naomi": "0.0.16",
         "rrq": "0.2.1"
     }
 }
@@ -409,8 +442,8 @@ $ curl http://localhost:8888/hintr/worker/status
 
     ],
     "data": {
-        "dramatisable_cuttlefish_2": "IDLE",
-        "dramatisable_cuttlefish_1": "IDLE"
+        "unacknowledged_pilchard_2": "IDLE",
+        "unacknowledged_pilchard_1": "IDLE"
     }
 }
 ```

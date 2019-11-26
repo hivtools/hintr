@@ -1,7 +1,19 @@
-# hintr 0.0.15
+# hintr 0.0.18
 
 * Return version info from model run options response
 * Require version info in model run submit endpoint
+
+# hintr 0.0.17
+
+* Not found (404) responses now conform to the error schema (mrc-596)
+
+# hintr 0.0.16
+
+* Download endpoints return Content-Disposition headers
+
+# hintr 0.0.15
+
+* Add HEAD endpoints for summary and spectrum downloads
 
 # hintr 0.0.14
 

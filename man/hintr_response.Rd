@@ -4,7 +4,7 @@
 \alias{hintr_response}
 \title{Format a hintr response and validate against schema.}
 \usage{
-hintr_response(value, schema, include_version = FALSE)
+hintr_response(value, schema, include_version = FALSE, as_json = TRUE)
 }
 \arguments{
 \item{value}{List containing an indication of success, any errors and the
@@ -14,6 +14,9 @@ value to return.}
 
 \item{include_version}{If TRUE the package version information is included
 in the response.}
+
+\item{as_json}{Logical, indicating if the response should be
+converted into a json string}
 }
 \value{
 Formatted hintr response.
