@@ -35,7 +35,7 @@ test_that("can read iso3 from geojson", {
 
 test_that("can read country from PJNZ", {
   pjnz <- file_object(file.path("testdata", "Botswana2018.PJNZ"))
-  expect_equal(read_country(pjnz), "Botswana")
+  expect_equal(read_country(pjnz$path), "Botswana")
 })
 
 test_that("geojson read applies can use cache", {

@@ -44,7 +44,6 @@ test_that("endpoint_validate_baseline returns nice error if file does not exist"
   expect_equal(response$errors[[1]]$detail,
                "File at path path/to/file does not exist. Create it, or fix the path.")
   expect_equal(res$status, 400)
-
 })
 
 test_that("endpoint_validate_baseline validates the input and response", {
@@ -80,6 +79,34 @@ test_that("endpoint_validate_baseline can take zip of PJNZ extracts", {
   expect_equal(response$data$data$iso3, "BWA")
   expect_equal(response$data$filename, "original")
   expect_equal(res$status, 200)
+})
+
+test_that("error thrown if zip contains non PJNZ files", {
+  pjnz <- file.path("testdata", "invalid_files.zip")
+  req <- list(postBody = '{"type": "pjnz", "file": {"path": "path/to/file", "hash": "12345", "filename": "original"}}')
+  res <- MockPlumberResponse$new()
+  file <- list(path = pjnz, hash = "12345", filename = "original")
+  response <- endpoint_validate_baseline(req, res, "pjnz", file)
+  response <- jsonlite::parse_json(response)
+  expect_equal(response$status, "failure")
+  expect_equal(res$status, 400)
+  expect_equal(response$errors[[1]]$error, "INVALID_FILE")
+  expect_equal(response$errors[[1]]$detail,
+    "Zip contains non PJNZ files: \ncat.mp4, invalid_file.zip, invalid_file2.zip")
+})
+
+test_that("error thrown if zip contains different countries", {
+  pjnz <- file.path("testdata", "mixed_pjnz_countries.zip")
+  req <- list(postBody = '{"type": "pjnz", "file": {"path": "path/to/file", "hash": "12345", "filename": "original"}}')
+  res <- MockPlumberResponse$new()
+  file <- list(path = pjnz, hash = "12345", filename = "original")
+  response <- endpoint_validate_baseline(req, res, "pjnz", file)
+  response <- jsonlite::parse_json(response)
+  expect_equal(response$status, "failure")
+  expect_equal(res$status, 400)
+  expect_equal(response$errors[[1]]$error, "INVALID_FILE")
+  expect_equal(response$errors[[1]]$detail,
+               "Zip contains PJNZ for multiple countries, got Botswana, Malawi")
 })
 
 test_that("endpoint_validate_baseline support shape file", {

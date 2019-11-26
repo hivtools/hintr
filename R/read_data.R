@@ -28,6 +28,11 @@ read_pjnz_iso3 <- function(pjnz) {
   iso_numeric_to_alpha_3(hiv_params$iso3)
 }
 
+read_pjnz_iso3_from_path <- function(pjnz_path) {
+  hiv_params <- specio::read_hivproj_param(pjnz_path)
+  iso_numeric_to_alpha_3(hiv_params$iso3)
+}
+
 ## Convert numeric iso3 country code to the alpha-3 code
 iso_numeric_to_alpha_3 <- function(numeric_iso) {
   spectrum5_countrylist[which(spectrum5_countrylist$Code == numeric_iso),
@@ -41,10 +46,10 @@ read_geojson_iso3 <- function(shape) {
   substr(json$features[[1]]$properties$area_id, 1, 3)
 }
 
-read_country <- function(pjnz) {
+read_country <- function(pjnz_path) {
   ## TODO: Add function to specio to just extract metadata from the PJN and
   ## use this here instead to avoid getting unnecessary data. See mrc-388.
-  hiv_params <- specio::read_hivproj_param(pjnz$path)
+  hiv_params <- specio::read_hivproj_param(pjnz_path)
   hiv_params$country
 }
 

@@ -14,7 +14,7 @@ test_that("PJNZ can be validated and return data", {
 
 test_that("country can be read", {
   pjnz <- file_object(file.path("testdata", "Botswana2018.PJNZ"))
-  expect_equal(read_country(pjnz), "Botswana")
+  expect_equal(read_country(pjnz$path), "Botswana")
 })
 
 test_that("assert fails if more than once country in json", {

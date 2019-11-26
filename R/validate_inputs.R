@@ -1,27 +1,37 @@
 do_validate_pjnz <- function(pjnz) {
-  browser()
   if (!is_pjnz(pjnz$path)) {
-    subnational_pjnz <- zip::zip_list(pjnz$path)$filename
-    are_pjnz <- lapply(subnational_pjnz, is_pjnz)
-    if (!all(are_pjnz)) {
-      not_pjnz <- subnational_pjnz[!are_pjnz]
+    unzip_dir <- tempfile("pjnz_unzip")
+    dir.create(unzip_dir)
+    zip::unzip(pjnz$path, exdir = unzip_dir)
+    pjnz_paths <- list.files(unzip_dir, full.names = TRUE)
+    are_pjnz <- lapply(pjnz_paths, is_pjnz)
+    if (!all(unlist(are_pjnz))) {
+      not_pjnz <- list.files(unzip_dir)[!unlist(are_pjnz)]
       stop(sprintf("Zip contains non PJNZ files: \n%s", collapse(not_pjnz)))
     }
+  } else {
+    pjnz_paths <- pjnz$path
   }
-  country <- read_country(pjnz)
-  if (country == "GBR") {
-    stop("Invalid country")
+  countries <- lapply(pjnz_paths, read_country)
+  if (length(unique(countries)) != 1) {
+    stop(sprintf("Zip contains PJNZs for mixed countries, got %s",
+                 collapse(unique(countries))))
   }
   list(
-    data = list(country = scalar(country),
-                iso3 = scalar(read_pjnz_iso3(pjnz))),
+    data = list(country = scalar(countries[[1]]),
+                iso3 = scalar(read_pjnz_iso3_from_path(pjnz_paths[[1]]))),
     filters = scalar(NA)
   )
 }
 
 is_pjnz <- function(path) {
-  files <- zip::zip_list(path)
-  any(grepl("*.DP", files$filename))
+  tryCatch({
+    files <- zip::zip_list(path)
+    any(grepl("*.DP", files$filename))
+  },
+  error = function(e) {
+    return(FALSE)
+  })
 }
 
 read_iso3 <- function(file, type) {
