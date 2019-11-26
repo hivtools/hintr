@@ -5,10 +5,13 @@ Queue <- R6::R6Class(
     root = NULL,
     cleanup_on_exit = NULL,
     queue = NULL,
+    results_dir = NULL,
 
     initialize = function(queue_id = NULL, workers = 2,
-                          cleanup_on_exit = workers > 0) {
+                          cleanup_on_exit = workers > 0,
+                          results_dir = tempdir()) {
       self$cleanup_on_exit <- cleanup_on_exit
+      self$results_dir = results_dir
 
       message("connecting to redis at ", redux::redis_config()$url)
       con <- redux::hiredis()
@@ -30,7 +33,9 @@ Queue <- R6::R6Class(
     },
 
     submit = function(data, options) {
-      self$queue$enqueue_(quote(hintr:::run_model(data, options)))
+      results_dir <- self$results_dir
+      self$queue$enqueue_(quote(
+        hintr:::run_model(data, options, results_dir)))
     },
 
     status = function(id) {
