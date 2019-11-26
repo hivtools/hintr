@@ -5,7 +5,7 @@ main_api_args <- function(args = commandArgs(TRUE)) {
 Options:
 --workers=N         Number of workers to spawn [default: 2]
 --port=PORT         Port to use [default: 8888]
---results-dir=PATH  Directory to store model results in [default: results/]"
+--results-dir=PATH  Directory to store model results in [default: results]"
 
   dat <- docopt::docopt(usage, args)
   list(port = as.integer(dat$port),
