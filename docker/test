@@ -28,6 +28,7 @@ docker run --rm -d --network=$NAME_NETWORK \
        -e REDIS_URL=redis://redis:6379 \
        -e USE_MOCK_MODEL=true \
        --mount type=volume,src=$NAME_VOLUME,dst=/uploads \
+       --mount type=volume,src=$NAME_VOLUME,dst=/results \
        --name $NAME_SERVER $TAG_SHA
 
 set +e

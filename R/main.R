@@ -16,7 +16,7 @@ Options:
 
 main_api <- function(args = commandArgs(TRUE)) {
   dat <- main_api_args(args) # nocov
-  api(dat$port, dat$queue_id, dat$workers, results_dir) # nocov
+  api(dat$port, dat$queue_id, dat$workers, dat$results_dir) # nocov
 }
 
 main_worker_args <- function(args = commandArgs(TRUE)) {
