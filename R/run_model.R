@@ -1,4 +1,4 @@
-run_model <- function(data, options) {
+run_model <- function(data, options, dir) {
   if (use_mock_model()) {
     progress_start <- list(
       list(
@@ -34,7 +34,12 @@ run_model <- function(data, options) {
          spectrum_path = system_file("output", "malawi_spectrum_download.zip"),
          summary_path = system_file("output", "malawi_summary_download.zip")))
   }
-  naomi::hintr_run_model(data, options)
+  dir <- normalizePath(dir, mustWork = TRUE)
+  output_path <- tempfile(tmpdir = dir, fileext = ".RDS")
+  spectrum_path <- tempfile(tmpdir = dir, ".zip")
+  summary_path <- tempfile(tmpdir = dir, ".zip")
+  naomi::hintr_run_model(data, options, output_path, spectrum_path,
+                         summary_path)
 }
 
 select_data <- function(data) {
