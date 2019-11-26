@@ -3,15 +3,15 @@ main_api_args <- function(args = commandArgs(TRUE)) {
   hintr_api [options] [<queue_id>]
 
 Options:
---workers=N              Number of workers to spawn [default: 2]
---port=PORT              Port to use [default: 8888]
---results_dir=RESULT_DIR  Directory to store model results in [default: results/]"
+--workers=N         Number of workers to spawn [default: 2]
+--port=PORT         Port to use [default: 8888]
+--results-dir=PATH  Directory to store model results in [default: results/]"
 
   dat <- docopt::docopt(usage, args)
   list(port = as.integer(dat$port),
        queue_id = dat$queue_id,
        workers = as.integer(dat$workers),
-       results_dir = dat$results_dir)
+       results_dir = dat[["results-dir"]])
 }
 
 main_api <- function(args = commandArgs(TRUE)) {
