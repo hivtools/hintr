@@ -25,12 +25,19 @@ test_that("assert fails if more than once country in json", {
 test_that("assert fails if a feature is missing an area id", {
   shape <- file_object(file.path("testdata", "malawi.geojson"))
   json <- hintr_geojson_read(shape)
-  expect_true(assert_area_id_exists(json))
+  expect_true(assert_property_exists("area_id", json))
+  expect_true(assert_property_exists("spectrum_region_code", json))
+  expect_true(assert_properties_exist(json,
+                                      c("area_id", "spectrum_region_code")))
 
   ## Remove an ID for testing
   json$features[[1]]$properties$area_id <- NULL
-  expect_error(assert_area_id_exists(json),
-               "Shape file does not contain an area ID for each region. Missing ID for 1 feature.")
+  expect_error(assert_property_exists("area_id", json),
+               "Shape file does not contain property area_id for each region. Missing ID for 1 feature.")
+
+  json$features[[1]]$properties$spectrum_region_code <- NULL
+  expect_error(assert_property_exists("spectrum_region_code", json),
+               "Shape file does not contain property spectrum_region_code for each region. Missing ID for 1 feature.")
 })
 
 test_that("assert_column_names checks column names are as expected", {

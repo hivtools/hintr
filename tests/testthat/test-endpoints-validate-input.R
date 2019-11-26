@@ -66,8 +66,9 @@ test_that("endpoint_validate_baseline validates the input and response", {
 })
 
 test_that("endpoint_validate_baseline can take zip of PJNZ extracts", {
-  pjnz <- file.path("testdata", "sensitive", "ZMB", "data", "pjnz",
-                    "zmb_pjnz_extract.zip")
+  skip_if_sensitive_data_missing()
+  pjnz <- file.path("testdata", "sensitive", "ZMB", "data",
+                    "zmb_all_pjnz_extract.zip")
   req <- list(postBody = '{"type": "pjnz", "file": {"path": "path/to/file", "hash": "12345", "filename": "original"}}')
   res <- MockPlumberResponse$new()
   file <- list(path = pjnz, hash = "12345", filename = "original")

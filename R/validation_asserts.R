@@ -53,15 +53,21 @@ assert_single_country.character <- function(data, type) {
   invisible(TRUE)
 }
 
-assert_area_id_exists <- function(json) {
+assert_properties_exist <- function(json, properties) {
+ lapply(properties, assert_property_exists, json)
+ invisible(TRUE)
+}
+
+assert_property_exists <- function(property, json) {
   contains_id <- vapply(json$features, function(x) {
-    !is_empty(x$properties$area_id)
+    !is_empty(x$properties[[property]])
   }, logical(1))
   if (!all(contains_id)) {
     missing_count <- sum(!contains_id)
     stop(
       sprintf(
-        "Shape file does not contain an area ID for each region. Missing ID for %s %s.",
+        "Shape file does not contain property %s for each region. Missing ID for %s %s.",
+        property,
         missing_count,
         ngettext(missing_count, "feature", "features")
       )
