@@ -11,6 +11,7 @@
    * Update model run options
    * Update region IDS to be formatted as <ISO3>_<area_level>_<area_number> e.g. MWI_2_1 for first region in level 2. Top level region remains as just ISO3 code e.g. MWI
    * Update filters and metadata to reflect data changes
+* Add advanced model run options
 
 # hintr 0.0.17
 

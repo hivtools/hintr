@@ -42,6 +42,7 @@ RUN install_packages --repo=https://mrc-ide.github.io/drat \
         specio \
         testthat \
         tidyr \
+        zip \
         zoo
 
 RUN install_packages --repo=https://inla.r-inla-download.org/R/stable \

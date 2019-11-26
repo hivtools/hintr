@@ -77,7 +77,7 @@ test_that("real model can be run", {
     no_of_samples = 20
   )
   withr::with_envvar(c("USE_MOCK_MODEL" = "false"), {
-    model_run <- run_model(data, options)
+    model_run <- run_model(data, options, tempdir())
   })
   expect_equal(names(model_run),
                c("output_path", "spectrum_path", "summary_path"))

@@ -6,7 +6,7 @@
 .idea
 *.~lock.*
 docker/Dockerfile.worker
-inst/output/malawi_output.RDS
+inst/output/malawi_output.rds
 inst/output/malawi_spectrum_download.zip
 inst/output/malawi_summary_download.zip
 id_rsa

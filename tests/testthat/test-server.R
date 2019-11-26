@@ -244,8 +244,11 @@ test_that("model interactions", {
 })
 
 test_that("real model can be run by API", {
+  ## Results can be stored in specified results directory
+  results_dir <- tempfile("results")
+  dir.create(results_dir)
   withr::with_envvar(c("USE_MOCK_MODEL" = "false"), {
-    server <- hintr_server()
+    server <- hintr_server(results_dir = results_dir)
 
     ## Submit a model run
     submit <- file.path("payload", "model_submit_payload.json")
@@ -374,7 +377,7 @@ test_that("model run options are exposed", {
   expect_equal(response$status, "success")
   expect_equal(response$errors, list())
   expect_equal(names(response$data), "controlSections")
-  expect_length(response$data$controlSections, 4)
+  expect_length(response$data$controlSections, 5)
 
   general_section <- response$data$controlSections[[1]]
   expect_length(
