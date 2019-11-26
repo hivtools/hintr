@@ -65,6 +65,22 @@ test_that("endpoint_validate_baseline validates the input and response", {
                        "ValidateInputResponse", "data")
 })
 
+test_that("endpoint_validate_baseline can take zip of PJNZ extracts", {
+  pjnz <- file.path("testdata", "sensitive", "ZMB", "data", "pjnz",
+                    "zmb_pjnz_extract.zip")
+  req <- list(postBody = '{"type": "pjnz", "file": {"path": "path/to/file", "hash": "12345", "filename": "original"}}')
+  res <- MockPlumberResponse$new()
+  file <- list(path = pjnz, hash = "12345", filename = "original")
+  response <- endpoint_validate_baseline(req, res, "pjnz", file)
+  response <- jsonlite::parse_json(response)
+  expect_equal(response$status, "success")
+  expect_equal(response$data$hash, "12345")
+  expect_equal(response$data$data$country, "Botswana")
+  expect_equal(response$data$data$iso3, "BWA")
+  expect_equal(response$data$filename, "original")
+  expect_equal(res$status, 200)
+})
+
 test_that("endpoint_validate_baseline support shape file", {
   shape <- file.path("testdata", "malawi.geojson")
   res <- MockPlumberResponse$new()

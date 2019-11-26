@@ -1,4 +1,13 @@
 do_validate_pjnz <- function(pjnz) {
+  browser()
+  if (!is_pjnz(pjnz$path)) {
+    subnational_pjnz <- zip::zip_list(pjnz$path)$filename
+    are_pjnz <- lapply(subnational_pjnz, is_pjnz)
+    if (!all(are_pjnz)) {
+      not_pjnz <- subnational_pjnz[!are_pjnz]
+      stop(sprintf("Zip contains non PJNZ files: \n%s", collapse(not_pjnz)))
+    }
+  }
   country <- read_country(pjnz)
   if (country == "GBR") {
     stop("Invalid country")
@@ -8,6 +17,11 @@ do_validate_pjnz <- function(pjnz) {
                 iso3 = scalar(read_pjnz_iso3(pjnz))),
     filters = scalar(NA)
   )
+}
+
+is_pjnz <- function(path) {
+  files <- zip::zip_list(path)
+  any(grepl("*.DP", files$filename))
 }
 
 read_iso3 <- function(file, type) {
