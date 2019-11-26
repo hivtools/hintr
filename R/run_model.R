@@ -30,12 +30,12 @@ run_model <- function(data, options, dir) {
     )
     signalCondition(structure(list(message = progress_complete),
                               class = c("progress", "condition")))
-    return(list(output_path = system_file("output", "malawi_output.RDS"),
+    return(list(output_path = system_file("output", "malawi_output.rds"),
          spectrum_path = system_file("output", "malawi_spectrum_download.zip"),
          summary_path = system_file("output", "malawi_summary_download.zip")))
   }
   dir <- normalizePath(dir, mustWork = TRUE)
-  output_path <- tempfile(tmpdir = dir, fileext = ".RDS")
+  output_path <- tempfile(tmpdir = dir, fileext = ".rds")
   spectrum_path <- tempfile(tmpdir = dir, fileext = ".zip")
   summary_path <- tempfile(tmpdir = dir, fileext = ".zip")
   naomi::hintr_run_model(data, options, output_path, spectrum_path,
