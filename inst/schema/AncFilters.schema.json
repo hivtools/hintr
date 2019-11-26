@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "quarter": {
+    "year": {
       "type": "array",
       "items": { "$ref": "FilterOption.schema.json" }
     },
@@ -13,6 +13,6 @@
   },
   "additionalProperties": false,
   "required": [
-    "quarter", "indicators"
+    "year", "indicators"
   ]
 }

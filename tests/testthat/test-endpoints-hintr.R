@@ -27,6 +27,7 @@ test_that("endpoint worker status works", {
 })
 
 test_that("stop calls quit and stop_workers", {
+  test_redis_available()
   queue <- Queue$new(workers = 0)
   unlockBinding("worker_stop", queue$queue)
   queue$queue$worker_stop <- mockery::mock()

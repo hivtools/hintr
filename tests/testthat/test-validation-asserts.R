@@ -77,17 +77,17 @@ test_that("assert_single_parent_region fails if more than one parent region", {
       ),
       list(
         properties = list(
-          area_id = "MWI.1"
+          area_id = "MWI_1"
         )
       ),
       list(
         properties = list(
-          area_id = "MWI.2"
+          area_id = "MWI_2"
         )
       ),
       list(
         properties = list(
-          area_id = "MWI.1.1"
+          area_id = "MWI_1_1"
         )
       )
     )
@@ -109,12 +109,12 @@ test_that("assert_single_parent_region fails if more than one parent region", {
       ),
       list(
         properties = list(
-          area_id = "MWI.2"
+          area_id = "MWI_2"
         )
       ),
       list(
         properties = list(
-          area_id = "MWI.1.1"
+          area_id = "MWI_1_1"
         )
       )
     )

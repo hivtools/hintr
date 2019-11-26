@@ -76,7 +76,6 @@ $ curl -X POST -H 'Content-Type: application/json' \
         "type": "shape",
         "data": {
             "type": "FeatureCollection",
-            "name": "area_long",
             "crs": {
                 "type": "name",
                 "properties": {
@@ -86,7 +85,8 @@ $ curl -X POST -H 'Content-Type: application/json' \
             "features": [
                 {
                     "type": "Feature",
-... truncated 144066 lines of output
+                    "properties": {
+... truncated 144134 lines of output
 ```
 Validate population data
 
@@ -128,7 +128,6 @@ $ curl -X POST -H 'Content-Type: application/json' \
 
     ],
     "data": {
-        "complete": true,
         "consistent": true
     }
 }
@@ -153,17 +152,17 @@ $ curl -X POST -H 'Content-Type: application/json' \
         "type": "programme",
         "data": [
             {
-                "area_id": "MWI.3.4.18.20",
+                "area_id": "MWI_4_20",
                 "sex": "both",
-                "age_group_id": 24,
-                "quarter_id": 445,
-                "current_art": 376.8
+                "age_group": "00-14",
+                "year": 2011,
+                "current_art": 464.1
             },
             {
-                "area_id": "MWI.3.4.18.20",
+                "area_id": "MWI_4_20",
                 "sex": "both",
-                "age_group_id": 24,
-... truncated 14435 lines of output
+                "age_group": "00-14",
+... truncated 3615 lines of output
 ```
 Validate ANC data
 
@@ -184,17 +183,17 @@ $ curl -X POST -H 'Content-Type: application/json' \
         "type": "anc",
         "data": [
             {
-                "area_id": "MWI.3.4.18.20",
-                "age_group_id": 18,
-                "quarter_id": 447,
-                "anc_clients": 4534,
-                "ancrt_hiv_status": 3580,
-                "ancrt_known_pos": 98,
+                "area_id": "MWI_4_1",
+                "age_group": "15-49",
+                "year": 2011,
+                "anc_clients": 4325,
+                "ancrt_hiv_status": 2346,
+                "ancrt_known_pos": 24,
                 "ancrt_already_art": 0,
-                "ancrt_tested": 3482,
-                "ancrt_test_pos": 266,
-                "prevalence": 0.1017,
-... truncated 12122 lines of output
+                "ancrt_tested": 2322,
+                "ancrt_test_pos": 50,
+                "prevalence": 0.0315,
+... truncated 3367 lines of output
 ```
 Validate survey data
 
@@ -217,16 +216,16 @@ $ curl -X POST -H 'Content-Type: application/json' \
         "data": [
             {
                 "indicator": "prev",
-                "iso3": "MWI",
                 "survey_id": "MWI2004DHS",
                 "survey_year": 2004,
                 "area_id": "MWI",
                 "sex": "both",
-                "age_group_id": 4,
+                "age_group": "15-19",
                 "n_cluster": 392,
                 "n_obs": 1000,
                 "est": 0.021,
-... truncated 302428 lines of output
+                "se": 0.0049,
+... truncated 281411 lines of output
 ```
 Get model run options
 
@@ -257,7 +256,7 @@ $ curl -X POST -H 'Content-Type: application/json' \
                                 "options": [
                                     {
                                         "id": "MWI",
-... truncated 1706 lines of output
+... truncated 1113 lines of output
 ```
 Run a model
 
@@ -274,7 +273,7 @@ $ curl -X POST -H 'Content-Type: application/json' \
 
     ],
     "data": {
-        "id": "fff14fcb70529a45668cddf8fab99bd3"
+        "id": "76bed22993c3012ac90347343b8d7f45"
     }
 }
 ```
@@ -298,7 +297,7 @@ $ curl http://localhost:8888/model/status/{id}
         "progress": [
 
         ],
-        "id": "fff14fcb70529a45668cddf8fab99bd3"
+        "id": "76bed22993c3012ac90347343b8d7f45"
     }
 }
 ```
@@ -319,8 +318,8 @@ $ curl http://localhost:8888/model/result/{id}
             {
                 "area_id": "MWI",
                 "sex": "both",
-                "age_group_id": 18,
-                "quarter_id": 465,
+                "age_group": "15-49",
+                "calendar_quarter": "CY2016Q1",
                 "indicator_id": 1,
                 "mode": 7631061.6527,
                 "mean": 7631061.6527,
@@ -339,12 +338,11 @@ $ curl -I http://localhost:8888/download/summary/{id}
 
 ```json
 HTTP/1.1 200 OK
-Date: Thu, 14 Nov 2019 16:04:02 GMT
+Date: Wed, 20 Nov 2019 14:13:30 GMT
 Content-Type: application/octet-stream
-Content-Disposition: attachment; filename="naomi_summary.zip"
-Date: Thu, 14 Nov 2019 04:04:02 PM GMT
+Date: Wed, 20 Nov 2019 02:13:30 PM GMT
 Connection: close
-Content-Length: 2530508
+Content-Length: 2552891
 
 ```
 Get the summary download
@@ -354,7 +352,7 @@ $ curl http://localhost:8888/download/summary/{id}
 ```
 
 ```json
-Hidden 11632 bytes of output
+Hidden 11915 bytes of output
 ```
 Headers for spectrum digest download
 
@@ -364,12 +362,11 @@ $ curl -I http://localhost:8888/download/spectrum/{id}
 
 ```json
 HTTP/1.1 200 OK
-Date: Thu, 14 Nov 2019 16:04:02 GMT
+Date: Wed, 20 Nov 2019 14:13:30 GMT
 Content-Type: application/octet-stream
-Content-Disposition: attachment; filename="naomi_spectrum_digest.zip"
-Date: Thu, 14 Nov 2019 04:04:02 PM GMT
+Date: Wed, 20 Nov 2019 02:13:30 PM GMT
 Connection: close
-Content-Length: 2530508
+Content-Length: 2552891
 
 ```
 Get the spectrum digest download
@@ -379,7 +376,7 @@ $ curl http://localhost:8888/download/spectrum/{id}
 ```
 
 ```json
-Hidden 11632 bytes of output
+Hidden 11915 bytes of output
 ```
 Get plotting metadata for Malawi
 
@@ -424,7 +421,7 @@ $ curl http://localhost:8888/hintr/version
     ],
     "data": {
         "hintr": "0.0.15",
-        "naomi": "0.0.16",
+        "naomi": "0.0.17",
         "rrq": "0.2.1"
     }
 }
@@ -442,8 +439,8 @@ $ curl http://localhost:8888/hintr/worker/status
 
     ],
     "data": {
-        "unacknowledged_pilchard_2": "IDLE",
-        "unacknowledged_pilchard_1": "IDLE"
+        "supersecretive_sanderling_1": "IDLE",
+        "supersecretive_sanderling_2": "IDLE"
     }
 }
 ```

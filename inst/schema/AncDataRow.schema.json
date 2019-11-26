@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "area_id": {
+      "type": "string"
+    },
+    "age_group": {
+      "type": "string"
+    },
+    "year": {
+      "type": "number"
+    },
+    "anc_clients": {
+      "type": "number"
+    },
+    "ancrt_hiv_status": {
+      "type": "number"
+    },
+    "ancrt_known_pos": {
+      "type": "number"
+    },
+    "ancrt_already_art": {
+      "type": "number"
+    },
+    "ancrt_tested": {
+      "type": "number"
+    },
+    "ancrt_test_pos": {
+      "type": "number"
+    },
+    "prevalence": {
+      "type": "number"
+    },
+    "art_coverage": {
+      "type": "number"
+    }
+  },
+  "additionalProperties": true,
+  "required": [ "area_id", "age_group", "year", "anc_clients", 
+    "ancrt_hiv_status", "ancrt_known_pos", "ancrt_already_art", 
+    "ancrt_tested", "ancrt_test_pos", "prevalence", "art_coverage" ]
+}

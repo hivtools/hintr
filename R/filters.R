@@ -1,8 +1,8 @@
 get_age_filters <- function(data) {
-  ## Assuming data is a data frame with age_group_id
-  filters <- get_age_labels(unique(data$age_group_id))
+  ## Assuming data is a data frame with age_group
+  filters <- get_age_labels(unique(data$age_group))
   sorted_filters <- filters[order(filters$age_group_sort_order), ]
-  construct_filter(sorted_filters, "age_group_id", "age_group_label")
+  construct_filter(sorted_filters, "age_group", "age_group_label")
 }
 
 construct_filter <- function(data, id, name) {
@@ -12,16 +12,16 @@ construct_filter <- function(data, id, name) {
   })
 }
 
-get_age_labels <- function(age_group_ids) {
+get_age_labels <- function(age_group) {
   age_groups <- naomi::get_age_groups()
-  groups <- age_groups$age_group_id %in% age_group_ids
-  missing_ids <- setdiff(age_group_ids, age_groups$age_group_id)
+  groups <- age_groups$age_group %in% age_group
+  missing_ids <- setdiff(age_group, age_groups$age_group)
   if (length(missing_ids) > 0) {
-    stop(sprintf("Found 0 rows for age_group_id %s.",
+    stop(sprintf("Found 0 rows for age_group %s.",
                  collapse(missing_ids)))
   }
   age_groups[groups,
-             c("age_group_id", "age_group_label", "age_group_sort_order")]
+             c("age_group", "age_group_label", "age_group_sort_order")]
 }
 
 get_survey_filters <- function(data) {
@@ -97,29 +97,37 @@ get_model_output_filters <- function(data) {
   list(
     list(
       id = scalar("age"),
-      column_id = scalar("age_group_id"),
+      column_id = scalar("age_group"),
       label = scalar("Age"),
       options = get_age_filters(data)
     ),
     list(
       id = scalar("quarter"),
-      column_id = scalar("Quarter"),
-      label = scalar("quarter_id"),
+      column_id = scalar("calendar_quarter"),
+      label = scalar("Period"),
       options = get_quarter_filters(data)
     )
   )
 }
 
 get_quarter_filters <- function(data) {
-  quarter_ids <- unique(data$quarter_id)
-  lapply(quarter_ids, function(quarter_id) {
-    list(id = scalar(as.character(quarter_id)),
-         label = scalar(get_quarter_name(quarter_id)))
+  calendar_quarters <- unique(data$calendar_quarter)
+  lapply(calendar_quarters, function(quarter) {
+    list(id = scalar(as.character(quarter)),
+         label = scalar(get_quarter_label(quarter)))
   })
 }
 
-get_quarter_name <- function(quarter_id) {
-  naomi::quarter_year_labels(quarter_id)
+get_quarter_label <- function(calendar_quarter) {
+  naomi::calendar_quarter_labels(calendar_quarter)
+}
+
+get_year_filters <- function(data) {
+  years <- unique(data$year)
+  lapply(years, function(year) {
+    list(id = scalar(as.character(year)),
+         label = scalar(as.character(year)))
+  })
 }
 
 get_indicator_display_name <- function(indicator_id) {

@@ -279,21 +279,21 @@ test_that("possible filters are returned for data", {
     shape)
   response <- jsonlite::parse_json(response)
 
-  expect_equal(names(response$data$filters), c("age", "quarter", "indicators"))
+  expect_equal(names(response$data$filters), c("age", "year", "indicators"))
   expect_length(response$data$filters$age, 2)
   expect_equal(response$data$filters$age, list(
     list(
-      id = "20",
+      id = "15+",
       label = "15+"
     ),
     list(
-      id = "24",
+      id = "00-14",
       label = "0-14"
     )
   ))
-  expect_length(response$data$filters$quarter, 32)
-  expect_equal(response$data$filters$quarter[[1]]$id, "445")
-  expect_equal(response$data$filters$quarter[[1]]$label, "Jan-Mar 2011")
+  expect_length(response$data$filters$year, 8)
+  expect_equal(response$data$filters$year[[1]]$id, "2011")
+  expect_equal(response$data$filters$year[[1]]$label, "2011")
 
   expect_length(response$data$filters$indicators, 1)
   expect_equal(response$data$filters$indicators[[1]]$id, "current_art")
@@ -311,10 +311,10 @@ test_that("possible filters are returned for data", {
     shape)
   response <- jsonlite::parse_json(response)
 
-  expect_equal(names(response$data$filters), c("quarter", "indicators"))
-  expect_length(response$data$filters$quarter, 29)
-  expect_equal(response$data$filters$quarter[[1]]$id, "447")
-  expect_equal(response$data$filters$quarter[[1]]$label, "Jul-Sep 2011")
+  expect_equal(names(response$data$filters), c("year", "indicators"))
+  expect_length(response$data$filters$year, 8)
+  expect_equal(response$data$filters$year[[1]]$id, "2011")
+  expect_equal(response$data$filters$year[[1]]$label, "2011")
 
   expect_length(response$data$filters$indicators, 2)
   expect_equal(response$data$filters$indicators[[1]]$id, "prevalence")
@@ -360,12 +360,12 @@ test_that("possible filters are returned for data", {
   expect_equal(response$data$filters$indicators[[1]]$label, "Prevalence")
   expect_equal(response$data$filters$indicators[[2]]$id, "art_coverage")
   expect_equal(response$data$filters$indicators[[2]]$label, "ART coverage")
-  expect_equal(response$data$filters$indicators[[3]]$id, "vls")
+  expect_equal(response$data$filters$indicators[[3]]$id, "recent")
   expect_equal(response$data$filters$indicators[[3]]$label,
-               "Viral load suppression")
-  expect_equal(response$data$filters$indicators[[4]]$id, "recent")
-  expect_equal(response$data$filters$indicators[[4]]$label,
                "Proportion recently infected")
+  expect_equal(response$data$filters$indicators[[4]]$id, "vls")
+  expect_equal(response$data$filters$indicators[[4]]$label,
+               "Viral load suppression")
 })
 
 test_that("endpoint_plotting_metadata gets metadata", {
@@ -434,7 +434,7 @@ test_that("endpoint_model_options returns model options", {
 
   expect_equal(res$status, 200)
   expect_equal(names(json$data), "controlSections")
-  expect_length(json$data$controlSections, 4)
+  expect_length(json$data$controlSections, 5)
 
   general_section <- json$data$controlSections[[1]]
   expect_length(
@@ -487,41 +487,38 @@ test_that("endpoint_model_options returns model options", {
   art_section <- json$data$controlSections[[3]]
   expect_length(
     art_section$controlGroups[[1]]$controls[[1]]$options,
-    32
+    2
   )
   expect_equal(
     names(art_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
     c("id", "label"))
   expect_equal(
     art_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
-    "445")
+    "true")
   expect_equal(
     art_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
-    "Jan-Mar 2011")
+    "yes")
   expect_equal(
-    names(art_section$controlGroups[[1]]$controls[[2]]$options[[1]]),
-    c("id", "label"))
+    art_section$controlGroups[[1]]$controls[[1]]$options[[2]]$id,
+    "false")
   expect_equal(
-    art_section$controlGroups[[1]]$controls[[2]]$options[[1]]$id,
-    "445")
-  expect_equal(
-    art_section$controlGroups[[1]]$controls[[2]]$options[[1]]$label,
-    "Jan-Mar 2011")
+    art_section$controlGroups[[1]]$controls[[1]]$options[[2]]$label,
+    "no")
 
   anc_section <- json$data$controlSections[[4]]
   expect_length(
     anc_section$controlGroups[[1]]$controls[[1]]$options,
-    29
+    8
   )
   expect_equal(
     names(anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
     c("id", "label"))
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
-    "447")
+    "2011")
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
-    "Jul-Sep 2011")
+    "2011")
 })
 
 test_that("endpoint_model_options can be run without programme data", {
@@ -536,7 +533,7 @@ test_that("endpoint_model_options can be run without programme data", {
 
   expect_equal(res$status, 200)
   expect_equal(names(json$data), "controlSections")
-  expect_length(json$data$controlSections, 2)
+  expect_length(json$data$controlSections, 3)
 
   general_section <- json$data$controlSections[[1]]
   expect_length(

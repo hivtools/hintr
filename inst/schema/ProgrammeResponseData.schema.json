@@ -1,16 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "array",
-  "items": {
-    "type": "object",
-    "properties": {
-      "area_id": {
-        "type": "string"
-      },
-      "current_art": {
-        "type": "number"
-      }
-    },
-    "required": [ "area_id", "current_art" ]
-  }
+  "items": { "$ref": "ProgrammeDataRow.schema.json" }
 }
