@@ -49,10 +49,10 @@ hintr_server <- function(n_tries = 10, poll = 0.5, results_dir = tempdir()) {
   queue_id <- ids::random_id()
   port <- get_free_port()
   process <- callr::r_bg(
-    function(port, queue_id) {
+    function(port, queue_id, results_dir) {
       hintr:::api(port, results_dir = results_dir)
     },
-    args = list(port = port, queue_id = queue_id))
+    args = list(port = port, queue_id = queue_id, results_dir = results_dir))
   url <- sprintf("http://localhost:%d", port)
 
   for (i in seq_len(n_tries)) {

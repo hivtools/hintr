@@ -33,7 +33,9 @@ Queue <- R6::R6Class(
     },
 
     submit = function(data, options) {
-      self$queue$enqueue_(quote(hintr:::run_model(data, options, output_dir)))
+      results_dir <- self$results_dir
+      self$queue$enqueue_(quote(
+        hintr:::run_model(data, options, results_dir)))
     },
 
     status = function(id) {
