@@ -10,18 +10,17 @@
   "options": {
     "area_scope": "MWI",
     "area_level": 4,
-    "t1": 465,
-    "t2": 475,
+    "calendar_quarter_t1": "CY2016Q1",
+    "calendar_quarter_t2": "CY2018Q3",
     "survey_prevalence": [ "MWI2016PHIA", "MWI2015DHS" ],
     "survey_art_coverage": "MWI2016PHIA",
     "survey_recently_infected": "MWI2016PHIA",
     "survey_art_or_vls": "art_coverage",
-    "art_t1": 465,
-    "art_t2": 475,
-    "anc_prevalence_t1": 464,
-    "anc_prevalence_t2": 475,
-    "anc_art_coverage_t1": 464,
-    "anc_art_coverage_t2": 475,
+    "include_art": "true",
+    "anc_prevalence_year1": 2016,
+    "anc_prevalence_year2": 2018,
+    "anc_art_coverage_year1": 2016,
+    "anc_art_coverage_year2": 2018,
     "no_of_samples": 500
   }
 }

@@ -11,11 +11,13 @@ invisible(lapply(paths, function(path) {
   }
 }))
 
-system2("./scripts/run_model",
+out <- system2("./scripts/run_model",
   args = c(
     "--payload", "./scripts/payload.json",
     "--output-path", paths$output_path,
     "--spectrum-path", paths$spectrum_path,
     "--summary-path", paths$summary_path))
 
-
+if (out != 0) {
+  quit(save = "no", status = 1)
+}

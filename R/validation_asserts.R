@@ -13,7 +13,7 @@ assert_single_parent_region <- function(json) {
   regions <- vcapply(json$features, function(x) {
     x$properties$area_id
   })
-  parent_region <- regions[!grepl("\\.", regions)]
+  parent_region <- regions[!grepl("\\_", regions)]
   if (length(parent_region) != 1) {
     stop(sprintf("Should have located one parent regions but found regions %s.",
                  collapse(parent_region)))
