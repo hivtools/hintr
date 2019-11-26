@@ -36,8 +36,8 @@ run_model <- function(data, options, dir) {
   }
   dir <- normalizePath(dir, mustWork = TRUE)
   output_path <- tempfile(tmpdir = dir, fileext = ".RDS")
-  spectrum_path <- tempfile(tmpdir = dir, ".zip")
-  summary_path <- tempfile(tmpdir = dir, ".zip")
+  spectrum_path <- tempfile(tmpdir = dir, fileext = ".zip")
+  summary_path <- tempfile(tmpdir = dir, fileext = ".zip")
   naomi::hintr_run_model(data, options, output_path, spectrum_path,
                          summary_path)
 }
