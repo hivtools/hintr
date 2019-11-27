@@ -348,7 +348,7 @@ endpoint_hintr_stop <- function(queue) {
   }
 }
 
-api_root <- function() {
+endpoint_root <- function() {
   scalar("Welcome to hintr")
 }
 

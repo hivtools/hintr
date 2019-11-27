@@ -29,7 +29,7 @@ api_build <- function(queue) {
   pr$handle("GET", "/hintr/worker/status", endpoint_hintr_worker_status(queue),
             serializer = serializer_json_hintr())
   pr$handle("POST", "/hintr/stop", endpoint_hintr_stop(queue))
-  pr$handle("GET", "/", api_root)
+  pr$handle("GET", "/", endpoint_root)
 
   pr$registerHook("preroute", api_log_start)
   pr$registerHook("postserialize", api_log_end)
