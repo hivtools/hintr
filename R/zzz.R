@@ -11,6 +11,9 @@ NULL
 cfg <- new.env(parent = emptyenv())
 .onLoad <- function(...) {
   get_version_info() # nocov
+  path <- system.file("traduire/translations.json",
+                      package = "hintr", mustWork = TRUE)
+  traduire::translator_register(path, "en")
 }
 
 get_version_info <- function() {

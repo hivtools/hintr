@@ -8,6 +8,20 @@ test_that("PJNZ can be validated and return data", {
                     filters = scalar(NA)))
 })
 
+test_that("PJNZ can be validated and return data, in french", {
+  pjnz <- file_object(file.path("testdata", "Botswana2018.PJNZ"))
+  expect_equal(do_validate_pjnz(pjnz),
+               list(data = list(country = scalar("Botswana"),
+                                iso3 = scalar("BWA")),
+                    filters = scalar(NA)))
+  mock_read_country <- mockery::mock("GBR")
+  reset <- traduire::translator_set_language("fr", "package:hintr")
+  on.exit(reset())
+  with_mock("hintr:::read_country" = mock_read_country, {
+    expect_error(do_validate_pjnz(pjnz), "Payes invalide")
+  })
+})
+
 test_that("country can be read", {
   pjnz <- file_object(file.path("testdata", "Botswana2018.PJNZ"))
   expect_equal(read_country(pjnz$path), "Botswana")
