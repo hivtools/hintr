@@ -470,11 +470,10 @@ test_that("model run options are exposed", {
 
 test_that("model options can be validated", {
   server <- hintr_server()
+  payload <- setup_submit_payload()
 
-  ## Submit a model run
-  submit <- file.path("payload", "model_submit_payload.json")
   r <- httr::POST(paste0(server$url, "/validate/options"),
-                  body = httr::upload_file(submit),
+                  body = httr::upload_file(payload),
                   encode = "json")
 
   expect_equal(httr::status_code(r), 200)
