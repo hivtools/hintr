@@ -50,10 +50,15 @@ select_data <- function(data) {
 
 process_result <- function(model_output) {
   output <- readRDS(model_output$output_path)
+  output_filters <- get_model_output_filters(output)
   metadata <- list(
     barchart = list(
       indicators = get_barchart_metadata(output),
-      filters = get_model_output_filters(output)
+      filters = output_filters
+    ),
+    choropleth = list(
+      indicators = get_choropleth_metadata(output),
+      filters = output_filters
     )
   )
   list(data = select_data(output),

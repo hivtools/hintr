@@ -12,6 +12,16 @@ construct_filter <- function(data, id, name) {
   })
 }
 
+get_sex_filters <- function(data) {
+  sexes <- unique(data$sex)
+  lapply(sexes, function(sex) {
+    list(
+      id = scalar(sex),
+      label = scalar(to_upper_first(sex))
+    )
+  })
+}
+
 get_age_labels <- function(age_group) {
   age_groups <- naomi::get_age_groups()
   groups <- age_groups$age_group %in% age_group
@@ -96,22 +106,36 @@ read_long_indicator_filters <- function(data, type) {
 get_model_output_filters <- function(data) {
   list(
     list(
-      id = scalar("age"),
-      column_id = scalar("age_group"),
-      label = scalar("Age"),
-      options = get_age_filters(data)
+      id = scalar("area"),
+      column_id = scalar("area_id"),
+      label = scalar("Area"),
+      options = scalar(NA),
+      use_shape_regions = scalar(TRUE)
     ),
     list(
       id = scalar("quarter"),
       column_id = scalar("calendar_quarter"),
       label = scalar("Period"),
       options = get_quarter_filters(data)
+    ),
+    list(
+      id = scalar("sex"),
+      column_id = scalar("sex"),
+      label = scalar("Sex"),
+      options = get_sex_filters(data)
+    ),
+    list(
+      id = scalar("age"),
+      column_id = scalar("age_group"),
+      label = scalar("Age"),
+      options = get_age_filters(data)
     )
   )
 }
 
 get_quarter_filters <- function(data) {
   calendar_quarters <- unique(data$calendar_quarter)
+  calendar_quarters <- sort(calendar_quarters, decreasing = TRUE)
   lapply(calendar_quarters, function(quarter) {
     list(id = scalar(as.character(quarter)),
          label = scalar(get_quarter_label(quarter)))
@@ -124,6 +148,7 @@ get_quarter_label <- function(calendar_quarter) {
 
 get_year_filters <- function(data) {
   years <- unique(data$year)
+  years <- sort(years, decreasing = TRUE)
   lapply(years, function(year) {
     list(id = scalar(as.character(year)),
          label = scalar(as.character(year)))
