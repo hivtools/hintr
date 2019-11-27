@@ -95,7 +95,7 @@ test_that("hintr errors correctly formats errors", {
 })
 
 test_that("hintr API can be tested", {
-  expect_s3_class(api_root(), "scalar")
+  expect_s3_class(endpoint_root(), "scalar")
 })
 
 test_that("plumber api can be built", {
