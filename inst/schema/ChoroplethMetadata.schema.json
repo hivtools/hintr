@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties" : {
+    "indicators" : {
+      "type": "array",
+      "items": { "$ref": "ChoroplethIndicatorMetadata.schema.json" }
+    },
+    "filters" : {
+      "type": "array",
+      "items": { "$ref": "Filter.schema.json" }
+    }
+  },
+  "additonalProperties": "false",
+  "required": [ "indicators", "filters" ]
+}

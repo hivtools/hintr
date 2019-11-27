@@ -292,8 +292,8 @@ test_that("possible filters are returned for data", {
     )
   ))
   expect_length(response$data$filters$year, 8)
-  expect_equal(response$data$filters$year[[1]]$id, "2011")
-  expect_equal(response$data$filters$year[[1]]$label, "2011")
+  expect_equal(response$data$filters$year[[1]]$id, "2018")
+  expect_equal(response$data$filters$year[[1]]$label, "2018")
 
   expect_length(response$data$filters$indicators, 1)
   expect_equal(response$data$filters$indicators[[1]]$id, "current_art")
@@ -313,8 +313,8 @@ test_that("possible filters are returned for data", {
 
   expect_equal(names(response$data$filters), c("year", "indicators"))
   expect_length(response$data$filters$year, 8)
-  expect_equal(response$data$filters$year[[1]]$id, "2011")
-  expect_equal(response$data$filters$year[[1]]$label, "2011")
+  expect_equal(response$data$filters$year[[1]]$id, "2018")
+  expect_equal(response$data$filters$year[[1]]$label, "2018")
 
   expect_length(response$data$filters$indicators, 2)
   expect_equal(response$data$filters$indicators[[1]]$id, "prevalence")
@@ -515,10 +515,10 @@ test_that("endpoint_model_options returns model options", {
     c("id", "label"))
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
-    "2011")
+    "2018")
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
-    "2011")
+    "2018")
 
   expect_true(!is.null(json$version))
   expect_equal(names(json$version), c("hintr", "naomi", "rrq"))

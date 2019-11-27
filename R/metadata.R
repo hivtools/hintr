@@ -34,8 +34,24 @@ Check each combination is unique in configuration.")
 
 get_barchart_metadata <- function(output) {
   metadata <- naomi::get_metadata()
-  metadata[
+  metadata <- metadata[
     metadata$data_type == "output" & metadata$plot_type == "barchart",
     c("indicator", "value_column", "error_low_column", "error_high_column",
       "indicator_column", "indicator_value", "name")]
+  metadata[order(metadata$indicator_value), ]
+}
+
+get_choropleth_metadata <- function(output) {
+  iso3 <- get_root_node(output$area_id)
+  metadata <- naomi::get_plotting_metadata(iso3)
+  metadata <- metadata[
+    metadata$data_type == "output" & metadata$plot_type == "choropleth",
+    c("indicator", "value_column", "indicator_column", "indicator_value",
+      "name", "min", "max", "colour", "invert_scale")]
+  metadata[order(metadata$indicator_value), ]
+}
+
+
+get_root_node <- function(area_ids) {
+  unique(area_ids[!grepl("\\_", area_ids)])
 }

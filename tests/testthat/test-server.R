@@ -195,16 +195,52 @@ test_that("model interactions", {
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator_id", "mode", "mean", "lower", "upper"))
   expect_length(response$data$data, 84042)
-  expect_equal(names(response$data$plottingMetadata), "barchart")
+  expect_equal(names(response$data$plottingMetadata),
+               c("barchart", "choropleth"))
+
   barchart <- response$data$plottingMetadata$barchart
   expect_equal(names(barchart), c("indicators", "filters"))
-  expect_length(barchart$filters, 2)
-  expect_equal(barchart$filters[[1]]$id, "age")
+  expect_length(barchart$filters, 4)
+  expect_equal(names(barchart$filters[[1]]),
+               c("id", "column_id", "label", "options", "use_shape_regions"))
+  expect_equal(names(barchart$filters[[2]]),
+               c("id", "column_id", "label", "options"))
+  expect_equal(barchart$filters[[1]]$id, "area")
   expect_equal(barchart$filters[[2]]$id, "quarter")
-  expect_length(barchart$filters[[1]]$options, 29)
+  expect_equal(barchart$filters[[3]]$id, "sex")
+  expect_equal(barchart$filters[[4]]$id, "age")
+  expect_length(barchart$filters[[4]]$options, 29)
   expect_length(barchart$filters[[2]]$options, 2)
-  expect_equal(barchart$filters[[2]]$options[[1]]$label, "Jan-Mar 2016")
+  expect_equal(barchart$filters[[2]]$options[[1]]$id, "CY2018Q3")
+  expect_equal(barchart$filters[[2]]$options[[1]]$label, "Jul-Sep 2018")
   expect_length(barchart$indicators, 7)
+  out <- lapply(barchart$indicators, function(indicator) {
+    expect_true(indicator$indicator %in%
+                  c("prevalence", "art_coverage", "current_art", "population",
+                    "plhiv", "incidence", "new_infections"))
+  })
+
+  choropleth <- response$data$plottingMetadata$choropleth
+  expect_equal(names(choropleth), c("indicators", "filters"))
+  expect_length(choropleth$filters, 4)
+  expect_equal(names(choropleth$filters[[1]]),
+               c("id", "column_id", "label", "options", "use_shape_regions"))
+  expect_equal(names(choropleth$filters[[2]]),
+               c("id", "column_id", "label", "options"))
+  expect_equal(choropleth$filters[[1]]$id, "area")
+  expect_equal(choropleth$filters[[2]]$id, "quarter")
+  expect_equal(choropleth$filters[[3]]$id, "sex")
+  expect_equal(choropleth$filters[[4]]$id, "age")
+  expect_length(choropleth$filters[[4]]$options, 29)
+  expect_length(choropleth$filters[[2]]$options, 2)
+  expect_equal(choropleth$filters[[2]]$options[[1]]$id, "CY2018Q3")
+  expect_equal(choropleth$filters[[2]]$options[[1]]$label, "Jul-Sep 2018")
+  expect_length(choropleth$indicators, 7)
+  out <- lapply(choropleth$indicators, function(indicator) {
+    expect_true(indicator$indicator %in%
+                  c("prevalence", "art_coverage", "current_art", "population",
+                    "plhiv", "incidence", "new_infections"))
+  })
 })
 
 test_that("real model can be run by API", {
@@ -258,16 +294,52 @@ test_that("real model can be run by API", {
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator_id", "mode", "mean", "lower", "upper"))
   expect_length(response$data$data, 84042)
-  expect_equal(names(response$data$plottingMetadata), "barchart")
+  expect_equal(names(response$data$plottingMetadata),
+               c("barchart", "choropleth"))
+
   barchart <- response$data$plottingMetadata$barchart
   expect_equal(names(barchart), c("indicators", "filters"))
-  expect_length(barchart$filters, 2)
-  expect_equal(barchart$filters[[1]]$id, "age")
+  expect_length(barchart$filters, 4)
+  expect_equal(names(barchart$filters[[1]]),
+               c("id", "column_id", "label", "options", "use_shape_regions"))
+  expect_equal(names(barchart$filters[[2]]),
+               c("id", "column_id", "label", "options"))
+  expect_equal(barchart$filters[[1]]$id, "area")
   expect_equal(barchart$filters[[2]]$id, "quarter")
-  expect_length(barchart$filters[[1]]$options, 29)
+  expect_equal(barchart$filters[[3]]$id, "sex")
+  expect_equal(barchart$filters[[4]]$id, "age")
+  expect_length(barchart$filters[[4]]$options, 29)
   expect_length(barchart$filters[[2]]$options, 2)
-  expect_equal(barchart$filters[[2]]$options[[1]]$label, "Jan-Mar 2016")
+  expect_equal(barchart$filters[[2]]$options[[1]]$id, "CY2018Q3")
+  expect_equal(barchart$filters[[2]]$options[[1]]$label, "Jul-Sep 2018")
   expect_length(barchart$indicators, 7)
+  out <- lapply(barchart$indicators, function(indicator) {
+    expect_true(indicator$indicator %in%
+                  c("prevalence", "art_coverage", "current_art", "population",
+                    "plhiv", "incidence", "new_infections"))
+  })
+
+  choropleth <- response$data$plottingMetadata$choropleth
+  expect_equal(names(choropleth), c("indicators", "filters"))
+  expect_length(choropleth$filters, 4)
+  expect_equal(names(choropleth$filters[[1]]),
+               c("id", "column_id", "label", "options", "use_shape_regions"))
+  expect_equal(names(choropleth$filters[[2]]),
+               c("id", "column_id", "label", "options"))
+  expect_equal(choropleth$filters[[1]]$id, "area")
+  expect_equal(choropleth$filters[[2]]$id, "quarter")
+  expect_equal(choropleth$filters[[3]]$id, "sex")
+  expect_equal(choropleth$filters[[4]]$id, "age")
+  expect_length(choropleth$filters[[4]]$options, 29)
+  expect_length(choropleth$filters[[2]]$options, 2)
+  expect_equal(choropleth$filters[[2]]$options[[1]]$id, "CY2018Q3")
+  expect_equal(choropleth$filters[[2]]$options[[1]]$label, "Jul-Sep 2018")
+  expect_length(choropleth$indicators, 7)
+  out <- lapply(choropleth$indicators, function(indicator) {
+    expect_true(indicator$indicator %in%
+                  c("prevalence", "art_coverage", "current_art", "population",
+                    "plhiv", "incidence", "new_infections"))
+  })
 })
 
 test_that("plotting metadata is exposed", {
@@ -386,10 +458,10 @@ test_that("model run options are exposed", {
     c("id", "label"))
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
-    "2011")
+    "2018")
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
-    "2011")
+    "2018")
 
   expect_true(!is.null(response$version))
   expect_equal(names(response$version), c("hintr", "naomi", "rrq"))
