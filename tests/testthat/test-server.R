@@ -81,11 +81,11 @@ test_that("validate programme", {
   expect_equal(response$data$hash, "12345")
   expect_equal(response$data$filename, "original.csv")
   expect_equal(response$data$type, "programme")
-  expect_true(length(response$data$data) >= 1400)
+  expect_true(length(response$data$data) >= 500)
   expect_equal(typeof(response$data$data[[1]]$current_art), "double")
-  expect_equal(names(response$data$filters), c("age", "quarter", "indicators"))
+  expect_equal(names(response$data$filters), c("age", "year", "indicators"))
   expect_length(response$data$filters$age, 2)
-  expect_length(response$data$filters$quarter, 32)
+  expect_length(response$data$filters$year, 8)
   expect_length(response$data$filters$indicators, 1)
 })
 
@@ -104,10 +104,10 @@ test_that("validate ANC", {
   expect_equal(response$data$hash, "12345")
   expect_equal(response$data$filename, "original.csv")
   expect_equal(response$data$type, "anc")
-  expect_true(length(response$data$data) >= 800)
+  expect_true(length(response$data$data) >= 200)
   expect_equal(typeof(response$data$data[[1]]$ancrt_hiv_status), "integer")
-  expect_equal(names(response$data$filters), c("quarter", "indicators"))
-  expect_length(response$data$filters$quarter, 29)
+  expect_equal(names(response$data$filters), c("year", "indicators"))
+  expect_length(response$data$filters$year, 8)
   expect_length(response$data$filters$indicators, 2)
 })
 
@@ -192,9 +192,9 @@ test_that("model interactions", {
   expect_equal(httr::status_code(r), 200)
   expect_equal(names(response$data), c("data", "plottingMetadata"))
   expect_equal(names(response$data$data[[1]]),
-               c("area_id", "sex", "age_group_id", "quarter_id", "indicator_id",
-                 "mode", "mean", "lower", "upper"))
-  expect_length(response$data$data, 42021)
+               c("area_id", "sex", "age_group", "calendar_quarter",
+                 "indicator_id", "mode", "mean", "lower", "upper"))
+  expect_length(response$data$data, 84042)
   expect_equal(names(response$data$plottingMetadata), "barchart")
   barchart <- response$data$plottingMetadata$barchart
   expect_equal(names(barchart), c("indicators", "filters"))
@@ -202,14 +202,17 @@ test_that("model interactions", {
   expect_equal(barchart$filters[[1]]$id, "age")
   expect_equal(barchart$filters[[2]]$id, "quarter")
   expect_length(barchart$filters[[1]]$options, 29)
-  expect_length(barchart$filters[[2]]$options, 1)
+  expect_length(barchart$filters[[2]]$options, 2)
   expect_equal(barchart$filters[[2]]$options[[1]]$label, "Jan-Mar 2016")
   expect_length(barchart$indicators, 7)
 })
 
 test_that("real model can be run by API", {
+  ## Results can be stored in specified results directory
+  results_dir <- tempfile("results")
+  dir.create(results_dir)
   withr::with_envvar(c("USE_MOCK_MODEL" = "false"), {
-    server <- hintr_server()
+    server <- hintr_server(results_dir = results_dir)
 
     ## Submit a model run
     submit <- file.path("payload", "model_submit_payload.json")
@@ -252,9 +255,9 @@ test_that("real model can be run by API", {
   expect_equal(httr::status_code(r), 200)
   expect_equal(names(response$data), c("data", "plottingMetadata"))
   expect_equal(names(response$data$data[[1]]),
-               c("area_id", "sex", "age_group_id", "quarter_id", "indicator_id",
-                 "mode", "mean", "lower", "upper"))
-  expect_length(response$data$data, 42021)
+               c("area_id", "sex", "age_group", "calendar_quarter",
+                 "indicator_id", "mode", "mean", "lower", "upper"))
+  expect_length(response$data$data, 84042)
   expect_equal(names(response$data$plottingMetadata), "barchart")
   barchart <- response$data$plottingMetadata$barchart
   expect_equal(names(barchart), c("indicators", "filters"))
@@ -262,7 +265,7 @@ test_that("real model can be run by API", {
   expect_equal(barchart$filters[[1]]$id, "age")
   expect_equal(barchart$filters[[2]]$id, "quarter")
   expect_length(barchart$filters[[1]]$options, 29)
-  expect_length(barchart$filters[[2]]$options, 1)
+  expect_length(barchart$filters[[2]]$options, 2)
   expect_equal(barchart$filters[[2]]$options[[1]]$label, "Jan-Mar 2016")
   expect_length(barchart$indicators, 7)
 })
@@ -302,7 +305,7 @@ test_that("model run options are exposed", {
   expect_equal(response$status, "success")
   expect_equal(response$errors, list())
   expect_equal(names(response$data), "controlSections")
-  expect_length(response$data$controlSections, 4)
+  expect_length(response$data$controlSections, 5)
 
   general_section <- response$data$controlSections[[1]]
   expect_length(
@@ -355,41 +358,38 @@ test_that("model run options are exposed", {
   art_section <- response$data$controlSections[[3]]
   expect_length(
     art_section$controlGroups[[1]]$controls[[1]]$options,
-    32
+    2
   )
   expect_equal(
     names(art_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
     c("id", "label"))
   expect_equal(
     art_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
-    "445")
+    "true")
   expect_equal(
     art_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
-    "Jan-Mar 2011")
+    "yes")
   expect_equal(
-    names(art_section$controlGroups[[1]]$controls[[2]]$options[[1]]),
-    c("id", "label"))
+    art_section$controlGroups[[1]]$controls[[1]]$options[[2]]$id,
+    "false")
   expect_equal(
-    art_section$controlGroups[[1]]$controls[[2]]$options[[1]]$id,
-    "445")
-  expect_equal(
-    art_section$controlGroups[[1]]$controls[[2]]$options[[1]]$label,
-    "Jan-Mar 2011")
+    art_section$controlGroups[[1]]$controls[[1]]$options[[2]]$label,
+    "no")
 
   anc_section <- response$data$controlSections[[4]]
   expect_length(
     anc_section$controlGroups[[1]]$controls[[1]]$options,
-    29
+    8
   )
   expect_equal(
     names(anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
     c("id", "label"))
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
-    "447")
+    "2011")
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
-    "Jul-Sep 2011")
+    "2011")
 })
 
 test_that("model options can be validated", {
