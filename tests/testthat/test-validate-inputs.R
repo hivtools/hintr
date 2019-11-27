@@ -87,8 +87,8 @@ test_that("do_validate_programme validates programme file", {
   )
   expect_equal(data$filters$age, expected_age_filters)
   expect_length(data$filters$year, 8)
-  expect_equal(data$filters$year[[1]]$id, scalar("2011"))
-  expect_equal(data$filters$year[[1]]$label, scalar("2011"))
+  expect_equal(data$filters$year[[1]]$id, scalar("2018"))
+  expect_equal(data$filters$year[[1]]$label, scalar("2018"))
 
   expect_length(data$filters$indicators, 1)
   expect_equal(data$filters$indicators[[1]]$id, scalar("current_art"))
@@ -106,8 +106,8 @@ test_that("do_validate_anc validates ANC file and gets data for plotting", {
 
   expect_equal(names(data$filters), c("year", "indicators"))
   expect_length(data$filters$year, 8)
-  expect_equal(data$filters$year[[1]]$id, scalar("2011"))
-  expect_equal(data$filters$year[[1]]$label, scalar("2011"))
+  expect_equal(data$filters$year[[1]]$id, scalar("2018"))
+  expect_equal(data$filters$year[[1]]$label, scalar("2018"))
 
   expect_length(data$filters$indicators, 2)
   expect_equal(data$filters$indicators[[1]]$id, scalar("prevalence"))

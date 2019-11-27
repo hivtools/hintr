@@ -1,3 +1,7 @@
+# hintr 0.0.19
+
+* Update filter ordering and naming
+
 # hintr 0.0.18
 
 * Add model options validate endpoint

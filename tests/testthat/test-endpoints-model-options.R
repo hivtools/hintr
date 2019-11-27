@@ -98,10 +98,10 @@ test_that("endpoint_model_options returns model options", {
     c("id", "label"))
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
-    "2011")
+    "2018")
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
-    "2011")
+    "2018")
 })
 
 test_that("endpoint_model_options can be run without programme data", {
