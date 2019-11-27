@@ -4,6 +4,7 @@
 #' @importFrom jsonlite unbox
 #' @importFrom naomi get_metadata
 #' @importFrom rrq rrq_controller
+#' @importFrom traduire t_
 NULL
 
 

@@ -31,5 +31,6 @@ r_github_packages:
   - mrc-ide/eppasm
   - mrc-ide/naomi
   - mrc-ide/rrq
+  - reside-ic/traduire
 after_success:
   - Rscript -e 'covr::codecov(quiet = FALSE)'
