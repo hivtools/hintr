@@ -51,7 +51,7 @@ RUN install_packages --repo=https://inla.r-inla-download.org/R/stable \
 RUN install_remote \
         mrc-ide/eppasm \
         mrc-ide/rrq \
-        mrc-ide/traduire
+        reside-ic/traduire
 
 COPY . /src
 RUN R CMD INSTALL /src/naomi
