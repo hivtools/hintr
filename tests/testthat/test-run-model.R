@@ -92,14 +92,14 @@ test_that("real model can be run", {
   expect_true(nrow(output) == 84042)
 
   file_list <- unzip(model_run$spectrum_path, list = TRUE)
-  expect_equal(file_list$Name,
-               c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
-                 "meta_area.csv", "meta_indicator.csv", "meta_period.csv"))
+  expect_true(all(c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
+                    "meta_area.csv", "meta_indicator.csv", "meta_period.csv")
+                  %in% file_list$Name))
 
   ## TODO: replace with checks for spectrum digest once function to create
   ## that has been added mrc-636
   file_list <- unzip(model_run$summary_path, list = TRUE)
-  expect_equal(file_list$Name,
-               c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
-                 "meta_area.csv", "meta_indicator.csv", "meta_period.csv"))
+  expect_true(all(c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
+                    "meta_area.csv", "meta_indicator.csv", "meta_period.csv")
+                  %in% file_list$Name))
 })

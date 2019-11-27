@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "hintr": { "type": "string" },
+    "naomi": { "type": "string" },
+    "rrq": { "type": "string" }
+  },
+  "additionalProperties": true,
+  "required": [ "hintr", "naomi", "rrq" ]
+}
