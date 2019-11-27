@@ -1,6 +1,7 @@
 {
     "en": {
         "translation": {
+            "welcome": "Welcome to hintr",
             "invalid_country": "Invalid country",
             "invalid_iso3": "Can't read country from data of type {type}",
             "invalid_regions": "Can't read regions from data of type {type}"
@@ -8,6 +9,7 @@
     },
     "fr": {
         "translation": {
+            "welcome": "Bienvenue à hintr",
             "invalid_country": "Payes invalide",
             "invalid_iso3": "Ce n'est pas possible à lire le payes de données de type {type}",
             "invalid_iso3": "Ce n'est pas possible à lire des regions de données de type {type}"

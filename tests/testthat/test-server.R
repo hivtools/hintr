@@ -634,3 +634,11 @@ test_that("Error handler is triggered", {
                   "'GET /download/summary/asdfasdfa'")
   expect_equal(dat$errors[[1]]$detail, detail)
 })
+
+test_that("translation", {
+  server <- hintr_server()
+
+  r <- httr::GET(server$url, httr::add_headers("Accept-Language" = "fr"))
+  expect_equal(httr::status_code(r), 200)
+  expect_equal(response_from_json(r), "Bienvenue à hintr")
+})
