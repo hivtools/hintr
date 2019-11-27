@@ -1,17 +1,5 @@
 do_validate_pjnz <- function(pjnz) {
-  if (!is_pjnz(pjnz$path)) {
-    unzip_dir <- tempfile("pjnz_unzip")
-    dir.create(unzip_dir)
-    zip::unzip(pjnz$path, exdir = unzip_dir)
-    pjnz_paths <- list.files(unzip_dir, full.names = TRUE)
-    are_pjnz <- lapply(pjnz_paths, is_pjnz)
-    if (!all(unlist(are_pjnz))) {
-      not_pjnz <- list.files(unzip_dir)[!unlist(are_pjnz)]
-      stop(sprintf("Zip contains non PJNZ files: \n%s", collapse(not_pjnz)))
-    }
-  } else {
-    pjnz_paths <- pjnz$path
-  }
+  pjnz_paths <- get_pjnz_paths(pjnz)
   countries <- lapply(pjnz_paths, read_country)
   if (length(unique(countries)) != 1) {
     stop(sprintf("Zip contains PJNZs for mixed countries, got %s",
@@ -22,16 +10,6 @@ do_validate_pjnz <- function(pjnz) {
                 iso3 = scalar(read_pjnz_iso3_from_path(pjnz_paths[[1]]))),
     filters = scalar(NA)
   )
-}
-
-is_pjnz <- function(path) {
-  tryCatch({
-    files <- zip::zip_list(path)
-    any(grepl("*.DP", files$filename))
-  },
-  error = function(e) {
-    return(FALSE)
-  })
 }
 
 read_iso3 <- function(file, type) {
@@ -196,9 +174,11 @@ do_validate_baseline <- function(pjnz, shape, population) {
   check_regions <- !is.null(shape) && !is.null(population)
   consistent_country <- TRUE
   consistent_regions <- TRUE
-
   if (check_country) {
-    pjnz_country <- read_iso3(pjnz, "pjnz")
+    pjnz_paths <- get_pjnz_paths(pjnz)
+    ## Already validated that each subnational PJNZ has the same country
+    ## so we only need to check 1 path here.
+    pjnz_country <- read_pjnz_iso3_from_path(pjnz_paths[[1]])
     shape_country <- read_iso3(shape, "shape")
     consistent_country <- assert_consistent_country(pjnz_country, "pjnz",
                                                     shape_country, "shape")
