@@ -45,3 +45,15 @@ test_that("geojson read applies can use cache", {
   expect_equal(cache$list("geojson"), path$hash)
   expect_identical(hintr_geojson_read(path, cache), value)
 })
+
+test_that("can read spectrum region code from geojson", {
+  shape <- file_object(file.path("testdata", "malawi.geojson"))
+  region_codes <- read_geojson_spectrum_region_codes(shape)
+  expect_equal(region_codes, 0)
+
+  skip_if_sensitive_data_missing()
+  shape <- file_object(file.path("testdata", "sensitive", "ZMB", "data",
+                     "zmb_areas.geojson"))
+  region_codes <- read_geojson_spectrum_region_codes(shape)
+  expect_equal(region_codes, c(10, 11, 12, 13, 14, 15, 16, 17, 18, 19))
+})

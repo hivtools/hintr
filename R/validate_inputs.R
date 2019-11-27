@@ -170,24 +170,38 @@ do_validate_survey <- function(survey, shape) {
 #' @return An error if invalid.
 #' @keywords internal
 do_validate_baseline <- function(pjnz, shape, population) {
-  check_country <- !is.null(pjnz) && !is.null(shape)
-  check_regions <- !is.null(shape) && !is.null(population)
+  check_pjnz_shape <- !is.null(pjnz) && !is.null(shape)
+  check_shape_population <- !is.null(shape) && !is.null(population)
   consistent_country <- TRUE
   consistent_regions <- TRUE
-  if (check_country) {
-    pjnz_paths <- get_pjnz_paths(pjnz)
-    ## Already validated that each subnational PJNZ has the same country
-    ## so we only need to check 1 path here.
-    pjnz_country <- read_pjnz_iso3_from_path(pjnz_paths[[1]])
-    shape_country <- read_iso3(shape, "shape")
-    consistent_country <- assert_consistent_country(pjnz_country, "pjnz",
-                                                    shape_country, "shape")
+  if (check_pjnz_shape) {
+    valid_pjnz_shape <- validate_pjnz_shape(pjnz, shape)
   }
-  if (check_regions) {
-    shape_regions <- read_regions(shape, "shape")
-    population_regions <- read_regions(population, "population")
-    consistent_regions <- assert_consistent_regions(
-      shape_regions, population_regions, "population")
+  if (check_shape_population) {
+    valid_shape_population <- validate_shape_population(shape, population)
   }
-  list(consistent = scalar(consistent_country && consistent_regions))
+  list(consistent = scalar(valid_pjnz_shape && valid_shape_population))
+}
+
+validate_pjnz_shape <- function(pjnz, shape) {
+  pjnz_paths <- get_pjnz_paths(pjnz)
+  ## Already validated that each subnational PJNZ has the same country
+  ## so we only need to check 1 path here.
+  pjnz_country <- read_pjnz_iso3_from_path(pjnz_paths[[1]])
+  shape_country <- read_iso3(shape, "shape")
+  assert_consistent_country(pjnz_country, "pjnz", shape_country, "shape")
+
+  pjnz_spectrum_region_codes <- lapply(pjnz_paths,
+                                       specio::read_spectrum_region_code)
+  shape_spectrum_region_codes <- read_geojson_spectrum_region_codes(shape)
+  assert_consistent_region_codes(pjnz_spectrum_region_codes,
+                                 shape_spectrum_region_codes)
+  TRUE
+}
+
+validate_shape_population <- function(shape, population) {
+  shape_regions <- read_regions(shape, "shape")
+  population_regions <- read_regions(population, "population")
+  assert_consistent_regions( shape_regions, population_regions, "population")
+  TRUE
 }

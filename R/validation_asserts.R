@@ -100,6 +100,30 @@ assert_consistent_regions <- function(shape_regions, test_regions, test_source) 
   invisible(TRUE)
 }
 
+assert_consistent_region_codes <- function(pjnz_codes, shape_codes) {
+  if (!setequal(pjnz_codes, shape_codes)) {
+    missing_shape_codes <- setdiff(shape_codes, pjnz_codes)
+    missing_pjnz_codes <- setdiff(pjnz_codes, shape_codes)
+    if (length(missing_shape_codes) > 0 &&
+        length(missing_pjnz_codes) > 0) {
+      separator <- "\n"
+    } else {
+      separator <- ""
+    }
+    stop(sprintf(
+      "%s%s%s",
+      n0_get_text(length(missing_shape_codes),
+                  sprintf("Shape file contains spectrum region codes missing from PJNZ files: %s",
+                          collapse(missing_shape_codes))),
+      separator,
+      n0_get_text(length(missing_pjnz_codes),
+                  sprintf("PJNZ files contain spectrum region codes missing from shape file: %s",
+                          collapse(missing_pjnz_codes)))
+    ))
+  }
+  invisible(TRUE)
+}
+
 is_superset <- function(super, sub) {
   diff <- setdiff(sub, super)
   length(diff) == 0

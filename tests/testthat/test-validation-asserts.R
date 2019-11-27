@@ -129,3 +129,22 @@ test_that("assert_single_parent_region fails if more than one parent region", {
   expect_error(assert_single_parent_region(data),
     "Should have located one parent regions but found regions MWI, MWI.")
 })
+
+test_that("can test region codes are consistent", {
+  pjnz_codes <- c(1, 2)
+  shape_codes <- c(1, 2)
+  expect_true(assert_consistent_region_codes(pjnz_codes, shape_codes))
+
+  pjnz_codes <- c(1, 2, 3)
+  expect_error(assert_consistent_region_codes(pjnz_codes, shape_codes),
+               "PJNZ files contain spectrum region codes missing from shape file: 3")
+
+  shape_codes <- c(1, 2, 3, 4)
+  expect_error(assert_consistent_region_codes(pjnz_codes, shape_codes),
+               "Shape file contains spectrum region codes missing from PJNZ files: 4")
+
+  pjnz_codes <- c(1, 2, 3, 5)
+  expect_error(assert_consistent_region_codes(pjnz_codes, shape_codes),
+               "Shape file contains spectrum region codes missing from PJNZ files: 4
+PJNZ files contain spectrum region codes missing from shape file: 5")
+})
