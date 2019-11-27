@@ -46,6 +46,6 @@ json_verbatim <- function(x) {
 }
 
 to_json <- function(x) {
-  jsonlite::toJSON(x, json_verbatim = TRUE)
+  jsonlite::toJSON(x, json_verbatim = TRUE, na = "null")
 }
 

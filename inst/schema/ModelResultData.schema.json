@@ -1,39 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "array",
-  "items": {
-    "type": "object",
-    "properties": {
-      "area_id": {
-        "type": "string"
-      },
-      "sex": {
-        "type": "string"
-      },
-      "age_group_id": {
-        "type": "number"
-      },
-      "quarter_id": {
-        "type": "number"
-      },
-      "indicator_id": {
-        "type": "number"
-      },
-      "mode": {
-        "type": "number"
-      },
-      "mean": {
-        "type": "number"
-      },
-      "lower": {
-        "type": "number"
-      },
-      "upper": {
-        "type": "number"
-      }
-    },
-    "additonalProperties": "true",
-    "required": [ "area_id", "sex", "age_group_id", "quarter_id", "indicator_id",
-    "mode", "mean", "lower", "upper" ]
-  }
+  "items": { "$ref": "ModelResultRow.schema.json" }
 }

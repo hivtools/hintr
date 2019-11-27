@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-paths <- list(output_path = "inst/output/malawi_output.RDS",
+paths <- list(output_path = "inst/output/malawi_output.rds",
               spectrum_path = "inst/output/malawi_spectrum_download.zip",
               summary_path = "inst/output/malawi_summary_download.zip")
 
@@ -11,11 +11,13 @@ invisible(lapply(paths, function(path) {
   }
 }))
 
-system2("./scripts/run_model",
+out <- system2("./scripts/run_model",
   args = c(
     "--payload", "./scripts/payload.json",
     "--output-path", paths$output_path,
     "--spectrum-path", paths$spectrum_path,
     "--summary-path", paths$summary_path))
 
-
+if (out != 0) {
+  quit(save = "no", status = 1)
+}

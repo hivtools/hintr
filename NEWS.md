@@ -1,6 +1,14 @@
 # hintr 0.0.18
 
 * Add model options validate endpoint
+* Update input data structures including
+   * Move quarter_id to use calendar_quarter instead in format CY2016Q3 for population and output data
+   * Move quarter_id to use year for ANC, ART, 
+   * Move age_group_id to age_group format e.g. 00-04, 15+, 05-09 etc. in ANC, ART, population, programme, survey and output data
+   * Update model run options
+   * Update region IDS to be formatted as <ISO3>_<area_level>_<area_number> e.g. MWI_2_1 for first region in level 2. Top level region remains as just ISO3 code e.g. MWI
+   * Update filters and metadata to reflect data changes
+* Add advanced model run options
 
 # hintr 0.0.17
 
