@@ -25,7 +25,7 @@ test_that("endpoint_validate_baseline_combined returns error on invalid data", {
                 '{"pjnz": "path/to/file",
                   "shape": "path/to/file",
                   "population": "path/to/file"}')
-  mock_read_iso3 <- mockery::mock("BLZ", "MWI")
+  mock_read_iso3 <- mockery::mock("BLZ")
   with_mock("hintr:::read_iso3" = mock_read_iso3, {
     res <- MockPlumberResponse$new()
     response <- endpoint_validate_baseline_combined(req, res, pjnz, shape,
@@ -36,7 +36,7 @@ test_that("endpoint_validate_baseline_combined returns error on invalid data", {
   expect_length(response$errors, 1)
   expect_equal(response$errors[[1]]$error, "INVALID_BASELINE")
   expect_equal(response$errors[[1]]$detail,
-               "Countries aren't consistent got BLZ from pjnz and MWI from shape.")
+               "Countries aren't consistent got MWI from pjnz and BLZ from shape.")
   expect_equal(response$data, structure(list(), names = character(0)))
   expect_equal(res$status, 400)
 })

@@ -6,10 +6,6 @@ test_that("PJNZ can be validated and return data", {
                list(data = list(country = scalar("Botswana"),
                                 iso3 = scalar("BWA")),
                     filters = scalar(NA)))
-  mock_read_country <- mockery::mock("GBR")
-  with_mock("hintr:::read_country" = mock_read_country, {
-    expect_error(do_validate_pjnz(pjnz), "Invalid country")
-  })
 })
 
 test_that("country can be read", {
