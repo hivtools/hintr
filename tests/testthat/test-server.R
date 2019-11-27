@@ -357,13 +357,13 @@ test_that("plotting metadata is exposed", {
   expect_equal(names(response$data$programme), "choropleth")
   expect_length(response$data$anc$choropleth$indicators, 2)
   expect_equal(response$data$anc$choropleth$indicators[[1]]$indicator,
-               "art_coverage")
-  expect_equal(response$data$anc$choropleth$indicators[[2]]$indicator,
                "prevalence")
+  expect_equal(response$data$anc$choropleth$indicators[[2]]$indicator,
+               "art_coverage")
   expect_equal(response$data$anc$choropleth$indicators[[1]]$name,
-               "ART coverage")
-  expect_equal(response$data$anc$choropleth$indicators[[2]]$name,
                "Prevalence")
+  expect_equal(response$data$anc$choropleth$indicators[[2]]$name,
+               "ART coverage")
 })
 
 test_that("model run options are exposed", {
