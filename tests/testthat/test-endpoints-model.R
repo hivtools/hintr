@@ -32,7 +32,7 @@ test_that("endpoint model run queues a model run", {
   ## Call the endpoint
   queue <- Queue$new()
   model_submit <- endpoint_model_submit(queue)
-  response <- model_submit(req, res, data, options)
+  response <- model_submit(req, res, data, options, cfg$version_info)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
   expect_true("id" %in% names(response$data))
@@ -188,7 +188,7 @@ test_that("endpoint_run_model returns error if queueing fails", {
   ## Call the endpoint
   model_submit <- endpoint_model_submit(queue)
   mockery::stub(model_submit, "queue$submit", mock_submit)
-  response <- model_submit(req, res, data, options)
+  response <- model_submit(req, res, data, options, cfg$version_info)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "failure")
   expect_length(response$errors, 1)
@@ -281,7 +281,7 @@ test_that("querying for result of incomplete jobs returns useful error", {
   ## Call the endpoint
   queue <- Queue$new()
   model_submit <- endpoint_model_submit(queue)
-  response <- model_submit(req, res, data, options)
+  response <- model_submit(req, res, data, options, cfg$version_info)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
 
@@ -305,7 +305,7 @@ test_that("erroring model run returns useful messages", {
   ## Call the endpoint
   queue <- MockQueue$new()
   model_submit <- endpoint_model_submit(queue)
-  response <- model_submit(req, res, NULL, list())
+  response <- model_submit(req, res, NULL, list(), cfg$version_info)
   response <- jsonlite::parse_json(response)
   expect_equal(response$status, "success")
 
@@ -330,4 +330,28 @@ test_that("erroring model run returns useful messages", {
   expect_length(result$errors, 1)
   expect_equal(result$errors[[1]]$error, "MODEL_RUN_FAILED")
   expect_equal(result$errors[[1]]$detail, "test error")
+})
+
+test_that("running model with old version throws an error", {
+  test_redis_available()
+
+  ## Setup mocks
+  res <- MockPlumberResponse$new()
+
+  ## Call the endpoint
+  queue <- Queue$new()
+  model_submit <- endpoint_model_submit(queue)
+  version <- list(
+    hintr = "0.0.12",
+    naomi = "0.0.15",
+    rrq = "0.2.1"
+  )
+  response <- model_submit(req, res, NULL, list(), version)
+  response <- jsonlite::parse_json(response)
+  expect_equal(response$status, "failure")
+  expect_length(response$errors, 1)
+  expect_equal(response$errors[[1]]$error, "VERSION_OUT_OF_DATE")
+  expect_equal(response$errors[[1]]$detail,
+               "Trying to run model with old version of options. Update model run options")
+  expect_length(response$data, 0)
 })

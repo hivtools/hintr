@@ -382,13 +382,13 @@ test_that("endpoint_plotting_metadata gets metadata", {
   expect_equal(names(response$data$programme), "choropleth")
   expect_length(response$data$anc$choropleth$indicators, 2)
   expect_equal(response$data$anc$choropleth$indicators[[1]]$indicator,
-               "art_coverage")
-  expect_equal(response$data$anc$choropleth$indicators[[2]]$indicator,
                "prevalence")
+  expect_equal(response$data$anc$choropleth$indicators[[2]]$indicator,
+               "art_coverage")
   expect_equal(response$data$anc$choropleth$indicators[[1]]$name,
-               "ART coverage")
-  expect_equal(response$data$anc$choropleth$indicators[[2]]$name,
                "Prevalence")
+  expect_equal(response$data$anc$choropleth$indicators[[2]]$name,
+               "ART coverage")
 })
 
 test_that("endpoint_plotting_metadata returns default data for missing country", {
@@ -408,13 +408,13 @@ test_that("endpoint_plotting_metadata returns default data for missing country",
   expect_equal(names(response$data$programme), "choropleth")
   expect_length(response$data$anc$choropleth$indicators, 2)
   expect_equal(response$data$anc$choropleth$indicators[[1]]$indicator,
-               "art_coverage")
-  expect_equal(response$data$anc$choropleth$indicators[[2]]$indicator,
                "prevalence")
+  expect_equal(response$data$anc$choropleth$indicators[[2]]$indicator,
+               "art_coverage")
   expect_equal(response$data$anc$choropleth$indicators[[1]]$name,
-               "ART coverage")
-  expect_equal(response$data$anc$choropleth$indicators[[2]]$name,
                "Prevalence")
+  expect_equal(response$data$anc$choropleth$indicators[[2]]$name,
+               "ART coverage")
 })
 
 test_that("endpoint_model_options returns model options", {
@@ -519,6 +519,10 @@ test_that("endpoint_model_options returns model options", {
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
     "2018")
+
+  expect_true(!is.null(json$version))
+  expect_equal(names(json$version), c("hintr", "naomi", "rrq"))
+  expect_true(all(grepl("^(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$", json$version)))
 })
 
 test_that("endpoint_model_options can be run without programme data", {
@@ -582,6 +586,10 @@ test_that("endpoint_model_options can be run without programme data", {
   expect_equal(
     survey_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
     "MWI2016PHIA")
+
+  expect_true(!is.null(json$version))
+  expect_equal(names(json$version), c("hintr", "naomi", "rrq"))
+  expect_true(all(grepl("^(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$", json$version)))
 })
 
 test_that("endpoint_model_options fails without shape & survey data", {

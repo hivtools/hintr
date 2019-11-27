@@ -22,5 +22,6 @@
     "anc_art_coverage_year1": 2016,
     "anc_art_coverage_year2": 2018,
     "no_of_samples": 20
-  }
+  },
+  "version": <version_info>
 }
