@@ -98,7 +98,7 @@ endpoint_model_options <- function(req, res, shape, survey, programme =  NULL, a
     res$status <- 400
   }
 
-  hintr_response(response, "ModelRunOptions")
+  hintr_response(response, "ModelRunOptions", include_version = TRUE)
 }
 
 #' Validate that set of model run options is okay to submit for a model run
@@ -124,13 +124,23 @@ endpoint_model_options_validate <- function(req, res, data, options) {
 }
 
 endpoint_model_submit <- function(queue) {
-  function(req, res, data, options) {
-    response <- with_success(
-      queue$submit(data, options))
+  function(req, res, data, options, version) {
+    model_submit <- function() {
+      if (!is_current_version(version)) {
+        stop("Trying to run model with old version of options. Update model run options")
+      }
+      queue$submit(data, options)
+    }
+    response <- with_success(model_submit())
     if (response$success) {
       response$value <- list(id = scalar(response$value))
     } else {
-      response$errors <- hintr_errors(list("FAILED_TO_QUEUE" = response$message))
+      if (!is_current_version(version)) {
+        errors <- list("VERSION_OUT_OF_DATE" = response$message)
+      } else {
+        errors <- list("FAILED_TO_QUEUE" = response$message)
+      }
+      response$errors <- hintr_errors(errors)
       res$status <- 400
     }
     hintr_response(response, "ModelSubmitResponse")
@@ -357,14 +367,16 @@ endpoint_plotting_metadata <- function(req, res, iso3) {
 #'
 #' @param value List containing an indication of success, any errors and the
 #' value to return.
-#'
+#' @param schema The name of data subschema to validate response against.
+#' @param include_version If TRUE the package version information is included
+#' in the response.
 #' @param as_json Logical, indicating if the response should be
 #'   converted into a json string
 #'
 #' @return Formatted hintr response.
 #' @keywords internal
-#' @noRd
-hintr_response <- function(value, schema, as_json = TRUE) {
+hintr_response <- function(value, schema, include_version = FALSE,
+                           as_json = TRUE) {
   if (value$success) {
     status <- "success"
   } else {
@@ -372,14 +384,16 @@ hintr_response <- function(value, schema, as_json = TRUE) {
   }
   if (is.null(value$errors)) {
     errors <- list()
-  }
-  else {
+  } else {
     errors = value$errors
   }
   response <- list(
     status = scalar(status),
     errors = errors,
     data = value$value)
+  if (include_version) {
+    response$version <- cfg$version_info
+  }
   ret <- to_json(response)
   if (value$success) {
     validate_json_schema(ret, schema, query = "data")
@@ -407,11 +421,8 @@ with_success <- function(expr) {
 }
 
 endpoint_hintr_version <- function(req, res) {
-  packages <- c("hintr", "naomi", "rrq")
-  value <- lapply(packages, function(p)
-    scalar(as.character(utils::packageVersion(p))))
-  names(value) <- packages
-  hintr_response(list(success = TRUE, value = value), "HintrVersionResponse")
+  hintr_response(list(success = TRUE, value = cfg$version_info),
+                 "HintrVersionResponse")
 }
 
 endpoint_hintr_worker_status <- function(queue) {

@@ -150,12 +150,12 @@ test_that("validate baseline", {
 
 test_that("model interactions", {
   test_mock_model_available()
+  payload <- setup_submit_payload()
   server <- hintr_server()
 
   ## Submit a model run
-  submit <- file.path("payload", "model_submit_payload.json")
   r <- httr::POST(paste0(server$url, "/model/submit"),
-                  body = httr::upload_file(submit),
+                  body = httr::upload_file(payload),
                   encode = "json")
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
@@ -244,6 +244,7 @@ test_that("model interactions", {
 })
 
 test_that("real model can be run by API", {
+  payload <- setup_submit_payload()
   ## Results can be stored in specified results directory
   results_dir <- tempfile("results")
   dir.create(results_dir)
@@ -251,9 +252,8 @@ test_that("real model can be run by API", {
     server <- hintr_server(results_dir = results_dir)
 
     ## Submit a model run
-    submit <- file.path("payload", "model_submit_payload.json")
     r <- httr::POST(paste0(server$url, "/model/submit"),
-                    body = httr::upload_file(submit),
+                    body = httr::upload_file(payload),
                     encode = "json")
   })
   expect_equal(httr::status_code(r), 200)
@@ -357,13 +357,13 @@ test_that("plotting metadata is exposed", {
   expect_equal(names(response$data$programme), "choropleth")
   expect_length(response$data$anc$choropleth$indicators, 2)
   expect_equal(response$data$anc$choropleth$indicators[[1]]$indicator,
-               "art_coverage")
-  expect_equal(response$data$anc$choropleth$indicators[[2]]$indicator,
                "prevalence")
+  expect_equal(response$data$anc$choropleth$indicators[[2]]$indicator,
+               "art_coverage")
   expect_equal(response$data$anc$choropleth$indicators[[1]]$name,
-               "ART coverage")
-  expect_equal(response$data$anc$choropleth$indicators[[2]]$name,
                "Prevalence")
+  expect_equal(response$data$anc$choropleth$indicators[[2]]$name,
+               "ART coverage")
 })
 
 test_that("model run options are exposed", {
@@ -462,6 +462,10 @@ test_that("model run options are exposed", {
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
     "2018")
+
+  expect_true(!is.null(response$version))
+  expect_equal(names(response$version), c("hintr", "naomi", "rrq"))
+  expect_true(all(grepl("^(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$", response$version)))
 })
 
 test_that("model options can be validated", {
@@ -504,11 +508,11 @@ test_that("worker information is returned", {
 test_that("spectrum file download streams bytes", {
   test_mock_model_available()
   server <- hintr_server()
+  payload <- setup_submit_payload()
 
   ## Run a model
-  submit <- file.path("payload", "model_submit_payload.json")
   r <- httr::POST(paste0(server$url, "/model/submit"),
-                  body = httr::upload_file(submit),
+                  body = httr::upload_file(payload),
                   encode = "json")
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
@@ -543,11 +547,11 @@ test_that("spectrum file download streams bytes", {
 test_that("summary file download streams bytes", {
   test_mock_model_available()
   server <- hintr_server()
+  payload <- setup_submit_payload()
 
   ## Run a model
-  submit <- file.path("payload", "model_submit_payload.json")
   r <- httr::POST(paste0(server$url, "/model/submit"),
-                  body = httr::upload_file(submit),
+                  body = httr::upload_file(payload),
                   encode = "json")
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)

@@ -1,5 +1,7 @@
 # hintr 0.0.19
 
+* Return version info from model run options response
+* Require version info in model run submit endpoint
 * Update filter ordering and naming
 
 # hintr 0.0.18

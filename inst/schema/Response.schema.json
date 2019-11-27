@@ -11,7 +11,8 @@
     "errors": {
       "type": "array",
       "items": { "$ref": "Error.schema.json" }
-    }
+    },
+    "version": { "$ref": "VersionInfo.schema.json" }
   },
   "additionalProperties": false,
   "required": ["status", "errors", "data" ]
