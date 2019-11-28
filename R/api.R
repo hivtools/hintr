@@ -103,6 +103,7 @@ api_set_language <- function(data, req, res) {
     language <- req$HEADERS[["accept-language"]]
     data$reset_language <- traduire::translator_set_language(language)
   }
+  invisible(NULL)
 }
 
 api_reset_language <- function(data, req, res, value) {
