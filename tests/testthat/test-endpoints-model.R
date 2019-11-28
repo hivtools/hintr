@@ -322,7 +322,7 @@ test_that("erroring model run returns useful messages", {
 
   ## Get the result
   model_result <- endpoint_model_result(queue)
-  result_parsed <- jsonlite::parse_json(model_result)
+  result <- model_result(req, res, response$data$id)
   result_parsed <- jsonlite::parse_json(result)
   expect_equal(res$status, 400)
 
