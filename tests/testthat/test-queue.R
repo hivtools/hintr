@@ -2,6 +2,7 @@ context("queue")
 
 test_that("queue works as intended", {
   test_redis_available()
+  test_mock_model_available()
 
   queue <- Queue$new()
   expect_equal(queue$queue$worker_len(), 2)
