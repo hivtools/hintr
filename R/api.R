@@ -8,6 +8,8 @@ api_build <- function(queue) {
             serializer = serializer_json_hintr())
   pr$handle("POST", "/model/options", endpoint_model_options,
             serializer = serializer_json_hintr())
+  pr$handle("POST", "/validate/options", endpoint_model_options_validate,
+            serializer = serializer_json_hintr())
   pr$handle("POST", "/model/submit", endpoint_model_submit(queue),
             serializer = serializer_json_hintr())
   pr$handle("GET", "/model/status/<id>", endpoint_model_status(queue),

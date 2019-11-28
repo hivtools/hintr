@@ -29,6 +29,28 @@ endpoint_model_options <- function(req, res, shape, survey, programme =  NULL, a
   hintr_response(response, "ModelRunOptions", include_version = TRUE)
 }
 
+#' Validate that set of model run options is okay to submit for a model run
+#'
+#' @param req The request object
+#' @param res The response object
+#' @param data The set of input data for the model run
+#' @param options key-value list of selected options
+#'
+#' @return Response with data valid if true and errors if not valid
+#' @keywords internal
+endpoint_model_options_validate <- function(req, res, data, options) {
+  response <- with_success({
+    do_validate_model_options(data, options)
+  })
+  if (!response$success) {
+    response$errors <- hintr_errors(list(
+      "INVALID_OPTIONS" = response$message
+    ))
+    res$status <- 400
+  }
+  hintr_response(response, "ModelOptionsValidate")
+}
+
 endpoint_model_submit <- function(queue) {
   function(req, res, data, options, version) {
     model_submit <- function() {

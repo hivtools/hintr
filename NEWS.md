@@ -10,6 +10,7 @@
 
 # hintr 0.0.18
 
+* Add model options validate endpoint
 * Update input data structures including
    * Move quarter_id to use calendar_quarter instead in format CY2016Q3 for population and output data
    * Move quarter_id to use year for ANC, ART, 
