@@ -92,6 +92,25 @@ test_that("error thrown if zip contains different countries", {
                "Zip contains PJNZs for mixed countries, got Botswana, Malawi")
 })
 
+test_that("error thrown if more than 1 country with a 0 spectrum region code", {
+  skip_if_sensitive_data_missing()
+  pjnz <- file.path("testdata", "sensitive", "ZMB", "data",
+                    "zmb_all_pjnz_extract.zip")
+  req <- list(postBody = '{"type": "pjnz", "file": {"path": "path/to/file", "hash": "12345", "filename": "original"}}')
+  res <- MockPlumberResponse$new()
+  file <- list(path = pjnz, hash = "12345", filename = "original")
+  mock_region_code <- mockery::mock(0, cycle = TRUE)
+  with_mock("naomi::read_spectrum_region_code" = mock_region_code, {
+    response <- endpoint_validate_baseline(req, res, "pjnz", file)
+  })
+  response <- jsonlite::parse_json(response)
+  expect_equal(response$status, "failure")
+  expect_equal(res$status, 400)
+  expect_equal(response$errors[[1]]$error, "INVALID_FILE")
+  expect_match(response$errors[[1]]$detail,
+               "Zip contains 10 PJNZ files with spectrum region code 0. Should be max 1 PJNZ with spectrum region code 0 got:\n.*")
+})
+
 test_that("endpoint_validate_baseline support shape file", {
   shape <- file.path("testdata", "malawi.geojson")
   res <- MockPlumberResponse$new()
