@@ -468,6 +468,22 @@ test_that("model run options are exposed", {
   expect_true(all(grepl("^(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$", response$version)))
 })
 
+test_that("model options can be validated", {
+  server <- hintr_server()
+  payload <- setup_submit_payload()
+
+  r <- httr::POST(paste0(server$url, "/validate/options"),
+                  body = httr::upload_file(payload),
+                  encode = "json")
+
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+  expect_equal(response$errors, list())
+  expect_equal(names(response$data), "valid")
+  expect_equal(response$data$valid, TRUE)
+})
+
 test_that("version information is returned", {
   server <- hintr_server()
   r <- httr::GET(paste0(server$url, "/hintr/version"))
