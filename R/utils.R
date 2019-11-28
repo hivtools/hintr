@@ -61,3 +61,11 @@ file_object <- function(path) {
        filename = path,
        hash = unname(tools::md5sum(path)))
 }
+
+file_copy <- function(from, to) {
+  ok <- file.copy(from, to)
+  if (length(ok) > 1 && any(!ok)) {
+    stop("Some file.copy failed")
+  }
+  invisible(ok)
+}
