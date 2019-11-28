@@ -194,7 +194,7 @@ test_that("model interactions", {
   expect_equal(names(response$data$data[[1]]),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator_id", "mode", "mean", "lower", "upper"))
-  expect_length(response$data$data, 84042)
+  expect_true(length(response$data$data) > 84042)
   expect_equal(names(response$data$plottingMetadata),
                c("barchart", "choropleth"))
 
@@ -209,7 +209,7 @@ test_that("model interactions", {
   expect_equal(barchart$filters[[2]]$id, "quarter")
   expect_equal(barchart$filters[[3]]$id, "sex")
   expect_equal(barchart$filters[[4]]$id, "age")
-  expect_length(barchart$filters[[4]]$options, 29)
+  expect_true(length(barchart$filters[[4]]$options) > 29)
   expect_length(barchart$filters[[2]]$options, 2)
   expect_equal(barchart$filters[[2]]$options[[1]]$id, "CY2018Q3")
   expect_equal(barchart$filters[[2]]$options[[1]]$label, "Jul-Sep 2018")
@@ -231,7 +231,7 @@ test_that("model interactions", {
   expect_equal(choropleth$filters[[2]]$id, "quarter")
   expect_equal(choropleth$filters[[3]]$id, "sex")
   expect_equal(choropleth$filters[[4]]$id, "age")
-  expect_length(choropleth$filters[[4]]$options, 29)
+  expect_true(length(choropleth$filters[[4]]$options) > 29)
   expect_length(choropleth$filters[[2]]$options, 2)
   expect_equal(choropleth$filters[[2]]$options[[1]]$id, "CY2018Q3")
   expect_equal(choropleth$filters[[2]]$options[[1]]$label, "Jul-Sep 2018")
@@ -293,7 +293,7 @@ test_that("real model can be run by API", {
   expect_equal(names(response$data$data[[1]]),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator_id", "mode", "mean", "lower", "upper"))
-  expect_length(response$data$data, 84042)
+  expect_true(length(response$data$data) > 84042)
   expect_equal(names(response$data$plottingMetadata),
                c("barchart", "choropleth"))
 
@@ -308,7 +308,7 @@ test_that("real model can be run by API", {
   expect_equal(barchart$filters[[2]]$id, "quarter")
   expect_equal(barchart$filters[[3]]$id, "sex")
   expect_equal(barchart$filters[[4]]$id, "age")
-  expect_length(barchart$filters[[4]]$options, 29)
+  expect_true(length(barchart$filters[[4]]$options) > 29)
   expect_length(barchart$filters[[2]]$options, 2)
   expect_equal(barchart$filters[[2]]$options[[1]]$id, "CY2018Q3")
   expect_equal(barchart$filters[[2]]$options[[1]]$label, "Jul-Sep 2018")
@@ -330,7 +330,7 @@ test_that("real model can be run by API", {
   expect_equal(choropleth$filters[[2]]$id, "quarter")
   expect_equal(choropleth$filters[[3]]$id, "sex")
   expect_equal(choropleth$filters[[4]]$id, "age")
-  expect_length(choropleth$filters[[4]]$options, 29)
+  expect_true(length(choropleth$filters[[4]]$options) > 29)
   expect_length(choropleth$filters[[2]]$options, 2)
   expect_equal(choropleth$filters[[2]]$options[[1]]$id, "CY2018Q3")
   expect_equal(choropleth$filters[[2]]$options[[1]]$label, "Jul-Sep 2018")
