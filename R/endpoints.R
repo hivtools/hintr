@@ -95,9 +95,9 @@ endpoint_model_result <- function(queue) {
     response <- with_success(queue$result(id))
     if (is_error(response$value)) {
       response$success <- FALSE
-      response$errors <- hintr_errors(
-        list("MODEL_RUN_FAILED" = scalar(response$value$message))
-      )
+      error <- structure(response$value$message,
+                         trace = response$value$trace)
+      response$errors <- hintr_errors(list("MODEL_RUN_FAILED" = error))
       response$value <- NULL
       res$status <- 400
     } else if (!response$success) {
@@ -331,8 +331,15 @@ hintr_response <- function(value, schema, include_version = FALSE,
 }
 
 hintr_errors <- function(errors) {
-  lapply(names(errors), function(x)
-    list(error = scalar(x), detail = scalar(errors[[x]])))
+  f <- function(i) {
+    detail <- errors[[i]]
+    ret <- list(error = scalar(names(errors)[[i]]),
+                detail = scalar(detail),
+                key = scalar(ids::proquint(n_words = 3)))
+    ret$trace <- attr(detail, "trace", exact = TRUE)
+    ret
+  }
+  lapply(seq_along(errors), f)
 }
 
 with_success <- function(expr) {

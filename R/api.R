@@ -61,6 +61,20 @@ api_log_end <- function(data, req, res, value) {
   } else {
     size <- nchar(res$body)
   }
+  if (res$status >= 400 &&
+      identical(res$headers[["Content-Type"]], "application/json")) {
+    dat <- jsonlite::parse_json(res$body)
+    for (e in dat$errors) {
+      if (!is.null(e$key)) {
+        api_log(sprintf("error-key: %s", e$key))
+        api_log(sprintf("error-detail: %s", e$detail))
+        if (!is.null(e$trace)) {
+          trace <- sub("\n", " ", vcapply(e$trace, identity))
+          api_log(sprintf("error-trace: %s", trace))
+        }
+      }
+    }
+  }
   api_log(sprintf("`--> %d (%d bytes)", res$status, size))
   value
 }
