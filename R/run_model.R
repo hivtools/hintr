@@ -51,7 +51,6 @@ select_data <- function(data) {
 process_result <- function(model_output) {
   output <- readRDS(model_output$output_path)
   output_filters <- get_model_output_filters(output)
-  browser()
   metadata <- list(
     barchart = list(
       indicators = get_barchart_metadata(output),

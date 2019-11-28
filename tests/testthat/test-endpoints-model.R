@@ -77,7 +77,7 @@ test_that("endpoint model run queues a model run", {
 
   ## Barchart
   barchart <- result$data$plottingMetadata$barchart
-  expect_equal(names(barchart), c("indicators", "filters"))
+  expect_equal(names(barchart), c("indicators", "filters", "defaults"))
   expect_length(barchart$filters, 4)
   expect_equal(names(barchart$filters[[1]]),
                c("id", "column_id", "label", "options", "use_shape_regions"))

@@ -140,7 +140,7 @@ get_barchart_defaults <- function(output, output_filters) {
     disaggregate_by_id = scalar("sex"),
     selected_filter_options = list(
       area = get_country_filter_option(output),
-      quarter = get_selected_filter_options(ouput_filters, "quarter")[[1]],
+      quarter = get_selected_filter_options(output_filters, "quarter")[1],
       sex = get_selected_filter_options(output_filters, "sex",
                                         c("female", "male")),
       age = get_selected_filter_options(output_filters, "age",
@@ -186,8 +186,10 @@ get_country_filter_option <- function(output) {
     stop(sprintf("Got %s top level areas from output.", nrow(option)))
   }
   list(
-    id = scalar(option$area_id),
-    label = scalar(option$area_name)
+    list(
+      id = scalar(option$area_id),
+      label = scalar(option$area_name)
+    )
   )
 }
 

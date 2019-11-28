@@ -254,13 +254,14 @@ test_that("error thrown for unknown type", {
 test_that("can get output country filter option", {
   test_mock_model_available()
   output <- readRDS(mock_model$output_path)
-  expect_equal(get_country_filter_option(output),
-               list(
-                 id = scalar("MWI"),
-                 label = scalar("Malawi")
-               ))
+  expect_equal(get_country_filter_option(output), list(
+    list(
+      id = scalar("MWI"),
+      label = scalar("Malawi")
+    )
+  ))
 
-  output$area_label[[1]] <- "test"
+  output$area_name[[1]] <- "test"
   expect_error(get_country_filter_option(output),
                "Got 2 top level areas from output.")
 })
@@ -284,29 +285,29 @@ test_that("can get defaults for bar chart", {
   ))
   expect_equal(defaults$selected_filter_options$quarter, list(
     list(
-      id = scalar("MWI2016PHIA"),
-      label = scalar("MWI2016PHIA")
+      id = scalar("CY2018Q3"),
+      label = scalar("Jul-Sep 2018")
     )
   ))
   expect_equal(defaults$selected_filter_options$sex, list(
     list(
-      id = scalar("male"),
-      label = scalar("Male")
-    ),
-    list(
       id = scalar("female"),
       label = scalar("Female")
+    ),
+    list(
+      id = scalar("male"),
+      label = scalar("Male")
     )
   ))
   age_options <- defaults$selected_filter_options$age
-  expect_true(length(age_options), 20)
+  expect_length(age_options, 17)
   expect_equal(age_options[[1]], list(
-    id = "00-04",
-    label = "0-4"
+    id = scalar("00-04"),
+    label = scalar("0-4")
   ))
   expect_equal(age_options[[length(age_options)]], list(
-    id = "80+",
-    label = "80+"
+    id = scalar("80+"),
+    label = scalar("80+")
   ))
 })
 
@@ -315,17 +316,38 @@ test_that("can get selected filter options", {
   output <- readRDS(mock_model$output_path)
   filters <- get_model_output_filters(output)
   selected_options <- get_selected_filter_options(filters, "age", "00-04")
-
-  expect_equal()
+  expect_equal(selected_options, list(
+    list(
+      id = scalar("00-04"),
+      label = scalar("0-4")
+    )
+  ))
 
   selected_options <- get_selected_filter_options(filters, "sex")
-  expect_equal()
+  expect_equal(selected_options, list(
+    list(
+      id = scalar("both"),
+      label = scalar("Both")
+    ),
+    list(
+      id = scalar("female"),
+      label = scalar("Female")
+    ),
+    list(
+      id = scalar("male"),
+      label = scalar("Male")
+    )
+  ))
 
-  selected_options <- get_selected_filter_options(filters, "test")
-
-  expect_equal()
+  expect_error(get_selected_filter_options(filters, "test"),
+               "Found no matching filters for type test")
 
   selected_options <- get_selected_filter_options(filters, "sex",
                                                   c("male", "test"))
-  expect_equal()
+  expect_equal(selected_options, list(
+    list(
+      id = scalar("male"),
+      label = scalar("Male")
+    )
+  ))
 })

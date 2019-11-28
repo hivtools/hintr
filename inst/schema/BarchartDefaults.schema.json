@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties" : {
+    "indicator_id": { "type": "string" },
+    "x_axis_id": { "type": "string" },
+    "disaggregate_by_id": { "type": "string" },
+    "selected_filter_options": {
+      "type": "object",
+      "properties": {
+        "area" : { 
+          "type": "array",
+          "items": { "$ref": "FilterOption.schema.json" }
+        },
+        "quarter" : { 
+          "type": "array",
+          "items": { "$ref": "FilterOption.schema.json" }
+        },
+        "age" : { 
+          "type": "array",
+          "items": { "$ref": "FilterOption.schema.json" }
+        },
+        "sex" : { 
+          "type": "array",
+          "items": { "$ref": "FilterOption.schema.json" }
+        }
+      },
+      "additionalProperties": false,
+      "required": [ "area", "quarter", "age", "sex" ]
+    }
+  },
+  "additonalProperties": false,
+  "required": [ "indicator_id", "x_axis_id", "disaggregate_by_id", "selected_filter_options" ]
+}
