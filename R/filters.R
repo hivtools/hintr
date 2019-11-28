@@ -133,6 +133,65 @@ get_model_output_filters <- function(data) {
   )
 }
 
+get_barchart_defaults <- function(output, output_filters) {
+  list(
+    indicator_id = scalar("prevalence"),
+    x_axis_id = scalar("age"),
+    disaggregate_by_id = scalar("sex"),
+    selected_filter_options = list(
+      area = get_country_filter_option(output),
+      quarter = get_selected_filter_options(ouput_filters, "quarter")[[1]],
+      sex = get_selected_filter_options(output_filters, "sex",
+                                        c("female", "male")),
+      age = get_selected_filter_options(output_filters, "age",
+                                        naomi::get_five_year_age_groups())
+    )
+  )
+}
+
+#' Get selected filter options from full list of output filters.
+#'
+#' Gets the filter options of a particular type matching a set of IDs.
+#' If ids are NULL then this returns all options.
+#'
+#' @param output_filters The full set of output filters
+#' @param filter_type The type of filter to get options for, area, age, sex, quarter
+#' @param ids Set of option IDs to reutrn, or NULL for all options
+#'
+#' @return The selected filter options
+#' @keywords internal
+get_selected_filter_options <- function(output_filters, filter_type, ids = NULL) {
+  options <- NULL
+  for (filter in output_filters) {
+    if (filter$id == filter_type) {
+      options <- filter$options
+      break
+    }
+  }
+  if (is.null(options)) {
+    stop(sprintf("Found no matching filters for type %s", filter_type))
+  }
+  if (!is.null(ids)) {
+    keep_option <- vapply(options, function(option) {
+      option$id %in% ids
+    }, logical(1))
+    options <- options[keep_option]
+  }
+  options
+}
+
+get_country_filter_option <- function(output) {
+  option <- unique(output[output$area_level == 0, c("area_id", "area_name")])
+  if (nrow(option) != 1) {
+    stop(sprintf("Got %s top level areas from output.", nrow(option)))
+  }
+  list(
+    id = scalar(option$area_id),
+    label = scalar(option$area_name)
+  )
+}
+
+
 get_quarter_filters <- function(data) {
   calendar_quarters <- unique(data$calendar_quarter)
   calendar_quarters <- sort(calendar_quarters, decreasing = TRUE)
