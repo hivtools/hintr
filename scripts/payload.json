@@ -4,8 +4,8 @@
     "shape": "tests/testthat/testdata/malawi.geojson",
     "population": "tests/testthat/testdata/population.csv",
     "survey": "tests/testthat/testdata/survey.csv",
-    "programme": "tests/testthat/testdata/programme.csv",
-    "anc": "tests/testthat/testdata/anc.csv"
+    "art_number": "tests/testthat/testdata/programme.csv",
+    "anc_testing": "tests/testthat/testdata/anc.csv"
   },
   "options": {
     "area_scope": "MWI",

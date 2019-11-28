@@ -34,6 +34,11 @@ run_model <- function(data, options, dir) {
          spectrum_path = system_file("output", "malawi_spectrum_download.zip"),
          summary_path = system_file("output", "malawi_summary_download.zip")))
   }
+  ## Fix some labels to match what naomi requires
+  data$art_number <- data$programme
+  data$programme <- NULL
+  data$anc_testing <- data$anc
+  data$anc <- NULL
   dir <- normalizePath(dir, mustWork = TRUE)
   output_path <- tempfile(tmpdir = dir, fileext = ".rds")
   spectrum_path <- tempfile(tmpdir = dir, fileext = ".zip")
