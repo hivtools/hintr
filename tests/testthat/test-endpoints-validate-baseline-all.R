@@ -79,6 +79,7 @@ test_that("validation works with inconsistent ", {
                "Countries aren't consistent got ZMB from pjnz and MWI from shape.")
   expect_equal(res$status, 400)
 
+  skip("TODO: enable validation of shape + PJNZ region codes mrc-1156")
   res <- MockPlumberResponse$new()
   mock_read_iso3 <- mockery::mock("ZMB")
   with_mock("hintr:::read_iso3" = mock_read_iso3, {

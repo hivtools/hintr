@@ -179,8 +179,8 @@ do_validate_survey <- function(survey, shape) {
 do_validate_baseline <- function(pjnz, shape, population) {
   check_pjnz_shape <- !is.null(pjnz) && !is.null(shape)
   check_shape_population <- !is.null(shape) && !is.null(population)
-  consistent_country <- TRUE
-  consistent_regions <- TRUE
+  valid_pjnz_shape <- TRUE
+  valid_shape_population <- TRUE
   if (check_pjnz_shape) {
     valid_pjnz_shape <- validate_pjnz_shape(pjnz, shape)
   }
@@ -198,11 +198,13 @@ validate_pjnz_shape <- function(pjnz, shape) {
   shape_country <- read_iso3(shape, "shape")
   assert_consistent_country(pjnz_country, "pjnz", shape_country, "shape")
 
-  pjnz_spectrum_region_codes <- lapply(pjnz_paths,
-                                       specio::read_spectrum_region_code)
-  shape_spectrum_region_codes <- read_geojson_spectrum_region_codes(shape)
-  assert_consistent_region_codes(pjnz_spectrum_region_codes,
-                                 shape_spectrum_region_codes)
+  ## TODO: Enable this validation - Jeff has request we disable it for the
+  ## time being mrc-1156
+  ##pjnz_spectrum_region_codes <- lapply(pjnz_paths,
+  ##                                     specio::read_spectrum_region_code)
+  ##shape_spectrum_region_codes <- read_geojson_spectrum_region_codes(shape)
+  ##assert_consistent_region_codes(pjnz_spectrum_region_codes,
+  ##                               shape_spectrum_region_codes)
   TRUE
 }
 
