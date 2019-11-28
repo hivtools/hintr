@@ -8,14 +8,14 @@ do_validate_pjnz <- function(pjnz) {
   pjnz_spectrum_region_codes <-
     vapply(pjnz_paths, naomi::read_spectrum_region_code, numeric(1))
   zero_codes <- pjnz_spectrum_region_codes == 0
-  if (length(zero_codes) > 1) {
+  if (length(which(zero_codes)) > 1) {
     stop(sprintf(
       "Zip contains %s PJNZ files with spectrum region code 0. Should be max 1 PJNZ with spectrum region code 0 got:\n%s",
-      length(zero_codes), collapse(basename(names(zero_codes)))))
+      length(which(zero_codes)), collapse(basename(names(zero_codes)))))
   }
   list(
     data = list(country = scalar(countries[[1]]),
-                iso3 = scalar(pjnz_spectrum_region_codes[[1]])),
+                iso3 = scalar(read_pjnz_iso3_from_path(pjnz_paths[[1]]))),
     filters = scalar(NA)
   )
 }
