@@ -61,11 +61,3 @@ file_object <- function(path) {
        filename = path,
        hash = unname(tools::md5sum(path)))
 }
-
-## Like ngettext but when n = 0 return empty string
-n0_get_text <- function(n, message) {
-  if (n == 0) {
-    return("")
-  }
-  message
-}
