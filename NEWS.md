@@ -1,3 +1,7 @@
+# hintr 0.0.20
+
+* Accept and validate zip of PJNZ files
+
 # hintr 0.0.19
 
 * Return version info from model run options response

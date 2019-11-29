@@ -15,23 +15,6 @@ test_that("endpoint_validate_baseline correctly validates data", {
   expect_equal(res$status, 200)
 })
 
-test_that("endpoint_validate_baseline returns error on invalid data", {
-  pjnz <- file.path("testdata", "Botswana2018.PJNZ")
-  req <- list(postBody = '{"type": "pjnz", "file": {"path": "path/to/file", "hash": "12345", "filename": "original"}}')
-  file <- list(path = pjnz, hash = "12345", filename = "original")
-  mock_read_country <- mockery::mock("GBR")
-  with_mock("hintr:::read_country" = mock_read_country, {
-    res <- MockPlumberResponse$new()
-    response <- endpoint_validate_baseline(req, res, "pjnz", file)
-    response <- jsonlite::parse_json(response)
-    expect_equal(response$status, "failure")
-    expect_length(response$errors, 1)
-    expect_equal(response$errors[[1]]$error, "INVALID_FILE")
-    expect_equal(response$errors[[1]]$detail, "Invalid country")
-    expect_equal(res$status, 400)
-  })
-})
-
 test_that("endpoint_validate_baseline returns nice error if file does not exist", {
   req <- list(postBody = '{"type": "pjnz", "file": {"path": "path/to/file", "hash": "12345", "filename": "original"}}')
   res <- MockPlumberResponse$new()
@@ -44,7 +27,6 @@ test_that("endpoint_validate_baseline returns nice error if file does not exist"
   expect_equal(response$errors[[1]]$detail,
                "File at path path/to/file does not exist. Create it, or fix the path.")
   expect_equal(res$status, 400)
-
 })
 
 test_that("endpoint_validate_baseline validates the input and response", {
@@ -63,6 +45,70 @@ test_that("endpoint_validate_baseline validates the input and response", {
                        "Response")
   mockery::expect_args(mock_validate_json_schema, 3, ret,
                        "ValidateInputResponse", "data")
+})
+
+test_that("endpoint_validate_baseline can take zip of PJNZ extracts", {
+  skip_if_sensitive_data_missing()
+  pjnz <- file.path("testdata", "sensitive", "ZMB", "data",
+                    "zmb_all_pjnz_extract.zip")
+  req <- list(postBody = '{"type": "pjnz", "file": {"path": "path/to/file", "hash": "12345", "filename": "original"}}')
+  res <- MockPlumberResponse$new()
+  file <- list(path = pjnz, hash = "12345", filename = "original")
+  response <- endpoint_validate_baseline(req, res, "pjnz", file)
+  response <- jsonlite::parse_json(response)
+  expect_equal(response$status, "success")
+  expect_equal(response$data$hash, "12345")
+  expect_equal(response$data$data$country, "Zambia")
+  expect_equal(response$data$data$iso3, "ZMB")
+  expect_equal(response$data$filename, "original")
+  expect_equal(res$status, 200)
+})
+
+test_that("error thrown if zip contains non PJNZ files", {
+  pjnz <- file.path("testdata", "invalid_files.zip")
+  req <- list(postBody = '{"type": "pjnz", "file": {"path": "path/to/file", "hash": "12345", "filename": "original"}}')
+  res <- MockPlumberResponse$new()
+  file <- list(path = pjnz, hash = "12345", filename = "original")
+  response <- endpoint_validate_baseline(req, res, "pjnz", file)
+  response <- jsonlite::parse_json(response)
+  expect_equal(response$status, "failure")
+  expect_equal(res$status, 400)
+  expect_equal(response$errors[[1]]$error, "INVALID_FILE")
+  expect_equal(response$errors[[1]]$detail,
+    "Zip contains non PJNZ files: \ncat.mp4, invalid_file1.zip, invalid_file2.zip")
+})
+
+test_that("error thrown if zip contains different countries", {
+  pjnz <- file.path("testdata", "mixed_pjnz_countries.zip")
+  req <- list(postBody = '{"type": "pjnz", "file": {"path": "path/to/file", "hash": "12345", "filename": "original"}}')
+  res <- MockPlumberResponse$new()
+  file <- list(path = pjnz, hash = "12345", filename = "original")
+  response <- endpoint_validate_baseline(req, res, "pjnz", file)
+  response <- jsonlite::parse_json(response)
+  expect_equal(response$status, "failure")
+  expect_equal(res$status, 400)
+  expect_equal(response$errors[[1]]$error, "INVALID_FILE")
+  expect_equal(response$errors[[1]]$detail,
+               "Zip contains PJNZs for mixed countries, got Botswana, Malawi")
+})
+
+test_that("error thrown if more than 1 country with a 0 spectrum region code", {
+  skip_if_sensitive_data_missing()
+  pjnz <- file.path("testdata", "sensitive", "ZMB", "data",
+                    "zmb_all_pjnz_extract.zip")
+  req <- list(postBody = '{"type": "pjnz", "file": {"path": "path/to/file", "hash": "12345", "filename": "original"}}')
+  res <- MockPlumberResponse$new()
+  file <- list(path = pjnz, hash = "12345", filename = "original")
+  mock_region_code <- mockery::mock(0, cycle = TRUE)
+  with_mock("naomi::read_spectrum_region_code" = mock_region_code, {
+    response <- endpoint_validate_baseline(req, res, "pjnz", file)
+  })
+  response <- jsonlite::parse_json(response)
+  expect_equal(response$status, "failure")
+  expect_equal(res$status, 400)
+  expect_equal(response$errors[[1]]$error, "INVALID_FILE")
+  expect_match(response$errors[[1]]$detail,
+               "Zip contains 10 PJNZ files with spectrum region code 0. Should be max 1 PJNZ with spectrum region code 0 got:\n.*")
 })
 
 test_that("endpoint_validate_baseline support shape file", {
