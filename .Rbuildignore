@@ -10,3 +10,4 @@
 ^scripts$
 ^id_rsa\.enc$
 ^id_rsa$
+^tests/testthat/testdata/sensitive$

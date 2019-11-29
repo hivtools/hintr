@@ -23,7 +23,7 @@ before_script:
   - GIT_SSH_COMMAND="ssh -i id_rsa" git clone git@github.com:mrc-ide/naomi-data tests/testthat/testdata/sensitive
 cache: packages
 env:
-  - VALIDATE_JSON_SCHEMAS=true USE_MOCK_MODEL=true
+  - VALIDATE_JSON_SCHEMAS=true USE_MOCK_MODEL=true NAOMI_SENSITIVE_DATA_PATH= $TRAVIS_BUILD_DIR/tests/testthat/testdata/sensitive
 r_packages:
   - covr
 r_github_packages:
