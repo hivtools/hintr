@@ -6,7 +6,7 @@ Queue <- R6::R6Class(
     cleanup_on_exit = NULL,
     queue = NULL,
     results_dir = NULL,
-    prerun = NULL,
+    prerun_dir = NULL,
 
     initialize = function(queue_id = NULL, workers = 2,
                           cleanup_on_exit = workers > 0,
