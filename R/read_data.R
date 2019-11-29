@@ -41,8 +41,15 @@ read_geojson_iso3 <- function(shape) {
   substr(json$features[[1]]$properties$area_id, 1, 3)
 }
 
-read_country <- function(pjnz) {
-  hiv_params <- specio::read_pjn_metadata(pjnz$path)
-  hiv_params$country
+read_geojson_spectrum_region_codes <- function(shape) {
+  json <- hintr_geojson_read(shape)
+  region_codes <- lapply(json$features, function(x) {
+    x$properties$spectrum_region_code
+  })
+  unique(unlist(region_codes))
 }
 
+read_country <- function(pjnz_path) {
+  hiv_params <- specio::read_pjn_metadata(pjnz_path)
+  hiv_params$country
+}
