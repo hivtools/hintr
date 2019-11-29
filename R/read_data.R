@@ -54,8 +54,8 @@ read_geojson_spectrum_region_codes <- function(shape) {
   unique(unlist(region_codes))
 }
 
-read_country <- function(pjnz) {
-  hiv_params <- specio::read_pjn_metadata(pjnz$path)
+read_country <- function(pjnz_path) {
+  hiv_params <- specio::read_pjn_metadata(pjnz_path)
   hiv_params$country
 }
 
