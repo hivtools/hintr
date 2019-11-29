@@ -79,7 +79,7 @@ do_validate_shape <- function(shape) {
 #' @return An error if invalid.
 #' @keywords internal
 do_validate_population <- function(population) {
-  assert_file_extension(shape, "csv")
+  assert_file_extension(population, "csv")
   population <- read_csv(population$path, header = TRUE)
   assert_single_country(population, "population")
   assert_column_names(
