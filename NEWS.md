@@ -1,3 +1,7 @@
+# hintr 0.0.21
+
+* Errors in the hint model run are returned with stack traces (mrc-714)
+
 # hintr 0.0.20
 
 * Accept and validate zip of PJNZ files
