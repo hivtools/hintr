@@ -1,4 +1,5 @@
 do_validate_pjnz <- function(pjnz) {
+  assert_file_extension(pjnz, c("pjnz", "zip", "PJNZ"))
   pjnz_paths <- get_pjnz_paths(pjnz)
   countries <- lapply(pjnz_paths, read_country)
   if (length(unique(countries)) != 1) {
@@ -56,6 +57,7 @@ do_validate_shape <- function(shape) {
   # and it's only 2.5MB large).  A caching layer will help, but this
   # is going to lock things up enough we might need to do it
   # asynchronously.
+  assert_file_extension(shape, "geojson")
   json <- hintr_geojson_read(shape)
   assert_single_parent_region(json)
   assert_single_country(json, "shape")
@@ -77,6 +79,7 @@ do_validate_shape <- function(shape) {
 #' @return An error if invalid.
 #' @keywords internal
 do_validate_population <- function(population) {
+  assert_file_extension(shape, "csv")
   population <- read_csv(population$path, header = TRUE)
   assert_single_country(population, "population")
   assert_column_names(
@@ -99,6 +102,7 @@ do_validate_population <- function(population) {
 #' @return An error if invalid.
 #' @keywords internal
 do_validate_programme <- function(programme, shape) {
+  assert_file_extension(programme, "csv")
   data <- read_csv(programme$path, header = TRUE)
   assert_single_country(data, "programme")
   assert_column_names(
@@ -125,6 +129,7 @@ do_validate_programme <- function(programme, shape) {
 #' @return An error if invalid.
 #' @keywords internal
 do_validate_anc <- function(anc, shape) {
+  assert_file_extension(anc, "csv")
   data <- read_csv(anc$path, header = TRUE)
   assert_single_country(data, "anc")
   assert_column_names(
@@ -150,6 +155,7 @@ do_validate_anc <- function(anc, shape) {
 #' @return An error if invalid.
 #' @keywords internal
 do_validate_survey <- function(survey, shape) {
+  assert_file_extension(survey, "csv")
   data <- read_csv(survey$path, header = TRUE)
   assert_single_country(data, "survey")
   assert_column_names(

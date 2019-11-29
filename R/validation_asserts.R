@@ -134,3 +134,12 @@ assert_file_exists <- function(file) {
   }
   invisible(TRUE)
 }
+
+assert_file_extension <- function(file_path, types) {
+  extension <- tools::file_ext(file_path)
+  if (!any(extension %in% types)) {
+    stop(sprintf("File must be of type %s, got type %s.",
+                 collapse(types), extension))
+  }
+  invisible(TRUE)
+}

@@ -152,3 +152,12 @@ test_that("can test region codes are consistent", {
 1 code in PJNZ missing from shape file: 5
 1 code in shape file missing from PJNZ: 4")
 })
+
+test_that("can check file extensions", {
+  expect_true(assert_file_extension("testdata/anc.csv", "csv"))
+  expect_true(assert_file_extension("testdata/Botswana2018.PJNZ",
+                                    c("PJNZ", "pjnz", "zip")))
+  expect_error(assert_file_extension("testdata/anc.csv",
+                                     c("PJNZ", "pjnz", "zip")),
+               "File must be of type PJNZ, pjnz, zip, got type csv.")
+})
