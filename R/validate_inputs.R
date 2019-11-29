@@ -1,11 +1,22 @@
 do_validate_pjnz <- function(pjnz) {
-  country <- read_country(pjnz)
-  if (country == "GBR") {
-    stop("Invalid country")
+  assert_file_extension(pjnz, c("pjnz", "zip", "PJNZ"))
+  pjnz_paths <- get_pjnz_paths(pjnz)
+  countries <- lapply(pjnz_paths, read_country)
+  if (length(unique(countries)) != 1) {
+    stop(sprintf("Zip contains PJNZs for mixed countries, got %s",
+                 collapse(unique(countries))))
+  }
+  pjnz_spectrum_region_codes <-
+    vapply(pjnz_paths, naomi::read_spectrum_region_code, numeric(1))
+  zero_codes <- pjnz_spectrum_region_codes == 0
+  if (length(which(zero_codes)) > 1) {
+    stop(sprintf(
+      "Zip contains %s PJNZ files with spectrum region code 0. Should be max 1 PJNZ with spectrum region code 0 got:\n%s",
+      length(which(zero_codes)), collapse(basename(names(zero_codes)))))
   }
   list(
-    data = list(country = scalar(country),
-                iso3 = scalar(read_pjnz_iso3(pjnz))),
+    data = list(country = scalar(countries[[1]]),
+                iso3 = scalar(read_pjnz_iso3_from_path(pjnz_paths[[1]]))),
     filters = scalar(NA)
   )
 }
@@ -46,10 +57,11 @@ do_validate_shape <- function(shape) {
   # and it's only 2.5MB large).  A caching layer will help, but this
   # is going to lock things up enough we might need to do it
   # asynchronously.
+  assert_file_extension(shape, "geojson")
   json <- hintr_geojson_read(shape)
   assert_single_parent_region(json)
   assert_single_country(json, "shape")
-  assert_area_id_exists(json)
+  assert_properties_exist(json, c("spectrum_region_code", "area_id"))
   # Then we have to *reread* the file now that we know that it is
   # valid, but but this is not too slow, especially as the file is now
   # in cache (but still ~1/20s)
@@ -67,6 +79,7 @@ do_validate_shape <- function(shape) {
 #' @return An error if invalid.
 #' @keywords internal
 do_validate_population <- function(population) {
+  assert_file_extension(population, "csv")
   population <- read_csv(population$path, header = TRUE)
   assert_single_country(population, "population")
   assert_column_names(
@@ -89,6 +102,7 @@ do_validate_population <- function(population) {
 #' @return An error if invalid.
 #' @keywords internal
 do_validate_programme <- function(programme, shape) {
+  assert_file_extension(programme, "csv")
   data <- read_csv(programme$path, header = TRUE)
   assert_single_country(data, "programme")
   assert_column_names(
@@ -115,6 +129,7 @@ do_validate_programme <- function(programme, shape) {
 #' @return An error if invalid.
 #' @keywords internal
 do_validate_anc <- function(anc, shape) {
+  assert_file_extension(anc, "csv")
   data <- read_csv(anc$path, header = TRUE)
   assert_single_country(data, "anc")
   assert_column_names(
@@ -140,6 +155,7 @@ do_validate_anc <- function(anc, shape) {
 #' @return An error if invalid.
 #' @keywords internal
 do_validate_survey <- function(survey, shape) {
+  assert_file_extension(survey, "csv")
   data <- read_csv(survey$path, header = TRUE)
   assert_single_country(data, "survey")
   assert_column_names(
@@ -167,22 +183,40 @@ do_validate_survey <- function(survey, shape) {
 #' @return An error if invalid.
 #' @keywords internal
 do_validate_baseline <- function(pjnz, shape, population) {
-  check_country <- !is.null(pjnz) && !is.null(shape)
-  check_regions <- !is.null(shape) && !is.null(population)
-  consistent_country <- TRUE
-  consistent_regions <- TRUE
+  check_pjnz_shape <- !is.null(pjnz) && !is.null(shape)
+  check_shape_population <- !is.null(shape) && !is.null(population)
+  valid_pjnz_shape <- TRUE
+  valid_shape_population <- TRUE
+  if (check_pjnz_shape) {
+    valid_pjnz_shape <- validate_pjnz_shape(pjnz, shape)
+  }
+  if (check_shape_population) {
+    valid_shape_population <- validate_shape_population(shape, population)
+  }
+  list(consistent = scalar(valid_pjnz_shape && valid_shape_population))
+}
 
-  if (check_country) {
-    pjnz_country <- read_iso3(pjnz, "pjnz")
-    shape_country <- read_iso3(shape, "shape")
-    consistent_country <- assert_consistent_country(pjnz_country, "pjnz",
-                                                    shape_country, "shape")
-  }
-  if (check_regions) {
-    shape_regions <- read_regions(shape, "shape")
-    population_regions <- read_regions(population, "population")
-    consistent_regions <- assert_consistent_regions(
-      shape_regions, population_regions, "population")
-  }
-  list(consistent = scalar(consistent_country && consistent_regions))
+validate_pjnz_shape <- function(pjnz, shape) {
+  pjnz_paths <- get_pjnz_paths(pjnz)
+  ## Already validated that each subnational PJNZ has the same country
+  ## so we only need to check 1 path here.
+  pjnz_country <- read_pjnz_iso3_from_path(pjnz_paths[[1]])
+  shape_country <- read_iso3(shape, "shape")
+  assert_consistent_country(pjnz_country, "pjnz", shape_country, "shape")
+
+  ## TODO: Enable this validation - Jeff has request we disable it for the
+  ## time being mrc-1156
+  ##pjnz_spectrum_region_codes <- lapply(pjnz_paths,
+  ##                                     specio::read_spectrum_region_code)
+  ##shape_spectrum_region_codes <- read_geojson_spectrum_region_codes(shape)
+  ##assert_consistent_region_codes(pjnz_spectrum_region_codes,
+  ##                               shape_spectrum_region_codes)
+  TRUE
+}
+
+validate_shape_population <- function(shape, population) {
+  shape_regions <- read_regions(shape, "shape")
+  population_regions <- read_regions(population, "population")
+  assert_consistent_regions( shape_regions, population_regions, "population")
+  TRUE
 }

@@ -45,9 +45,17 @@ run_model <- function(data, options, path_results, path_prerun = NULL) {
   }
 
   path_results <- normalizePath(path_results, mustWork = TRUE)
+  dir <- normalizePath(path_results, mustWork = TRUE)
   output_path <- tempfile(tmpdir = path_results, fileext = ".rds")
   spectrum_path <- tempfile(tmpdir = path_results, fileext = ".zip")
   summary_path <- tempfile(tmpdir = path_results, fileext = ".zip")
+
+  ## Remap some keys to match what naomi requires
+  data$art_number <- data$programme
+  data$programme <- NULL
+  data$anc_testing <- data$anc
+  data$anc <- NULL
+
   naomi::hintr_run_model(data, options, output_path, spectrum_path,
                          summary_path)
 }

@@ -25,12 +25,19 @@ test_that("assert fails if more than once country in json", {
 test_that("assert fails if a feature is missing an area id", {
   shape <- file_object(file.path("testdata", "malawi.geojson"))
   json <- hintr_geojson_read(shape)
-  expect_true(assert_area_id_exists(json))
+  expect_true(assert_property_exists("area_id", json))
+  expect_true(assert_property_exists("spectrum_region_code", json))
+  expect_true(assert_properties_exist(json,
+                                      c("area_id", "spectrum_region_code")))
 
   ## Remove an ID for testing
   json$features[[1]]$properties$area_id <- NULL
-  expect_error(assert_area_id_exists(json),
-               "Shape file does not contain an area ID for each region. Missing ID for 1 feature.")
+  expect_error(assert_property_exists("area_id", json),
+               "Shape file does not contain property area_id for each region. Missing ID for 1 feature.")
+
+  json$features[[1]]$properties$spectrum_region_code <- NULL
+  expect_error(assert_property_exists("spectrum_region_code", json),
+               "Shape file does not contain property spectrum_region_code for each region. Missing ID for 1 feature.")
 })
 
 test_that("assert_column_names checks column names are as expected", {
@@ -121,4 +128,36 @@ test_that("assert_single_parent_region fails if more than one parent region", {
   )
   expect_error(assert_single_parent_region(data),
     "Should have located one parent regions but found regions MWI, MWI.")
+})
+
+test_that("can test region codes are consistent", {
+  pjnz_codes <- c(1, 2)
+  shape_codes <- c(1, 2)
+  expect_true(assert_consistent_region_codes(pjnz_codes, shape_codes))
+
+  pjnz_codes <- c(1, 2, 3)
+  expect_error(assert_consistent_region_codes(pjnz_codes, shape_codes),
+               "Different spectrum region codes in PJNZ and shape file.
+1 code in PJNZ missing from shape file: 3
+0 codes in shape file missing from PJNZ:")
+
+  shape_codes <- c(1, 2, 3, 4)
+  expect_error(assert_consistent_region_codes(pjnz_codes, shape_codes),
+               "Different spectrum region codes in PJNZ and shape file.
+0 codes in PJNZ missing from shape file: \n1 code in shape file missing from PJNZ: 4")
+
+  pjnz_codes <- c(1, 2, 3, 5)
+  expect_error(assert_consistent_region_codes(pjnz_codes, shape_codes),
+               "Different spectrum region codes in PJNZ and shape file.
+1 code in PJNZ missing from shape file: 5
+1 code in shape file missing from PJNZ: 4")
+})
+
+test_that("can check file extensions", {
+  expect_true(assert_file_extension("testdata/anc.csv", "csv"))
+  expect_true(assert_file_extension("testdata/Botswana2018.PJNZ",
+                                    c("PJNZ", "pjnz", "zip")))
+  expect_error(assert_file_extension("testdata/anc.csv",
+                                     c("PJNZ", "pjnz", "zip")),
+               "File must be of type PJNZ, pjnz, zip, got type csv.")
 })
