@@ -76,5 +76,7 @@ read_info_inputs <- function(path) {
 
 
 hash_info_inputs <- function(inputs) {
+  inputs$role[inputs$role == "art_number"] <- "programme"
+  inputs$role[inputs$role == "anc_testing"] <- "anc"
   digest::digest(inputs$md5sum[order(inputs$role)])
 }

@@ -77,11 +77,12 @@ test_that("run with prerun", {
   )
 
   path_results <- tempfile()
+  dir.create(path_results)
   withr::with_envvar(c("USE_MOCK_MODEL" = "false"), {
     expect_message(
       model_run <- run_model(data, options, path_results, path_prerun),
       "Found prerun model results")
   })
-  expect_false(file.exists(path_results))
+  expect_equal(dir(path_results), character(0))
   expect_equal(model_run, obj$get_by_hash(h))
 })
