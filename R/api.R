@@ -46,9 +46,12 @@ api_run <- function(pr, port = 8888) {
 }
 
 api <- function(port = 8888, queue_id = NULL, workers = 2,
-                results_dir = tempdir()) {
-  queue <- Queue$new(queue_id, workers, results_dir = results_dir) # nocov
-  api_run(api_build(queue), port) # nocov
+                results_dir = tempdir(), prerun_dir = NULL) {
+  # nocov start
+  queue <- Queue$new(queue_id, workers, results_dir = results_dir,
+                     prerun_dir = prerun_dir)
+  api_run(api_build(queue), port)
+  # nocov end
 }
 
 api_log_start <- function(data, req, res) {

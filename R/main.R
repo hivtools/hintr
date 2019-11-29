@@ -5,18 +5,22 @@ main_api_args <- function(args = commandArgs(TRUE)) {
 Options:
 --workers=N         Number of workers to spawn [default: 2]
 --port=PORT         Port to use [default: 8888]
---results-dir=PATH  Directory to store model results in [default: results]"
+--results-dir=PATH  Directory to store model results in [default: results]
+--prerun-dir=PATH   Directory to find prerun results in [default: prerun]"
 
   dat <- docopt::docopt(usage, args)
   list(port = as.integer(dat$port),
        queue_id = dat$queue_id,
        workers = as.integer(dat$workers),
-       results_dir = dat[["results-dir"]])
+       results_dir = dat[["results-dir"]],
+       prerun_dir = dat[["prerun-dir"]])
 }
 
 main_api <- function(args = commandArgs(TRUE)) {
-  dat <- main_api_args(args) # nocov
-  api(dat$port, dat$queue_id, dat$workers, dat$results_dir) # nocov
+  # nocov start
+  dat <- main_api_args(args)
+  api(dat$port, dat$queue_id, dat$workers, dat$results_dir, dat$prerun_dir)
+  # nocov end
 }
 
 main_worker_args <- function(args = commandArgs(TRUE)) {
