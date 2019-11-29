@@ -64,8 +64,9 @@ file_object <- function(path) {
 
 file_copy <- function(from, to) {
   ok <- file.copy(from, to)
-  if (length(ok) > 1 && any(!ok)) {
-    stop("Some file.copy failed")
+  err <- from[!ok]
+  if (length(err) > 0L) {
+    stop(sprintf("Copying %s failed", paste(err, collapse = ", ")))
   }
   invisible(ok)
 }
