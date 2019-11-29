@@ -18,7 +18,6 @@ test_that("import failures", {
                "Path for 'output' must be just the filename, no slashes")
 })
 
-
 test_that("import base data", {
   path_prerun <- tempfile()
   obj <- PrerunModelResults$new(path_prerun)
@@ -39,8 +38,13 @@ test_that("import base data", {
                     spectrum_path = file.path(path_prerun, h, "spectrum.zip"),
                     summary_path = file.path(path_prerun, h, "summary.zip")))
   expect_true(all(vapply(obj$get(inputs), file.exists, TRUE)))
-})
 
+  expect_error(
+    obj$import(p, "malawi_output.rds",
+               "malawi_spectrum_download.zip",
+               "malawi_summary_download.zip"),
+    "This set of data has been imported already")
+})
 
 test_that("run with prerun", {
   path_prerun <- tempfile()
