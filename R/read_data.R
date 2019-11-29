@@ -24,8 +24,8 @@ read_csv <- function(...) {
 }
 
 read_pjnz_iso3 <- function(pjnz) {
-  hiv_params <- specio::read_hivproj_param(pjnz$path)
-  iso_numeric_to_alpha_3(hiv_params$iso3)
+    hiv_params <- specio::read_pjn_metadata(pjnz$path)
+      iso_numeric_to_alpha_3(hiv_params$iso3)
 }
 
 read_pjnz_iso3_from_path <- function(pjnz_path) {
@@ -54,10 +54,8 @@ read_geojson_spectrum_region_codes <- function(shape) {
   unique(unlist(region_codes))
 }
 
-read_country <- function(pjnz_path) {
-  ## TODO: Add function to specio to just extract metadata from the PJN and
-  ## use this here instead to avoid getting unnecessary data. See mrc-388.
-  hiv_params <- specio::read_hivproj_param(pjnz_path)
+read_country <- function(pjnz) {
+  hiv_params <- specio::read_pjn_metadata(pjnz$path)
   hiv_params$country
 }
 

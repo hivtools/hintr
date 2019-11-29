@@ -25,7 +25,7 @@ Imports:
     R6,
     redux,
     rrq (>= 0.2.1),
-    specio,
+    specio (>= 0.1.4),
     storr
 Suggests:
     callr,
