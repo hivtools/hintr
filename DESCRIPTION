@@ -27,7 +27,8 @@ Imports:
     redux,
     rrq (>= 0.2.1),
     specio,
-    storr
+    storr,
+    zip
 Suggests:
     callr,
     covr,
