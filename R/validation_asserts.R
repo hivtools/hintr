@@ -102,24 +102,22 @@ assert_consistent_regions <- function(shape_regions, test_regions, test_source) 
 
 assert_consistent_region_codes <- function(pjnz_codes, shape_codes) {
   if (!setequal(pjnz_codes, shape_codes)) {
-    missing_shape_codes <- setdiff(shape_codes, pjnz_codes)
-    missing_pjnz_codes <- setdiff(pjnz_codes, shape_codes)
-    if (length(missing_shape_codes) > 0 &&
-        length(missing_pjnz_codes) > 0) {
-      separator <- "\n"
-    } else {
-      separator <- ""
-    }
-    stop(sprintf(
-      "%s%s%s",
-      n0_get_text(length(missing_shape_codes),
-                  sprintf("Shape file contains spectrum region codes missing from PJNZ files: %s",
-                          collapse(missing_shape_codes))),
-      separator,
-      n0_get_text(length(missing_pjnz_codes),
-                  sprintf("PJNZ files contain spectrum region codes missing from shape file: %s",
-                          collapse(missing_pjnz_codes)))
-    ))
+    missing_code_from_shape <- setdiff(pjnz_codes, shape_codes)
+    missing_code_from_pjnz <- setdiff(shape_codes, pjnz_codes)
+    pjnz_no_missing <- length(missing_code_from_pjnz)
+    shape_no_missing <- length(missing_code_from_shape)
+    debug_info <- list(
+      pjnz_no_missing = pjnz_no_missing,
+      pjnz_code_text = ngettext(pjnz_no_missing, "code", "codes"),
+      shape_no_missing = shape_no_missing,
+      shape_code_text = ngettext(shape_no_missing, "code", "codes"),
+      pjnz_missing_codes = collapse(missing_code_from_pjnz),
+      shape_missing_codes = collapse(missing_code_from_shape)
+    )
+    stop(glue::glue("Different spectrum region codes in PJNZ and shape file.",
+               "{shape_no_missing} {shape_code_text} in PJNZ missing from shape file: {shape_missing_codes}",
+               "{pjnz_no_missing} {pjnz_code_text} in shape file missing from PJNZ: {pjnz_missing_codes}",
+               .sep = "\n", .envir = as.environment(debug_info)))
   }
   invisible(TRUE)
 }
