@@ -28,6 +28,11 @@ read_pjnz_iso3 <- function(pjnz) {
       iso_numeric_to_alpha_3(hiv_params$iso3)
 }
 
+read_pjnz_iso3_from_path <- function(pjnz_path) {
+  hiv_params <- specio::read_hivproj_param(pjnz_path)
+  iso_numeric_to_alpha_3(hiv_params$iso3)
+}
+
 ## Convert numeric iso3 country code to the alpha-3 code
 iso_numeric_to_alpha_3 <- function(numeric_iso) {
   spectrum5_countrylist[which(spectrum5_countrylist$Code == numeric_iso),
@@ -41,8 +46,16 @@ read_geojson_iso3 <- function(shape) {
   substr(json$features[[1]]$properties$area_id, 1, 3)
 }
 
-read_country <- function(pjnz) {
-  hiv_params <- specio::read_pjn_metadata(pjnz$path)
+read_geojson_spectrum_region_codes <- function(shape) {
+  json <- hintr_geojson_read(shape)
+  region_codes <- lapply(json$features, function(x) {
+    x$properties$spectrum_region_code
+  })
+  unique(unlist(region_codes))
+}
+
+read_country <- function(pjnz_path) {
+  hiv_params <- specio::read_pjn_metadata(pjnz_path)
   hiv_params$country
 }
 
