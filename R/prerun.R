@@ -1,5 +1,5 @@
-PrerunModels <- R6::R6Class(
-  "PrerunModels",
+PrerunModelResults <- R6::R6Class(
+  "PrerunModelResults",
   private = list(
     path = NULL,
     validate_path = function(path, dir, name = deparse(substitute(path))) {
@@ -31,7 +31,10 @@ PrerunModels <- R6::R6Class(
     },
 
     get = function(inputs) {
-      hash <- hash_info_inputs(inputs)
+      self$get_by_hash(hash_info_inputs(inputs))
+    },
+
+    get_by_hash = function(hash) {
       p <- file.path(private$path, hash)
       ret <- list(
         output_path = file.path(private$path, hash, "output.rds"),

@@ -6,10 +6,12 @@ Queue <- R6::R6Class(
     cleanup_on_exit = NULL,
     queue = NULL,
     results_dir = NULL,
+    prerun = NULL,
 
     initialize = function(queue_id = NULL, workers = 2,
                           cleanup_on_exit = workers > 0,
-                          results_dir = tempdir()) {
+                          results_dir = tempdir(),
+                          prerun_dir = NULL) {
       self$cleanup_on_exit <- cleanup_on_exit
       self$results_dir = results_dir
 
@@ -24,6 +26,8 @@ Queue <- R6::R6Class(
 
       message("Creating cache")
       set_cache(queue_id)
+
+      self$prerun_dir <- prerun_dir
     },
 
     start = function(workers) {
@@ -34,8 +38,9 @@ Queue <- R6::R6Class(
 
     submit = function(data, options) {
       results_dir <- self$results_dir
+      prerun_dir <- self$prerun_dir
       self$queue$enqueue_(quote(
-        hintr:::run_model(data, options, results_dir)))
+        hintr:::run_model(data, options, results_dir, prerun_dir)))
     },
 
     status = function(id) {
