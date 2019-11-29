@@ -24,7 +24,12 @@ read_csv <- function(...) {
 }
 
 read_pjnz_iso3 <- function(pjnz) {
-  hiv_params <- specio::read_hivproj_param(pjnz$path)
+    hiv_params <- specio::read_pjn_metadata(pjnz$path)
+      iso_numeric_to_alpha_3(hiv_params$iso3)
+}
+
+read_pjnz_iso3_from_path <- function(pjnz_path) {
+  hiv_params <- specio::read_hivproj_param(pjnz_path)
   iso_numeric_to_alpha_3(hiv_params$iso3)
 }
 

@@ -53,15 +53,21 @@ assert_single_country.character <- function(data, type) {
   invisible(TRUE)
 }
 
-assert_area_id_exists <- function(json) {
+assert_properties_exist <- function(json, properties) {
+ lapply(properties, assert_property_exists, json)
+ invisible(TRUE)
+}
+
+assert_property_exists <- function(property, json) {
   contains_id <- vapply(json$features, function(x) {
-    !is_empty(x$properties$area_id)
+    !is_empty(x$properties[[property]])
   }, logical(1))
   if (!all(contains_id)) {
     missing_count <- sum(!contains_id)
     stop(
       sprintf(
-        "Shape file does not contain an area ID for each region. Missing ID for %s %s.",
+        "Shape file does not contain property %s for each region. Missing ID for %s %s.",
+        property,
         missing_count,
         ngettext(missing_count, "feature", "features")
       )
@@ -94,6 +100,28 @@ assert_consistent_regions <- function(shape_regions, test_regions, test_source) 
   invisible(TRUE)
 }
 
+assert_consistent_region_codes <- function(pjnz_codes, shape_codes) {
+  if (!setequal(pjnz_codes, shape_codes)) {
+    missing_code_from_shape <- setdiff(pjnz_codes, shape_codes)
+    missing_code_from_pjnz <- setdiff(shape_codes, pjnz_codes)
+    pjnz_no_missing <- length(missing_code_from_pjnz)
+    shape_no_missing <- length(missing_code_from_shape)
+    debug_info <- list(
+      pjnz_no_missing = pjnz_no_missing,
+      pjnz_code_text = ngettext(pjnz_no_missing, "code", "codes"),
+      shape_no_missing = shape_no_missing,
+      shape_code_text = ngettext(shape_no_missing, "code", "codes"),
+      pjnz_missing_codes = collapse(missing_code_from_pjnz),
+      shape_missing_codes = collapse(missing_code_from_shape)
+    )
+    stop(glue::glue("Different spectrum region codes in PJNZ and shape file.",
+               "{shape_no_missing} {shape_code_text} in PJNZ missing from shape file: {shape_missing_codes}",
+               "{pjnz_no_missing} {pjnz_code_text} in shape file missing from PJNZ: {pjnz_missing_codes}",
+               .sep = "\n", .envir = as.environment(debug_info)))
+  }
+  invisible(TRUE)
+}
+
 is_superset <- function(super, sub) {
   diff <- setdiff(sub, super)
   length(diff) == 0
@@ -103,6 +131,15 @@ assert_file_exists <- function(file) {
   if (is.null(file) || !file.exists(file)) {
     stop(sprintf("File at path %s does not exist. Create it, or fix the path.",
                  file %||% "NULL"))
+  }
+  invisible(TRUE)
+}
+
+assert_file_extension <- function(file_path, types) {
+  extension <- tools::file_ext(file_path)
+  if (!any(extension %in% types)) {
+    stop(sprintf("File must be of type %s, got type %s.",
+                 collapse(types), extension))
   }
   invisible(TRUE)
 }
