@@ -1,6 +1,6 @@
 Package: hintr
 Title: R API for calling naomi district level HIV model
-Version: 0.0.22
+Version: 0.0.22-1
 Authors@R: 
     person(given = "Robert",
            family = "Ashton",
@@ -36,3 +36,5 @@ Suggests:
     mockery,
     testthat (>= 2.1.0),
     withr
+Remotes:
+    mrc-ide/naomi@simulation-seed
