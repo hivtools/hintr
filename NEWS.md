@@ -1,3 +1,7 @@
+# hintr 0.0.22
+
+* Update for changes to model options in naomi v0.0.21
+
 # hintr 0.0.21
 
 * Errors in the hint model run are returned with stack traces (mrc-714)
