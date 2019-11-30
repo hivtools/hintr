@@ -61,8 +61,8 @@ test_that("do_endpoint_model_options correctly builds params list", {
                c("area_scope_options", "area_scope_default", "area_level_options",
                  "calendar_quarter_t1_options", "calendar_quarter_t2_options",
                  "survey_prevalence_options", "survey_art_coverage_options",
-                 "survey_vls_options", "survey_recently_infected_options",
-                 "survey_art_or_vls_options", "anc_prevalence_year1_options",
+                 "survey_recently_infected_options",
+                 "anc_prevalence_year1_options",
                  "anc_prevalence_year2_options",
                  "anc_art_coverage_year1_options",
                  "anc_art_coverage_year2_options"))
@@ -111,12 +111,7 @@ test_that("do_endpoint_model_options correctly builds params list", {
   expect_equal(params$survey_prevalence_options,
                params$survey_art_coverage_options)
   expect_equal(params$survey_prevalence_options,
-               params$survey_vls_options)
-  expect_equal(params$survey_prevalence_options,
                params$survey_recently_infected_options)
-  expect_equal(params$survey_art_or_vls_options[[1]]$id,
-               scalar("art_coverage"))
-  expect_equal(params$survey_art_or_vls_options[[2]]$id, scalar("vls"))
   expect_length(params$anc_prevalence_year1_options, 8)
   expect_equal(params$anc_prevalence_year1_options[[1]]$id, scalar("2018"))
   expect_equal(params$anc_prevalence_year1_options[[1]]$label, scalar("2018"))
@@ -145,8 +140,8 @@ test_that("do_endpoint_model_options without programme data", {
                c("area_scope_options", "area_scope_default", "area_level_options",
                  "calendar_quarter_t1_options", "calendar_quarter_t2_options",
                  "survey_prevalence_options", "survey_art_coverage_options",
-                 "survey_vls_options", "survey_recently_infected_options",
-                 "survey_art_or_vls_options", "anc_prevalence_year1_options",
+                 "survey_recently_infected_options",
+                 "anc_prevalence_year1_options",
                  "anc_prevalence_year2_options",
                  "anc_art_coverage_year1_options",
                  "anc_art_coverage_year2_options"))
@@ -195,12 +190,7 @@ test_that("do_endpoint_model_options without programme data", {
   expect_equal(params$survey_prevalence_options,
                params$survey_art_coverage_options)
   expect_equal(params$survey_prevalence_options,
-               params$survey_vls_options)
-  expect_equal(params$survey_prevalence_options,
-               params$survey_recently_infected_options)
-  expect_equal(params$survey_art_or_vls_options[[1]]$id,
-               scalar("art_coverage"))
-  expect_equal(params$survey_art_or_vls_options[[2]]$id, scalar("vls"))
+               params$survey_recently_infected_options)  
 })
 
 test_that("can retrieve validated model options", {
@@ -212,7 +202,7 @@ test_that("can retrieve validated model options", {
 
   json <- jsonlite::parse_json(json)
   expect_equal(names(json), "controlSections")
-  expect_length(json$controlSections, 5)
+  expect_length(json$controlSections, 7)
 
   general_section <- json$controlSections[[1]]
   expect_length(
@@ -250,16 +240,21 @@ test_that("can retrieve validated model options", {
   survey_section <- json$controlSections[[2]]
   expect_length(
     survey_section$controlGroups[[1]]$controls[[1]]$options,
+    32
+  )
+  survey_section <- json$controlSections[[2]]
+  expect_length(
+    survey_section$controlGroups[[2]]$controls[[1]]$options,
     4
   )
   expect_equal(
     names(survey_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
     c("id", "label"))
   expect_equal(
-    survey_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
+    survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
     "MWI2016PHIA")
   expect_equal(
-    survey_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
+    survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
     "MWI2016PHIA")
 
   art_section <- json$controlSections[[3]]
@@ -275,13 +270,13 @@ test_that("can retrieve validated model options", {
     "true")
   expect_equal(
     art_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
-    "yes")
+    "Yes")
   expect_equal(
     art_section$controlGroups[[1]]$controls[[1]]$options[[2]]$id,
     "false")
   expect_equal(
     art_section$controlGroups[[1]]$controls[[1]]$options[[2]]$label,
-    "no")
+    "No")
 
   anc_section <- json$controlSections[[4]]
   expect_length(
@@ -298,7 +293,7 @@ test_that("can retrieve validated model options", {
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
     "2018")
 
-  advanced_section <- json$controlSections[[5]]
+  advanced_section <- json$controlSections[[7]]
   expect_equal(advanced_section$label, "Advanced")
 })
 
