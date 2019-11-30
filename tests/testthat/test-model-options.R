@@ -327,6 +327,8 @@ test_that("can read geojson level labels", {
 })
 
 test_that("model options can be validated", {
+  skip("Skipping model option validation endpoint not implemented")
+  
   data <- list(
     pjnz = "path/to/pjnz",
     shape = "path",
