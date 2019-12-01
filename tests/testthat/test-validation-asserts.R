@@ -156,8 +156,10 @@ test_that("can test region codes are consistent", {
 test_that("can check file extensions", {
   expect_true(assert_file_extension("testdata/anc.csv", "csv"))
   expect_true(assert_file_extension("testdata/Botswana2018.PJNZ",
-                                    c("PJNZ", "pjnz", "zip")))
+                                    c("PJNZ", "zip")))
+  expect_true(assert_file_extension("testdata/Botswana2018.pjnz",
+                                    c("PJNZ", "zip")))
   expect_error(assert_file_extension("testdata/anc.csv",
-                                     c("PJNZ", "pjnz", "zip")),
-               "File must be of type PJNZ, pjnz, zip, got type csv.")
+                                     c("PJNZ", "zip")),
+               "File must be of type PJNZ, zip, got type csv.")
 })
