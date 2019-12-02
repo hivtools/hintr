@@ -275,11 +275,12 @@ test_that("real model can be run by API", {
     expect_equal(response$data$success, TRUE)
     expect_equal(response$data$queue, 0)
     expect_true("id" %in% names(response$data))
-    expect_length(response$data$progress, 4)
+    expect_length(response$data$progress, 5)
     expect_true(response$data$progress[[1]]$complete)
     expect_true(response$data$progress[[2]]$complete)
     expect_true(response$data$progress[[3]]$complete)
     expect_true(response$data$progress[[4]]$complete)
+    expect_true(response$data$progress[[5]]$complete)
   })
 
   ## Get the result
@@ -377,7 +378,7 @@ test_that("model run options are exposed", {
   expect_equal(response$status, "success")
   expect_equal(response$errors, list())
   expect_equal(names(response$data), "controlSections")
-  expect_length(response$data$controlSections, 5)
+  expect_length(response$data$controlSections, 7)
 
   general_section <- response$data$controlSections[[1]]
   expect_length(
@@ -415,16 +416,20 @@ test_that("model run options are exposed", {
   survey_section <- response$data$controlSections[[2]]
   expect_length(
     survey_section$controlGroups[[1]]$controls[[1]]$options,
+    32
+  )
+  expect_length(
+    survey_section$controlGroups[[2]]$controls[[1]]$options,
     4
   )
   expect_equal(
-    names(survey_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
+    names(survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]),
     c("id", "label"))
   expect_equal(
-    survey_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
+    survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
     "MWI2016PHIA")
   expect_equal(
-    survey_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
+    survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
     "MWI2016PHIA")
 
   art_section <- response$data$controlSections[[3]]
@@ -440,13 +445,13 @@ test_that("model run options are exposed", {
     "true")
   expect_equal(
     art_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
-    "yes")
+    "Yes")
   expect_equal(
     art_section$controlGroups[[1]]$controls[[1]]$options[[2]]$id,
     "false")
   expect_equal(
     art_section$controlGroups[[1]]$controls[[1]]$options[[2]]$label,
-    "no")
+    "No")
 
   anc_section <- response$data$controlSections[[4]]
   expect_length(
