@@ -1,4 +1,4 @@
-#' Filter data to only return rows containing data for indicator.
+#' Filter data to only return rows containing data for the specified indicator
 #'
 #' This filters data based on metadata. If wide format data it will
 #' return the input with no filtering. If long format then it will only

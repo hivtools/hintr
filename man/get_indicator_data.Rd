@@ -2,7 +2,7 @@
 % Please edit documentation in R/indicators.R
 \name{get_indicator_data}
 \alias{get_indicator_data}
-\title{Filter data to only return rows containing data for indicator.}
+\title{Filter data to only return rows containing data for the specified indicator}
 \usage{
 get_indicator_data(file, type, indicator)
 }
