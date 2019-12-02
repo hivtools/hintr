@@ -7,25 +7,13 @@
     "disaggregate_by_id": { "type": "string" },
     "selected_filter_options": {
       "type": "object",
-      "properties": {
-        "area" : { 
-          "type": "array",
-          "items": { "$ref": "FilterOption.schema.json" }
-        },
-        "quarter" : { 
-          "type": "array",
-          "items": { "$ref": "FilterOption.schema.json" }
-        },
-        "age" : { 
-          "type": "array",
-          "items": { "$ref": "FilterOption.schema.json" }
-        },
-        "sex" : { 
+      "patternProperties": {
+        "^.*$": { 
           "type": "array",
           "items": { "$ref": "FilterOption.schema.json" }
         }
       },
-      "additionalProperties": false,
+      "additonalProperties": true,
       "required": [ "area", "quarter", "age", "sex" ]
     }
   },
