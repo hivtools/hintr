@@ -468,6 +468,10 @@ test_that("404 handler", {
   ans <- hintr_404_handler(req, res)
   expect_is(ans, "list") # not json
   expect_equal(ans$status, scalar("failure"))
+  expect_is(ans$errors[[1]]$key, "scalar")
+  expect_match(ans$errors[[1]]$key, "^[a-z]{5}-[a-z]{5}-[a-z]{5}$")
+  # key is randomly generated - remove to compare rest
+  ans$errors[[1]]$key <- NULL
   expect_equal(ans$errors,
                list(list(
                  error = scalar("NOT_FOUND"),
@@ -488,6 +492,10 @@ test_that("error handler", {
   expect_equal(dat$status, "failure")
   detail <- paste("Unexpected server error in 'f(x)' :",
                   "'some error' while doing 'POST /my/path'")
+  expect_is(dat$errors[[1]]$key, "character")
+  expect_match(dat$errors[[1]]$key, "^[a-z]{5}-[a-z]{5}-[a-z]{5}$")
+  # key is randomly generated - remove to compare rest
+  dat$errors[[1]]$key <- NULL
   expect_equal(dat$errors,
                list(list(error = "SERVER_ERROR", detail = detail)))
   expect_identical(res$status, 500L)
@@ -504,6 +512,10 @@ test_that("error handler with no call", {
   validate_json_schema(ans$body, "Response")
   dat <- jsonlite::fromJSON(ans$body, simplifyVector = FALSE)
   expect_equal(dat$status, "failure")
+  expect_is(dat$errors[[1]]$key, "character")
+  expect_match(dat$errors[[1]]$key, "^[a-z]{5}-[a-z]{5}-[a-z]{5}$")
+  # key is randomly generated - remove to compare rest
+  dat$errors[[1]]$key <- NULL
   detail <- paste("Unexpected server error in '<call missing>' :",
                   "'some error' while doing 'POST /my/path'")
   expect_equal(dat$errors,
