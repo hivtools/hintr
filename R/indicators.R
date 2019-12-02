@@ -16,11 +16,11 @@ get_indicator_data <- function(file, type, indicator) {
     metadata$data_type == type & metadata$indicator == indicator, ]
   if (nrow(type_metadata) != 1) {
     stop(sprintf(
-      "Found more than 1 row in metadata for data type %s and indicator %s. Should be exactly one.",
-      type, indicator))
+      "Found %s rows in metadata for data type %s and indicator %s. Should be exactly one.",
+      nrow(type_metadata), type, indicator))
   }
   data <- read_csv(file$path)
-  if (!is.null(metadata$indicator_column)) {
+  if (!is.null(type_metadata$indicator_column) && !identical(type_metadata$indicator_column, "")) {
     ## Filter indicator column based on indicator value of data
     ret <- data[data[[type_metadata$indicator_column]] == type_metadata$indicator_value, ]
   } else {

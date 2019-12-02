@@ -18,4 +18,14 @@ test_that("can get filtered data for indicator", {
                  "ancrt_tested", "ancrt_test_pos"))
   anc_art <- get_indicator_data(anc, "anc", "art_coverage")
   expect_equal(nrow(anc_art), nrow(anc_prevalence))
+
+  mock_metadata <- mockery::mock(data.frame(
+    data_type = c("survey", "survey"),
+    indicator = c("prevalence", "art_coverage"),
+    stringsAsFactors = FALSE
+  ))
+  with_mock("naomi::get_metadata" = mock_metadata, {
+    expect_error(get_indicator_data(anc, "anc", "prevalence"),
+                 "Found 0 rows in metadata for data type anc and indicator prevalence. Should be exactly one.")
+  })
 })
