@@ -3,8 +3,15 @@
   "type": "object",
   "properties": {
     "error" : { "$ref": "ErrorCode.schema.json" },
-    "detail" : { "type": ["string", "null"] }
+    "detail" : { "type": ["string", "null"] },
+    "key": { "type": "string" },
+    "trace": {
+      "type": "array",
+      "items": {
+        "type": "string"
+       }
+    }
   },
-  "additionalProperties": false,
+  "additionalProperties": true,
   "required": [ "error", "detail" ]
 }
