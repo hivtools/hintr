@@ -235,7 +235,7 @@ test_that("invalid model options returns error", {
   expect_equal(response$status, "failure")
   expect_length(response$data, 0)
   expect_length(response$errors, 1)
-  expect_equal(names(response$errors[[1]]), c("error", "detail"))
+  expect_equal(names(response$errors[[1]]), c("error", "detail", "key"))
   expect_equal(response$errors[[1]]$error, "INVALID_OPTIONS")
   expect_equal(response$errors[[1]]$detail, "Invalid options")
 })
