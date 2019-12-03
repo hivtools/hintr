@@ -86,7 +86,7 @@ test_that("do_validate_anc validates ANC file and gets data for plotting", {
   data <- do_validate_anc(anc, shape)
 
   expect_true(nrow(data$data) > 200)
-  expect_equal(typeof(data$data$area_id), "integer")
+  expect_equal(typeof(data$data$area_id), "character")
   expect_true(all(c("prevalence", "art_coverage") %in% colnames(data$data)))
 
   expect_equal(names(data$filters), c("year", "indicators"))
@@ -107,7 +107,7 @@ test_that("do_validate_anc doesn't require ancrt_hiv_status column", {
   data <- do_validate_anc(anc, shape)
 
   expect_true(nrow(data$data) > 200)
-  expect_equal(typeof(data$data$area_id), "integer")
+  expect_equal(typeof(data$data$area_id), "character")
   expect_true(all(c("prevalence", "art_coverage") %in% colnames(data$data)))
 
   expect_equal(names(data$filters), c("year", "indicators"))
