@@ -5,15 +5,22 @@ main_api_args <- function(args = commandArgs(TRUE)) {
 Options:
 --workers=N         Number of workers to spawn [default: 2]
 --port=PORT         Port to use [default: 8888]
---results-dir=PATH  Directory to store model results in [default: results]
---prerun-dir=PATH   Directory to find prerun results in [default: prerun]"
+--results-dir=PATH  Directory to store model results in
+--prerun-dir=PATH   Directory to find prerun results in"
 
+  validate_path <- function(path) {
+    if (is.null(path)) {
+      path <- tempfile()
+      dir.create(path, FALSE, TRUE)
+    }
+    path
+  }
   dat <- docopt::docopt(usage, args)
   list(port = as.integer(dat$port),
        queue_id = dat$queue_id,
        workers = as.integer(dat$workers),
-       results_dir = dat[["results-dir"]],
-       prerun_dir = dat[["prerun-dir"]])
+       results_dir = validate_path(dat[["results-dir"]]),
+       prerun_dir = validate_path(dat[["prerun-dir"]]))
 }
 
 main_api <- function(args = commandArgs(TRUE)) {
@@ -26,7 +33,6 @@ main_api <- function(args = commandArgs(TRUE)) {
 main_worker_args <- function(args = commandArgs(TRUE)) {
   usage <- "Usage:
 hintr_worker [<queue_id>]"
-
   dat <- docopt::docopt(usage, args)
   list(queue_id = dat$queue_id)
 }
