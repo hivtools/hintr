@@ -9,9 +9,10 @@ test_that("get_age_label correctly maps to label and returns useful error", {
                     data_frame(age_group = c("00-04", "15-19", "50-54"),
                                age_group_label = c("0-4", "15-19", "50-54"),
                                age_group_sort_order = c(13, 16, 23)))
-  expect_error(get_age_labels("00-90"), "Found 0 rows for age_group 00-90.")
+  expect_error(get_age_labels("00-90"),
+               "Age groups metadata contains 0 rows for age_group 00-90. Speak to administrator.")
   expect_error(get_age_labels(c("00-90", "-20-09")),
-               "Found 0 rows for age_group 00-90, -20-09.")
+               "Age groups metadata contains 0 rows for age_group 00-90, -20-09. Speak to administrator.")
 })
 
 test_that("get_age_filters gets available filter options in correct order", {
