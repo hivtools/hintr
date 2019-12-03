@@ -378,7 +378,7 @@ endpoint_hintr_stop <- function(queue) {
 }
 
 endpoint_root <- function() {
-  scalar("Welcome to hintr")
+  scalar(t_("welcome"))
 }
 
 prepare_status_response <- function(value, id) {

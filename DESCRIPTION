@@ -28,6 +28,7 @@ Imports:
     rrq (>= 0.2.1),
     specio (>= 0.1.4),
     storr,
+    traduire,
     zip
 Suggests:
     callr,

@@ -1,6 +1,7 @@
 # hintr 0.0.23
 
 * No longer require ancrt_hiv_status
+* Internationalisation support (mrc-788)
 
 # hintr 0.0.22
 
