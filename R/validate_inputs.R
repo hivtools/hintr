@@ -136,8 +136,7 @@ do_validate_anc <- function(anc, shape) {
   assert_column_names(
     colnames(data),
     c("area_id", "age_group", "year", "anc_clients",
-      "ancrt_hiv_status", "ancrt_known_pos", "ancrt_already_art",
-      "ancrt_tested", "ancrt_test_pos"))
+      "ancrt_known_pos", "ancrt_already_art", "ancrt_tested", "ancrt_test_pos"))
   assert_consistent_regions(read_regions(shape, "shape"),
                             read_regions(anc, "anc"),
                             "ANC")
