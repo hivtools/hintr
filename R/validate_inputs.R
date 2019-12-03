@@ -177,7 +177,7 @@ do_validate_survey <- function(survey, shape) {
   assert_consistent_regions(read_regions(shape, "shape"),
                             read_regions(survey, "survey"),
                             "survey")
-  assert_expected_values(data, "sex", c("male", "female", "all"))
+  assert_expected_values(data, "sex", c("male", "female", "both"))
   assert_expected_values(data, "age_group", naomi::get_age_groups()$age_group)
   list(data = data,
        filters = list("age" = get_age_filters(data),
