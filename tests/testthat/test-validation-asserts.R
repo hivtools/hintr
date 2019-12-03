@@ -164,15 +164,33 @@ test_that("can check file extensions", {
 
 test_that("can check a column for expected values", {
   data <- data_frame(
-    age_groups = c("00-04", "05-09", "10-14"),
+    age_group = c("00-04", "05-09", "10-14"),
     sex = c("male", "female", "female")
   )
 
-  expect_true(assert_expected_values(data, "age_groups", c("00-04", "05-09", "10-14")))
+  expect_true(assert_expected_values(data, "age_group", c("00-04", "05-09", "10-14")))
   expect_true(assert_expected_values(data, "sex", c("male", "female")))
 
-  expect_error(assert_expected_values(data, "age_groups", c("00-04")),
-               "Unexpected values in column age_groups: 05-09, 10-14")
+  expect_error(assert_expected_values(data, "age_group", c("00-04")),
+               "Unexpected values in column age_group: 05-09, 10-14")
   expect_error(assert_expected_values(data, "sex", c("male")),
                "Unexpected values in column sex: female")
+})
+
+test_that("can check column values for expected patterns", {
+  data <- data_frame(
+    calendar_quarter = c("CY1998Q2", "CY2012Q3", "CY2020Q2"),
+    year= c("2019", "1999", "2025")
+  )
+
+  expect_true(assert_calendar_quarter_column(data))
+  expect_true(assert_year_column(data))
+
+  data$calendar_quarter <- c("1998", "CY2012Q3", "CY2020Q9")
+  data$year <- c("2010Q2", "2018", "Y2020")
+  expect_error(assert_calendar_quarter_column(data),
+               "Values in column calendar_quarter do not match required format: 1998, CY2020Q9")
+  expect_error(assert_year_column(data),
+               "Values in column year do not match required format: 2010Q2, Y2020")
+
 })

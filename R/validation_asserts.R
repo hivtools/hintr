@@ -43,6 +43,37 @@ assert_expected_values <- function(data, column_name, expected_values, all_value
   invisible(TRUE)
 }
 
+
+#' Check that values of calendar_quarter and year columns meet standard format
+#'
+#' @param data # data to check
+#' @param column_name # column to check
+#' @param pattern # expected format
+#'
+#' @return TRUE is valid otherwise throws an error
+#' @keywords internal
+assert_column_matches <- function(data, column_name, pattern) {
+  if (is.null(data[[column_name]])) {
+    stop(sprintf("Data does not contain required column: %s",
+                 column_name))
+  }
+  values <- unique(data[[column_name]])
+  check <- grepl(pattern, values)
+  if (!all(check)){
+    unmatched <- values[which(check == FALSE)]
+    stop(sprintf("Values in column %s do not match required format: %s",
+                 column_name, paste(unmatched, collapse=", ")))
+  }
+  invisible(TRUE)
+}
+
+assert_calendar_quarter_column <- function(data) {
+  assert_column_matches(data, "calendar_quarter", "^CY[12][901][0-9]{2}Q[1-4]$")
+}
+assert_year_column <- function(data) {
+  assert_column_matches(data, "year", "^[12][901][0-9][0-9]$")
+}
+
 assert_single_parent_region <- function(json) {
   regions <- vcapply(json$features, function(x) {
     x$properties$area_id
