@@ -71,7 +71,8 @@ process_result <- function(model_output) {
   metadata <- list(
     barchart = list(
       indicators = get_barchart_metadata(output),
-      filters = output_filters
+      filters = output_filters,
+      defaults = get_barchart_defaults(output, output_filters)
     ),
     choropleth = list(
       indicators = get_choropleth_metadata(output),
