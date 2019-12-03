@@ -108,12 +108,9 @@ test_that("do_endpoint_model_options correctly builds params list", {
                scalar("MWI2016PHIA"))
   expect_equal(params$survey_prevalence_options[[1]]$label,
                scalar("MWI2016PHIA"))
-  expect_equal(params$survey_prevalence_options,
-               params$survey_art_coverage_options)
-  expect_equal(params$survey_prevalence_options,
-               params$survey_vls_options)
-  expect_equal(params$survey_prevalence_options,
-               params$survey_recently_infected_options)
+  expect_length(params$survey_art_coverage_options, 1)
+  expect_length(params$survey_recently_infected_options, 1)
+  expect_length(params$survey_vls_options, 1)
   expect_equal(params$survey_art_or_vls_options[[1]]$id,
                scalar("art_coverage"))
   expect_equal(params$survey_art_or_vls_options[[2]]$id, scalar("vls"))
@@ -192,12 +189,9 @@ test_that("do_endpoint_model_options without programme data", {
                scalar("MWI2016PHIA"))
   expect_equal(params$survey_prevalence_options[[1]]$label,
                scalar("MWI2016PHIA"))
-  expect_equal(params$survey_prevalence_options,
-               params$survey_art_coverage_options)
-  expect_equal(params$survey_prevalence_options,
-               params$survey_vls_options)
-  expect_equal(params$survey_prevalence_options,
-               params$survey_recently_infected_options)
+  expect_length(params$survey_art_coverage_options, 1)
+  expect_length(params$survey_vls_options, 1)
+  expect_length(params$survey_recently_infected_options, 1)
   expect_equal(params$survey_art_or_vls_options[[1]]$id,
                scalar("art_coverage"))
   expect_equal(params$survey_art_or_vls_options[[2]]$id, scalar("vls"))

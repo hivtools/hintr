@@ -55,20 +55,34 @@ api <- function(port = 8888, queue_id = NULL, workers = 2,
 }
 
 api_log_start <- function(data, req, res) {
-  api_log("%s %s", req$REQUEST_METHOD, req$PATH_INFO)
+  api_log(sprintf("%s %s", req$REQUEST_METHOD, req$PATH_INFO))
 }
 
 api_log_end <- function(data, req, res, value) {
-  if (is.raw(value$body)) {
-    size <- length(value$body)
+  if (is.raw(res$body)) {
+    size <- length(res$body)
   } else {
-    size <- nchar(value$body)
+    size <- nchar(res$body)
   }
-  api_log("`--> %d (%d bytes)", value$status, size)
+  if (res$status >= 400 &&
+      identical(res$headers[["Content-Type"]], "application/json")) {
+    dat <- jsonlite::parse_json(res$body)
+    for (e in dat$errors) {
+      if (!is.null(e$key)) {
+        api_log(sprintf("error-key: %s", e$key))
+        api_log(sprintf("error-detail: %s", e$detail))
+        if (!is.null(e$trace)) {
+          trace <- sub("\n", " ", vcapply(e$trace, identity))
+          api_log(sprintf("error-trace: %s", trace))
+        }
+      }
+    }
+  }
+  api_log(sprintf("`--> %d (%d bytes)", res$status, size))
   value
 }
 
 # We can route this via some check for enabling/disabling logging later
-api_log <- function(fmt, ...) {
-  message(sprintf("[%s] %s", Sys.time(), sprintf(fmt, ...)))
+api_log <- function(msg) {
+  message(paste(sprintf("[%s] %s", Sys.time(), msg), collapse = "\n"))
 }

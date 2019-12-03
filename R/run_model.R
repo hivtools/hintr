@@ -49,7 +49,7 @@ run_model <- function(data, options, path_results, path_prerun = NULL) {
   spectrum_path <- tempfile(tmpdir = path_results, fileext = ".zip")
   summary_path <- tempfile(tmpdir = path_results, fileext = ".zip")
 
-  ## Remap some keys to match what naomi requires
+  ## Fix some labels to match what naomi requires
   data$art_number <- data$programme
   data$programme <- NULL
   data$anc_testing <- data$anc

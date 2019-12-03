@@ -1,5 +1,5 @@
 do_validate_pjnz <- function(pjnz) {
-  assert_file_extension(pjnz, c("pjnz", "zip", "PJNZ"))
+  assert_file_extension(pjnz, c("PJNZ", "zip"))
   pjnz_paths <- get_pjnz_paths(pjnz)
   countries <- lapply(pjnz_paths, read_country)
   if (length(unique(countries)) != 1) {

@@ -323,13 +323,28 @@ test_that("erroring model run returns useful messages", {
   ## Get the result
   model_result <- endpoint_model_result(queue)
   result <- model_result(req, res, response$data$id)
-  result <- jsonlite::parse_json(result)
+  result_parsed <- jsonlite::parse_json(result)
   expect_equal(res$status, 400)
-  expect_equal(result$status, "failure")
-  expect_length(result$data, 0)
-  expect_length(result$errors, 1)
-  expect_equal(result$errors[[1]]$error, "MODEL_RUN_FAILED")
-  expect_equal(result$errors[[1]]$detail, "test error")
+
+  expect_equal(result_parsed$status, "failure")
+  expect_length(result_parsed$data, 0)
+  expect_length(result_parsed$errors, 1)
+  expect_equal(result_parsed$errors[[1]]$error, "MODEL_RUN_FAILED")
+  expect_equal(result_parsed$errors[[1]]$detail, "test error")
+
+  trace <- vcapply(result_parsed$errors[[1]]$trace, identity)
+  expect_true("rrq:::rrq_worker_main()" %in% trace)
+  expect_true("stop(\"test error\")" %in% trace)
+
+  ## Check logging:
+  res$headers[["Content-Type"]] <- "application/json"
+  res$body <- result
+  res$status <- 400
+  msg <- capture_messages(
+    api_log_end(NULL, NULL, res, NULL))
+  expect_match(msg[[1]], "error-key: [a-z]{5}-[a-z]{5}-[a-z]{5}")
+  expect_match(msg[[2]], "error-detail: test error")
+  expect_match(msg[[3]], "error-trace: rrq:::rrq_worker_main")
 })
 
 test_that("running model with old version throws an error", {
