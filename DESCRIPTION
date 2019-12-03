@@ -1,6 +1,6 @@
 Package: hintr
 Title: R API for calling naomi district level HIV model
-Version: 0.0.21
+Version: 0.0.22
 Authors@R: 
     person(given = "Robert",
            family = "Ashton",
@@ -15,6 +15,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
 Additional_repositories: https://mrc-ide.github.io/drat
 Imports:
+    digest,
     docopt,
     geojsonio (>= 0.8.0),
     glue,

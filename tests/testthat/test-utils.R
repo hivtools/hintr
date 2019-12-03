@@ -34,3 +34,8 @@ test_that("collapse prepares vector for printing", {
                "one and two")
   expect_equal(collapse(test_vector, limit = 1), "...")
 })
+
+test_that("file_copy reports error on failure", {
+  expect_error(file_copy(tempfile(), tempfile()),
+               "Copying .* failed")
+})

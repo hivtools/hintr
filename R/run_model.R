@@ -1,4 +1,4 @@
-run_model <- function(data, options, dir) {
+run_model <- function(data, options, path_results, path_prerun = NULL) {
   if (use_mock_model()) {
     progress_start <- list(
       list(
@@ -34,15 +34,27 @@ run_model <- function(data, options, dir) {
          spectrum_path = system_file("output", "malawi_spectrum_download.zip"),
          summary_path = system_file("output", "malawi_summary_download.zip")))
   }
+
+  if (!is.null(path_prerun)) {
+    p <- PrerunModelResults$new(path_prerun)
+    inputs <- naomi:::naomi_info_input(data)
+    if (p$exists(inputs)) {
+      message("Found prerun model results")
+      return(p$get(inputs))
+    }
+  }
+
+  path_results <- normalizePath(path_results, mustWork = TRUE)
+  output_path <- tempfile(tmpdir = path_results, fileext = ".rds")
+  spectrum_path <- tempfile(tmpdir = path_results, fileext = ".zip")
+  summary_path <- tempfile(tmpdir = path_results, fileext = ".zip")
+
   ## Fix some labels to match what naomi requires
   data$art_number <- data$programme
   data$programme <- NULL
   data$anc_testing <- data$anc
   data$anc <- NULL
-  dir <- normalizePath(dir, mustWork = TRUE)
-  output_path <- tempfile(tmpdir = dir, fileext = ".rds")
-  spectrum_path <- tempfile(tmpdir = dir, fileext = ".zip")
-  summary_path <- tempfile(tmpdir = dir, fileext = ".zip")
+
   naomi::hintr_run_model(data, options, output_path, spectrum_path,
                          summary_path)
 }
