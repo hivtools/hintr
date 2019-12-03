@@ -9,7 +9,8 @@
     "filters" : {
       "type": "array",
       "items": { "$ref": "Filter.schema.json" }
-    }
+    },
+    "defaults": { "$ref": "BarchartDefaults.schema.json" }
   },
   "additonalProperties": "false",
   "required": [ "indicators", "filters" ]

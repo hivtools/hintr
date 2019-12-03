@@ -199,7 +199,7 @@ test_that("model interactions", {
                c("barchart", "choropleth"))
 
   barchart <- response$data$plottingMetadata$barchart
-  expect_equal(names(barchart), c("indicators", "filters"))
+  expect_equal(names(barchart), c("indicators", "filters", "defaults"))
   expect_length(barchart$filters, 4)
   expect_equal(names(barchart$filters[[1]]),
                c("id", "column_id", "label", "options", "use_shape_regions"))
@@ -299,7 +299,7 @@ test_that("real model can be run by API", {
                c("barchart", "choropleth"))
 
   barchart <- response$data$plottingMetadata$barchart
-  expect_equal(names(barchart), c("indicators", "filters"))
+  expect_equal(names(barchart), c("indicators", "filters", "defaults"))
   expect_length(barchart$filters, 4)
   expect_equal(names(barchart$filters[[1]]),
                c("id", "column_id", "label", "options", "use_shape_regions"))

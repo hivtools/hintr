@@ -3,15 +3,16 @@ context("main")
 test_that("main_api_args", {
   expect_equal(main_api_args(c()),
                list(port = 8888, queue_id = NULL, workers = 2,
-                    results_dir = "results"))
+                    results_dir = "results", prerun_dir = "prerun"))
   expect_equal(
     main_api_args(c("--workers=0", "--port", "80", "--results-dir=out",
-                    "hintr")),
-    list(port = 80, queue_id = "hintr", workers = 0, results_dir = "out"))
-
+                    "--prerun-dir=pr", "hintr")),
+    list(port = 80, queue_id = "hintr", workers = 0, results_dir = "out",
+         prerun_dir = "pr"))
   expect_equal(
     main_api_args(c("--workers=0", "--port", "80", "hintr")),
-    list(port = 80, queue_id = "hintr", workers = 0, results_dir = "results"))
+    list(port = 80, queue_id = "hintr", workers = 0,
+         results_dir = "results", prerun_dir = "prerun"))
 })
 
 test_that("main_worker_args", {

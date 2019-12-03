@@ -58,12 +58,27 @@ assert_properties_exist <- function(json, properties) {
  invisible(TRUE)
 }
 
-assert_property_exists <- function(property, json) {
-  contains_id <- vapply(json$features, function(x) {
+assert_region_codes_valid <- function(json) {
+  contains_property <- features_contain_property(json, "spectrum_region_code")
+  missing_count <- sum(!contains_property)
+  if (missing_count > 1) {
+    stop(sprintf(
+      "Shape file contains %s regions with missing spectrum region code, code can only be missing for country level region.",
+      missing_count))
+  }
+  invisible(TRUE)
+}
+
+features_contain_property <- function(json, property) {
+  vapply(json$features, function(x) {
     !is_empty(x$properties[[property]])
   }, logical(1))
-  if (!all(contains_id)) {
-    missing_count <- sum(!contains_id)
+}
+
+assert_property_exists <- function(property, json) {
+  contains_property <- features_contain_property(json, property)
+  if (!all(contains_property)) {
+    missing_count <- sum(!contains_property)
     stop(
       sprintf(
         "Shape file does not contain property %s for each region. Missing ID for %s %s.",
@@ -137,7 +152,7 @@ assert_file_exists <- function(file) {
 
 assert_file_extension <- function(file_path, types) {
   extension <- tools::file_ext(file_path)
-  if (!any(extension %in% types)) {
+  if (!any(tolower(extension) %in% tolower(types))) {
     stop(sprintf("File must be of type %s, got type %s.",
                  collapse(types), extension))
   }

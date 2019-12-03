@@ -10,7 +10,7 @@ test_that("model can be run and filters extracted", {
   expect_true(nrow(model_run$data) > 84042)
   expect_equal(names(model_run$plottingMetadata), c("barchart", "choropleth"))
   barchart <- model_run$plottingMetadata$barchart
-  expect_equal(names(barchart), c("indicators", "filters"))
+  expect_equal(names(barchart), c("indicators", "filters", "defaults"))
   expect_length(barchart$filters, 4)
   expect_equal(names(barchart$filters[[1]]),
                c("id", "column_id", "label", "options", "use_shape_regions"))

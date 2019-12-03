@@ -108,10 +108,8 @@ test_that("do_endpoint_model_options correctly builds params list", {
                scalar("MWI2016PHIA"))
   expect_equal(params$survey_prevalence_options[[1]]$label,
                scalar("MWI2016PHIA"))
-  expect_equal(params$survey_prevalence_options,
-               params$survey_art_coverage_options)
-  expect_equal(params$survey_prevalence_options,
-               params$survey_recently_infected_options)
+  expect_length(params$survey_art_coverage_options, 1)
+  expect_length(params$survey_recently_infected_options, 1)
   expect_length(params$anc_prevalence_year1_options, 8)
   expect_equal(params$anc_prevalence_year1_options[[1]]$id, scalar("2018"))
   expect_equal(params$anc_prevalence_year1_options[[1]]$label, scalar("2018"))
@@ -187,10 +185,8 @@ test_that("do_endpoint_model_options without programme data", {
                scalar("MWI2016PHIA"))
   expect_equal(params$survey_prevalence_options[[1]]$label,
                scalar("MWI2016PHIA"))
-  expect_equal(params$survey_prevalence_options,
-               params$survey_art_coverage_options)
-  expect_equal(params$survey_prevalence_options,
-               params$survey_recently_infected_options)  
+  expect_length(params$survey_art_coverage_options, 1)
+  expect_length(params$survey_recently_infected_options, 1)
 })
 
 test_that("can retrieve validated model options", {
@@ -328,7 +324,7 @@ test_that("can read geojson level labels", {
 
 test_that("model options can be validated", {
   skip("Skipping model option validation endpoint not implemented")
-  
+
   data <- list(
     pjnz = "path/to/pjnz",
     shape = "path",

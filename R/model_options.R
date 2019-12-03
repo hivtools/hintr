@@ -25,7 +25,14 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
   time_options <- get_time_options()
 
   ## Survey options
-  survey_options <- get_survey_filters(read_csv(survey$path))
+  ## Have to use the metadata to work out where within the output data these
+  ## values can be located
+  get_survey_options <- function(indicator) {
+    get_survey_filters(get_indicator_data(survey, "survey", indicator))
+  }
+  survey_prevalence_options <- get_survey_options("prevalence")
+  survey_art_coverage_options <- get_survey_options("art_coverage")
+  survey_recently_infected_options <- get_survey_options("recent")
 
   ## ART options
   art_year_options <- NULL
@@ -39,16 +46,15 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
     anc_year_options <- get_year_filters(read_csv(anc$path))
   }
 
-
   params <- list(
     area_scope_options = list(regions),
     area_scope_default = parent_region_id,
     area_level_options = area_level_options,
     calendar_quarter_t1_options = time_options,
     calendar_quarter_t2_options = time_options,
-    survey_prevalence_options = survey_options,
-    survey_art_coverage_options = survey_options,
-    survey_recently_infected_options = survey_options,
+    survey_prevalence_options = survey_prevalence_options,
+    survey_art_coverage_options = survey_art_coverage_options,
+    survey_recently_infected_options = survey_recently_infected_options,
     anc_prevalence_year1_options = anc_year_options,
     anc_prevalence_year2_options = anc_year_options,
     anc_art_coverage_year1_options = anc_year_options,
