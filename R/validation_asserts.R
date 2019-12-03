@@ -46,9 +46,9 @@ assert_expected_values <- function(data, column_name, expected_values, all_value
 
 #' Check that values of calendar_quarter and year columns meet standard format
 #'
-#' @param data # data to check
-#' @param column_name # column to check
-#' @param pattern # expected format
+#' @param data data to check
+#' @param column_name column to check
+#' @param pattern expected format
 #'
 #' @return TRUE is valid otherwise throws an error
 #' @keywords internal
@@ -72,6 +72,32 @@ assert_calendar_quarter_column <- function(data) {
 }
 assert_year_column <- function(data) {
   assert_column_matches(data, "year", "^[12][901][0-9][0-9]$")
+}
+
+#' Checks that the data source column contains a single value
+#'
+#' @param data data to check source column for single value
+#'
+#' @return TRUE is valid else throws error
+#' @keywords internal
+assert_single_source <- function(data) {
+  if (length(unique(data$source)) > 1) {
+    stop(sprintf("Data should be from a single source. Multiple sources present: %s",
+                 paste(unique(data$source), collapse=", ")))
+  }
+  invisible(TRUE)
+}
+
+assert_single_age_1549 <- function(data) {
+  if (length(unique(data$age_group)) > 1) {
+    stop(sprintf("Data should contain a single age_group 15-49. Multiple age groups present: %s",
+                 paste(unique(data$age_group), collapse=", ")))
+  }
+  if (unique(data$age_group)=="15-49"){
+    invisible(TRUE)
+  }else{
+    stop(sprintf("age_group should be 15-49"))
+  }
 }
 
 assert_single_parent_region <- function(json) {
