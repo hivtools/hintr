@@ -44,11 +44,11 @@ assert_expected_values <- function(data, column_name, expected_values, all_value
 }
 
 
-#' Check that values of calendar_quarter and year columns meet standard format
+#' Check that values of column match regex pattern
 #'
-#' @param data data to check
-#' @param column_name column to check
-#' @param pattern expected format
+#' @param data Data to check
+#' @param column_name Column to check
+#' @param pattern Pattern to match
 #'
 #' @return TRUE is valid otherwise throws an error
 #' @keywords internal
@@ -59,7 +59,7 @@ assert_column_matches <- function(data, column_name, pattern) {
   }
   values <- unique(data[[column_name]])
   check <- grepl(pattern, values)
-  if (!all(check)){
+  if (!all(check)) {
     unmatched <- values[which(check == FALSE)]
     stop(sprintf("Values in column %s do not match required format: %s",
                  column_name, paste(unmatched, collapse=", ")))
@@ -70,13 +70,14 @@ assert_column_matches <- function(data, column_name, pattern) {
 assert_calendar_quarter_column <- function(data) {
   assert_column_matches(data, "calendar_quarter", "^CY[12][901][0-9]{2}Q[1-4]$")
 }
+
 assert_year_column <- function(data) {
   assert_column_matches(data, "year", "^[12][901][0-9][0-9]$")
 }
 
 #' Checks that the data source column contains a single value
 #'
-#' @param data data to check source column for single value
+#' @param data Data to check source column for single value
 #'
 #' @return TRUE is valid else throws error
 #' @keywords internal
@@ -86,18 +87,6 @@ assert_single_source <- function(data) {
                  paste(unique(data$source), collapse=", ")))
   }
   invisible(TRUE)
-}
-
-assert_single_age_1549 <- function(data) {
-  if (length(unique(data$age_group)) > 1) {
-    stop(sprintf("Data should contain a single age_group 15-49. Multiple age groups present: %s",
-                 paste(unique(data$age_group), collapse=", ")))
-  }
-  if (unique(data$age_group)=="15-49"){
-    invisible(TRUE)
-  }else{
-    stop(sprintf("age_group should be 15-49"))
-  }
 }
 
 assert_single_parent_region <- function(json) {

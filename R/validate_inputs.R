@@ -150,7 +150,7 @@ do_validate_anc <- function(anc, shape) {
   assert_consistent_regions(read_regions(shape, "shape"),
                             read_regions(anc, "anc"),
                             "ANC")
-  assert_single_age_1549(data)
+  assert_expected_values(data, "age_group", "15-49")
   assert_year_column(data)
   data <- naomi::calculate_prevalence_art_coverage(data)
   list(data = data,

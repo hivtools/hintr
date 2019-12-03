@@ -223,16 +223,3 @@ test_that("can check data comes from a single source", {
   expect_error(assert_single_source(data),
                "Data should be from a single source. Multiple sources present: NSO, WorldPop")
 })
-
-test_that("can check single age_group 15-49 is present", {
-  data <- data_frame(age_group=c("15-49", "15-49", "15-49"))
-
-  expect_true(assert_single_age_1549(data))
-
-  data$age_group <- c("15-49", "15-49", "15+")
-  expect_error(assert_single_age_1549(data),
-               "Data should contain a single age_group 15-49. Multiple age groups present: 15-49, 15+")
-  data$age_group <- c("15+", "15+", "15+")
-  expect_error(assert_single_age_1549(data),
-               "age_group should be 15-49")
-})
