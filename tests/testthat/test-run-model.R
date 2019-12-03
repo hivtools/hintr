@@ -10,7 +10,7 @@ test_that("model can be run and filters extracted", {
   expect_true(nrow(model_run$data) > 84042)
   expect_equal(names(model_run$plottingMetadata), c("barchart", "choropleth"))
   barchart <- model_run$plottingMetadata$barchart
-  expect_equal(names(barchart), c("indicators", "filters"))
+  expect_equal(names(barchart), c("indicators", "filters", "defaults"))
   expect_length(barchart$filters, 4)
   expect_equal(names(barchart$filters[[1]]),
                c("id", "column_id", "label", "options", "use_shape_regions"))
@@ -68,8 +68,8 @@ test_that("real model can be run", {
     survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
     survey_art_coverage = "MWI2016PHIA",
     survey_recently_infected = "MWI2016PHIA",
-    survey_art_or_vls = "art_coverage",
-    include_art = "true",
+    include_art_t1 = "true",
+    include_art_t2 = "true",
     anc_prevalence_year1 = 2016,
     anc_prevalence_year2 = 2018,
     anc_art_coverage_year1 = 2016,

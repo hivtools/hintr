@@ -1,5 +1,5 @@
 do_validate_pjnz <- function(pjnz) {
-  assert_file_extension(pjnz, c("pjnz", "zip", "PJNZ"))
+  assert_file_extension(pjnz, c("PJNZ", "zip"))
   pjnz_paths <- get_pjnz_paths(pjnz)
   countries <- lapply(pjnz_paths, read_country)
   if (length(unique(countries)) != 1) {
@@ -61,7 +61,8 @@ do_validate_shape <- function(shape) {
   json <- hintr_geojson_read(shape)
   assert_single_parent_region(json)
   assert_single_country(json, "shape")
-  assert_properties_exist(json, c("spectrum_region_code", "area_id"))
+  assert_properties_exist(json, "area_id")
+  assert_region_codes_valid(json)
   # Then we have to *reread* the file now that we know that it is
   # valid, but but this is not too slow, especially as the file is now
   # in cache (but still ~1/20s)
