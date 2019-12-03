@@ -9,6 +9,40 @@ assert_column_names <- function(names, expected_names) {
   invisible(TRUE)
 }
 
+#' Check that values for specified column belong in a set of expected values
+#'
+#' Optionally check that the column contains all expected values.
+#'
+#' @param data The data to check
+#' @param column_name The column name to check
+#' @param expected_values The set of expected values
+#' @param all_values If TRUE check that the column contains all expected values
+#'
+#' @return TRUE is valid otherwise throws an error
+#' @keywords internal
+assert_expected_values <- function(data, column_name, expected_values, all_values = FALSE) {
+
+  if (is.null(data[[column_name]])) {
+    stop(sprintf("Data does not contain required column: %s",
+                 column_name))
+  }
+  values <- unique(data[[column_name]])
+  if (all_values==TRUE) {
+    missing_values <- setdiff(expected_values, values)
+    if (length(missing_values>0)) {
+      stop(sprintf("Column %s is missing required values: %s",
+                   column_name, paste(missing_values, collapse=", ")))
+    }
+  }
+
+  unexpected_values <- setdiff(values, expected_values)
+  if (length(unexpected_values) > 0) {
+    stop(sprintf("Unexpected values in column %s: %s",
+                 column_name, paste(unexpected_values, collapse=", ")))
+  }
+  invisible(TRUE)
+}
+
 assert_single_parent_region <- function(json) {
   regions <- vcapply(json$features, function(x) {
     x$properties$area_id

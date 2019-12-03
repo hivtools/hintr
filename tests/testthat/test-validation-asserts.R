@@ -161,3 +161,18 @@ test_that("can check file extensions", {
                                      c("PJNZ", "pjnz", "zip")),
                "File must be of type PJNZ, pjnz, zip, got type csv.")
 })
+
+test_that("can check a column for expected values", {
+  data <- data_frame(
+    age_groups = c("00-04", "05-09", "10-14"),
+    sex = c("male", "female", "female")
+  )
+
+  expect_true(assert_expected_values(data, "age_groups", c("00-04", "05-09", "10-14")))
+  expect_true(assert_expected_values(data, "sex", c("male", "female")))
+
+  expect_error(assert_expected_values(data, "age_groups", c("00-04")),
+               "Unexpected values in column age_groups: 05-09, 10-14")
+  expect_error(assert_expected_values(data, "sex", c("male")),
+               "Unexpected values in column sex: female")
+})
