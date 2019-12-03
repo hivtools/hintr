@@ -2,7 +2,7 @@
 % Please edit documentation in R/model_options.R
 \name{build_json}
 \alias{build_json}
-\title{Buld JSON from template and a set of params}
+\title{Build JSON from template and a set of params}
 \usage{
 build_json(options_template, params)
 }

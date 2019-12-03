@@ -86,7 +86,28 @@ test_that("do_validate_anc validates ANC file and gets data for plotting", {
   data <- do_validate_anc(anc, shape)
 
   expect_true(nrow(data$data) > 200)
-  expect_equal(typeof(data$data$ancrt_hiv_status), "integer")
+  expect_equal(typeof(data$data$area_id), "character")
+  expect_true(all(c("prevalence", "art_coverage") %in% colnames(data$data)))
+
+  expect_equal(names(data$filters), c("year", "indicators"))
+  expect_length(data$filters$year, 8)
+  expect_equal(data$filters$year[[1]]$id, scalar("2018"))
+  expect_equal(data$filters$year[[1]]$label, scalar("2018"))
+
+  expect_length(data$filters$indicators, 2)
+  expect_equal(data$filters$indicators[[1]]$id, scalar("prevalence"))
+  expect_equal(data$filters$indicators[[1]]$label, scalar("Prevalence"))
+  expect_equal(data$filters$indicators[[2]]$id, scalar("art_coverage"))
+  expect_equal(data$filters$indicators[[2]]$label, scalar("ART coverage"))
+})
+
+test_that("do_validate_anc doesn't require ancrt_hiv_status column", {
+  anc <- file_object(file.path("testdata", "anc_without_hiv_status.csv"))
+  shape <- file_object(file.path("testdata", "malawi.geojson"))
+  data <- do_validate_anc(anc, shape)
+
+  expect_true(nrow(data$data) > 200)
+  expect_equal(typeof(data$data$area_id), "character")
   expect_true(all(c("prevalence", "art_coverage") %in% colnames(data$data)))
 
   expect_equal(names(data$filters), c("year", "indicators"))

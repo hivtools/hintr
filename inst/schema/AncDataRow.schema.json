@@ -37,7 +37,7 @@
     }
   },
   "additionalProperties": true,
-  "required": [ "area_id", "age_group", "year", "anc_clients", 
-    "ancrt_hiv_status", "ancrt_known_pos", "ancrt_already_art", 
-    "ancrt_tested", "ancrt_test_pos", "prevalence", "art_coverage" ]
+  "required": [ "area_id", "age_group", "year", "anc_clients",
+    "ancrt_known_pos", "ancrt_already_art", "ancrt_tested", "ancrt_test_pos",
+    "prevalence", "art_coverage" ]
 }
