@@ -32,18 +32,7 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
   }
   survey_prevalence_options <- get_survey_options("prevalence")
   survey_art_coverage_options <- get_survey_options("art_coverage")
-  survey_vls_options <- get_survey_options("vls")
   survey_recently_infected_options <- get_survey_options("recent")
-  survey_art_or_vls_options <- list(
-    list(
-      id = scalar("art_coverage"),
-      label = scalar(get_indicator_display_name("art_coverage"))
-    ),
-    list(
-      id = scalar("vls"),
-      label = scalar(get_indicator_display_name("vls"))
-    )
-  )
 
   ## ART options
   art_year_options <- NULL
@@ -65,9 +54,7 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
     calendar_quarter_t2_options = time_options,
     survey_prevalence_options = survey_prevalence_options,
     survey_art_coverage_options = survey_art_coverage_options,
-    survey_vls_options = survey_vls_options,
     survey_recently_infected_options = survey_recently_infected_options,
-    survey_art_or_vls_options = survey_art_or_vls_options,
     anc_prevalence_year1_options = anc_year_options,
     anc_prevalence_year2_options = anc_year_options,
     anc_art_coverage_year1_options = anc_year_options,
@@ -77,7 +64,7 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
 }
 
 
-#' Buld JSON from template and a set of params
+#' Build JSON from template and a set of params
 #'
 #' This wraps params in quotes and collapses any arrays into a single comma
 #' separated list. Therefore only substitutes in string types for the time

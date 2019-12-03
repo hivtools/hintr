@@ -1,5 +1,6 @@
 # hintr 0.0.22
 
+* Update for changes to model options in naomi v0.0.21
 * Support prerun model results (mrc-1155)
 
 # hintr 0.0.21
