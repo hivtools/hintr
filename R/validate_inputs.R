@@ -218,6 +218,6 @@ validate_pjnz_shape <- function(pjnz, shape) {
 validate_shape_population <- function(shape, population) {
   shape_regions <- read_regions(shape, "shape")
   population_regions <- read_regions(population, "population")
-  assert_consistent_regions( shape_regions, population_regions, "population")
+  assert_consistent_regions(shape_regions, population_regions, "population")
   TRUE
 }
