@@ -74,3 +74,14 @@ To run tests which use sensitive data you need to clone the private [naomi-data 
 ```
 git clone git@github.com:mrc-ide/naomi-data.git tests/testthat/testdata/sensitive
 ```
+
+## Adding prerun model results
+
+Details here will depend on the deploy (and that will be the place to look for the running version).
+
+The manual process looks like
+
+1. Run a model using `naomi::hintr_run_model` into directory `mydir`
+2. Run `prerun_import("prerun", "mydir")` where `prerun` is your prerun model store location
+
+if your files are not called `output.rds`, `spectrum.zip` or `summary.zip` you must provide these names in the second step.

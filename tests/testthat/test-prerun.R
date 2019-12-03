@@ -51,10 +51,11 @@ test_that("run with prerun", {
   obj <- PrerunModelResults$new(path_prerun)
   expect_equal(obj$list(), character(0))
 
-  h <- obj$import(system_file("output"),
-                  "malawi_output.rds",
-                  "malawi_spectrum_download.zip",
-                  "malawi_summary_download.zip")
+  h <- prerun_import(path_prerun, system_file("output"),
+                     "malawi_output.rds",
+                     "malawi_spectrum_download.zip",
+                     "malawi_summary_download.zip")
+
   data <- list(
     pjnz = file.path("testdata", "Malawi2019.PJNZ"),
     shape = file.path("testdata", "malawi.geojson"),

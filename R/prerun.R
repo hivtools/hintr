@@ -65,6 +65,20 @@ PrerunModelResults <- R6::R6Class(
     }
   ))
 
+##' Import prerun model results
+##'
+##' @title Import prerun model results
+##' @param prerun Path to the prerun model store
+##' @param path Path to your results
+##' @param output Path, within \code{path} to your output file
+##' @param spectrum Path, within \code{path} to your spectrum file
+##' @param summary Path, within \code{path} to your summary file
+##' @export
+prerun_import <- function(prerun, path, output = "output.rds",
+                          spectrum = "spectrum.zip", summary = "summary.zip") {
+  PrerunModelResults$new(prerun)$import(path, output, spectrum, summary)
+}
+
 
 read_info_inputs <- function(path) {
   tmp <- tempfile()
