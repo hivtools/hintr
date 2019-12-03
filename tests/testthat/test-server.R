@@ -471,9 +471,10 @@ test_that("model run options are exposed", {
   expect_true(!is.null(response$version))
   expect_equal(names(response$version), c("hintr", "naomi", "rrq"))
   expect_true(all(grepl("^(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$", response$version)))
-})
+  })
 
 test_that("model options can be validated", {
+  skip("Skipping model option validation endpoint not implemented mrc-592")
   server <- hintr_server()
   payload <- setup_submit_payload()
 

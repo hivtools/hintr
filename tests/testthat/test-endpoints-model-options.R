@@ -194,8 +194,8 @@ test_that("endpoint_model_options fails without shape & survey data", {
 })
 
 test_that("endpoint_model_options_validate validates options", {
-  skip("Skipping model option validation endpoint not implemented")
-  
+  skip("Skipping model option validation endpoint not implemented mrc-592")
+
   data <- list(
     pjnz = "path/to/pjnz",
     shape = "path",
@@ -221,8 +221,8 @@ test_that("endpoint_model_options_validate validates options", {
 })
 
 test_that("invalid model options returns error", {
-  skip("Skipping model option validation endpoint not implemented")
-  
+  skip("Skipping model option validation endpoint not implemented mrc-592")
+
   data <- list(
     pjnz = "path/to/pjnz",
     shape = "path",
