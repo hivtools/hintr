@@ -10,16 +10,20 @@ NULL
 
 cfg <- new.env(parent = emptyenv())
 .onLoad <- function(...) {
-  get_version_info() # nocov
-  path <- system.file("traduire/translations.json",
-                      package = "hintr", mustWork = TRUE)
-  traduire::translator_register(path, "en")
+  cfg$version_info <- get_version_info() # nocov
+  hintr_init_traduire() # nocov
 }
 
 get_version_info <- function() {
-  packages <- c("hintr", "naomi", "rrq")
+  packages <- c("hintr", "naomi", "rrq", "traduire")
   value <- lapply(packages, function(p)
     scalar(as.character(utils::packageVersion(p))))
   names(value) <- packages
-  cfg$version_info <- value
+  value
+}
+
+hintr_init_traduire <- function() {
+  path <- system.file("traduire/translations.json",
+                      package = "hintr", mustWork = TRUE)
+  traduire::translator_register(path, "en")
 }
