@@ -1,3 +1,7 @@
+# hintr 0.0.23
+
+* Internationalisation support (mrc-788)
+
 # hintr 0.0.22
 
 * Update for changes to model options in naomi v0.0.21

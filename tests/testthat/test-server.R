@@ -469,7 +469,7 @@ test_that("model run options are exposed", {
     "2018")
 
   expect_true(!is.null(response$version))
-  expect_equal(names(response$version), c("hintr", "naomi", "rrq"))
+  expect_equal(names(response$version), c("hintr", "naomi", "rrq", "traduire"))
   expect_true(all(grepl("^(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$", response$version)))
   })
 
@@ -497,7 +497,7 @@ test_that("version information is returned", {
   response <- response_from_json(r)
   expect_equal(response$status, "success")
   expect_setequal(names(response$data),
-                  c("hintr", "naomi", "rrq"))
+                  c("hintr", "naomi", "rrq", "traduire"))
 })
 
 test_that("worker information is returned", {
@@ -633,4 +633,12 @@ test_that("Error handler is triggered", {
                   "'$ operator is invalid for atomic vectors' while doing",
                   "'GET /download/summary/asdfasdfa'")
   expect_equal(dat$errors[[1]]$detail, detail)
+})
+
+test_that("translation", {
+  server <- hintr_server()
+
+  r <- httr::GET(server$url, httr::add_headers("Accept-Language" = "fr"))
+  expect_equal(httr::status_code(r), 200)
+  expect_equal(response_from_json(r), "Bienvenue à hintr")
 })

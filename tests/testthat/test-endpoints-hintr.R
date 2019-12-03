@@ -5,7 +5,7 @@ test_that("endpoint hintr works", {
   response <- jsonlite::parse_json(response)
 
   expect_is(response$data, "list")
-  expect_setequal(names(response$data), c("hintr", "naomi", "rrq"))
+  expect_setequal(names(response$data), c("hintr", "naomi", "rrq", "traduire"))
   expect_equal(response$data$rrq, as.character(packageVersion("rrq")))
 })
 
