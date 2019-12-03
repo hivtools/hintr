@@ -131,6 +131,23 @@ test_that("endpoint_validate_baseline support shape file", {
   expect_equal(names(response$data$filters), c("regions", "level_labels"))
 })
 
+test_that("country can have null spectrum region code for country level region", {
+  ## Regression test for bug mrc-1169
+  skip_if_sensitive_data_missing()
+  shape <- file.path("testdata", "sensitive", "ZWE", "data",
+                     "zwe_areas.geojson")
+  req <- list(postBody = '{"type": "shape", "file": {"path": "path/to/file", "hash": "12345", "filename": "original"}}')
+  res <- MockPlumberResponse$new()
+  file <- list(path = shape, hash = "12345", filename = "original")
+  response <- endpoint_validate_baseline(req, res, "shape", file)
+  response <- jsonlite::parse_json(response)
+  expect_equal(response$status, "success")
+  expect_equal(response$data$hash, "12345")
+  expect_true(all(c("type", "features") %in% names(response$data$data)))
+  expect_equal(names(response$data$filters), c("regions", "level_labels"))
+  expect_equal(res$status, 200)
+})
+
 test_that("endpoint_validate_baseline supports population file", {
   population <- file.path("testdata", "population.csv")
   res <- MockPlumberResponse$new()
