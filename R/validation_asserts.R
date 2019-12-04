@@ -75,24 +75,45 @@ assert_year_column <- function(data) {
   assert_column_matches(data, "year", "^[12][901][0-9][0-9]$")
 }
 
+#' Check that the values of a column are not NA
+#'
+#' @param data data to be checked
+#' @param column_names column name to be checked
+#'
+#' @return TRUE if column contains no NA values else throws error
+#' @keywords internal
+assert_no_na <- function(data, column_name) {
+  column_data <- data[[column_name]]
+  if (is.null(column_data)) {
+    stop(sprintf("Data does not contain required column: %s",
+                 column_name))
+  }
+  if(any(is.na(column_data))) {
+    stop(sprintf("Found NA values in column %s. NA values not allowed.",
+                 column_name))
+  }
+  invisible(TRUE)
+}
+
 #' Check that the values of a column are positive numeric only
 #'
 #' @param data data to be checked
 #' @param column_names column name to be checked
 #'
 #' @return TRUE if numeric positive else throws error
-#' @keywords external
+#' @keywords internal
 assert_column_positive_numeric <- function(data, column_names) {
   out <- lapply(column_names, function(column_name) {
-    if (is.null(data[[column_name]])) {
+    column_data <- data[[column_name]]
+    if (is.null(column_data)) {
       stop(sprintf("Data does not contain required column: %s",
                    column_name))
     }
-    if(!is.numeric(data[[column_name]])) {
+    if(!is.numeric(column_data)) {
       stop(sprintf("Column %s is required to be numeric. Non-numeric values were found.",
                    column_name))
     }
-    if(any(data[[column_name]] < 0)) {
+    if(any(column_data < 0 || is.na(column_data))) {
       stop(sprintf("Column %s requires positive numeric values. Negative numeric values were found.",
                    column_name))
     }

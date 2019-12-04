@@ -266,3 +266,12 @@ test_that("can check that a column contains only positive numeric values", {
                                               "Column current_art is required to be numeric. Non-numeric values were found.")
 })
 
+test_that("can check for non NA values", {
+  data <- data_frame(
+    calendar_quarter = c("CY1998Q2", "CY2012Q3", "CY2020Q2"),
+    year= c("2019", "1999", NA)
+  )
+  expect_true(assert_no_na(data, "calendar_quarter"))
+  expect_error(assert_no_na(data, "year"),
+               "Found NA values in column year. NA values not allowed.")
+})
