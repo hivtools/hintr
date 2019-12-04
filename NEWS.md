@@ -1,3 +1,7 @@
+# hintr 0.0.24
+
+* Return better error message from geojson reading
+
 # hintr 0.0.23
 
 * No longer require ancrt_hiv_status
