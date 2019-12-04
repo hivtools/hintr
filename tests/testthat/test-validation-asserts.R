@@ -267,3 +267,26 @@ test_that("can check that certain combinations of column values are unique", {
                "Unique combinations are required for columns: area_id, calendar_quarter, age_group")
 })
 
+test_that("can check that a column contains only positive numeric values", {
+  data <- data_frame(population=c(1, 2, 2, 3),
+                     current_art=c("none", 2, 0, 5),
+                     test_pos=c(-1, -3, 2, 4))
+
+  expect_true(assert_column_positive_numeric(data, "population"))
+  expect_error(assert_column_positive_numeric(data, "current_art"),
+               "Column current_art is required to be numeric. Non-numeric values were found.")
+  expect_error(assert_column_positive_numeric(data, "test_pos"),
+               "Column test_pos requires positive numeric values. Negative numeric values were found.")
+  expect_error(assert_column_positive_numeric(data, c("population", "current_art")),
+                                              "Column current_art is required to be numeric. Non-numeric values were found.")
+        })
+
+test_that("can check for non NA values", {
+  data <- data_frame(
+    calendar_quarter = c("CY1998Q2", "CY2012Q3", "CY2020Q2"),
+    year= c("2019", "1999", NA)
+  )
+  expect_true(assert_no_na(data, "calendar_quarter"))
+  expect_error(assert_no_na(data, "year"),
+               "Found NA values in column year. NA values not allowed.")
+})

@@ -20,7 +20,7 @@ test_that("model can be run and filters extracted", {
   expect_equal(barchart$filters[[2]]$id, scalar("quarter"))
   expect_equal(barchart$filters[[3]]$id, scalar("sex"))
   expect_equal(barchart$filters[[4]]$id, scalar("age"))
-  expect_true(length(barchart$filters[[4]]$options) > 29)
+  expect_true(length(barchart$filters[[4]]$options) >= 29)
   expect_length(barchart$filters[[2]]$options, 2)
   expect_equal(barchart$filters[[2]]$options[[1]]$id, scalar("CY2018Q3"))
   expect_equal(barchart$filters[[2]]$options[[1]]$label, scalar("Jul-Sep 2018"))
@@ -40,7 +40,7 @@ test_that("model can be run and filters extracted", {
   expect_equal(choropleth$filters[[2]]$id, scalar("quarter"))
   expect_equal(choropleth$filters[[3]]$id, scalar("sex"))
   expect_equal(choropleth$filters[[4]]$id, scalar("age"))
-  expect_true(length(choropleth$filters[[4]]$options) > 29)
+  expect_true(length(choropleth$filters[[4]]$options) >= 29)
   expect_length(choropleth$filters[[2]]$options, 2)
   expect_equal(choropleth$filters[[2]]$options[[1]]$id, scalar("CY2018Q3"))
   expect_equal(choropleth$filters[[2]]$options[[1]]$label,
@@ -74,7 +74,16 @@ test_that("real model can be run", {
     anc_prevalence_year2 = 2018,
     anc_art_coverage_year1 = 2016,
     anc_art_coverage_year2 = 2018,
-    no_of_samples = 20
+    spectrum_population_calibration = "national",
+    spectrum_plhiv_calibration_level = "subnational",
+    spectrum_plhiv_calibration_strat = "sex_age_group",
+    spectrum_artnum_calibration_level = "national",
+    spectrum_artnum_calibration_strat = "age_coarse",
+    artattend = FALSE,
+    rng_seed = 17,
+    no_of_samples = 20,
+    max_iter = 250,
+    permissive = FALSE
   )
   withr::with_envvar(c("USE_MOCK_MODEL" = "false"), {
     model_run <- run_model(data, options, tempdir())
