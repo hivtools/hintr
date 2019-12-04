@@ -27,9 +27,9 @@ assert_expected_values <- function(data, column_name, expected_values, all_value
                  column_name))
   }
   values <- unique(data[[column_name]])
-  if (all_values==TRUE) {
+  if (all_values == TRUE) {
     missing_values <- setdiff(expected_values, values)
-    if (length(missing_values>0)) {
+    if (length(missing_values > 0)) {
       stop(sprintf("Column %s is missing required values: %s",
                    column_name, paste(missing_values, collapse=", ")))
     }

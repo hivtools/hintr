@@ -27,7 +27,7 @@ get_age_labels <- function(age_group) {
   groups <- age_groups$age_group %in% age_group
   missing_ids <- setdiff(age_group, age_groups$age_group)
   if (length(missing_ids) > 0) {
-    stop(sprintf("Found 0 rows for age_group %s.",
+    stop(sprintf("Age groups metadata contains 0 rows for age_group %s. Speak to administrator.",
                  collapse(missing_ids)))
   }
   age_groups[groups,
