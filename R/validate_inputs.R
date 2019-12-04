@@ -89,7 +89,7 @@ do_validate_population <- function(population) {
   assert_calendar_quarter_column(population)
   assert_expected_values(population, "sex", c("male", "female"), all_values=TRUE)
   assert_expected_values(population, "age_group", naomi::get_five_year_age_groups(), all_values=TRUE)
-  assert_unique_combinations(population, "area_id", "calendar_quarter", "sex", "age_group")
+  assert_unique_combinations(population, c("area_id", "calendar_quarter", "sex", "age_group"))
   assert_single_source(population)
   assert_no_na(population, "population")
   assert_column_positive_numeric(population, "population")
