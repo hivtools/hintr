@@ -4,8 +4,12 @@
 \alias{construct_tree}
 \title{Create an ordered tree from a data frame.}
 \usage{
-construct_tree(data, id_column = 1, parent_id_column = 2,
-  sort_order_column = 3)
+construct_tree(
+  data,
+  id_column = 1,
+  parent_id_column = 2,
+  sort_order_column = 3
+)
 }
 \arguments{
 \item{data}{Data frame with at minimum id, parent id and sort order columns
