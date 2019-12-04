@@ -150,7 +150,7 @@ do_validate_anc <- function(anc, shape) {
   assert_consistent_regions(read_regions(shape, "shape"),
                             read_regions(anc, "anc"),
                             "ANC")
-  assert_single_age_1549(data)
+  assert_expected_values(data, "age_group", "15-49")
   assert_year_column(data)
   data <- naomi::calculate_prevalence_art_coverage(data)
   list(data = data,
@@ -177,7 +177,7 @@ do_validate_survey <- function(survey, shape) {
   assert_consistent_regions(read_regions(shape, "shape"),
                             read_regions(survey, "survey"),
                             "survey")
-  assert_expected_values(data, "sex", c("male", "female", "all"))
+  assert_expected_values(data, "sex", c("male", "female", "both"))
   assert_expected_values(data, "age_group", naomi::get_age_groups()$age_group)
   list(data = data,
        filters = list("age" = get_age_filters(data),

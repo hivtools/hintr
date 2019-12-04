@@ -224,15 +224,17 @@ test_that("can check data comes from a single source", {
                "Data should be from a single source. Multiple sources present: NSO, WorldPop")
 })
 
-test_that("can check single age_group 15-49 is present", {
-  data <- data_frame(age_group=c("15-49", "15-49", "15-49"))
+test_that("can check the validity of ANC data", {
+  data <- data_frame(ancrt_test_pos=c(2,3,6), ancrt_known_pos=c(4,5,6),
+                     ancrt_already_art=c(1,1,5), ancrt_tested=c(2,4,9))
 
-  expect_true(assert_single_age_1549(data))
+  expect_true(assert_anc_client_numbers(data))
 
-  data$age_group <- c("15-49", "15-49", "15+")
-  expect_error(assert_single_age_1549(data),
-               "Data should contain a single age_group 15-49. Multiple age groups present: 15-49, 15+")
-  data$age_group <- c("15+", "15+", "15+")
-  expect_error(assert_single_age_1549(data),
-               "age_group should be 15-49")
+  data$ancrt_tested <- c(2,2,9)
+  expect_error(assert_anc_client_numbers(data),
+                 "The number of people who tested positive is greater than the number of people tested")
+  data$ancrt_already_art <- c(20,1,5)
+  data$ancrt_tested <- c(2,4,9)
+  expect_error(assert_anc_client_numbers(data),
+                 "The number of people already on ART is greater than the number positive \\(those known to be positive \\+ those who tested positive\\)")
 })
