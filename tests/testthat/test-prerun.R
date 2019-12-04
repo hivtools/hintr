@@ -72,13 +72,22 @@ test_that("run with prerun", {
     survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
     survey_art_coverage = "MWI2016PHIA",
     survey_recently_infected = "MWI2016PHIA",
-    survey_art_or_vls = "art_coverage",
-    include_art = "true",
+    include_art_t1 = "true",
+    include_art_t2 = "true",
     anc_prevalence_year1 = 2016,
     anc_prevalence_year2 = 2018,
     anc_art_coverage_year1 = 2016,
     anc_art_coverage_year2 = 2018,
-    no_of_samples = 20
+    spectrum_population_calibration = "national",
+    spectrum_plhiv_calibration_level = "subnational",
+    spectrum_plhiv_calibration_strat = "sex_age_group",
+    spectrum_artnum_calibration_level = "national",
+    spectrum_artnum_calibration_strat = "age_coarse",
+    artattend = FALSE,
+    rng_seed = 17,
+    no_of_samples = 20,
+    max_iter = 250,
+    permissive = FALSE
   )
 
   path_results <- tempfile()
