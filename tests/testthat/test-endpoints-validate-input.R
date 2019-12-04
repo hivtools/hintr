@@ -113,7 +113,6 @@ test_that("error thrown if more than 1 country with a 0 spectrum region code", {
 
 test_that("endpoint_validate_baseline support shape file", {
   shape <- file.path("testdata", "malawi.geojson")
-  shape <- file.path("~/Downloads/uganda-geographic-data-2019_naomi_format.geojson")
   res <- MockPlumberResponse$new()
   file <- list(path = shape, hash = "12345", filename = "original")
   response <- endpoint_validate_baseline(
