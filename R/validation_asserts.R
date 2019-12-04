@@ -108,6 +108,23 @@ assert_anc_client_numbers <- function(data) {
   invisible(TRUE)
 }
 
+#' Check for unique combinations of values in each row of selected columns
+#'
+#' @param data
+#' @param columns_for_unique
+#'
+#' @return TRUE if the required combinations are unique, else throws error
+#' @keywords internal
+assert_unique_combinations <- function(data, columns_for_unique) {
+
+  if (any(duplicated(data[ ,columns_for_unique]))) {
+    stop(sprintf("Unique combinations are required for columns: %s",
+         paste(columns_for_unique, collapse = ", ")))
+  }
+  invisible(TRUE)
+}
+
+
 assert_single_parent_region <- function(json) {
   regions <- vcapply(json$features, function(x) {
     x$properties$area_id

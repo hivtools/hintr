@@ -253,3 +253,17 @@ test_that("can check the validity of ANC data", {
   expect_error(assert_anc_client_numbers(data),
                  "The number of people already on ART is greater than the number positive \\(those known to be positive \\+ those who tested positive\\)")
 })
+
+test_that("can check that certain combinations of column values are unique", {
+  data <- data_frame(area_id = rep("XXX_1_1",3), calendar_quarter = rep("CY2000Q2",3),
+                     age_group = rep("00-04",3), sex = c("male", "female", "both"))
+
+  cols_for_unique <- c("area_id", "calendar_quarter", "age_group", "sex")
+
+  expect_true(assert_unique_combinations(data, cols_for_unique))
+
+  cols_for_unique <- c("area_id", "calendar_quarter", "age_group")
+  expect_error(assert_unique_combinations(data, cols_for_unique),
+               "Unique combinations are required for columns: area_id, calendar_quarter, age_group")
+})
+

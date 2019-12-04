@@ -89,6 +89,7 @@ do_validate_population <- function(population) {
   assert_calendar_quarter_column(population)
   assert_expected_values(population, "sex", c("male", "female"), all_values=TRUE)
   assert_expected_values(population, "age_group", naomi::get_five_year_age_groups(), all_values=TRUE)
+  assert_unique_combinations(population, "area_id", "calendar_quarter", "sex", "age_group")
   assert_single_source(population)
   list(data = scalar(NA),
        filters = scalar(NA))
@@ -116,6 +117,7 @@ do_validate_programme <- function(programme, shape) {
   assert_consistent_regions(read_regions(shape, "shape"),
                             read_regions(programme, "programme"),
                             "programme")
+  assert_unique_combinations(data, c("area_id", "year", "sex", "age_group"))
   assert_expected_values(data, "sex", c("male", "female", "both"))
   art_ages <- naomi::get_age_groups()$age_group
   art_ages <- art_ages[!art_ages %in% c("00-00", "01-04")]
@@ -149,6 +151,7 @@ do_validate_anc <- function(anc, shape) {
   assert_consistent_regions(read_regions(shape, "shape"),
                             read_regions(anc, "anc"),
                             "ANC")
+  assert_unique_combinations(data, c("area_id", "age_group", "year"))
   assert_expected_values(data, "age_group", "15-49")
   assert_year_column(data)
   assert_anc_client_numbers(data)
@@ -177,6 +180,7 @@ do_validate_survey <- function(survey, shape) {
   assert_consistent_regions(read_regions(shape, "shape"),
                             read_regions(survey, "survey"),
                             "survey")
+  assert_unique_combinations(data, c("area_id", "survey_id", "survey_year", "sex", "age_group", "indicator"))
   assert_expected_values(data, "sex", c("male", "female", "both"))
   assert_expected_values(data, "age_group", naomi::get_age_groups()$age_group)
   list(data = data,
