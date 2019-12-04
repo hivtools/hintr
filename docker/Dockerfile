@@ -6,7 +6,7 @@ RUN apt-get update && apt-get -y install \
         libhiredis-dev \
         libjq-dev \
         libprotobuf-dev \
-        libssl-dev \
+        libssh-dev \
         libudunits2-dev \
         libv8-dev \
         libxml2-dev \

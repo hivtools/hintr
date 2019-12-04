@@ -91,3 +91,17 @@ test_that("run with prerun", {
   expect_equal(dir(path_results), character(0))
   expect_equal(model_run, obj$get_by_hash(h))
 })
+
+test_that("run with prerun", {
+  path_prerun <- tempfile()
+  obj <- PrerunModelResults$new(path_prerun)
+  expect_equal(obj$list(), character(0))
+
+  args <- c(path_prerun, system_file("output"),
+            "--output=malawi_output.rds",
+            "--spectrum=malawi_spectrum_download.zip",
+            "--summary=malawi_summary_download.zip")
+  expect_message(main_import_prerun(args),
+                 "Imported data as '[[:xdigit:]]+'")
+  expect_equal(length(obj$list()), 1)
+})
