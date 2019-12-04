@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -eu
+
+CONTAINER=hint_hintr
+DEST=/prerun/incoming
+PRERUN=/prerun
+
+if [ $# -lt 1 ]; then
+    echo "Usage:"
+    echo "  $(basename $0) <source> ..."
+    exit 1
+fi
+
+SRC=$1
+shift
+
+if [ ! -d $SRC ]; then
+    echo "Expected first argument to be a directory"
+    exit 1
+fi
+
+docker exec $CONTAINER rm -rf "$DEST"
+docker cp $SRC $CONTAINER:$DEST
+docker exec $CONTAINER hintr_prerun_import "/prerun" $DEST $@
+
+function cleanup {
+    docker exec $CONTAINER rm -rf "$DEST"
+}
+trap cleanup EXIT
