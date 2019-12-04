@@ -10,7 +10,7 @@ EOF
 
 rm -rf naomi
 
-git clone https://github.com/mrc-ide/naomi
+git clone --single-branch --branch pop-carry-back https://github.com/mrc-ide/naomi
 
 docker build --pull \
        -t $TAG_SHA \
