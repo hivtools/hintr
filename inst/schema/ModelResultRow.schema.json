@@ -18,16 +18,16 @@
       "type": "number"
     },
     "mode": {
-      "type": "number"
+      "type": [ "number", "null" ]
     },
     "mean": {
-      "type": "number"
+      "type": [ "number", "null" ]
     },
     "lower": {
-      "type": "number"
+      "type": [ "number", "null" ]
     },
     "upper": {
-      "type": "number"
+      "type": [ "number", "null" ]
     }
   },
   "additonalProperties": true,

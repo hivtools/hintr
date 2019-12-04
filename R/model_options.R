@@ -79,7 +79,7 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
 build_json <- function(options_template, params) {
   param_env <- list2env(params, parent = .GlobalEnv)
   tryCatch(
-    glue::glue(options_template, .envir = param_env, .open = "<", .close = ">",
+    glue::glue(options_template, .envir = param_env, .open = "<+", .close = "+>",
                .transformer = json_transformer),
     error = function(e) {
       e$message <- paste0(
