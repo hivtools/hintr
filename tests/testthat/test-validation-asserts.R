@@ -255,7 +255,9 @@ test_that("can check the validity of ANC data", {
 })
 
 test_that("can check that a column contains only positive numeric values", {
-  data <- data_frame(population=c(1,2,3), current_art=c("none",0,5), test_pos=c(-1,2,4))
+  data <- data_frame(population=c(1, 2, 2, 3),
+                     current_art=c("none", 2, 0, 5),
+                     test_pos=c(-1, -3, 2, 4))
 
   expect_true(assert_column_positive_numeric(data, "population"))
   expect_error(assert_column_positive_numeric(data, "current_art"),
@@ -264,7 +266,7 @@ test_that("can check that a column contains only positive numeric values", {
                "Column test_pos requires positive numeric values. Negative numeric values were found.")
   expect_error(assert_column_positive_numeric(data, c("population", "current_art")),
                                               "Column current_art is required to be numeric. Non-numeric values were found.")
-})
+        })
 
 test_that("can check for non NA values", {
   data <- data_frame(
