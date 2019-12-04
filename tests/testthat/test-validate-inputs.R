@@ -157,7 +157,7 @@ test_that("do_validate_survey validates survey file", {
   expect_equal(data$filters$indicators[[4]]$id, scalar("vls"))
   expect_equal(data$filters$indicators[[4]]$label,
                scalar("Viral load suppression"))
-  })
+})
 
 test_that("do_validate_programme returns useful error from shapefile comparison", {
   programme <- file_object(file.path("testdata", "programme.csv"))
