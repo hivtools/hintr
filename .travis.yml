@@ -9,6 +9,7 @@ addons:
       - libhiredis-dev
       - libjq-dev
       - libprotobuf-dev
+      - libssh-dev
       - libudunits2-dev
       - libv8-dev
       - protobuf-compiler
