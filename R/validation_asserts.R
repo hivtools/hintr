@@ -88,6 +88,7 @@ assert_single_source <- function(data) {
   }
   invisible(TRUE)
 }
+
 #' Provides some checks on the validity of the ANC data
 #'
 #' @param data ANC data to validate
@@ -105,19 +106,6 @@ assert_anc_client_numbers <- function(data) {
     stop(sprintf("The number of people already on ART is greater than the number positive (those known to be positive + those who tested positive)"))
   }
   invisible(TRUE)
-}
-
-assert_anc_client_numbers <- function(data) {
-  check_pos <- data$ancrt_tested - data$ancrt_test_pos
-  if (any(check_pos) < 0 ){
-    stop(sprintf("The number of people who tested positive is greater than the number of people tested"))
-  }
-
-  check_tested <- (data$ancrt_test_pos + data$ancrt_known_pos) - data$ancrt_already_art
-  data <- data_frame(ancrt_test_pos=c(2,3,6), ancrt_known_pos=c(4,5,6),
-                     ancrt_already_art=c(1,1,1), ancrt_tested=c(2,4,5))
-  check_tested
-  check_pos
 }
 
 assert_single_parent_region <- function(json) {
