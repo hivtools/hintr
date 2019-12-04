@@ -113,6 +113,7 @@ test_that("error thrown if more than 1 country with a 0 spectrum region code", {
 
 test_that("endpoint_validate_baseline support shape file", {
   shape <- file.path("testdata", "malawi.geojson")
+  shape <- file.path("~/Downloads/uganda-geographic-data-2019_naomi_format.geojson")
   res <- MockPlumberResponse$new()
   file <- list(path = shape, hash = "12345", filename = "original")
   response <- endpoint_validate_baseline(
@@ -129,6 +130,25 @@ test_that("endpoint_validate_baseline support shape file", {
   expect_equal(length(response$data$data$features), 69)
   expect_equal(res$status, 200)
   expect_equal(names(response$data$filters), c("regions", "level_labels"))
+})
+
+test_that("endpoint_validate_baseline returns human readable error", {
+  shape <- file.path("testdata", "uganda.geojson")
+  res <- MockPlumberResponse$new()
+  file <- list(path = shape, hash = "12345", filename = "original")
+  response <- endpoint_validate_baseline(
+    list(postBody = '{"type":"shape", "file": {"path": "path/to/file", "hash": "12345", "filename": "original"}}'),
+    res,
+    "shape",
+    file)
+  response <- jsonlite::parse_json(response)
+
+  expect_equal(response$status, "failure")
+  expect_equal(res$status, 400)
+  expect_length(response$errors, 1)
+  expect_equal(response$errors[[1]]$error, "INVALID_FILE")
+  expect_equal(response$errors[[1]]$detail,
+               "Property area_sort_order is incorrect type, should be numeric.")
 })
 
 test_that("country can have null spectrum region code for country level region", {

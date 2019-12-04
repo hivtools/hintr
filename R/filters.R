@@ -240,8 +240,18 @@ get_region_filters <- function(json) {
                area_sort_order = NA_real_,
                area_name = NA_character_)
   extract <- function(name, default) {
-    vapply(json$features, function(x)
-      x$properties[[name]] %||% default, default)
+    tryCatch({
+      vapply(json$features, function(x)
+        x$properties[[name]] %||% default, default)
+    },
+    error = function(e) {
+      expected_type <- typeof(default)
+      if (expected_type == "double") {
+        expected_type <- "numeric"
+      }
+      stop(sprintf("Property %s is incorrect type, should be %s.", name,
+                   expected_type))
+    })
   }
   hierarchy_table <- data_frame(Map(extract, names(cols), cols))
   colnames(hierarchy_table) <- c("id", "parent_id", "sort_order", "label")
