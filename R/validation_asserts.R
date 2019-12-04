@@ -144,12 +144,12 @@ assert_single_source <- function(data) {
 #' @keywords internal
 assert_anc_client_numbers <- function(data) {
   check_pos <- data$ancrt_tested - data$ancrt_test_pos
-  if (any(check_pos < 0)){
+  if (any(check_pos < 0, na.rm = TRUE)){
     stop(sprintf("The number of people who tested positive is greater than the number of people tested"))
   }
 
   check_on_art <- (data$ancrt_test_pos + data$ancrt_known_pos) - data$ancrt_already_art
-  if(any(check_on_art < 0)){
+  if(any(check_on_art < 0, na.rm = TRUE)){
     stop(sprintf("The number of people already on ART is greater than the number positive (those known to be positive + those who tested positive)"))
   }
   invisible(TRUE)
