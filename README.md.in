@@ -79,9 +79,19 @@ git clone git@github.com:mrc-ide/naomi-data.git tests/testthat/testdata/sensitiv
 
 Details here will depend on the deploy (and that will be the place to look for the running version).
 
-The manual process looks like
+Use `hintr::prerun_push`, specifying the *relative* filenames of the output, spectrum and summary files.
 
-1. Run a model using `naomi::hintr_run_model` into directory `mydir`
-2. Run `prerun_import("prerun", "mydir")` where `prerun` is your prerun model store location
+First, run a model using `naomi::hintr_run_model` into some directory, say `mydir`
 
-if your files are not called `output.rds`, `spectrum.zip` or `summary.zip` you must provide these names in the second step.
+Then import the data into the *production copy of naomi* with
+
+```
+hintr::prerun_push("mydir",
+                   output = "malawi_output.rds",
+                   spectrum = "malawi_spectrum_download.zip",
+                   summary = "malawi_summary_download.zip")
+```
+
+Make a note of the hash that is returned - you'll need that if you want to delete the data.
+
+**You must be on the VPN for this to work.**
