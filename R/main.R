@@ -46,9 +46,9 @@ main_import_prerun <- function(args = commandArgs(TRUE)) {
   hintr-import-prerun <prerun> <path> [options]
 
 Options:
---output=PATH    Path to output file
---spectrum=PATH  Path to spectrum file
---summary=PATH   Path to summary file"
+--output=PATH    Path to output file [default: output.rds]
+--spectrum=PATH  Path to spectrum file [default: spectrum.zip]
+--summary=PATH   Path to summary file [default: summary.zip]"
   args <- docopt::docopt(usage, args)
   h <- prerun_import(args$prerun, args$path,
                      args$output, args$spectrum, args$summary)
