@@ -91,11 +91,14 @@ prerun_push <- function(path, output = "output.rds",
   on.exit(ssh::ssh_disconnect(session))
   id <- ids::random_id(1, 6)
   dest <- sprintf("incoming/%s", id)
-  args <- c("hintr_prerun_import", dest, "--output", output,
+  args <- c("./hintr_prerun_import", dest, "--output", output,
             "--spectrum", spectrum, "--summary", summary)
   command <- paste(args, collapse = " ")
   ssh::scp_upload(session, path, dest)
-  ssh::ssh_exec_wait(session, command)
+  code <- ssh::ssh_exec_wait(session, command)
+  if (code != 0) {
+    stop("Error running remote command")
+  }
 }
 
 read_info_inputs <- function(path) {
