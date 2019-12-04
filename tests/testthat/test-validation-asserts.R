@@ -223,3 +223,18 @@ test_that("can check data comes from a single source", {
   expect_error(assert_single_source(data),
                "Data should be from a single source. Multiple sources present: NSO, WorldPop")
 })
+
+test_that("can check the validity of ANC data", {
+  data <- data_frame(ancrt_test_pos=c(2,3,6), ancrt_known_pos=c(4,5,6),
+                     ancrt_already_art=c(1,1,5), ancrt_tested=c(2,4,9))
+
+  expect_true(assert_anc_client_numbers(data))
+
+  data$ancrt_tested <- c(2,2,9)
+  expect_error(assert_anc_client_numbers(data),
+                 "The number of people who tested positive is greater than the number of people tested")
+  data$ancrt_already_art <- c(20,1,5)
+  data$ancrt_tested <- c(2,4,9)
+  expect_error(assert_anc_client_numbers(data),
+                 "The number of people already on ART is greater than the number positive \\(those known to be positive \\+ those who tested positive\\)")
+})
