@@ -4,8 +4,13 @@
 \alias{prerun_import}
 \title{Import prerun model results}
 \usage{
-prerun_import(prerun, path, output = "output.rds",
-  spectrum = "spectrum.zip", summary = "summary.zip")
+prerun_import(
+  prerun,
+  path,
+  output = "output.rds",
+  spectrum = "spectrum.zip",
+  summary = "summary.zip"
+)
 }
 \arguments{
 \item{prerun}{Path to the prerun model store}
