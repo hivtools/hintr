@@ -74,7 +74,16 @@ test_that("real model can be run", {
     anc_prevalence_year2 = 2018,
     anc_art_coverage_year1 = 2016,
     anc_art_coverage_year2 = 2018,
-    no_of_samples = 20
+    spectrum_population_calibration = "national",
+    spectrum_plhiv_calibration_level = "subnational",
+    spectrum_plhiv_calibration_strat = "sex_age_group",
+    spectrum_artnum_calibration_level = "national",
+    spectrum_artnum_calibration_strat = "age_coarse",
+    artattend = FALSE,
+    rng_seed = 17,
+    no_of_samples = 20,
+    max_iter = 250,
+    permissive = FALSE
   )
   withr::with_envvar(c("USE_MOCK_MODEL" = "false"), {
     model_run <- run_model(data, options, tempdir())
