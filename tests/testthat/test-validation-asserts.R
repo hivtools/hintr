@@ -187,13 +187,26 @@ test_that("can check a column for expected values", {
     sex = c("male", "female", "female")
   )
 
-  expect_true(assert_expected_values(data, "age_group", c("00-04", "05-09", "10-14")))
+  expect_true(assert_expected_values(data, "age_group",
+                                     c("00-04", "05-09", "10-14")))
   expect_true(assert_expected_values(data, "sex", c("male", "female")))
 
   expect_error(assert_expected_values(data, "age_group", c("00-04")),
                "Unexpected values in column age_group: 05-09, 10-14")
   expect_error(assert_expected_values(data, "sex", c("male")),
                "Unexpected values in column sex: female")
+
+  expect_error(assert_expected_values(data, "missing_col", "test"),
+               "Data does not contain required column: missing_col")
+
+  expect_true(assert_expected_values(data, "age_group",
+                                     c("00-04", "05-09", "10-14"),
+                                     all_values = TRUE))
+  expect_error(assert_expected_values(data, "age_group",
+                                      c("00-04", "05-09", "10-14", "15-19"),
+                                      all_values = TRUE),
+               "Column age_group is missing required values: 15-19")
+
 })
 
 test_that("can check column values for expected patterns", {
@@ -211,6 +224,8 @@ test_that("can check column values for expected patterns", {
                "Values in column calendar_quarter do not match required format: 1998, CY2020Q9")
   expect_error(assert_year_column(data),
                "Values in column year do not match required format: 2010Q2, Y2020")
+  expect_error(assert_column_matches(data, "missing_column", ".*"),
+               "Data does not contain required column: missing_column")
 
 })
 
