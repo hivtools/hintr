@@ -90,6 +90,7 @@ do_validate_population <- function(population) {
   assert_expected_values(population, "sex", c("male", "female"), all_values=TRUE)
   assert_expected_values(population, "age_group", naomi::get_five_year_age_groups(), all_values=TRUE)
   assert_single_source(population)
+  assert_column_positive_numeric(population, "population")
   list(data = scalar(NA),
        filters = scalar(NA))
 }
@@ -120,6 +121,7 @@ do_validate_programme <- function(programme, shape) {
   art_ages <- naomi::get_age_groups()$age_group
   art_ages <- art_ages[!art_ages %in% c("00-00", "01-04")]
   assert_expected_values(data, "age_group", art_ages)
+  assert_column_positive_numeric(data, "current_art")
   assert_year_column(data)
   list(data = data,
        filters = list("age" = get_age_filters(data),
@@ -151,6 +153,8 @@ do_validate_anc <- function(anc, shape) {
                             "ANC")
   assert_expected_values(data, "age_group", "15-49")
   assert_year_column(data)
+  assert_column_positive_numeric(data, c("anc_clients", "ancrt_known_pos", "ancrt_already_art",
+                                         "ancrt_tested", "ancrt_test_pos"))
   assert_anc_client_numbers(data)
   data <- naomi::calculate_prevalence_art_coverage(data)
   list(data = data,
@@ -179,6 +183,7 @@ do_validate_survey <- function(survey, shape) {
                             "survey")
   assert_expected_values(data, "sex", c("male", "female", "both"))
   assert_expected_values(data, "age_group", naomi::get_age_groups()$age_group)
+  assert_column_positive_numeric(data, c("n_cluster", "n_obs", "est", "se", "ci_l", "ci_u"))
   list(data = data,
        filters = list("age" = get_age_filters(data),
                       "surveys" = get_survey_filters(data),

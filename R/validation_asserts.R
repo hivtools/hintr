@@ -75,6 +75,32 @@ assert_year_column <- function(data) {
   assert_column_matches(data, "year", "^[12][901][0-9][0-9]$")
 }
 
+#' Check that the values of a column are positive numeric only
+#'
+#' @param data data to be checked
+#' @param column_names column name to be checked
+#'
+#' @return TRUE if numeric positive else throws error
+#' @keywords external
+assert_column_positive_numeric <- function(data, column_names) {
+  out <- lapply(column_names, function(column_name) {
+    if (is.null(data[[column_name]])) {
+      stop(sprintf("Data does not contain required column: %s",
+                   column_name))
+    }
+    if(!is.numeric(data[[column_name]])) {
+      stop(sprintf("Column %s is required to be numeric. Non-numeric values were found.",
+                   column_name))
+    }
+    if(any(data[[column_name]] < 0)) {
+      stop(sprintf("Column %s requires positive numeric values. Negative numeric values were found.",
+                   column_name))
+    }
+    invisible(TRUE)
+  })
+  invisible(TRUE)
+}
+
 #' Checks that the data source column contains a single value
 #'
 #' @param data Data to check source column for single value
