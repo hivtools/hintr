@@ -89,6 +89,25 @@ assert_single_source <- function(data) {
   invisible(TRUE)
 }
 
+#' Provides some checks on the validity of the ANC data
+#'
+#' @param data ANC data to validate
+#'
+#' @return TRUE if data passes validity checks, else throws error
+#' @keywords internal
+assert_anc_client_numbers <- function(data) {
+  check_pos <- data$ancrt_tested - data$ancrt_test_pos
+  if (any(check_pos < 0)){
+    stop(sprintf("The number of people who tested positive is greater than the number of people tested"))
+  }
+
+  check_on_art <- (data$ancrt_test_pos + data$ancrt_known_pos) - data$ancrt_already_art
+  if(any(check_on_art < 0)){
+    stop(sprintf("The number of people already on ART is greater than the number positive (those known to be positive + those who tested positive)"))
+  }
+  invisible(TRUE)
+}
+
 assert_single_parent_region <- function(json) {
   regions <- vcapply(json$features, function(x) {
     x$properties$area_id

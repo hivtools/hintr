@@ -151,6 +151,7 @@ do_validate_anc <- function(anc, shape) {
                             "ANC")
   assert_expected_values(data, "age_group", "15-49")
   assert_year_column(data)
+  assert_anc_client_numbers(data)
   data <- naomi::calculate_prevalence_art_coverage(data)
   list(data = data,
        filters = list("year" = get_year_filters(data),
