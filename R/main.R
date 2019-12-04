@@ -40,3 +40,17 @@ hintr_worker [<queue_id>]"
 main_worker <- function(args = commandArgs(TRUE)) {
   rrq::rrq_worker(hintr_queue_id(main_worker_args(args)$queue_id, TRUE)) # nocov
 }
+
+main_import_prerun <- function(args = commandArgs(TRUE)) {
+  usage <- "Usage:
+  hintr-import-prerun <prerun> <path> [options]
+
+Options:
+--output=PATH    Path to output file
+--spectrum=PATH  Path to spectrum file
+--summary=PATH   Path to summary file"
+  args <- docopt::docopt(usage, args)
+  h <- prerun_import(args$prerun, args$path,
+                     args$output, args$spectrum, args$summary)
+  message(sprintf("Imported data as '%s'", h))
+}
