@@ -25,7 +25,7 @@ read_iso3 <- function(file, type) {
   func <- switch(type,
     "pjnz" = read_pjnz_iso3,
     "shape" = read_geojson_iso3,
-    stop(sprintf("Can't read country from data of type %s.", type)))
+    stop(t_("invalid_iso3", data = list(type = type))))
   func(file)
 }
 
@@ -36,7 +36,7 @@ read_regions <- function(file, type) {
     "programme" = read_csv_regions,
     "anc" = read_csv_regions,
     "survey" = read_csv_regions,
-    stop(sprintf("Can't read regions from data of type %s.", type)))
+    stop(t_("invalid_regions", data = list(type = type))))
   func(file)
 }
 
@@ -145,8 +145,7 @@ do_validate_anc <- function(anc, shape) {
   assert_column_names(
     colnames(data),
     c("area_id", "age_group", "year", "anc_clients",
-      "ancrt_hiv_status", "ancrt_known_pos", "ancrt_already_art",
-      "ancrt_tested", "ancrt_test_pos"))
+      "ancrt_known_pos", "ancrt_already_art", "ancrt_tested", "ancrt_test_pos"))
   assert_consistent_regions(read_regions(shape, "shape"),
                             read_regions(anc, "anc"),
                             "ANC")

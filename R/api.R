@@ -33,12 +33,23 @@ api_build <- function(queue) {
   pr$handle("POST", "/hintr/stop", endpoint_hintr_stop(queue))
   pr$handle("GET", "/", endpoint_root)
 
-  pr$registerHook("preroute", api_log_start)
-  pr$registerHook("postserialize", api_log_end)
+  pr$registerHook("preroute", api_preroute)
+  pr$registerHook("postserialize", api_postserialize)
   pr$set404Handler(hintr_404_handler)
   pr$setErrorHandler(hintr_error_handler)
 
   pr
+}
+
+api_preroute <- function(data, req, res, value) {
+  api_log_start(data, req, res)
+  api_set_language(data, req, res)
+}
+
+api_postserialize <- function(data, req, res, value) {
+  value <- api_log_end(data, req, res, value)
+  value <- api_reset_language(data, req, res, value)
+  value
 }
 
 api_run <- function(pr, port = 8888) {
@@ -85,4 +96,19 @@ api_log_end <- function(data, req, res, value) {
 # We can route this via some check for enabling/disabling logging later
 api_log <- function(msg) {
   message(paste(sprintf("[%s] %s", Sys.time(), msg), collapse = "\n"))
+}
+
+api_set_language <- function(data, req, res) {
+  if ("accept-language" %in% names(req$HEADERS)) {
+    language <- req$HEADERS[["accept-language"]]
+    data$reset_language <- traduire::translator_set_language(language)
+  }
+  invisible(NULL)
+}
+
+api_reset_language <- function(data, req, res, value) {
+  if (!is.null(data$reset_language)) {
+    data$reset_language()
+  }
+  value
 }
