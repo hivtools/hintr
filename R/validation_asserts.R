@@ -113,7 +113,7 @@ assert_column_positive_numeric <- function(data, column_names) {
       stop(sprintf("Column %s is required to be numeric. Non-numeric values were found.",
                    column_name))
     }
-    if(any(column_data < 0 | is.na(column_data))) {
+    if(any(column_data < 0, na.rm = TRUE)) {
       stop(sprintf("Column %s requires positive numeric values. Negative numeric values were found.",
                    column_name))
     }
