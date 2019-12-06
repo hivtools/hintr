@@ -252,10 +252,10 @@ test_that("error thrown for unknown type", {
                "Can't get indicator filters for data type unknown.")
 })
 
-test_that("can get output country filter option", {
+test_that("can get area filter option", {
   test_mock_model_available()
   output <- readRDS(mock_model$output_path)
-  expect_equal(get_country_filter_option(output), list(
+  expect_equal(get_area_level_filter_option(output), list(
     list(
       id = scalar("MWI"),
       label = scalar("Malawi")
@@ -263,8 +263,20 @@ test_that("can get output country filter option", {
   ))
 
   output$area_name[[1]] <- "test"
-  expect_error(get_country_filter_option(output),
-               "Got 2 top level areas from output.")
+  expect_equal(get_area_level_filter_option(output), list(
+    list(
+      id = scalar("MWI"),
+      label = scalar("test")
+    )
+  ))
+
+  output <- output[output$area_level != 0, ]
+  expect_equal(get_area_level_filter_option(output), list(
+    list(
+      id = scalar("MWI_1_1"),
+      label = scalar("Northern")
+    )
+  ))
 })
 
 test_that("can get defaults for bar chart", {
