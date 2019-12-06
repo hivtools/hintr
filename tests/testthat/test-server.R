@@ -213,11 +213,11 @@ test_that("model interactions", {
   expect_length(barchart$filters[[2]]$options, 2)
   expect_equal(barchart$filters[[2]]$options[[1]]$id, "CY2018Q3")
   expect_equal(barchart$filters[[2]]$options[[1]]$label, "Jul-Sep 2018")
-  expect_length(barchart$indicators, 7)
+  expect_length(barchart$indicators, 8)
   out <- lapply(barchart$indicators, function(indicator) {
     expect_true(indicator$indicator %in%
                   c("prevalence", "art_coverage", "current_art", "population",
-                    "plhiv", "incidence", "new_infections"))
+                    "plhiv", "incidence", "new_infections", "receiving_art"))
   })
 
   choropleth <- response$data$plottingMetadata$choropleth
@@ -235,11 +235,11 @@ test_that("model interactions", {
   expect_length(choropleth$filters[[2]]$options, 2)
   expect_equal(choropleth$filters[[2]]$options[[1]]$id, "CY2018Q3")
   expect_equal(choropleth$filters[[2]]$options[[1]]$label, "Jul-Sep 2018")
-  expect_length(choropleth$indicators, 7)
+  expect_length(choropleth$indicators, 8)
   out <- lapply(choropleth$indicators, function(indicator) {
     expect_true(indicator$indicator %in%
                   c("prevalence", "art_coverage", "current_art", "population",
-                    "plhiv", "incidence", "new_infections"))
+                    "plhiv", "incidence", "new_infections", "receiving_art"))
   })
 })
 
@@ -313,11 +313,11 @@ test_that("real model can be run by API", {
   expect_length(barchart$filters[[2]]$options, 2)
   expect_equal(barchart$filters[[2]]$options[[1]]$id, "CY2018Q3")
   expect_equal(barchart$filters[[2]]$options[[1]]$label, "Jul-Sep 2018")
-  expect_length(barchart$indicators, 7)
+  expect_length(barchart$indicators, 8)
   out <- lapply(barchart$indicators, function(indicator) {
     expect_true(indicator$indicator %in%
                   c("prevalence", "art_coverage", "current_art", "population",
-                    "plhiv", "incidence", "new_infections"))
+                    "plhiv", "incidence", "new_infections", "receiving_art"))
   })
 
   choropleth <- response$data$plottingMetadata$choropleth
@@ -335,11 +335,11 @@ test_that("real model can be run by API", {
   expect_length(choropleth$filters[[2]]$options, 2)
   expect_equal(choropleth$filters[[2]]$options[[1]]$id, "CY2018Q3")
   expect_equal(choropleth$filters[[2]]$options[[1]]$label, "Jul-Sep 2018")
-  expect_length(choropleth$indicators, 7)
+  expect_length(choropleth$indicators, 8)
   out <- lapply(choropleth$indicators, function(indicator) {
     expect_true(indicator$indicator %in%
                   c("prevalence", "art_coverage", "current_art", "population",
-                    "plhiv", "incidence", "new_infections"))
+                    "plhiv", "incidence", "new_infections", "receiving_art"))
   })
 })
 
@@ -362,7 +362,7 @@ test_that("plotting metadata is exposed", {
   expect_equal(response$data$anc$choropleth$indicators[[2]]$indicator,
                "art_coverage")
   expect_equal(response$data$anc$choropleth$indicators[[1]]$name,
-               "Prevalence")
+               "HIV prevalence")
   expect_equal(response$data$anc$choropleth$indicators[[2]]$name,
                "ART coverage")
 })

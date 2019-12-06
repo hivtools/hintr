@@ -96,7 +96,7 @@ test_that("do_validate_anc validates ANC file and gets data for plotting", {
 
   expect_length(data$filters$indicators, 2)
   expect_equal(data$filters$indicators[[1]]$id, scalar("prevalence"))
-  expect_equal(data$filters$indicators[[1]]$label, scalar("Prevalence"))
+  expect_equal(data$filters$indicators[[1]]$label, scalar("HIV prevalence"))
   expect_equal(data$filters$indicators[[2]]$id, scalar("art_coverage"))
   expect_equal(data$filters$indicators[[2]]$label, scalar("ART coverage"))
 })
@@ -117,7 +117,7 @@ test_that("do_validate_anc doesn't require ancrt_hiv_status column", {
 
   expect_length(data$filters$indicators, 2)
   expect_equal(data$filters$indicators[[1]]$id, scalar("prevalence"))
-  expect_equal(data$filters$indicators[[1]]$label, scalar("Prevalence"))
+  expect_equal(data$filters$indicators[[1]]$label, scalar("HIV prevalence"))
   expect_equal(data$filters$indicators[[2]]$id, scalar("art_coverage"))
   expect_equal(data$filters$indicators[[2]]$label, scalar("ART coverage"))
 })
@@ -148,7 +148,7 @@ test_that("do_validate_survey validates survey file", {
 
   expect_length(data$filters$indicators, 4)
   expect_equal(data$filters$indicators[[1]]$id, scalar("prevalence"))
-  expect_equal(data$filters$indicators[[1]]$label, scalar("Prevalence"))
+  expect_equal(data$filters$indicators[[1]]$label, scalar("HIV prevalence"))
   expect_equal(data$filters$indicators[[2]]$id, scalar("art_coverage"))
   expect_equal(data$filters$indicators[[2]]$label, scalar("ART coverage"))
   expect_equal(data$filters$indicators[[3]]$id, scalar("recent"))

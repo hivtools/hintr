@@ -201,7 +201,7 @@ test_that("naomi IDs can be mapped to hint IDs", {
 
 test_that("can get indicator display name", {
   expect_equal(get_indicator_display_name("vls"), "Viral load suppression")
-  expect_equal(get_indicator_display_name("prevalence"), "Prevalence")
+  expect_equal(get_indicator_display_name("prevalence"), "HIV prevalence")
   expect_error(get_indicator_display_name("missing"),
                "Failed to get display name for hint ID missing.")
 })
@@ -213,7 +213,7 @@ test_that("can get indicator filters for survey data", {
 
   expect_length(filters, 4)
   expect_equal(filters[[1]]$id, scalar("prevalence"))
-  expect_equal(filters[[1]]$label, scalar("Prevalence"))
+  expect_equal(filters[[1]]$label, scalar("HIV prevalence"))
   expect_equal(filters[[2]]$id, scalar("art_coverage"))
   expect_equal(filters[[2]]$label, scalar("ART coverage"))
   expect_equal(filters[[3]]$id, scalar("recent"))
@@ -241,7 +241,7 @@ test_that("can get indicator filters for anc data", {
 
   expect_length(filters, 2)
   expect_equal(filters[[1]]$id, scalar("prevalence"))
-  expect_equal(filters[[1]]$label, scalar("Prevalence"))
+  expect_equal(filters[[1]]$label, scalar("HIV prevalence"))
   expect_equal(filters[[2]]$id, scalar("art_coverage"))
   expect_equal(filters[[2]]$label, scalar("ART coverage"))
 })
