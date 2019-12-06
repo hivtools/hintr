@@ -1,3 +1,7 @@
+# hintr 0.0.25
+
+* Add receiving_art output indicator
+
 # hintr 0.0.24
 
 * Return better error message from geojson reading
