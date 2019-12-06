@@ -30,7 +30,7 @@ r_packages:
 r_github_packages:
   - ropensci/jsonvalidate
   - mrc-ide/eppasm
-  - mrc-ide/naomi@debug-zmb
+  - mrc-ide/naomi
   - mrc-ide/rrq
   - reside-ic/traduire
 after_success:
