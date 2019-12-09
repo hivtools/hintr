@@ -70,3 +70,16 @@ file_copy <- function(from, to) {
   }
   invisible(ok)
 }
+
+# Run a command with a rate limiter - this is used to throttle the
+# cleanup check.
+throttle <- function(f, every) {
+  last <- Sys.time() - every
+  function() {
+    now <- Sys.time()
+    if (now - every > last) {
+      last <<- now
+      f()
+    }
+  }
+}
