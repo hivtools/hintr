@@ -112,7 +112,7 @@ test_that("endpoint model run queues a model run", {
   })
   expect_equal(unlist(indicators),
                c("population", "prevalence", "plhiv", "art_coverage",
-                 "current_art", "incidence", "new_infections", "receiving_art"))
+                 "current_art", "receiving_art", "incidence", "new_infections"))
 
   ## Choropleth
   choropleth <- result$data$plottingMetadata$choropleth
@@ -150,7 +150,7 @@ test_that("endpoint model run queues a model run", {
   })
   expect_equal(unlist(indicators),
                c("population", "prevalence", "plhiv", "art_coverage",
-                 "current_art", "incidence", "new_infections", "receiving_art"))
+                 "current_art", "receiving_art", "incidence", "new_infections"))
 })
 
 test_that("endpoint_run_model returns error if queueing fails", {
