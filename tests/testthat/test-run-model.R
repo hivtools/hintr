@@ -51,6 +51,63 @@ test_that("model can be run and filters extracted", {
                     choropleth$indicators$indicator))
 })
 
+test_that("model without national level results can be processed", {
+  test_mock_model_available()
+  output <- readRDS(mock_model$output_path)
+  output <- output[output$area_level != 0, ]
+  output_temp <- tempfile()
+  saveRDS(output, output_temp)
+  model_run <- process_result(list(output_path = output_temp))
+  expect_equal(names(model_run), c("data", "plottingMetadata"))
+  expect_equal(names(model_run$data),
+               c("area_id", "sex", "age_group", "calendar_quarter",
+                 "indicator_id", "mode", "mean", "lower", "upper"))
+  expect_true(nrow(model_run$data) > 84042)
+  expect_equivalent(as.data.frame(model_run$data[1, "area_id"]), "MWI_1_1")
+  expect_equal(names(model_run$plottingMetadata), c("barchart", "choropleth"))
+  barchart <- model_run$plottingMetadata$barchart
+  expect_equal(names(barchart), c("indicators", "filters", "defaults"))
+  expect_length(barchart$filters, 4)
+  expect_equal(names(barchart$filters[[1]]),
+               c("id", "column_id", "label", "options", "use_shape_regions"))
+  expect_equal(names(barchart$filters[[2]]),
+               c("id", "column_id", "label", "options"))
+  expect_equal(barchart$filters[[1]]$id, scalar("area"))
+  expect_equal(barchart$filters[[2]]$id, scalar("quarter"))
+  expect_equal(barchart$filters[[3]]$id, scalar("sex"))
+  expect_equal(barchart$filters[[4]]$id, scalar("age"))
+  expect_true(length(barchart$filters[[4]]$options) >= 29)
+  expect_length(barchart$filters[[2]]$options, 2)
+  expect_equal(barchart$filters[[2]]$options[[1]]$id, scalar("CY2018Q3"))
+  expect_equal(barchart$filters[[2]]$options[[1]]$label, scalar("Jul-Sep 2018"))
+  expect_equal(nrow(barchart$indicators), 8)
+  expect_true(all(c("prevalence", "art_coverage", "current_art", "population",
+                    "plhiv", "incidence", "new_infections", "receiving_art") %in%
+                    barchart$indicators$indicator))
+
+  choropleth <- model_run$plottingMetadata$choropleth
+  expect_equal(names(choropleth), c("indicators", "filters"))
+  expect_length(choropleth$filters, 4)
+  expect_equal(names(choropleth$filters[[1]]),
+               c("id", "column_id", "label", "options", "use_shape_regions"))
+  expect_equal(names(choropleth$filters[[2]]),
+               c("id", "column_id", "label", "options"))
+  expect_equal(choropleth$filters[[1]]$id, scalar("area"))
+  expect_equal(choropleth$filters[[2]]$id, scalar("quarter"))
+  expect_equal(choropleth$filters[[3]]$id, scalar("sex"))
+  expect_equal(choropleth$filters[[4]]$id, scalar("age"))
+  expect_true(length(choropleth$filters[[4]]$options) >= 29)
+  expect_length(choropleth$filters[[2]]$options, 2)
+  expect_equal(choropleth$filters[[2]]$options[[1]]$id, scalar("CY2018Q3"))
+  expect_equal(choropleth$filters[[2]]$options[[1]]$label,
+               scalar("Jul-Sep 2018"))
+  expect_equal(nrow(choropleth$indicators), 8)
+  expect_true(all(c("prevalence", "art_coverage", "current_art", "population",
+                    "plhiv", "incidence", "new_infections", "receiving_art") %in%
+                    choropleth$indicators$indicator))
+
+})
+
 test_that("real model can be run", {
   data <- list(
     pjnz = file.path("testdata", "Malawi2019.PJNZ"),
