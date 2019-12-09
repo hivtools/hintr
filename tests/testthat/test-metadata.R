@@ -14,7 +14,7 @@ test_that("can build metadata response", {
   expect_equal(metadata$anc$choropleth$indicators[[2]]$indicator,
                scalar("art_coverage"))
   expect_equal(metadata$anc$choropleth$indicators[[1]]$name,
-               scalar("Prevalence"))
+               scalar("HIV prevalence"))
   expect_equal(metadata$anc$choropleth$indicators[[2]]$name,
                scalar("ART coverage"))
 })

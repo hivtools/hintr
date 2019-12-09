@@ -42,7 +42,6 @@ get_barchart_metadata <- function(output) {
 }
 
 get_choropleth_metadata <- function(output) {
-  browser()
   iso3 <- get_country_iso3(output$area_id)
   metadata <- naomi::get_plotting_metadata(iso3)
   metadata <- metadata[

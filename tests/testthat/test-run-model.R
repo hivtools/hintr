@@ -24,9 +24,9 @@ test_that("model can be run and filters extracted", {
   expect_length(barchart$filters[[2]]$options, 2)
   expect_equal(barchart$filters[[2]]$options[[1]]$id, scalar("CY2018Q3"))
   expect_equal(barchart$filters[[2]]$options[[1]]$label, scalar("Jul-Sep 2018"))
-  expect_equal(nrow(barchart$indicators), 7)
+  expect_equal(nrow(barchart$indicators), 8)
   expect_true(all(c("prevalence", "art_coverage", "current_art", "population",
-                    "plhiv", "incidence", "new_infections") %in%
+                    "plhiv", "incidence", "new_infections", "receiving_art") %in%
                     barchart$indicators$indicator))
 
   choropleth <- model_run$plottingMetadata$choropleth
@@ -45,9 +45,9 @@ test_that("model can be run and filters extracted", {
   expect_equal(choropleth$filters[[2]]$options[[1]]$id, scalar("CY2018Q3"))
   expect_equal(choropleth$filters[[2]]$options[[1]]$label,
                scalar("Jul-Sep 2018"))
-  expect_equal(nrow(choropleth$indicators), 7)
+  expect_equal(nrow(choropleth$indicators), 8)
   expect_true(all(c("prevalence", "art_coverage", "current_art", "population",
-                    "plhiv", "incidence", "new_infections") %in%
+                    "plhiv", "incidence", "new_infections", "receiving_art") %in%
                     choropleth$indicators$indicator))
 })
 
@@ -80,9 +80,9 @@ test_that("model without national level results can be processed", {
   expect_length(barchart$filters[[2]]$options, 2)
   expect_equal(barchart$filters[[2]]$options[[1]]$id, scalar("CY2018Q3"))
   expect_equal(barchart$filters[[2]]$options[[1]]$label, scalar("Jul-Sep 2018"))
-  expect_equal(nrow(barchart$indicators), 7)
+  expect_equal(nrow(barchart$indicators), 8)
   expect_true(all(c("prevalence", "art_coverage", "current_art", "population",
-                    "plhiv", "incidence", "new_infections") %in%
+                    "plhiv", "incidence", "new_infections", "receiving_art") %in%
                     barchart$indicators$indicator))
 
   choropleth <- model_run$plottingMetadata$choropleth
@@ -101,9 +101,9 @@ test_that("model without national level results can be processed", {
   expect_equal(choropleth$filters[[2]]$options[[1]]$id, scalar("CY2018Q3"))
   expect_equal(choropleth$filters[[2]]$options[[1]]$label,
                scalar("Jul-Sep 2018"))
-  expect_equal(nrow(choropleth$indicators), 7)
+  expect_equal(nrow(choropleth$indicators), 8)
   expect_true(all(c("prevalence", "art_coverage", "current_art", "population",
-                    "plhiv", "incidence", "new_infections") %in%
+                    "plhiv", "incidence", "new_infections", "receiving_art") %in%
                     choropleth$indicators$indicator))
 
 })

@@ -319,7 +319,7 @@ test_that("possible filters are returned for data", {
 
   expect_length(response$data$filters$indicators, 2)
   expect_equal(response$data$filters$indicators[[1]]$id, "prevalence")
-  expect_equal(response$data$filters$indicators[[1]]$label, "Prevalence")
+  expect_equal(response$data$filters$indicators[[1]]$label, "HIV prevalence")
   expect_equal(response$data$filters$indicators[[2]]$id, "art_coverage")
   expect_equal(response$data$filters$indicators[[2]]$label, "ART coverage")
 
@@ -358,7 +358,7 @@ test_that("possible filters are returned for data", {
 
   expect_length(response$data$filters$indicators, 4)
   expect_equal(response$data$filters$indicators[[1]]$id, "prevalence")
-  expect_equal(response$data$filters$indicators[[1]]$label, "Prevalence")
+  expect_equal(response$data$filters$indicators[[1]]$label, "HIV prevalence")
   expect_equal(response$data$filters$indicators[[2]]$id, "art_coverage")
   expect_equal(response$data$filters$indicators[[2]]$label, "ART coverage")
   expect_equal(response$data$filters$indicators[[3]]$id, "recent")
@@ -387,7 +387,7 @@ test_that("endpoint_plotting_metadata gets metadata", {
   expect_equal(response$data$anc$choropleth$indicators[[2]]$indicator,
                "art_coverage")
   expect_equal(response$data$anc$choropleth$indicators[[1]]$name,
-               "Prevalence")
+               "HIV prevalence")
   expect_equal(response$data$anc$choropleth$indicators[[2]]$name,
                "ART coverage")
 })
@@ -413,7 +413,7 @@ test_that("endpoint_plotting_metadata returns default data for missing country",
   expect_equal(response$data$anc$choropleth$indicators[[2]]$indicator,
                "art_coverage")
   expect_equal(response$data$anc$choropleth$indicators[[1]]$name,
-               "Prevalence")
+               "HIV prevalence")
   expect_equal(response$data$anc$choropleth$indicators[[2]]$name,
                "ART coverage")
 })
