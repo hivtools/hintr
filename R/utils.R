@@ -83,3 +83,7 @@ throttle <- function(f, every) {
     }
   }
 }
+
+no_error <- function(expr) {
+  tryCatch(expr, error = function(e) NULL)
+}

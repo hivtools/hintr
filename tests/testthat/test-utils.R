@@ -50,3 +50,13 @@ test_that("throttle does not call functions very often", {
   expect_equal(g(), 2)
   mockery::expect_called(f, 2)
 })
+
+test_that("no_error swallows all errors", {
+  f <- function(x) {
+    if (x < 0) {
+      stop("expected positive x")
+    }
+  }
+  expect_silent(no_error(f(1)))
+  expect_silent(no_error(f(-1)))
+})
