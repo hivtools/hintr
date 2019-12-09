@@ -51,7 +51,7 @@ RUN install_packages --repo=https://inla.r-inla-download.org/R/stable \
 RUN install_remote \
         mrc-ide/eppasm \
         mrc-ide/heartbeatr \
-        mrc-ide/rrq \
+        mrc-ide/rrq@mrc-1231 \
         reside-ic/traduire
 
 COPY . /src
