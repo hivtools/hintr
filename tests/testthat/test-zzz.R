@@ -11,11 +11,11 @@ test_that("version info is loaded on package load", {
 
 test_that("translation initialisation calls traduire_register", {
   expect_true("package:hintr" %in% traduire::translator_list())
-  expect_error(traduire::translator("package:hintr"), NA)
-  traduire::translator_unregister("package:hintr")
+  expect_error(hintr_translator(), NA)
+  hintr_translator_unregister()
   expect_false("package:hintr" %in% traduire::translator_list())
-  expect_error(traduire::translator("package:hintr"))
+  expect_error(hintr_translator())
   hintr_init_traduire()
-  expect_error(traduire::translator("package:hintr"), NA)
+  expect_error(hintr_translator(), NA)
   expect_true("package:hintr" %in% traduire::translator_list())
 })

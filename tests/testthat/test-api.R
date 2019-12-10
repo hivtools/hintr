@@ -2,7 +2,7 @@ context("api")
 
 test_that("don't change language if not asked to", {
   data <- new.env()
-  tr <- traduire::translator("package:hintr")
+  tr <- hintr_translator()
   expect_equal(tr$language(), "en")
 
   res <- MockPlumberResponse$new()
@@ -17,7 +17,7 @@ test_that("don't change language if not asked to", {
 
 test_that("change language based on header", {
   data <- new.env()
-  tr <- traduire::translator("package:hintr")
+  tr <- hintr_translator()
   expect_equal(tr$language(), "en")
 
   res <- MockPlumberResponse$new()
