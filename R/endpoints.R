@@ -76,7 +76,9 @@ endpoint_model_submit <- function(queue) {
 }
 
 endpoint_model_status <- function(queue) {
+  check_orphan <- throttle(queue$queue$worker_detect_exited, 10)
   function(req, res, id) {
+    no_error(check_orphan())
     response <- with_success(
       queue$status(id))
     if (response$success) {
@@ -101,8 +103,14 @@ endpoint_model_result <- function(queue) {
       response$value <- NULL
       res$status <- 400
     } else if (!response$success) {
-      response$errors <- hintr_errors(
-        list("FAILED_TO_RETRIEVE_RESULT" = response$message))
+      if (queue$queue$task_status(id) == "ORPHAN") {
+        error <- "Worker has crashed - error details are unavailable"
+        response$errors <- hintr_errors(list("MODEL_RUN_FAILED" = error))
+        response$value <- NULL
+      } else {
+        response$errors <- hintr_errors(
+          list("FAILED_TO_RETRIEVE_RESULT" = response$message))
+      }
       res$status <- 400
     } else {
       response$value <- process_result(response$value)

@@ -646,3 +646,47 @@ test_that("translation", {
   expect_equal(httr::status_code(r), 200)
   expect_equal(response_from_json(r), "Bienvenue à hintr")
 })
+
+test_that("crashed worker can be detected", {
+  ## Results can be stored in specified results directory
+  results_dir <- tempfile("results")
+  dir.create(results_dir)
+  withr::with_envvar(c("USE_MOCK_MODEL" = "false"), {
+    server <- hintr_server(results_dir = results_dir)
+  })
+
+  ## Submit a model run
+  payload <- setup_submit_payload()
+  r <- httr::POST(paste0(server$url, "/model/submit"),
+                  body = httr::upload_file(payload),
+                  encode = "json")
+  httr::stop_for_status(r)
+  id <- response_from_json(r)$data$id
+
+  Sys.sleep(2)
+  obj <- rrq::rrq_controller(server$queue_id)
+  expect_equal(obj$task_status(id), setNames("RUNNING", id))
+
+  w <- obj$worker_task_id()
+  expect_equal(unname(w), id)
+  info <- obj$worker_info()[[names(w)]]
+  tools::pskill(info$pid)
+
+  Sys.sleep(10) # 3 * the testing heartbeat + 1
+
+  r <- httr::GET(paste0(server$url, "/model/status/", id))
+  expect_equal(httr::status_code(r), 200)
+  dat <- response_from_json(r)
+  expect_true(dat$data$done)
+  expect_false(dat$data$success)
+  expect_equal(dat$data$status, "ORPHAN")
+
+  r <- httr::GET(paste0(server$url, "/model/result/", id))
+  expect_equal(httr::status_code(r), 400)
+  dat <- response_from_json(r)
+  expect_equal(dat$errors[[1]]$error,
+               "MODEL_RUN_FAILED")
+  expect_equal(dat$errors[[1]]$detail,
+               "Worker has crashed - error details are unavailable")
+  expect_is(dat$errors[[1]]$key, "character")
+})
