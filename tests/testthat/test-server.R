@@ -436,7 +436,22 @@ test_that("model run options are exposed", {
     survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
     "MWI2016PHIA")
 
-  art_section <- response$data$controlSections[[3]]
+  anc_section <- response$data$controlSections[[3]]
+  expect_length(
+    anc_section$controlGroups[[1]]$controls[[1]]$options,
+    8
+  )
+  expect_equal(
+    names(anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
+    c("id", "label"))
+  expect_equal(
+    anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
+    "2018")
+  expect_equal(
+    anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
+    "2018")
+
+  art_section <- response$data$controlSections[[4]]
   expect_length(
     art_section$controlGroups[[1]]$controls[[1]]$options,
     2
@@ -456,21 +471,6 @@ test_that("model run options are exposed", {
   expect_equal(
     art_section$controlGroups[[1]]$controls[[1]]$options[[2]]$label,
     "No")
-
-  anc_section <- response$data$controlSections[[4]]
-  expect_length(
-    anc_section$controlGroups[[1]]$controls[[1]]$options,
-    8
-  )
-  expect_equal(
-    names(anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
-    c("id", "label"))
-  expect_equal(
-    anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
-    "2018")
-  expect_equal(
-    anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
-    "2018")
 
   expect_true(!is.null(response$version))
   expect_equal(names(response$version), c("hintr", "naomi", "rrq", "traduire"))
