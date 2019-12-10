@@ -23,7 +23,7 @@ test_that("model can be run and filters extracted", {
   expect_true(length(barchart$filters[[4]]$options) >= 29)
   expect_length(barchart$filters[[2]]$options, 2)
   expect_equal(barchart$filters[[2]]$options[[1]]$id, scalar("CY2018Q3"))
-  expect_equal(barchart$filters[[2]]$options[[1]]$label, scalar("Jul-Sep 2018"))
+  expect_equal(barchart$filters[[2]]$options[[1]]$label, scalar("September 2018"))
   expect_equal(nrow(barchart$indicators), 10)
   expect_true(all(c("prevalence", "art_coverage", "current_art", "population",
                     "plhiv", "incidence", "new_infections", "receiving_art",
@@ -45,7 +45,7 @@ test_that("model can be run and filters extracted", {
   expect_length(choropleth$filters[[2]]$options, 2)
   expect_equal(choropleth$filters[[2]]$options[[1]]$id, scalar("CY2018Q3"))
   expect_equal(choropleth$filters[[2]]$options[[1]]$label,
-               scalar("Jul-Sep 2018"))
+               scalar("September 2018"))
   expect_equal(nrow(choropleth$indicators), 10)
   expect_true(all(c("prevalence", "art_coverage", "current_art", "population",
                     "plhiv", "incidence", "new_infections", "receiving_art",
@@ -81,7 +81,7 @@ test_that("model without national level results can be processed", {
   expect_true(length(barchart$filters[[4]]$options) >= 29)
   expect_length(barchart$filters[[2]]$options, 2)
   expect_equal(barchart$filters[[2]]$options[[1]]$id, scalar("CY2018Q3"))
-  expect_equal(barchart$filters[[2]]$options[[1]]$label, scalar("Jul-Sep 2018"))
+  expect_equal(barchart$filters[[2]]$options[[1]]$label, scalar("September 2018"))
   expect_equal(nrow(barchart$indicators), 10)
   expect_true(all(c("prevalence", "art_coverage", "current_art", "population",
                     "plhiv", "incidence", "new_infections", "receiving_art",
@@ -103,7 +103,7 @@ test_that("model without national level results can be processed", {
   expect_length(choropleth$filters[[2]]$options, 2)
   expect_equal(choropleth$filters[[2]]$options[[1]]$id, scalar("CY2018Q3"))
   expect_equal(choropleth$filters[[2]]$options[[1]]$label,
-               scalar("Jul-Sep 2018"))
+               scalar("September 2018"))
   expect_equal(nrow(choropleth$indicators), 10)
   expect_true(all(c("prevalence", "art_coverage", "current_art", "population",
                     "plhiv", "incidence", "new_infections", "receiving_art",

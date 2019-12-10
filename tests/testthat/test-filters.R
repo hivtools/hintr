@@ -68,11 +68,11 @@ test_that("get_quarter_filters gets quarter names from ids", {
   expected_filters <- list(
     list(
       id = scalar("CY2016Q1"),
-      label = scalar("Jan-Mar 2016")
+      label = scalar("March 2016")
     ),
     list(
       id = scalar("CY2013Q2"),
-      label = scalar("Apr-Jun 2013")
+      label = scalar("June 2013")
     )
   )
   expect_equal(get_quarter_filters(data), expected_filters)
@@ -299,7 +299,7 @@ test_that("can get defaults for bar chart", {
   expect_equal(defaults$selected_filter_options$quarter, list(
     list(
       id = scalar("CY2018Q3"),
-      label = scalar("Jul-Sep 2018")
+      label = scalar("September 2018")
     )
   ))
   expect_equal(defaults$selected_filter_options$sex, list(
