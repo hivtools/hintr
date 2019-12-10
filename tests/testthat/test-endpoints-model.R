@@ -229,6 +229,25 @@ test_that("querying for result of missing job returns useful error", {
   expect_equal(result$errors[[1]]$detail, "Missing some results")
 })
 
+test_that("querying for an orphan task returns sensible error", {
+  test_redis_available()
+  res <- MockPlumberResponse$new()
+  queue <- Queue$new(workers = 0)
+  model_result <- endpoint_model_result(queue)
+
+  id <- ids::random_id()
+  queue$queue$con$HSET(queue$queue$keys$task_status, id, "ORPHAN")
+
+  result <- jsonlite::parse_json(model_result(NULL, res, id))
+  expect_equal(res$status, 400)
+  expect_equal(result$status, "failure")
+  expect_length(result$data, 0)
+  expect_length(result$errors, 1)
+  expect_equal(result$errors[[1]]$error, "MODEL_RUN_FAILED")
+  expect_equal(result$errors[[1]]$detail,
+               "Worker has crashed - error details are unavailable")
+})
+
 test_that("endpoint_run_status returns error if query for status fails", {
   test_redis_available()
 
