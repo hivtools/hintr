@@ -18,6 +18,7 @@ test_that("endpoint worker status works", {
   expect_equal(unlist(response$data, FALSE, FALSE), rep("IDLE", 2))
 
   queue$queue$worker_stop(timeout = 5)
+  Sys.sleep(5)
   response <- jsonlite::parse_json(endpoint())
   expect_equal(unlist(response$data, FALSE, FALSE), rep("EXITED", 2))
 
