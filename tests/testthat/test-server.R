@@ -212,12 +212,13 @@ test_that("model interactions", {
   expect_true(length(barchart$filters[[4]]$options) >= 29)
   expect_length(barchart$filters[[2]]$options, 2)
   expect_equal(barchart$filters[[2]]$options[[1]]$id, "CY2018Q3")
-  expect_equal(barchart$filters[[2]]$options[[1]]$label, "Jul-Sep 2018")
-  expect_length(barchart$indicators, 7)
+  expect_equal(barchart$filters[[2]]$options[[1]]$label, "September 2018")
+  expect_length(barchart$indicators, 10)
   out <- lapply(barchart$indicators, function(indicator) {
     expect_true(indicator$indicator %in%
                   c("prevalence", "art_coverage", "current_art", "population",
-                    "plhiv", "incidence", "new_infections"))
+                    "plhiv", "incidence", "new_infections", "receiving_art",
+                    "anc_prevalence", "anc_art_coverage"))
   })
 
   choropleth <- response$data$plottingMetadata$choropleth
@@ -234,12 +235,13 @@ test_that("model interactions", {
   expect_true(length(choropleth$filters[[4]]$options) >= 29)
   expect_length(choropleth$filters[[2]]$options, 2)
   expect_equal(choropleth$filters[[2]]$options[[1]]$id, "CY2018Q3")
-  expect_equal(choropleth$filters[[2]]$options[[1]]$label, "Jul-Sep 2018")
-  expect_length(choropleth$indicators, 7)
+  expect_equal(choropleth$filters[[2]]$options[[1]]$label, "September 2018")
+  expect_length(choropleth$indicators, 10)
   out <- lapply(choropleth$indicators, function(indicator) {
     expect_true(indicator$indicator %in%
                   c("prevalence", "art_coverage", "current_art", "population",
-                    "plhiv", "incidence", "new_infections"))
+                    "plhiv", "incidence", "new_infections", "receiving_art",
+                    "anc_prevalence", "anc_art_coverage"))
   })
 })
 
@@ -312,12 +314,13 @@ test_that("real model can be run by API", {
   expect_true(length(barchart$filters[[4]]$options) >= 29)
   expect_length(barchart$filters[[2]]$options, 2)
   expect_equal(barchart$filters[[2]]$options[[1]]$id, "CY2018Q3")
-  expect_equal(barchart$filters[[2]]$options[[1]]$label, "Jul-Sep 2018")
-  expect_length(barchart$indicators, 7)
+  expect_equal(barchart$filters[[2]]$options[[1]]$label, "September 2018")
+  expect_length(barchart$indicators, 10)
   out <- lapply(barchart$indicators, function(indicator) {
     expect_true(indicator$indicator %in%
                   c("prevalence", "art_coverage", "current_art", "population",
-                    "plhiv", "incidence", "new_infections"))
+                    "plhiv", "incidence", "new_infections", "receiving_art",
+                    "anc_prevalence", "anc_art_coverage"))
   })
 
   choropleth <- response$data$plottingMetadata$choropleth
@@ -334,12 +337,13 @@ test_that("real model can be run by API", {
   expect_true(length(choropleth$filters[[4]]$options) >= 29)
   expect_length(choropleth$filters[[2]]$options, 2)
   expect_equal(choropleth$filters[[2]]$options[[1]]$id, "CY2018Q3")
-  expect_equal(choropleth$filters[[2]]$options[[1]]$label, "Jul-Sep 2018")
-  expect_length(choropleth$indicators, 7)
+  expect_equal(choropleth$filters[[2]]$options[[1]]$label, "September 2018")
+  expect_length(choropleth$indicators, 10)
   out <- lapply(choropleth$indicators, function(indicator) {
     expect_true(indicator$indicator %in%
                   c("prevalence", "art_coverage", "current_art", "population",
-                    "plhiv", "incidence", "new_infections"))
+                    "plhiv", "incidence", "new_infections", "receiving_art",
+                    "anc_prevalence", "anc_art_coverage"))
   })
 })
 
@@ -362,7 +366,7 @@ test_that("plotting metadata is exposed", {
   expect_equal(response$data$anc$choropleth$indicators[[2]]$indicator,
                "art_coverage")
   expect_equal(response$data$anc$choropleth$indicators[[1]]$name,
-               "Prevalence")
+               "HIV prevalence")
   expect_equal(response$data$anc$choropleth$indicators[[2]]$name,
                "ART coverage")
 })
@@ -432,7 +436,22 @@ test_that("model run options are exposed", {
     survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
     "MWI2016PHIA")
 
-  art_section <- response$data$controlSections[[3]]
+  anc_section <- response$data$controlSections[[3]]
+  expect_length(
+    anc_section$controlGroups[[1]]$controls[[1]]$options,
+    8
+  )
+  expect_equal(
+    names(anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
+    c("id", "label"))
+  expect_equal(
+    anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
+    "2018")
+  expect_equal(
+    anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
+    "2018")
+
+  art_section <- response$data$controlSections[[4]]
   expect_length(
     art_section$controlGroups[[1]]$controls[[1]]$options,
     2
@@ -452,21 +471,6 @@ test_that("model run options are exposed", {
   expect_equal(
     art_section$controlGroups[[1]]$controls[[1]]$options[[2]]$label,
     "No")
-
-  anc_section <- response$data$controlSections[[4]]
-  expect_length(
-    anc_section$controlGroups[[1]]$controls[[1]]$options,
-    8
-  )
-  expect_equal(
-    names(anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
-    c("id", "label"))
-  expect_equal(
-    anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
-    "2018")
-  expect_equal(
-    anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
-    "2018")
 
   expect_true(!is.null(response$version))
   expect_equal(names(response$version), c("hintr", "naomi", "rrq", "traduire"))
@@ -641,4 +645,48 @@ test_that("translation", {
   r <- httr::GET(server$url, httr::add_headers("Accept-Language" = "fr"))
   expect_equal(httr::status_code(r), 200)
   expect_equal(response_from_json(r), "Bienvenue à hintr")
+})
+
+test_that("crashed worker can be detected", {
+  ## Results can be stored in specified results directory
+  results_dir <- tempfile("results")
+  dir.create(results_dir)
+  withr::with_envvar(c("USE_MOCK_MODEL" = "false"), {
+    server <- hintr_server(results_dir = results_dir)
+  })
+
+  ## Submit a model run
+  payload <- setup_submit_payload()
+  r <- httr::POST(paste0(server$url, "/model/submit"),
+                  body = httr::upload_file(payload),
+                  encode = "json")
+  httr::stop_for_status(r)
+  id <- response_from_json(r)$data$id
+
+  Sys.sleep(2)
+  obj <- rrq::rrq_controller(server$queue_id)
+  expect_equal(obj$task_status(id), setNames("RUNNING", id))
+
+  w <- obj$worker_task_id()
+  expect_equal(unname(w), id)
+  info <- obj$worker_info()[[names(w)]]
+  tools::pskill(info$pid)
+
+  Sys.sleep(10) # 3 * the testing heartbeat + 1
+
+  r <- httr::GET(paste0(server$url, "/model/status/", id))
+  expect_equal(httr::status_code(r), 200)
+  dat <- response_from_json(r)
+  expect_true(dat$data$done)
+  expect_false(dat$data$success)
+  expect_equal(dat$data$status, "ORPHAN")
+
+  r <- httr::GET(paste0(server$url, "/model/result/", id))
+  expect_equal(httr::status_code(r), 400)
+  dat <- response_from_json(r)
+  expect_equal(dat$errors[[1]]$error,
+               "MODEL_RUN_FAILED")
+  expect_equal(dat$errors[[1]]$detail,
+               "Worker has crashed - error details are unavailable")
+  expect_is(dat$errors[[1]]$key, "character")
 })

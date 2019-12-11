@@ -68,11 +68,11 @@ test_that("get_quarter_filters gets quarter names from ids", {
   expected_filters <- list(
     list(
       id = scalar("CY2016Q1"),
-      label = scalar("Jan-Mar 2016")
+      label = scalar("March 2016")
     ),
     list(
       id = scalar("CY2013Q2"),
-      label = scalar("Apr-Jun 2013")
+      label = scalar("June 2013")
     )
   )
   expect_equal(get_quarter_filters(data), expected_filters)
@@ -201,7 +201,7 @@ test_that("naomi IDs can be mapped to hint IDs", {
 
 test_that("can get indicator display name", {
   expect_equal(get_indicator_display_name("vls"), "Viral load suppression")
-  expect_equal(get_indicator_display_name("prevalence"), "Prevalence")
+  expect_equal(get_indicator_display_name("prevalence"), "HIV prevalence")
   expect_error(get_indicator_display_name("missing"),
                "Failed to get display name for hint ID missing.")
 })
@@ -213,7 +213,7 @@ test_that("can get indicator filters for survey data", {
 
   expect_length(filters, 4)
   expect_equal(filters[[1]]$id, scalar("prevalence"))
-  expect_equal(filters[[1]]$label, scalar("Prevalence"))
+  expect_equal(filters[[1]]$label, scalar("HIV prevalence"))
   expect_equal(filters[[2]]$id, scalar("art_coverage"))
   expect_equal(filters[[2]]$label, scalar("ART coverage"))
   expect_equal(filters[[3]]$id, scalar("recent"))
@@ -241,7 +241,7 @@ test_that("can get indicator filters for anc data", {
 
   expect_length(filters, 2)
   expect_equal(filters[[1]]$id, scalar("prevalence"))
-  expect_equal(filters[[1]]$label, scalar("Prevalence"))
+  expect_equal(filters[[1]]$label, scalar("HIV prevalence"))
   expect_equal(filters[[2]]$id, scalar("art_coverage"))
   expect_equal(filters[[2]]$label, scalar("ART coverage"))
 })
@@ -252,10 +252,10 @@ test_that("error thrown for unknown type", {
                "Can't get indicator filters for data type unknown.")
 })
 
-test_that("can get output country filter option", {
+test_that("can get area filter option", {
   test_mock_model_available()
   output <- readRDS(mock_model$output_path)
-  expect_equal(get_country_filter_option(output), list(
+  expect_equal(get_area_level_filter_option(output), list(
     list(
       id = scalar("MWI"),
       label = scalar("Malawi")
@@ -263,8 +263,20 @@ test_that("can get output country filter option", {
   ))
 
   output$area_name[[1]] <- "test"
-  expect_error(get_country_filter_option(output),
-               "Got 2 top level areas from output.")
+  expect_equal(get_area_level_filter_option(output), list(
+    list(
+      id = scalar("MWI"),
+      label = scalar("test")
+    )
+  ))
+
+  output <- output[output$area_level != 0, ]
+  expect_equal(get_area_level_filter_option(output), list(
+    list(
+      id = scalar("MWI_1_1"),
+      label = scalar("Northern")
+    )
+  ))
 })
 
 test_that("can get defaults for bar chart", {
@@ -287,7 +299,7 @@ test_that("can get defaults for bar chart", {
   expect_equal(defaults$selected_filter_options$quarter, list(
     list(
       id = scalar("CY2018Q3"),
-      label = scalar("Jul-Sep 2018")
+      label = scalar("September 2018")
     )
   ))
   expect_equal(defaults$selected_filter_options$sex, list(

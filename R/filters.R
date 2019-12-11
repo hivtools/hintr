@@ -139,7 +139,7 @@ get_barchart_defaults <- function(output, output_filters) {
     x_axis_id = scalar("age"),
     disaggregate_by_id = scalar("sex"),
     selected_filter_options = list(
-      area = get_country_filter_option(output),
+      area = get_area_level_filter_option(output),
       quarter = get_selected_filter_options(output_filters, "quarter")[1],
       sex = get_selected_filter_options(output_filters, "sex",
                                         c("female", "male")),
@@ -180,11 +180,10 @@ get_selected_filter_options <- function(output_filters, filter_type, ids = NULL)
   options
 }
 
-get_country_filter_option <- function(output) {
-  option <- unique(output[output$area_level == 0, c("area_id", "area_name")])
-  if (nrow(option) != 1) {
-    stop(sprintf("Got %s top level areas from output.", nrow(option)))
-  }
+get_area_level_filter_option <- function(output) {
+  ## We expect the areas to be returned in order - return the first region
+  ## level as the default
+  option <- output[1, c("area_id", "area_name")]
   list(
     list(
       id = scalar(option$area_id),

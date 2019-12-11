@@ -97,11 +97,11 @@ test_that("do_endpoint_model_options correctly builds params list", {
     )))
   t1 <- params$calendar_quarter_t1_options
   expect_equal(t1[[length(t1)]]$id, scalar("CY2012Q1"))
-  expect_equal(t1[[length(t1)]]$label, scalar("Jan-Mar 2012"))
+  expect_equal(t1[[length(t1)]]$label, scalar("March 2012"))
   expect_true(length(t1) >= 32)
   t2 <- params$calendar_quarter_t2_options
   expect_equal(t2[[length(t2)]]$id, scalar("CY2012Q1"))
-  expect_equal(t2[[length(t2)]]$label, scalar("Jan-Mar 2012"))
+  expect_equal(t2[[length(t2)]]$label, scalar("March 2012"))
   expect_true(length(t2) >= 32)
   expect_length(params$survey_prevalence_options, 4)
   expect_equal(params$survey_prevalence_options[[1]]$id,
@@ -174,11 +174,11 @@ test_that("do_endpoint_model_options without programme data", {
     )))
   t1 <- params$calendar_quarter_t1_options
   expect_equal(t1[[length(t1)]]$id, scalar("CY2012Q1"))
-  expect_equal(t1[[length(t1)]]$label, scalar("Jan-Mar 2012"))
+  expect_equal(t1[[length(t1)]]$label, scalar("March 2012"))
   expect_true(length(t1) >= 32)
   t2 <- params$calendar_quarter_t2_options
   expect_equal(t2[[length(t2)]]$id, scalar("CY2012Q1"))
-  expect_equal(t2[[length(t2)]]$label, scalar("Jan-Mar 2012"))
+  expect_equal(t2[[length(t2)]]$label, scalar("March 2012"))
   expect_true(length(t2) >= 32)
   expect_length(params$survey_prevalence_options, 4)
   expect_equal(params$survey_prevalence_options[[1]]$id,
@@ -253,7 +253,22 @@ test_that("can retrieve validated model options", {
     survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
     "MWI2016PHIA")
 
-  art_section <- json$controlSections[[3]]
+  anc_section <- json$controlSections[[3]]
+  expect_length(
+    anc_section$controlGroups[[1]]$controls[[1]]$options,
+    8
+  )
+  expect_equal(
+    names(anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
+    c("id", "label"))
+  expect_equal(
+    anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
+    "2018")
+  expect_equal(
+    anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
+    "2018")
+
+  art_section <- json$controlSections[[4]]
   expect_length(
     art_section$controlGroups[[1]]$controls[[1]]$options,
     2
@@ -273,21 +288,6 @@ test_that("can retrieve validated model options", {
   expect_equal(
     art_section$controlGroups[[1]]$controls[[1]]$options[[2]]$label,
     "No")
-
-  anc_section <- json$controlSections[[4]]
-  expect_length(
-    anc_section$controlGroups[[1]]$controls[[1]]$options,
-    8
-  )
-  expect_equal(
-    names(anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
-    c("id", "label"))
-  expect_equal(
-    anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
-    "2018")
-  expect_equal(
-    anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
-    "2018")
 
   advanced_section <- json$controlSections[[7]]
   expect_equal(advanced_section$label, "Advanced")

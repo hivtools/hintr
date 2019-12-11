@@ -46,7 +46,7 @@ Queue <- R6::R6Class(
 
     status = function(id) {
       status <- unname(self$queue$task_status(id))
-      done <- c("ERROR", "COMPLETE")
+      done <- c("ERROR", "ORPHAN", "COMPLETE")
       incomplete <- c("MISSING")
       progress <- self$queue$task_progress(id)
       if (status %in% done) {

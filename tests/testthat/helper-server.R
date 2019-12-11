@@ -46,11 +46,11 @@ hintr_server <- function(n_tries = 10, poll = 0.5, results_dir = tempdir()) {
   skip_if_not_installed("callr")
   skip_if_not_installed("httr")
 
-  queue_id <- ids::random_id()
+  queue_id <- paste0("hintr:", ids::random_id())
   port <- get_free_port()
   process <- callr::r_bg(
     function(port, queue_id, results_dir) {
-      hintr:::api(port, results_dir = results_dir)
+      hintr:::api(port = port, queue_id = queue_id, results_dir = results_dir)
     },
     args = list(port = port, queue_id = queue_id, results_dir = results_dir))
   url <- sprintf("http://localhost:%d", port)

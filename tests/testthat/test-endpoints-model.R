@@ -93,9 +93,9 @@ test_that("endpoint model run queues a model run", {
   expect_equal(filters[[4]], "age_group")
   expect_length(barchart$filters[[2]]$options, 2)
   expect_equal(barchart$filters[[2]]$options[[1]]$id, "CY2018Q3")
-  expect_equal(barchart$filters[[2]]$options[[1]]$label, "Jul-Sep 2018")
+  expect_equal(barchart$filters[[2]]$options[[1]]$label, "September 2018")
   expect_true(length(barchart$filters[[4]]$options) >= 29)
-  expect_length(barchart$indicators, 7)
+  expect_length(barchart$indicators, 10)
 
   ## Quarters are in descending order
   calendar_quarters <-
@@ -112,7 +112,8 @@ test_that("endpoint model run queues a model run", {
   })
   expect_equal(unlist(indicators),
                c("population", "prevalence", "plhiv", "art_coverage",
-                 "current_art", "incidence", "new_infections"))
+                 "current_art", "receiving_art", "incidence", "new_infections",
+                 "anc_prevalence", "anc_art_coverage"))
 
   ## Choropleth
   choropleth <- result$data$plottingMetadata$choropleth
@@ -132,9 +133,9 @@ test_that("endpoint model run queues a model run", {
   expect_equal(filters[[4]], "age_group")
   expect_length(choropleth$filters[[2]]$options, 2)
   expect_equal(choropleth$filters[[2]]$options[[1]]$id, "CY2018Q3")
-  expect_equal(choropleth$filters[[2]]$options[[1]]$label, "Jul-Sep 2018")
+  expect_equal(choropleth$filters[[2]]$options[[1]]$label, "September 2018")
   expect_true(length(choropleth$filters[[4]]$options) >= 29)
-  expect_length(choropleth$indicators, 7)
+  expect_length(choropleth$indicators, 10)
 
   ## Quarters are in descending order
   calendar_quarters <-
@@ -150,7 +151,8 @@ test_that("endpoint model run queues a model run", {
   })
   expect_equal(unlist(indicators),
                c("population", "prevalence", "plhiv", "art_coverage",
-                 "current_art", "incidence", "new_infections"))
+                 "current_art", "receiving_art", "incidence", "new_infections",
+                 "anc_prevalence", "anc_art_coverage"))
 })
 
 test_that("endpoint_run_model returns error if queueing fails", {
@@ -227,6 +229,25 @@ test_that("querying for result of missing job returns useful error", {
   expect_length(result$errors, 1)
   expect_equal(result$errors[[1]]$error, "FAILED_TO_RETRIEVE_RESULT")
   expect_equal(result$errors[[1]]$detail, "Missing some results")
+})
+
+test_that("querying for an orphan task returns sensible error", {
+  test_redis_available()
+  res <- MockPlumberResponse$new()
+  queue <- Queue$new(workers = 0)
+  model_result <- endpoint_model_result(queue)
+
+  id <- ids::random_id()
+  queue$queue$con$HSET(queue$queue$keys$task_status, id, "ORPHAN")
+
+  result <- jsonlite::parse_json(model_result(NULL, res, id))
+  expect_equal(res$status, 400)
+  expect_equal(result$status, "failure")
+  expect_length(result$data, 0)
+  expect_length(result$errors, 1)
+  expect_equal(result$errors[[1]]$error, "MODEL_RUN_FAILED")
+  expect_equal(result$errors[[1]]$detail,
+               "Worker has crashed - error details are unavailable")
 })
 
 test_that("endpoint_run_status returns error if query for status fails", {
