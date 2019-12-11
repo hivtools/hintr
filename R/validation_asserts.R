@@ -2,9 +2,9 @@ assert_column_names <- function(names, expected_names) {
   missing <- setdiff(expected_names, names)
   if (length(missing) > 0) {
     missing <- setdiff(expected_names, names)
-    t_("validation_column_names",
-       list(count = length(missing),
-            missing = paste(missing, collapse = ", ")))
+    stop(t_("validation_column_names",
+            list(count = length(missing),
+                 missing = paste(missing, collapse = ", "))))
   }
   invisible(TRUE)
 }
@@ -30,15 +30,15 @@ assert_expected_values <- function(data, column_name, expected_values, all_value
     missing_values <- setdiff(expected_values, values)
     if (length(missing_values > 0)) {
       stop(t_("validation_column_value_missing",
-              list(name = column_name, missing = missing)))
+              list(name = column_name, missing = collapse(missing_values))))
     }
   }
 
   unexpected_values <- setdiff(values, expected_values)
   if (length(unexpected_values) > 0) {
-    t_("validation_column_value_unexpected",
-       list(name = column_name,
-            unexpected = paste(unexpected_values, collapse=", ")))
+    stop(t_("validation_column_value_unexpected",
+            list(name = column_name,
+                 unexpected = paste(unexpected_values, collapse=", "))))
   }
   invisible(TRUE)
 }
