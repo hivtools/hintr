@@ -29,8 +29,8 @@ assert_expected_values <- function(data, column_name, expected_values, all_value
   if (all_values) {
     missing_values <- setdiff(expected_values, values)
     if (length(missing_values > 0)) {
-      stop(t("validation_column_value_missing",
-             list(name = column_name, missing = missing)))
+      stop(t_("validation_column_value_missing",
+              list(name = column_name, missing = missing)))
     }
   }
 
