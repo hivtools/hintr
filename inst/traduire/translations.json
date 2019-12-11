@@ -24,7 +24,7 @@
             "run_model_mock_finish": "Finished mock model",
             "inputs_pjnz_zip_mixed": "Zip contains PJNZs for mixed countries, got {{countries}}",
             "inputs_pjnz_zip_region0": "Zip contains {{count}} PJNZ files with spectrum region code 0. Should be max 1 PJNZ with spectrum region code 0 got:\n{{err}}",
-            "validation_column_names": "Data missing {{count}} column {{missing}}",
+            "validation_column_names": "Data missing column {{missing}}",
             "validation_column_names_plural": "Data missing {{count}} columns {{missing}}",
             "validation_column_required": "Data does not contain required column: {{name}}",
             "validation_column_value_missing": "Column {{name}} is missing required values: {{missing}}",
