@@ -3,16 +3,16 @@ do_validate_pjnz <- function(pjnz) {
   pjnz_paths <- get_pjnz_paths(pjnz)
   countries <- lapply(pjnz_paths, read_country)
   if (length(unique(countries)) != 1) {
-    stop(sprintf("Zip contains PJNZs for mixed countries, got %s",
-                 collapse(unique(countries))))
+    stop(t_("inputs_pjnz_zip_mixed",
+            list(countries = collapse(unique(countries)))))
   }
   pjnz_spectrum_region_codes <-
     vapply(pjnz_paths, naomi::read_spectrum_region_code, numeric(1))
   zero_codes <- pjnz_spectrum_region_codes == 0
   if (length(which(zero_codes)) > 1) {
-    stop(sprintf(
-      "Zip contains %s PJNZ files with spectrum region code 0. Should be max 1 PJNZ with spectrum region code 0 got:\n%s",
-      length(which(zero_codes)), collapse(basename(names(zero_codes)))))
+    stop(t_("inputs_pjnz_zip_region0",
+            list(count = length(which(zero_codes)),
+                 err = collapse(basename(names(zero_codes))))))
   }
   list(
     data = list(country = scalar(countries[[1]]),

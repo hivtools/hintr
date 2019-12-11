@@ -4,12 +4,12 @@ run_model <- function(data, options, path_results, path_prerun = NULL) {
       list(
         started = TRUE,
         complete = FALSE,
-        name = "Started mock model"
+        name = t_("run_model_mock_start")
       ),
       list(
         started = FALSE,
         complete = FALSE,
-        name = "Finished mock model"
+        name = t_("run_model_mock_finish")
       )
     )
 
@@ -20,12 +20,12 @@ run_model <- function(data, options, path_results, path_prerun = NULL) {
       list(
         started = TRUE,
         complete = TRUE,
-        name = "Started mock model"
+        name = t_("run_model_mock_start")
       ),
       list(
         started = TRUE,
         complete = FALSE,
-        name = "Finished mock model"
+        name = t_("run_model_mock_finish")
       )
     )
     signalCondition(structure(list(message = progress_complete),

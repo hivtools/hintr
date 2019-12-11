@@ -7,7 +7,7 @@ get_pjnz_paths <- function(zip) {
     are_pjnz <- lapply(pjnz_paths, is_pjnz)
     if (!all(unlist(are_pjnz))) {
       not_pjnz <- list.files(unzip_dir)[!unlist(are_pjnz)]
-      stop(sprintf("Zip contains non PJNZ files: \n%s", collapse(not_pjnz)))
+      stop(t_("pjnz_invalid_zip", list(not_pjnz = collapse(not_pjnz))))
     }
   } else {
     pjnz_paths <- zip$path

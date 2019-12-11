@@ -55,7 +55,7 @@ endpoint_model_submit <- function(queue) {
   function(req, res, data, options, version) {
     model_submit <- function() {
       if (!is_current_version(version)) {
-        stop("Trying to run model with old version of options. Update model run options")
+        stop(t_("model_submit_old"))
       }
       queue$submit(data, options)
     }
@@ -104,7 +104,7 @@ endpoint_model_result <- function(queue) {
       res$status <- 400
     } else if (!response$success) {
       if (queue$queue$task_status(id) == "ORPHAN") {
-        error <- "Worker has crashed - error details are unavailable"
+        error <- t_("model_result_crash")
         response$errors <- hintr_errors(list("MODEL_RUN_FAILED" = error))
         response$value <- NULL
       } else {
@@ -447,8 +447,8 @@ serializer_zip <- function(filename) {
 
 hintr_404_handler <- function(req, res) {
   res$status <- 404L
-  detail <- sprintf("%s %s is not a valid hintr path",
-                    req$REQUEST_METHOD, req$PATH_INFO)
+  detail <- t_("error_404",
+               list(verb = req$REQUEST_METHOD, path = req$PATH_INFO))
   errors <- hintr_errors(list("NOT_FOUND" = detail))
   value <- list(success = FALSE,
                 errors = errors)
@@ -464,13 +464,13 @@ hintr_404_handler <- function(req, res) {
 hintr_error_handler <- function(req, res, error) {
   res$status <- 500L
   if (is.null(error$call)) {
-    call <- "<call missing>"
+    call <- t_("error_call_missing")
   } else {
     call <- paste(deparse(error$call), collapse = " ")
   }
-  detail <- sprintf(
-    "Unexpected server error in '%s' : '%s' while doing '%s %s'",
-    call, error$message, req$REQUEST_METHOD, req$PATH_INFO)
+  detail <- t_("error_500",
+               list(call = call, message = error$message,
+                    verb = req$REQUEST_METHOD, path = req$PATH_INFO))
   api_log(sprintf("ERROR: %s", detail))
   errors <- hintr_errors(list("SERVER_ERROR" = detail))
   # This seems at odds with the default handler present in the plumber
