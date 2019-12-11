@@ -247,7 +247,8 @@ get_region_filters <- function(json) {
       if (expected_type == "double") {
         expected_type <- "numeric"
       }
-      stop(t_("filters_incorrect_type", list(name = name, type = type)))
+      stop(t_("filters_incorrect_type",
+              list(name = name, type = expected_type)))
     })
   }
   hierarchy_table <- data_frame(Map(extract, names(cols), cols))
