@@ -199,10 +199,10 @@ assert_single_country.data.frame <- function(data, type) {
 
 assert_single_country.character <- function(data, type) {
   if (length(unique(data)) == 0) {
-    stop(t_("validate_single_country_no_regions",
+    stop(t_("validation_single_country_no_regions",
             list(type = to_upper_first(type))))
   } else if (length(unique(data)) != 1) {
-    stop(t_("validate_single_country_mutiple",
+    stop(t_("validation_single_country_mutiple",
             list(type = to_upper_first(type),
                  countries = toString(unique(data)))))
   }
@@ -218,7 +218,7 @@ assert_region_codes_valid <- function(json) {
   contains_property <- features_contain_property(json, "spectrum_region_code")
   missing_count <- sum(!contains_property)
   if (missing_count > 1) {
-    stop(t_("validate_region_codes_valid", list(count = missing_count)))
+    stop(t_("validation_region_codes_valid", list(count = missing_count)))
   }
   invisible(TRUE)
 }
@@ -233,7 +233,7 @@ assert_property_exists <- function(property, json) {
   contains_property <- features_contain_property(json, property)
   if (!all(contains_property)) {
     missing_count <- sum(!contains_property)
-    stop(t_("validate_property_exists",
+    stop(t_("validation_property_exists",
             list(property = property, count = missing_count)))
   }
   invisible(TRUE)
@@ -242,7 +242,7 @@ assert_property_exists <- function(property, json) {
 assert_consistent_country <- function(country_x, source_x, country_y, source_y) {
   if (!is.null(country_x) && !is.null(country_y) &&
       tolower(country_x) != tolower(country_y)) {
-    stop(t_("validate_consistent_country",
+    stop(t_("validation_consistent_country",
             list(country_x = country_x, source_x = source_x,
                  country_y = country_y, source_y = source_y)))
   }
@@ -254,7 +254,7 @@ assert_consistent_regions <- function(shape_regions, test_regions, test_source) 
   ## regions being tested
   if (!is_superset(shape_regions, test_regions)) {
     missing_regions <- setdiff(test_regions, shape_regions)
-    stop(t_("validate_consistent_region",
+    stop(t_("validation_consistent_region",
             list(source = test_source,
                  count = length(missing_regions),
                  missing = collapse(missing_regions))))
@@ -276,11 +276,11 @@ assert_consistent_region_codes <- function(pjnz_codes, shape_codes) {
       pjnz_missing_codes = collapse(missing_code_from_pjnz),
       shape_missing_codes = collapse(missing_code_from_shape)
     )
-    msg <- paste(t_("validate_consistent_region_codes1"),
-                 t_("validate_consistent_region_codes2",
+    msg <- paste(t_("validation_consistent_region_codes1"),
+                 t_("validation_consistent_region_codes2",
                     list(count = length(missing_code_from_shape),
                          missing = collapse(missing_code_from_shape))),
-                 t_("validate_consistent_region_codes3",
+                 t_("validation_consistent_region_codes3",
                     list(count = length(missing_code_from_pjnz),
                          missing = collapse(missing_code_from_pjnz))),
                  sep = "\n")
@@ -304,7 +304,7 @@ assert_file_exists <- function(file) {
 assert_file_extension <- function(file_path, types) {
   extension <- tools::file_ext(file_path)
   if (!any(tolower(extension) %in% tolower(types))) {
-    stop(t_("validate_file_extension",
+    stop(t_("validation_file_extension",
             list(expected = collapse(types), got = extension)))
   }
   invisible(TRUE)
