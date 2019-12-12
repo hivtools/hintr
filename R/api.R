@@ -101,14 +101,18 @@ api_log <- function(msg) {
 api_set_language <- function(data, req, res) {
   if ("accept-language" %in% names(req$HEADERS)) {
     language <- req$HEADERS[["accept-language"]]
-    data$reset_language <- traduire::translator_set_language(language)
+    data$reset_language <- TRUE
+    data$reset_language_hintr <- traduire::translator_set_language(language)
+    data$reset_language_naomi <-
+      traduire::translator_set_language(language, package = "naomi")
   }
   invisible(NULL)
 }
 
 api_reset_language <- function(data, req, res, value) {
-  if (!is.null(data$reset_language)) {
-    data$reset_language()
+  if (isTRUE(data$reset_language)) {
+    data$reset_language_hintr()
+    data$reset_language_naomi()
   }
   value
 }
