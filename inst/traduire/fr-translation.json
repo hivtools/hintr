@@ -57,5 +57,6 @@
     "QUEUE_CACHE": "Création d'un cache",
     "QUEUE_STOPPING_WORKERS": "Arrêt des processus de travail",
     "QUEUE_ID_NOT_SET": "Variable d'environnement 'HINTR_QUEUE_ID' n'est pas définie",
+    "QUEUE_RESULT_MISSING": "Echec de la récupération du résultat",
     "METADATA_BUILD_INDICATOR": "Attendu seulement 1 ligne pour l'indicateur, le type de données, et la combinaison de type de graphique. Vérifiez que chaque combinaison est unique dans votre configuration"
 }

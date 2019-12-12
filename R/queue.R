@@ -71,7 +71,15 @@ Queue <- R6::R6Class(
     },
 
     result = function(id) {
-      self$queue$task_result(id)
+      ## NOTE: this is not completely ideal because we don't know
+      ## *why* this error is being thrown here. It is almost certainly
+      ## because the result is just not there but it's also possible
+      ## that it is a communication error with the server.
+      tryCatch(
+        self$queue$task_result(id),
+        error = function(e) {
+          stop(t_("QUEUE_RESULT_MISSING"))
+        })
     },
 
     remove = function(id) {

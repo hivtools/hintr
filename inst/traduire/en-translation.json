@@ -57,5 +57,6 @@
     "QUEUE_CACHE": "Creating cache",
     "QUEUE_STOPPING_WORKERS": "Stopping workers",
     "QUEUE_ID_NOT_SET": "Environment variable 'HINTR_QUEUE_ID' is not set",
+    "QUEUE_RESULT_MISSING": "Failed to fetch result",
     "METADATA_BUILD_INDICATOR": "Expected only 1 row for indicator, data type, plot type combination.\nCheck each combination is unique in configuration."
 }

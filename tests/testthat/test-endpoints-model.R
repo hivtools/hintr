@@ -228,7 +228,7 @@ test_that("querying for result of missing job returns useful error", {
   expect_length(result$data, 0)
   expect_length(result$errors, 1)
   expect_equal(result$errors[[1]]$error, "FAILED_TO_RETRIEVE_RESULT")
-  expect_equal(result$errors[[1]]$detail, "Missing some results")
+  expect_equal(result$errors[[1]]$detail, "Failed to fetch result")
 })
 
 test_that("querying for an orphan task returns sensible error", {
@@ -315,7 +315,7 @@ test_that("querying for result of incomplete jobs returns useful error", {
   expect_length(result$data, 0)
   expect_length(result$errors, 1)
   expect_equal(result$errors[[1]]$error, "FAILED_TO_RETRIEVE_RESULT")
-  expect_equal(result$errors[[1]]$detail, "Missing some results")
+  expect_equal(result$errors[[1]]$detail, "Failed to fetch result")
 })
 
 test_that("erroring model run returns useful messages", {
