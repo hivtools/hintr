@@ -55,7 +55,7 @@ endpoint_model_submit <- function(queue) {
   function(req, res, data, options, version) {
     model_submit <- function() {
       if (!is_current_version(version)) {
-        stop(t_("model_submit_old"))
+        stop(t_("MODEL_SUBMIT_OLD"))
       }
       queue$submit(data, options)
     }
@@ -104,7 +104,7 @@ endpoint_model_result <- function(queue) {
       res$status <- 400
     } else if (!response$success) {
       if (queue$queue$task_status(id) == "ORPHAN") {
-        error <- t_("model_result_crash")
+        error <- t_("MODEL_RESULT_CRASH")
         response$errors <- hintr_errors(list("MODEL_RUN_FAILED" = error))
         response$value <- NULL
       } else {
@@ -386,7 +386,7 @@ endpoint_hintr_stop <- function(queue) {
 }
 
 endpoint_root <- function() {
-  scalar(t_("welcome"))
+  scalar(t_("WELCOME"))
 }
 
 prepare_status_response <- function(value, id) {
@@ -447,7 +447,7 @@ serializer_zip <- function(filename) {
 
 hintr_404_handler <- function(req, res) {
   res$status <- 404L
-  detail <- t_("error_404",
+  detail <- t_("ERROR_404",
                list(verb = req$REQUEST_METHOD, path = req$PATH_INFO))
   errors <- hintr_errors(list("NOT_FOUND" = detail))
   value <- list(success = FALSE,
@@ -464,11 +464,11 @@ hintr_404_handler <- function(req, res) {
 hintr_error_handler <- function(req, res, error) {
   res$status <- 500L
   if (is.null(error$call)) {
-    call <- t_("error_call_missing")
+    call <- t_("ERROR_CALL_MISSING")
   } else {
     call <- paste(deparse(error$call), collapse = " ")
   }
-  detail <- t_("error_500",
+  detail <- t_("ERROR_500",
                list(call = call, message = error$message,
                     verb = req$REQUEST_METHOD, path = req$PATH_INFO))
   api_log(sprintf("ERROR: %s", detail))

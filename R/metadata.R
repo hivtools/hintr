@@ -16,7 +16,7 @@ build_plot_type_metadata <- function(metadata) {
 
 build_indicator_metadata <- function(metadata) {
   if (nrow(metadata) != 1) {
-    stop(t_("metadata_build_indicator"))
+    stop(t_("METADATA_BUILD_INDICATOR"))
   }
   list(
     indicator = scalar(metadata$indicator),
