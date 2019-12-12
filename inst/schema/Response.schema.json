@@ -6,7 +6,7 @@
       "enum": [ "success", "failure" ]
     },
     "data": {
-      "type": "object"
+      "type": ["object", "null"]
     },
     "errors": {
       "type": "array",
