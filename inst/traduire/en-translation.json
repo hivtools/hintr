@@ -50,7 +50,6 @@
     "VALIDATION_CONSISTENT_REGION_CODES2_PLURAL": "{{count}} codes in PJNZ missing from shape file: {{missing}}",
     "VALIDATION_CONSISTENT_REGION_CODES3": "{{count}} code in shape file missing from PJNZ: {{missing}}",
     "VALIDATION_CONSISTENT_REGION_CODES3_PLURAL": "{{count}} codes in shape file missing from PJNZ: {{missing}}",
-    "VALIDATION_CONSISTENT_REGION_CODES": "Different spectrum region codes in PJNZ and shape file.\n{{shape_no_missing}} {{shape_code_text}} in PJNZ missing from shape file: {{shape_missing_codes}}\n{{pjnz_no_missing}} {{pjnz_code_text}} in shape file missing from PJNZ: {{pjnz_missing_codes}}",
     "VALIDATION_FILE_EXISTS": "File at path {{- path}} does not exist. Create it, or fix the path.",
     "VALIDATION_FILE_EXTENSION": "File must be of type {{expected}}, got type {{got}}.",
     "QUEUE_CONNECTING": "Connecting to redis at {{redis}}",
