@@ -2,5 +2,6 @@
     "welcome": "Bienvenue à hintr",
     "invalid_country": "Payes invalide",
     "invalid_iso3": "Ce n'est pas possible à lire le payes de données de type {{type}}",
-    "invalid_regions": "Ce n'est pas possible à lire des regions de données de type {{type}}"
+    "invalid_regions": "Ce n'est pas possible à lire des regions de données de type {{type}}",
+    "validation_file_exists": "Le fichier sur le chemin {{- path}} n'existe pas. Créez-le ou corrigez le chemin."
 }
