@@ -1,6 +1,6 @@
 {
-    "welcome": "Bienvenue à hintr",
-    "invalid_country": "Payes invalide",
-    "invalid_iso3": "Ce n'est pas possible à lire le payes de données de type {{type}}",
-    "invalid_regions": "Ce n'est pas possible à lire des regions de données de type {{type}}"
+    "WELCOME": "Bienvenue à hintr",
+    "INVALID_COUNTRY": "Payes invalide",
+    "INVALID_ISO3": "Ce n'est pas possible à lire le payes de données de type {{type}}",
+    "INVALID_REGIONS": "Ce n'est pas possible à lire des regions de données de type {{type}}"
 }

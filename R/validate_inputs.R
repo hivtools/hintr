@@ -3,14 +3,14 @@ do_validate_pjnz <- function(pjnz) {
   pjnz_paths <- get_pjnz_paths(pjnz)
   countries <- lapply(pjnz_paths, read_country)
   if (length(unique(countries)) != 1) {
-    stop(t_("inputs_pjnz_zip_mixed",
+    stop(t_("INPUTS_PJNZ_ZIP_MIXED",
             list(countries = collapse(unique(countries)))))
   }
   pjnz_spectrum_region_codes <-
     vapply(pjnz_paths, naomi::read_spectrum_region_code, numeric(1))
   zero_codes <- pjnz_spectrum_region_codes == 0
   if (length(which(zero_codes)) > 1) {
-    stop(t_("inputs_pjnz_zip_region0",
+    stop(t_("INPUTS_PJNZ_ZIP_REGION0",
             list(count = length(which(zero_codes)),
                  err = collapse(basename(names(zero_codes))))))
   }
@@ -25,7 +25,7 @@ read_iso3 <- function(file, type) {
   func <- switch(type,
     "pjnz" = read_pjnz_iso3,
     "shape" = read_geojson_iso3,
-    stop(t_("invalid_iso3", data = list(type = type))))
+    stop(t_("INVALID_ISO3", data = list(type = type))))
   func(file)
 }
 
@@ -36,7 +36,7 @@ read_regions <- function(file, type) {
     "programme" = read_csv_regions,
     "anc" = read_csv_regions,
     "survey" = read_csv_regions,
-    stop(t_("invalid_regions", data = list(type = type))))
+    stop(t_("INVALID_REGIONS", data = list(type = type))))
   func(file)
 }
 
