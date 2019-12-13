@@ -16,8 +16,7 @@ build_plot_type_metadata <- function(metadata) {
 
 build_indicator_metadata <- function(metadata) {
   if (nrow(metadata) != 1) {
-    stop("Expected only 1 row for indicator, data type, plot type combination.
-Check each combination is unique in configuration.")
+    stop(t_("METADATA_BUILD_INDICATOR"))
   }
   list(
     indicator = scalar(metadata$indicator),

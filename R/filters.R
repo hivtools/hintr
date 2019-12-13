@@ -27,8 +27,7 @@ get_age_labels <- function(age_group) {
   groups <- age_groups$age_group %in% age_group
   missing_ids <- setdiff(age_group, age_groups$age_group)
   if (length(missing_ids) > 0) {
-    stop(sprintf("Age groups metadata contains 0 rows for age_group %s. Speak to administrator.",
-                 collapse(missing_ids)))
+    stop(t_("FILTERS_MISSING_AGE_GROUP", list(group = collapse(missing_ids))))
   }
   age_groups[groups,
              c("age_group", "age_group_label", "age_group_sort_order")]
@@ -49,7 +48,7 @@ get_indicator_filters <- function(data, type) {
     "anc" = read_wide_indicator_filters,
     "programme" = read_wide_indicator_filters,
     "survey" = read_long_indicator_filters,
-    stop(sprintf("Can't get indicator filters for data type %s.", type)))
+    stop(t_("FILTERS_CANT_GET_INDICATOR", list(type = type))))
   get_filters(data, type)
 }
 
@@ -169,7 +168,7 @@ get_selected_filter_options <- function(output_filters, filter_type, ids = NULL)
     }
   }
   if (is.null(options)) {
-    stop(sprintf("Found no matching filters for type %s", filter_type))
+    stop(t_("FILTERS_NO_MATCHING", list(type = filter_type)))
   }
   if (!is.null(ids)) {
     keep_option <- vapply(options, function(option) {
@@ -219,7 +218,7 @@ get_indicator_display_name <- function(indicator_id) {
   metadata <- naomi::get_metadata()
   display_name <- metadata[metadata$indicator == indicator_id, "name"]
   if (length(unique(display_name)) != 1) {
-    stop(sprintf("Failed to get display name for hint ID %s.", indicator_id))
+    stop(t_("FILTERS_NO_DISPLAY_NAME", list(id = indicator_id)))
   }
   display_name[[1]]
 }
@@ -248,8 +247,8 @@ get_region_filters <- function(json) {
       if (expected_type == "double") {
         expected_type <- "numeric"
       }
-      stop(sprintf("Property %s is incorrect type, should be %s.", name,
-                   expected_type))
+      stop(t_("FILTERS_INCORRECT_TYPE",
+              list(name = name, type = expected_type)))
     })
   }
   hierarchy_table <- data_frame(Map(extract, names(cols), cols))
@@ -274,8 +273,7 @@ construct_tree <- function(data, id_column = 1, parent_id_column = 2,
                            sort_order_column = 3) {
   root_node <- is.na(data[, parent_id_column])
   if (sum(root_node) != 1) {
-    stop(sprintf("Got %s root nodes - tree must have 1 root.",
-                 sum(root_node)))
+    stop(t_("FILTERS_INCORRECT_TREE", list(n = sum(root_node))))
   }
   build_immediate_children <- function(current_node_id) {
     current_node <- data[, id_column] == current_node_id
@@ -306,7 +304,7 @@ get_hint_id <- function(naomi_id) {
     hint_id <- metadata[metadata$indicator_value ==
                           as.character(naomi_id), "indicator"]
   } else {
-    stop(sprintf("Failed to locate hint ID from naomi_id %s.", naomi_id))
+    stop(t_("FILTERS_CANT_GET_HINT_ID", list(id = naomi_id)))
   }
   hint_id[[1]]
 }

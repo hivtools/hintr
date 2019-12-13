@@ -15,9 +15,9 @@ get_indicator_data <- function(file, type, indicator) {
   type_metadata <- metadata[
     metadata$data_type == type & metadata$indicator == indicator, ]
   if (nrow(type_metadata) != 1) {
-    stop(sprintf(
-      "Found %s rows in metadata for data type %s and indicator %s. Should be exactly one.",
-      nrow(type_metadata), type, indicator))
+    stop(t_("INDICATORS_ROW_ERROR",
+            list(nrow = nrow(type_metadata), type = type,
+                 indicator = indicator)))
   }
   data <- read_csv(file$path)
   if (!is.null(type_metadata$indicator_column) && !identical(type_metadata$indicator_column, "")) {
