@@ -690,3 +690,39 @@ test_that("crashed worker can be detected", {
                "Worker has crashed - error details are unavailable")
   expect_is(dat$errors[[1]]$key, "character")
 })
+
+test_that("model run can be cancelled", {
+  test_mock_model_available()
+  payload <- setup_submit_payload()
+  server <- hintr_server()
+
+  ## Submit a model run
+  r <- httr::POST(paste0(server$url, "/model/submit"),
+                  body = httr::upload_file(payload),
+                  encode = "json")
+  expect_equal(httr::status_code(r), 200)
+  id <- response_from_json(r)$data$id
+
+  r <- httr::POST(paste0(server$url, "/model/cancel/", id))
+  expect_equal(httr::status_code(r), 200)
+  dat <- response_from_json(r)
+  expect_equal(dat$status, "success")
+  expect_null(dat$data)
+
+  r <- httr::GET(paste0(server$url, "/model/status/", id))
+  expect_equal(httr::status_code(r), 200)
+  dat <- response_from_json(r)
+  expect_equal(dat$status, "success")
+  expect_true(dat$data$done)
+  expect_equal(dat$data$status, "INTERRUPTED")
+  expect_false(dat$data$success)
+
+  r <- httr::GET(paste0(server$url, "/model/result/", id))
+  expect_equal(httr::status_code(r), 400)
+  dat <- response_from_json(r)
+  expect_equal(dat$status, "failure")
+  expect_equal(dat$errors[[1]]$error,
+               "MODEL_RUN_FAILED")
+  expect_equal(dat$errors[[1]]$detail,
+               "Model run was interrupted by user")
+})

@@ -94,26 +94,29 @@ endpoint_model_status <- function(queue) {
 
 endpoint_model_result <- function(queue) {
   function(req, res, id) {
-    response <- with_success(queue$result(id))
-    if (is_error(response$value)) {
-      response$success <- FALSE
-      error <- structure(response$value$message,
-                         trace = response$value$trace)
-      response$errors <- hintr_errors(list("MODEL_RUN_FAILED" = error))
-      response$value <- NULL
+    error <- function(...) {
       res$status <- 400
-    } else if (!response$success) {
-      if (queue$queue$task_status(id) == "ORPHAN") {
-        error <- t_("MODEL_RESULT_CRASH")
-        response$errors <- hintr_errors(list("MODEL_RUN_FAILED" = error))
-        response$value <- NULL
-      } else {
-        response$errors <- hintr_errors(
-          list("FAILED_TO_RETRIEVE_RESULT" = response$message))
-      }
-      res$status <- 400
+      list(
+        success = FALSE,
+        errors = hintr_errors(list(...)),
+        value = NULL)
+    }
+    task_status <- queue$queue$task_status(id)
+    if (task_status == "ORPHAN") {
+      response <- error("MODEL_RUN_FAILED" = t_("MODEL_RESULT_CRASH"))
+    } else if (task_status == "INTERRUPTED") {
+      response <- error("MODEL_RUN_FAILED" = t_("MODEL_RESULT_INTERRUPTED"))
+    } else if (task_status == "MISSING") {
+      response <- error("MODEL_RUN_FAILED" = t_("MODEL_RESULT_MISSING"))
     } else {
-      response$value <- process_result(response$value)
+      response <- with_success(queue$result(id))
+      if (is_error(response$value)) {
+        error_data <- structure(response$value$message,
+                                trace = response$value$trace)
+        response <- error("MODEL_RUN_FAILED" = error_data)
+      } else {
+        response$value <- process_result(response$value)
+      }
     }
     hintr_response(response, "ModelResultResponse")
   }
