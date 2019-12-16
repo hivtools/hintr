@@ -111,12 +111,9 @@ test_that("error thrown if more than 1 country with a 0 spectrum region code", {
                "Zip contains 10 PJNZ files with spectrum region code 0. Should be max 1 PJNZ with spectrum region code 0 got:\n.*")
 })
 
+gc()
+
 test_that("endpoint_validate_baseline support shape file", {
-  ## TODO: This is a complete mystery, and there is no obvious reason
-  ## why it should be failing.  Getting debug information out is
-  ## proving problematic.  We should come back and pick this up later
-  ## though (mrc-1167)
-  skip_on_travis()
   shape <- file.path("testdata", "malawi.geojson")
   res <- MockPlumberResponse$new()
   file <- list(path = shape, hash = "12345", filename = "original")
