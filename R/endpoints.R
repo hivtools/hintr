@@ -102,22 +102,21 @@ endpoint_model_result <- function(queue) {
         value = NULL)
     }
     task_status <- queue$queue$task_status(id)
-    if (task_status == "ORPHAN") {
+
+    if (task_status == "COMPLETE") {
+      response <- list(success = TRUE, value = queue$result(id))
+    } else if (task_status == "ERROR") {
+      result <- queue$result(id)
+      error_data <- structure(result$message, trace = result$trace)
+      response <- error(MODEL_RUN_FAILED = error_data)
+    } else if (task_status == "ORPHAN") {
       response <- error(MODEL_RUN_FAILED = t_("MODEL_RESULT_CRASH"))
     } else if (task_status == "INTERRUPTED") {
       response <- error(MODEL_RUN_FAILED = t_("MODEL_RESULT_INTERRUPTED"))
-    } else if (task_status == "MISSING") {
-      response <- error(FAILED_TO_RETRIEVE_RESULT = t_("MODEL_RESULT_MISSING"))
-    } else {
-      response <- with_success(queue$result(id))
-      if (is_error(response$value)) {
-        error_data <- structure(response$value$message,
-                                trace = response$value$trace)
-        response <- error(MODEL_RUN_FAILED = error_data)
-      } else {
-        response$value <- process_result(response$value)
-      }
+    } else { # ~= MISSING, PENDING, RUNNING
+      response = error(FAILED_TO_RETRIEVE_RESULT = t_("MODEL_RESULT_MISSING"))
     }
+
     hintr_response(response, "ModelResultResponse")
   }
 }
