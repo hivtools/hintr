@@ -104,7 +104,8 @@ endpoint_model_result <- function(queue) {
     task_status <- queue$queue$task_status(id)
 
     if (task_status == "COMPLETE") {
-      response <- list(success = TRUE, value = queue$result(id))
+      response <- list(success = TRUE,
+                       value = process_result(queue$result(id)))
     } else if (task_status == "ERROR") {
       result <- queue$result(id)
       error_data <- structure(result$message, trace = result$trace)
