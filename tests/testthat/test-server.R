@@ -724,5 +724,5 @@ test_that("model run can be cancelled", {
   expect_equal(dat$errors[[1]]$error,
                "MODEL_RUN_FAILED")
   expect_equal(dat$errors[[1]]$detail,
-               "Model run was interrupted by user")
+               "Model run was cancelled by user")
 })

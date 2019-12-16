@@ -460,7 +460,7 @@ test_that("model run can be cancelled", {
   expect_equal(response$status, "failure")
   expect_equal(response$errors[[1]]$error, "MODEL_RUN_FAILED")
   expect_equal(response$errors[[1]]$detail,
-               "Model run was interrupted by user")
+               "Model run was cancelled by user")
 })
 
 test_that("failed cancel sends reasonable message", {
