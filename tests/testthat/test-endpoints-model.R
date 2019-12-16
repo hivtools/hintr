@@ -439,9 +439,12 @@ test_that("model run can be cancelled", {
   expect_equal(jsonlite::parse_json(response),
                list(status = "success", errors = list(), data = NULL))
 
-  log <- queue$queue$worker_log_tail(worker, n = Inf)
-  expect_true("INTERRUPT" %in% log$command)
-  expect_equal(queue$queue$task_status(id), setNames("INTERRUPTED", id))
+  testthat::try_again(5, {
+    Sys.sleep(1)
+    log <- queue$queue$worker_log_tail(worker, n = Inf)
+    expect_true("INTERRUPT" %in% log$command)
+    expect_equal(queue$queue$task_status(id), setNames("INTERRUPTED", id))
+  })
 
   res <- MockPlumberResponse$new()
   response <- jsonlite::parse_json(model_status(list(), res, id))
