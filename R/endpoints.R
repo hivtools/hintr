@@ -122,20 +122,6 @@ endpoint_model_result <- function(queue) {
   }
 }
 
-endpoint_model_cancel <- function(queue) {
-  function(req, res, id) {
-    response <- with_success(queue$cancel(id))
-    if (!response$success) {
-      response$errors <- hintr_errors(
-        list("FAILED_TO_CANCEL" = response$message))
-      res$status <- 400
-    } else {
-      response$value <- scalar(NA)
-    }
-    hintr_response(response, "ModelCancelResponse")
-  }
-}
-
 is_error <- function(x) {
   inherits(x, "error")
 }
@@ -207,6 +193,19 @@ endpoint_validate_survey_programme <- function(req, res, type, file, shape) {
   hintr_response(response, "ValidateInputResponse")
 }
 
+endpoint_model_cancel <- function(queue) {
+  function(req, res, id) {
+    response <- with_success(queue$cancel(id))
+    if (!response$success) {
+      response$errors <- hintr_errors(
+        list("FAILED_TO_CANCEL" = response$message))
+      res$status <- 400
+    } else {
+      response$value <- scalar(NA)
+    }
+    hintr_response(response, "ModelCancelResponse")
+  }
+}
 
 input_response <- function(value, type, file) {
   ret <- list(hash = scalar(file$hash),
