@@ -5,7 +5,7 @@
     "INVALID_REGIONS": "Can't read regions from data of type {{type}}",
     "MODEL_SUBMIT_OLD": "Trying to run model with old version of options. Update model run options",
     "MODEL_RESULT_CRASH": "Worker has crashed - error details are unavailable",
-    "MODEL_RESULT_INTERRUPTED": "Model run was interrupted by user",
+    "MODEL_RESULT_CANCELLED": "Model run was cancelled by user",
     "MODEL_RESULT_MISSING": "Failed to fetch result",
     "ERROR_404": "{{verb}} {{- path}} is not a valid hintr path",
     "ERROR_500": "Unexpected server error in '{{- call}}' : '{{message}}' while doing '{{verb}} {{- path}}'",

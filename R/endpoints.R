@@ -113,7 +113,7 @@ endpoint_model_result <- function(queue) {
     } else if (task_status == "ORPHAN") {
       response <- error(MODEL_RUN_FAILED = t_("MODEL_RESULT_CRASH"))
     } else if (task_status == "INTERRUPTED") {
-      response <- error(MODEL_RUN_FAILED = t_("MODEL_RESULT_INTERRUPTED"))
+      response <- error(MODEL_RUN_FAILED = t_("MODEL_RESULT_CANCELLED"))
     } else { # ~= MISSING, PENDING, RUNNING
       response = error(FAILED_TO_RETRIEVE_RESULT = t_("MODEL_RESULT_MISSING"))
     }

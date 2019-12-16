@@ -5,7 +5,7 @@
     "INVALID_REGIONS": "Ce n'est pas possible à lire des regions de données de type {{type}}",
     "MODEL_SUBMIT_OLD": "Vous essayez à exécuter un modèle avec une ancienne version des options. Mettez à jour les options",
     "MODEL_RESULT_CRASH": "Le processus de travail s'est écrasé - détails de l'erreur ne sont pas disponibles",
-    "MODEL_RESULT_INTERRUPTED": "Le modèle a été interrompu par le utilisateur",
+    "MODEL_RESULT_CANCELLED": "Le modèle a été annulé par le utilisateur",
     "MODEL_RESULT_MISSING": "Echec de la récupération du résultat",
     "ERROR_404": "{{verb}} {{- path}} n'est pas un n'est pas un chemin hintr valide",
     "ERROR_500": "erreur de serveur inattendue dans '{{- call}}' : '{{message}}' en faisant '{{verb}} {{- path}}'",
