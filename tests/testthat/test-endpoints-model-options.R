@@ -1,5 +1,7 @@
 context("endpoints-model-options")
 
+gc()
+
 test_that("endpoint_model_options returns model options", {
   res <- MockPlumberResponse$new()
   shape <- file.path("testdata", "malawi.geojson")
