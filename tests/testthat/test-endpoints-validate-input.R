@@ -111,6 +111,9 @@ test_that("error thrown if more than 1 country with a 0 spectrum region code", {
                "Zip contains 10 PJNZ files with spectrum region code 0. Should be max 1 PJNZ with spectrum region code 0 got:\n.*")
 })
 
+## Forcing gc now prevents travis test failure (mrc-1265 for details)
+gc()
+
 test_that("endpoint_validate_baseline support shape file", {
   shape <- file.path("testdata", "malawi.geojson")
   res <- MockPlumberResponse$new()

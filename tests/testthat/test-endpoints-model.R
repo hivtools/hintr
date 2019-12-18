@@ -228,7 +228,7 @@ test_that("querying for result of missing job returns useful error", {
   expect_length(result$data, 0)
   expect_length(result$errors, 1)
   expect_equal(result$errors[[1]]$error, "FAILED_TO_RETRIEVE_RESULT")
-  expect_equal(result$errors[[1]]$detail, "Missing some results")
+  expect_equal(result$errors[[1]]$detail, "Failed to fetch result")
 })
 
 test_that("querying for an orphan task returns sensible error", {
@@ -315,7 +315,7 @@ test_that("querying for result of incomplete jobs returns useful error", {
   expect_length(result$data, 0)
   expect_length(result$errors, 1)
   expect_equal(result$errors[[1]]$error, "FAILED_TO_RETRIEVE_RESULT")
-  expect_equal(result$errors[[1]]$detail, "Missing some results")
+  expect_equal(result$errors[[1]]$detail, "Failed to fetch result")
 })
 
 test_that("erroring model run returns useful messages", {
@@ -390,4 +390,98 @@ test_that("running model with old version throws an error", {
   expect_equal(response$errors[[1]]$detail,
                "Trying to run model with old version of options. Update model run options")
   expect_length(response$data, 0)
+})
+
+test_that("model run can be cancelled", {
+  test_redis_available()
+  test_mock_model_available()
+  ## Create request data
+  data <- list(
+    pjnz = "path/to/pjnz",
+    shape = "path",
+    population = "path",
+    survey = "path",
+    programme = "path",
+    anc = "path"
+  )
+  options = list()
+  req <- list(postBody = '
+              {
+              "data": {
+              "pjnz": "path/to/file",
+              "shape": "path/to/file",
+              "population": "path/to/file",
+              "survey": "path/to/file",
+              "programme": "path/to/file",
+              "anc": "path/to/file"
+              },
+              "options": {}
+              }')
+
+  queue <- Queue$new()
+
+  model_submit <- endpoint_model_submit(queue)
+  model_cancel <- endpoint_model_cancel(queue)
+  model_status <- endpoint_model_status(queue)
+  model_result <- endpoint_model_result(queue)
+
+  res <- MockPlumberResponse$new()
+  response <- model_submit(req, res, data, options, cfg$version_info)
+  id <- jsonlite::parse_json(response)$data$id
+
+  running <- queue$queue$worker_task_id()
+  expect_equal(unname(running), id)
+  worker <- names(running)
+  expect_equal(queue$queue$task_status(id), setNames("RUNNING", id))
+
+  res <- MockPlumberResponse$new()
+  response <- model_cancel(list(), res, id)
+  expect_equal(jsonlite::parse_json(response),
+               list(status = "success", errors = list(), data = NULL))
+
+  testthat::try_again(5, {
+    Sys.sleep(1)
+    log <- queue$queue$worker_log_tail(worker, n = Inf)
+    expect_true("INTERRUPT" %in% log$command)
+    expect_equal(queue$queue$task_status(id), setNames("INTERRUPTED", id))
+  })
+
+  res <- MockPlumberResponse$new()
+  response <- jsonlite::parse_json(model_status(list(), res, id))
+  expect_equal(res$status, 200)
+  expect_equal(response$status, "success")
+  expect_true(response$data$done)
+  expect_false(response$data$success)
+  expect_equal(response$data$status, "INTERRUPTED")
+
+  res <- MockPlumberResponse$new()
+  response <- jsonlite::parse_json(model_result(list(), res, id))
+  expect_equal(res$status, 400)
+  expect_equal(response$status, "failure")
+  expect_equal(response$errors[[1]]$error, "MODEL_RUN_FAILED")
+  expect_equal(response$errors[[1]]$detail,
+               "Model run was cancelled by user")
+})
+
+test_that("failed cancel sends reasonable message", {
+  test_redis_available()
+  test_mock_model_available()
+  ## Create request data
+  queue <- Queue$new()
+  model_cancel <- endpoint_model_cancel(queue)
+
+  id <- ids::random_id()
+  req_cancel <- list(postBody = sprintf('{"id": "%s"}', id))
+  res <- MockPlumberResponse$new()
+  response <- model_cancel(req_cancel, res, id)
+  response <- jsonlite::parse_json(response)
+
+  ## TODO: translate the message ideally - requires some work in rrq
+  ## though.
+  expect_equal(res$status, 400)
+  expect_equal(response$status, "failure")
+  expect_equal(response$errors[[1]]$error, "FAILED_TO_CANCEL")
+  expect_match(response$errors[[1]]$detail,
+               "Task [[:xdigit:]]+ is not running \\(MISSING\\)")
+  expect_is(response$errors[[1]]$key, "character")
 })
