@@ -1,3 +1,7 @@
+# hintr 0.0.27
+
+* Support for stopping jobs (mrc-732)
+
 # hintr 0.0.25
 
 * Add receiving_art output indicator

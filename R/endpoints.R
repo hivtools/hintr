@@ -94,27 +94,30 @@ endpoint_model_status <- function(queue) {
 
 endpoint_model_result <- function(queue) {
   function(req, res, id) {
-    response <- with_success(queue$result(id))
-    if (is_error(response$value)) {
-      response$success <- FALSE
-      error <- structure(response$value$message,
-                         trace = response$value$trace)
-      response$errors <- hintr_errors(list("MODEL_RUN_FAILED" = error))
-      response$value <- NULL
+    error <- function(...) {
       res$status <- 400
-    } else if (!response$success) {
-      if (queue$queue$task_status(id) == "ORPHAN") {
-        error <- t_("MODEL_RESULT_CRASH")
-        response$errors <- hintr_errors(list("MODEL_RUN_FAILED" = error))
-        response$value <- NULL
-      } else {
-        response$errors <- hintr_errors(
-          list("FAILED_TO_RETRIEVE_RESULT" = response$message))
-      }
-      res$status <- 400
-    } else {
-      response$value <- process_result(response$value)
+      list(
+        success = FALSE,
+        errors = hintr_errors(list(...)),
+        value = NULL)
     }
+    task_status <- queue$queue$task_status(id)
+
+    if (task_status == "COMPLETE") {
+      response <- list(success = TRUE,
+                       value = process_result(queue$result(id)))
+    } else if (task_status == "ERROR") {
+      result <- queue$result(id)
+      error_data <- structure(result$message, trace = result$trace)
+      response <- error(MODEL_RUN_FAILED = error_data)
+    } else if (task_status == "ORPHAN") {
+      response <- error(MODEL_RUN_FAILED = t_("MODEL_RESULT_CRASH"))
+    } else if (task_status == "INTERRUPTED") {
+      response <- error(MODEL_RUN_FAILED = t_("MODEL_RUN_CANCELLED"))
+    } else { # ~= MISSING, PENDING, RUNNING
+      response = error(FAILED_TO_RETRIEVE_RESULT = t_("MODEL_RESULT_MISSING"))
+    }
+
     hintr_response(response, "ModelResultResponse")
   }
 }
@@ -190,6 +193,19 @@ endpoint_validate_survey_programme <- function(req, res, type, file, shape) {
   hintr_response(response, "ValidateInputResponse")
 }
 
+endpoint_model_cancel <- function(queue) {
+  function(req, res, id) {
+    response <- with_success(queue$cancel(id))
+    if (!response$success) {
+      response$errors <- hintr_errors(
+        list("FAILED_TO_CANCEL" = response$message))
+      res$status <- 400
+    } else {
+      response$value <- scalar(NA)
+    }
+    hintr_response(response, "ModelCancelResponse")
+  }
+}
 
 input_response <- function(value, type, file) {
   ret <- list(hash = scalar(file$hash),
