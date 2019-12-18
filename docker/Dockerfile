@@ -52,7 +52,7 @@ RUN install_remote \
         mrc-ide/eppasm \
         mrc-ide/heartbeatr \
         mrc-ide/rrq \
-        reside-ic/traduire
+        reside-ic/traduire@master
 
 COPY . /src
 RUN R CMD INSTALL /src/naomi

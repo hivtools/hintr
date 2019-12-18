@@ -82,7 +82,7 @@ build_json <- function(options_template, params) {
     glue::glue(options_template, .envir = param_env, .open = "<+", .close = "+>",
                .transformer = json_transformer),
     error = function(e) {
-      e$message <- t_("model_options_fail", list(message = message))
+      e$message <- t_("MODEL_OPTIONS_FAIL", list(message = message))
       stop(e)
     }
   )

@@ -15,17 +15,17 @@ Queue <- R6::R6Class(
       self$cleanup_on_exit <- cleanup_on_exit
       self$results_dir = results_dir
 
-      message(t_("queue_connecting", list(redis = redux::redis_config()$url)))
+      message(t_("QUEUE_CONNECTING", list(redis = redux::redis_config()$url)))
       con <- redux::hiredis()
 
-      message(t_("queue_starting"))
+      message(t_("QUEUE_STARTING"))
       queue_id <- hintr_queue_id(queue_id)
       self$queue <- rrq::rrq_controller(queue_id, con)
       self$queue$worker_config_save("localhost", heartbeat_period = 3)
 
       self$start(workers)
 
-      message(t_("queue_cache"))
+      message(t_("QUEUE_CACHE"))
       set_cache(queue_id)
 
       self$prerun_dir <- prerun_dir
@@ -86,7 +86,7 @@ Queue <- R6::R6Class(
     finalize = function(queue) {
       clear_cache(self$queue$keys$queue_id)
       if (self$cleanup_on_exit) {
-        message(t_("queue_stopping_workers"))
+        message(t_("QUEUE_STOPPING_WORKERS"))
         self$queue$worker_stop()
         self$destroy()
       }
@@ -101,7 +101,7 @@ hintr_queue_id <- function(queue_id, worker = FALSE) {
   id <- Sys.getenv("HINTR_QUEUE_ID", "")
   if (!nzchar(id)) {
     if (worker) {
-      stop(t_("queue_id_not_set"))
+      stop(t_("QUEUE_ID_NOT_SET"))
     }
     id <- sprintf("hintr:%s", ids::random_id())
   }

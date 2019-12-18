@@ -2,7 +2,7 @@ assert_column_names <- function(names, expected_names) {
   missing <- setdiff(expected_names, names)
   if (length(missing) > 0) {
     missing <- setdiff(expected_names, names)
-    stop(t_("validation_column_names",
+    stop(t_("VALIDATION_COLUMN_NAMES",
             list(count = length(missing),
                  missing = paste(missing, collapse = ", "))))
   }
@@ -23,20 +23,20 @@ assert_column_names <- function(names, expected_names) {
 assert_expected_values <- function(data, column_name, expected_values, all_values = FALSE) {
 
   if (is.null(data[[column_name]])) {
-    stop(t_("validation_column_required", list(name = column_name)))
+    stop(t_("VALIDATION_COLUMN_REQUIRED", list(name = column_name)))
   }
   values <- unique(data[[column_name]])
   if (all_values) {
     missing_values <- setdiff(expected_values, values)
     if (length(missing_values > 0)) {
-      stop(t_("validation_column_value_missing",
+      stop(t_("VALIDATION_COLUMN_VALUE_MISSING",
               list(name = column_name, missing = collapse(missing_values))))
     }
   }
 
   unexpected_values <- setdiff(values, expected_values)
   if (length(unexpected_values) > 0) {
-    stop(t_("validation_column_value_unexpected",
+    stop(t_("VALIDATION_COLUMN_VALUE_UNEXPECTED",
             list(name = column_name,
                  unexpected = paste(unexpected_values, collapse=", "))))
   }
@@ -54,13 +54,13 @@ assert_expected_values <- function(data, column_name, expected_values, all_value
 #' @keywords internal
 assert_column_matches <- function(data, column_name, pattern) {
   if (is.null(data[[column_name]])) {
-    stop(t_("validation_column_required", list(name = column_name)))
+    stop(t_("VALIDATION_COLUMN_REQUIRED", list(name = column_name)))
   }
   values <- unique(data[[column_name]])
   check <- grepl(pattern, values)
   if (!all(check)) {
     unmatched <- values[which(check == FALSE)]
-    stop(t_("validation_column_matches",
+    stop(t_("VALIDATION_COLUMN_MATCHES",
             list(name = column_name,
                  unmatched = paste(unmatched, collapse = ", "))))
   }
@@ -85,10 +85,10 @@ assert_year_column <- function(data) {
 assert_no_na <- function(data, column_name) {
   column_data <- data[[column_name]]
   if (is.null(column_data)) {
-    stop(t_("validation_column_required", list(name = column_name)))
+    stop(t_("VALIDATION_COLUMN_REQUIRED", list(name = column_name)))
   }
   if(any(is.na(column_data))) {
-    stop(t_("validation_column_no_na", list(name = column_name)))
+    stop(t_("VALIDATION_COLUMN_NO_NA", list(name = column_name)))
   }
   invisible(TRUE)
 }
@@ -104,13 +104,13 @@ assert_column_positive_numeric <- function(data, column_names) {
   out <- lapply(column_names, function(column_name) {
     column_data <- data[[column_name]]
     if (is.null(column_data)) {
-      stop(t_("validation_column_required", list(name = column_name)))
+      stop(t_("VALIDATION_COLUMN_REQUIRED", list(name = column_name)))
     }
     if (!is.numeric(column_data)) {
-      stop(t_("validation_column_numeric", list(name = column_name)))
+      stop(t_("VALIDATION_COLUMN_NUMERIC", list(name = column_name)))
     }
     if (any(column_data < 0, na.rm = TRUE)) {
-      stop(t_("validation_column_positive", list(name = column_name)))
+      stop(t_("VALIDATION_COLUMN_POSITIVE", list(name = column_name)))
     }
     invisible(TRUE)
   })
@@ -125,7 +125,7 @@ assert_column_positive_numeric <- function(data, column_names) {
 #' @keywords internal
 assert_single_source <- function(data) {
   if (length(unique(data$source)) > 1) {
-    stop(t_("validation_single_source",
+    stop(t_("VALIDATION_SINGLE_SOURCE",
             list(sources = paste(unique(data$source), collapse=", "))))
   }
   invisible(TRUE)
@@ -140,12 +140,12 @@ assert_single_source <- function(data) {
 assert_anc_client_numbers <- function(data) {
   check_pos <- data$ancrt_tested - data$ancrt_test_pos
   if (any(check_pos < 0, na.rm = TRUE)) {
-    stop(t_("validation_anc_client_numbers1"))
+    stop(t_("VALIDATION_ANC_CLIENT_NUMBERS1"))
   }
 
   check_on_art <- (data$ancrt_test_pos + data$ancrt_known_pos) - data$ancrt_already_art
   if (any(check_on_art < 0, na.rm = TRUE)) {
-    stop(t_("validation_anc_client_numbers2"))
+    stop(t_("VALIDATION_ANC_CLIENT_NUMBERS2"))
   }
   invisible(TRUE)
 }
@@ -160,7 +160,7 @@ assert_anc_client_numbers <- function(data) {
 assert_unique_combinations <- function(data, columns_for_unique) {
 
   if (any(duplicated(data[ ,columns_for_unique]))) {
-    stop(t_("validation_unique_combinations",
+    stop(t_("VALIDATION_UNIQUE_COMBINATIONS",
             list(columns = paste(columns_for_unique, collapse = ", "))))
   }
   invisible(TRUE)
@@ -173,7 +173,7 @@ assert_single_parent_region <- function(json) {
   })
   parent_region <- regions[!grepl("\\_", regions)]
   if (length(parent_region) != 1) {
-    stop(t_("validation_single_parent_region",
+    stop(t_("VALIDATION_SINGLE_PARENT_REGION",
             list(regions = collapse(parent_region))))
   }
   invisible(TRUE)
@@ -199,10 +199,10 @@ assert_single_country.data.frame <- function(data, type) {
 
 assert_single_country.character <- function(data, type) {
   if (length(unique(data)) == 0) {
-    stop(t_("validation_single_country_no_regions",
+    stop(t_("VALIDATION_SINGLE_COUNTRY_NO_REGIONS",
             list(type = to_upper_first(type))))
   } else if (length(unique(data)) != 1) {
-    stop(t_("validation_single_country_mutiple",
+    stop(t_("VALIDATION_SINGLE_COUNTRY_MUTIPLE",
             list(type = to_upper_first(type),
                  countries = toString(unique(data)))))
   }
@@ -218,7 +218,7 @@ assert_region_codes_valid <- function(json) {
   contains_property <- features_contain_property(json, "spectrum_region_code")
   missing_count <- sum(!contains_property)
   if (missing_count > 1) {
-    stop(t_("validation_region_codes_valid", list(count = missing_count)))
+    stop(t_("VALIDATION_REGION_CODES_VALID", list(count = missing_count)))
   }
   invisible(TRUE)
 }
@@ -233,7 +233,7 @@ assert_property_exists <- function(property, json) {
   contains_property <- features_contain_property(json, property)
   if (!all(contains_property)) {
     missing_count <- sum(!contains_property)
-    stop(t_("validation_property_exists",
+    stop(t_("VALIDATION_PROPERTY_EXISTS",
             list(property = property, count = missing_count)))
   }
   invisible(TRUE)
@@ -242,7 +242,7 @@ assert_property_exists <- function(property, json) {
 assert_consistent_country <- function(country_x, source_x, country_y, source_y) {
   if (!is.null(country_x) && !is.null(country_y) &&
       tolower(country_x) != tolower(country_y)) {
-    stop(t_("validation_consistent_country",
+    stop(t_("VALIDATION_CONSISTENT_COUNTRY",
             list(country_x = country_x, source_x = source_x,
                  country_y = country_y, source_y = source_y)))
   }
@@ -254,7 +254,7 @@ assert_consistent_regions <- function(shape_regions, test_regions, test_source) 
   ## regions being tested
   if (!is_superset(shape_regions, test_regions)) {
     missing_regions <- setdiff(test_regions, shape_regions)
-    stop(t_("validation_consistent_region",
+    stop(t_("VALIDATION_CONSISTENT_REGION",
             list(source = test_source,
                  count = length(missing_regions),
                  missing = collapse(missing_regions))))
@@ -276,11 +276,11 @@ assert_consistent_region_codes <- function(pjnz_codes, shape_codes) {
       pjnz_missing_codes = collapse(missing_code_from_pjnz),
       shape_missing_codes = collapse(missing_code_from_shape)
     )
-    msg <- paste(t_("validation_consistent_region_codes1"),
-                 t_("validation_consistent_region_codes2",
+    msg <- paste(t_("VALIDATION_CONSISTENT_REGION_CODES1"),
+                 t_("VALIDATION_CONSISTENT_REGION_CODES2",
                     list(count = length(missing_code_from_shape),
                          missing = collapse(missing_code_from_shape))),
-                 t_("validation_consistent_region_codes3",
+                 t_("VALIDATION_CONSISTENT_REGION_CODES3",
                     list(count = length(missing_code_from_pjnz),
                          missing = collapse(missing_code_from_pjnz))),
                  sep = "\n")
@@ -296,7 +296,7 @@ is_superset <- function(super, sub) {
 
 assert_file_exists <- function(file) {
   if (is.null(file) || !file.exists(file)) {
-    stop(t_("validation_file_exists", list(path = file %||% "NULL")))
+    stop(t_("VALIDATION_FILE_EXISTS", list(path = file %||% "NULL")))
   }
   invisible(TRUE)
 }
@@ -304,7 +304,7 @@ assert_file_exists <- function(file) {
 assert_file_extension <- function(file_path, types) {
   extension <- tools::file_ext(file_path)
   if (!any(tolower(extension) %in% tolower(types))) {
-    stop(t_("validation_file_extension",
+    stop(t_("VALIDATION_FILE_EXTENSION",
             list(expected = collapse(types), got = extension)))
   }
   invisible(TRUE)

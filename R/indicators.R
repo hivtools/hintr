@@ -15,7 +15,7 @@ get_indicator_data <- function(file, type, indicator) {
   type_metadata <- metadata[
     metadata$data_type == type & metadata$indicator == indicator, ]
   if (nrow(type_metadata) != 1) {
-    stop(t_("indicators_row_error",
+    stop(t_("INDICATORS_ROW_ERROR",
             list(nrow = nrow(type_metadata), type = type,
                  indicator = indicator)))
   }
