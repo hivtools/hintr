@@ -418,8 +418,8 @@ test_that("model run options are exposed", {
     "Country")
 
   survey_section <- response$data$controlSections[[2]]
-  expect_length(
-    survey_section$controlGroups[[1]]$controls[[1]]$options,
+  expect_true(
+    length(survey_section$controlGroups[[1]]$controls[[1]]$options) >
     32
   )
   expect_length(
