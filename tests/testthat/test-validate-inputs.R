@@ -77,7 +77,7 @@ test_that("do_validate_programme validates programme file", {
 
   expect_length(data$filters$indicators, 1)
   expect_equal(data$filters$indicators[[1]]$id, scalar("current_art"))
-  expect_equal(data$filters$indicators[[1]]$label, scalar("ART number"))
+  expect_equal(data$filters$indicators[[1]]$label, scalar("ART number (attending)"))
 })
 
 test_that("do_validate_anc validates ANC file and gets data for plotting", {
