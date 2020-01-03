@@ -298,7 +298,7 @@ test_that("possible filters are returned for data", {
 
   expect_length(response$data$filters$indicators, 1)
   expect_equal(response$data$filters$indicators[[1]]$id, "current_art")
-  expect_equal(response$data$filters$indicators[[1]]$label, "ART number")
+  expect_equal(response$data$filters$indicators[[1]]$label, "ART number (attending)")
 
 
   anc <- file.path("testdata", "anc.csv")

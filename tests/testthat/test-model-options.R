@@ -234,8 +234,8 @@ test_that("can retrieve validated model options", {
     "Country")
 
   survey_section <- json$controlSections[[2]]
-  expect_length(
-    survey_section$controlGroups[[1]]$controls[[1]]$options,
+  expect_true(
+    length(survey_section$controlGroups[[1]]$controls[[1]]$options) >
     32
   )
   survey_section <- json$controlSections[[2]]
