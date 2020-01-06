@@ -30,7 +30,7 @@ r_github_packages:
 
 jobs:
   include:
-    - stage: "build""
+    - stage: "build"
       name: "Build & check pacakge"
       before_script:
         - ./scripts/dep_locations
