@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+set -e
+
+printf "\n\nLocations of libgdal-dev"
+dpkg -L libgdal-dev
+printf "\n\nLocations of libhiredis-dev"
+dpkg -L libhiredis-dev
+printf "\n\nLocations of libjq-dev"
+dpkg -L libjq-dev
+printf "\n\nLocations of libprotobuf-dev"
+dpkg -L libprotobuf-dev
+printf "\n\nLocations of libssh-dev"
+dpkg -L libssh-dev
+printf "\n\nLocations of libudunits2-dev"
+dpkg -L libudunits2-dev
+printf "\n\nLocations of libv8-dev"
+dpkg -L libv8-dev
+printf "\n\nLocations of protobuf-compiler"
+dpkg -L protobuf-compiler
+printf "\n\nLocations of redis-server"
+dpkg -L redis-server
+

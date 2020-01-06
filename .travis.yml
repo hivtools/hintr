@@ -17,6 +17,7 @@ addons:
 services:
   - redis-server
 before_script:
+  - ./scripts/dep_locations
   - ./scripts/build_test_data
   - R CMD INSTALL .
   - openssl aes-256-cbc -K $encrypted_70b522aa6ec8_key -iv $encrypted_70b522aa6ec8_iv -in id_rsa.enc -out id_rsa -d
