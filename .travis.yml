@@ -25,17 +25,17 @@ r_github_packages:
   - mrc-ide/naomi
   - mrc-ide/rrq
   - reside-ic/traduire
+before_script:
+  - ./scripts/build_test_data
+  - R CMD INSTALL .
+  - openssl aes-256-cbc -K $encrypted_70b522aa6ec8_key -iv $encrypted_70b522aa6ec8_iv -in id_rsa.enc -out id_rsa -d
+  - chmod 400 id_rsa
+  - GIT_SSH_COMMAND="ssh -i id_rsa" git clone git@github.com:mrc-ide/naomi-data tests/testthat/testdata/sensitive
 
 jobs:
   include:
     - stage: "build"
       name: "Build & check pacakge"
-      before_script:
-        - ./scripts/build_test_data
-        - R CMD INSTALL .
-        - openssl aes-256-cbc -K $encrypted_70b522aa6ec8_key -iv $encrypted_70b522aa6ec8_iv -in id_rsa.enc -out id_rsa -d
-        - chmod 400 id_rsa
-        - GIT_SSH_COMMAND="ssh -i id_rsa" git clone git@github.com:mrc-ide/naomi-data tests/testthat/testdata/sensitive
     - stage: "coverage"
       name: "Code coverage"
       r_packages:
