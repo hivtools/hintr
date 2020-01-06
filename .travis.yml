@@ -19,8 +19,6 @@ services:
 cache: packages
 env:
   - VALIDATE_JSON_SCHEMAS=true USE_MOCK_MODEL=true NAOMI_SENSITIVE_DATA_PATH=$TRAVIS_BUILD_DIR/tests/testthat/testdata/sensitive
-r_packages:
-  - covr
 r_github_packages:
   - ropensci/jsonvalidate
   - mrc-ide/eppasm
@@ -33,7 +31,6 @@ jobs:
     - stage: "build"
       name: "Build & check pacakge"
       before_script:
-        - ./scripts/dep_locations
         - ./scripts/build_test_data
         - R CMD INSTALL .
         - openssl aes-256-cbc -K $encrypted_70b522aa6ec8_key -iv $encrypted_70b522aa6ec8_iv -in id_rsa.enc -out id_rsa -d
@@ -41,6 +38,8 @@ jobs:
         - GIT_SSH_COMMAND="ssh -i id_rsa" git clone git@github.com:mrc-ide/naomi-data tests/testthat/testdata/sensitive
     - stage: "coverage"
       name: "Code coverage"
+      r_packages:
+        - covr
       script:
         - R CMD build .
       after_success:
