@@ -34,5 +34,19 @@ r_github_packages:
   - mrc-ide/naomi
   - mrc-ide/rrq
   - reside-ic/traduire
-after_success:
-  - Rscript -e 'covr::codecov(quiet = FALSE)'
+
+jobs:
+  include:
+    - stage: "build""
+      name: "Build & check pacakge"
+    - stage: "coverage"
+      name: "Code coverage"
+      script:
+        - R CMD build .
+      after_success:
+        - Rscript -e 'covr::codecov(quiet = FALSE)'
+
+stages:
+  - build
+  - coverage
+
