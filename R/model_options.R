@@ -53,8 +53,6 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
     area_level_default = area_level_options[[length(area_level_options)]]$id,
     calendar_quarter_t1_options = time_options,
     calendar_quarter_t2_options = time_options,
-    ## Hardcoded t2 default expecting this to change each estimates round
-    calendar_quarter_t2_default = scalar("CY2019Q4"),
     survey_prevalence_options = survey_prevalence_options,
     survey_art_coverage_options = survey_art_coverage_options,
     survey_recently_infected_options = survey_recently_infected_options,
