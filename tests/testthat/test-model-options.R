@@ -352,15 +352,3 @@ test_that("area level is prepopualted to lowest region", {
   expect_equal(json$controlSections[[1]]$controlGroups[[2]]$label, "Area level")
   expect_equal(json$controlSections[[1]]$controlGroups[[2]]$controls[[1]]$value, "4")
 })
-
-test_that("quarter to generate estiamtes is prepopulated to estimate round time", {
-  shape <- file_object(file.path("testdata", "malawi.geojson"))
-  survey <- file_object(file.path("testdata", "survey.csv"))
-  json <- do_endpoint_model_options(shape, survey, NULL, NULL)
-
-  json <- jsonlite::parse_json(json)
-
-  expect_equal(json$controlSections[[1]]$controlGroups[[3]]$label, 
-    "Calendar quarter to generate estimates")
-  expect_equal(json$controlSections[[1]]$controlGroups[[3]]$controls[[1]]$value, "CY2019Q4")
-})
