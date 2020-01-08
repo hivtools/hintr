@@ -20,7 +20,9 @@ read_csv_regions <- function(csv_file) {
 }
 
 read_csv <- function(...) {
-  utils::read.csv(..., stringsAsFactors = FALSE)
+  data <- utils::read.csv(..., stringsAsFactors = FALSE)
+  na_or_empty_rows <- rowSums(is.na(data)) + rowSums(data == "", na.rm = TRUE)
+  data[na_or_empty_rows != ncol(data), ]
 }
 
 read_pjnz_iso3 <- function(pjnz) {

@@ -55,6 +55,16 @@ test_that("do_validate_population validates population file", {
   expect_true(is.na(pop$filters))
 })
 
+test_that("empty rows are ignored in validation", {
+  ## We saw in workshops people uploading csv files with several empty rows
+  ## The rows just contained , delimiters see mrc-1151
+  population <- file_object(file.path("testdata", "population_empty_rows.csv"))
+  pop <- do_validate_population(population)
+  ## No actual data to return but has been validated
+  expect_true(is.na(pop$data))
+  expect_true(is.na(pop$filters))
+})
+
 test_that("do_validate_programme validates programme file", {
   programme <- file_object(file.path("testdata", "programme.csv"))
   shape <- file_object(file.path("testdata", "malawi.geojson"))
