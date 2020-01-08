@@ -1,3 +1,7 @@
+# hintr 0.0.28
+
+* Add default values for area level and calendar quarter to generate estimates for
+
 # hintr 0.0.27
 
 * Support for stopping jobs (mrc-732)
