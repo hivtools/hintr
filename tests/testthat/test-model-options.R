@@ -58,7 +58,8 @@ test_that("do_endpoint_model_options correctly builds params list", {
   expect_true(grepl('"label": "ANC"', args[[1]][[1]]))
   params <- args[[1]][[2]]
   expect_equal(names(params),
-               c("area_scope_options", "area_scope_default", "area_level_options",
+               c("area_scope_options", "area_scope_default",
+                 "area_level_options", "area_level_default",
                  "calendar_quarter_t1_options", "calendar_quarter_t2_options",
                  "survey_prevalence_options", "survey_art_coverage_options",
                  "survey_recently_infected_options",
@@ -135,7 +136,8 @@ test_that("do_endpoint_model_options without programme data", {
   expect_false(grepl('"label": "ANC"', args[[1]][[1]]))
   params <- args[[1]][[2]]
   expect_equal(names(params),
-               c("area_scope_options", "area_scope_default", "area_level_options",
+               c("area_scope_options", "area_scope_default",
+                 "area_level_options", "area_level_default",
                  "calendar_quarter_t1_options", "calendar_quarter_t2_options",
                  "survey_prevalence_options", "survey_art_coverage_options",
                  "survey_recently_infected_options",
@@ -340,4 +342,15 @@ test_that("model options can be validated", {
   valid <- do_validate_model_options(data, options)
   expect_equal(names(valid), "valid")
   expect_equal(valid$valid, scalar(TRUE))
+})
+
+test_that("area level is prepopualted to lowest region", {
+  shape <- file_object(file.path("testdata", "malawi.geojson"))
+  survey <- file_object(file.path("testdata", "survey.csv"))
+  json <- do_endpoint_model_options(shape, survey, NULL, NULL)
+
+  json <- jsonlite::parse_json(json)
+
+  expect_equal(json$controlSections[[1]]$controlGroups[[2]]$label, "Area level")
+  expect_equal(json$controlSections[[1]]$controlGroups[[2]]$controls[[1]]$value, "4")
 })
