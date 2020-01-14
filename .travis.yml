@@ -1,6 +1,5 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
-language: R
 sudo: false
 addons:
   apt:
@@ -34,10 +33,8 @@ before_script:
 
 jobs:
   include:
-    - stage: "build"
-      name: "Build & check pacakge"
-    - stage: "coverage"
-      name: "Code coverage"
+    - language: R
+    - language: R
       r_packages:
         - covr
       script:
