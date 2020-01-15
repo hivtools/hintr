@@ -39,7 +39,8 @@ test_that("can build JSON from template", {
 
 test_that("JSON build fails if params are missing", {
   expect_error(build_json('{"options": <+param+>}', list(value = "test")),
-               "Failed to construct model options from template and params:\n\\w+")
+               "Failed to construct model options from template and params:
+object 'param' not found")
 })
 
 test_that("do_endpoint_model_options correctly builds params list", {

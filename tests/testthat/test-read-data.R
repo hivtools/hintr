@@ -57,3 +57,10 @@ test_that("can read spectrum region code from geojson", {
   region_codes <- read_geojson_spectrum_region_codes(shape)
   expect_equal(region_codes, c(10, 11, 12, 13, 14, 15, 16, 17, 18, 19))
 })
+
+test_that("read csv removes empty rows", {
+  path <- tempfile()
+  writeLines(c("character,value", "a,1", ",", "b,2", "c,3", "d,4", ",", ","),
+             path)
+  expect_equal(nrow(read_csv(path)), 4)
+})
