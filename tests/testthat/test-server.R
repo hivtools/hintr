@@ -210,9 +210,9 @@ test_that("model interactions", {
   expect_equal(barchart$filters[[3]]$id, "sex")
   expect_equal(barchart$filters[[4]]$id, "age")
   expect_true(length(barchart$filters[[4]]$options) >= 29)
-  expect_length(barchart$filters[[2]]$options, 2)
-  expect_equal(barchart$filters[[2]]$options[[1]]$id, "CY2018Q3")
-  expect_equal(barchart$filters[[2]]$options[[1]]$label, "September 2018")
+  expect_length(barchart$filters[[2]]$options, 3)
+  expect_equal(barchart$filters[[2]]$options[[2]]$id, "CY2018Q3")
+  expect_equal(barchart$filters[[2]]$options[[2]]$label, "September 2018")
   expect_length(barchart$indicators, 10)
   out <- lapply(barchart$indicators, function(indicator) {
     expect_true(indicator$indicator %in%
@@ -233,9 +233,9 @@ test_that("model interactions", {
   expect_equal(choropleth$filters[[3]]$id, "sex")
   expect_equal(choropleth$filters[[4]]$id, "age")
   expect_true(length(choropleth$filters[[4]]$options) >= 29)
-  expect_length(choropleth$filters[[2]]$options, 2)
-  expect_equal(choropleth$filters[[2]]$options[[1]]$id, "CY2018Q3")
-  expect_equal(choropleth$filters[[2]]$options[[1]]$label, "September 2018")
+  expect_length(choropleth$filters[[2]]$options, 3)
+  expect_equal(choropleth$filters[[2]]$options[[2]]$id, "CY2018Q3")
+  expect_equal(choropleth$filters[[2]]$options[[2]]$label, "September 2018")
   expect_length(choropleth$indicators, 10)
   out <- lapply(choropleth$indicators, function(indicator) {
     expect_true(indicator$indicator %in%
@@ -312,9 +312,9 @@ test_that("real model can be run by API", {
   expect_equal(barchart$filters[[3]]$id, "sex")
   expect_equal(barchart$filters[[4]]$id, "age")
   expect_true(length(barchart$filters[[4]]$options) >= 29)
-  expect_length(barchart$filters[[2]]$options, 2)
-  expect_equal(barchart$filters[[2]]$options[[1]]$id, "CY2018Q3")
-  expect_equal(barchart$filters[[2]]$options[[1]]$label, "September 2018")
+  expect_length(barchart$filters[[2]]$options, 3)
+  expect_equal(barchart$filters[[2]]$options[[2]]$id, "CY2018Q3")
+  expect_equal(barchart$filters[[2]]$options[[2]]$label, "September 2018")
   expect_length(barchart$indicators, 10)
   out <- lapply(barchart$indicators, function(indicator) {
     expect_true(indicator$indicator %in%
@@ -335,9 +335,9 @@ test_that("real model can be run by API", {
   expect_equal(choropleth$filters[[3]]$id, "sex")
   expect_equal(choropleth$filters[[4]]$id, "age")
   expect_true(length(choropleth$filters[[4]]$options) >= 29)
-  expect_length(choropleth$filters[[2]]$options, 2)
-  expect_equal(choropleth$filters[[2]]$options[[1]]$id, "CY2018Q3")
-  expect_equal(choropleth$filters[[2]]$options[[1]]$label, "September 2018")
+  expect_length(choropleth$filters[[2]]$options, 3)
+  expect_equal(choropleth$filters[[2]]$options[[2]]$id, "CY2018Q3")
+  expect_equal(choropleth$filters[[2]]$options[[2]]$label, "September 2018")
   expect_length(choropleth$indicators, 10)
   out <- lapply(choropleth$indicators, function(indicator) {
     expect_true(indicator$indicator %in%

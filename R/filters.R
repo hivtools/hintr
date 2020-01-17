@@ -139,7 +139,7 @@ get_barchart_defaults <- function(output, output_filters) {
     disaggregate_by_id = scalar("sex"),
     selected_filter_options = list(
       area = get_area_level_filter_option(output),
-      quarter = get_selected_filter_options(output_filters, "quarter")[1],
+      quarter = get_selected_filter_options(output_filters, "quarter")[2],
       sex = get_selected_filter_options(output_filters, "sex",
                                         c("female", "male")),
       age = get_selected_filter_options(output_filters, "age",
