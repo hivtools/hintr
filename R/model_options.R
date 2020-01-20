@@ -109,7 +109,7 @@ get_level_options <- function(json) {
 }
 
 get_time_options <- function() {
-  start_date <- naomi::convert_quarter_id(2012, 1)
+  start_date <- naomi::convert_quarter_id(2010, 1)
   current_quarter <- substr(quarters(Sys.Date()), 2, 2)
   end_date <- naomi::convert_quarter_id(as.integer(format(Sys.Date(), "%Y")),
                                         as.integer(current_quarter))

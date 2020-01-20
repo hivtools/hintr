@@ -98,12 +98,12 @@ test_that("do_endpoint_model_options correctly builds params list", {
       label = scalar("District + Metro")
     )))
   t1 <- params$calendar_quarter_t1_options
-  expect_equal(t1[[length(t1)]]$id, scalar("CY2012Q1"))
-  expect_equal(t1[[length(t1)]]$label, scalar("March 2012"))
+  expect_equal(t1[[length(t1)]]$id, scalar("CY2010Q1"))
+  expect_equal(t1[[length(t1)]]$label, scalar("March 2010"))
   expect_true(length(t1) >= 32)
   t2 <- params$calendar_quarter_t2_options
-  expect_equal(t2[[length(t2)]]$id, scalar("CY2012Q1"))
-  expect_equal(t2[[length(t2)]]$label, scalar("March 2012"))
+  expect_equal(t2[[length(t2)]]$id, scalar("CY2010Q1"))
+  expect_equal(t2[[length(t2)]]$label, scalar("March 2010"))
   expect_true(length(t2) >= 32)
   expect_length(params$survey_prevalence_options, 4)
   expect_equal(params$survey_prevalence_options[[1]]$id,
@@ -176,12 +176,12 @@ test_that("do_endpoint_model_options without programme data", {
       label = scalar("District + Metro")
     )))
   t1 <- params$calendar_quarter_t1_options
-  expect_equal(t1[[length(t1)]]$id, scalar("CY2012Q1"))
-  expect_equal(t1[[length(t1)]]$label, scalar("March 2012"))
+  expect_equal(t1[[length(t1)]]$id, scalar("CY2010Q1"))
+  expect_equal(t1[[length(t1)]]$label, scalar("March 2010"))
   expect_true(length(t1) >= 32)
   t2 <- params$calendar_quarter_t2_options
-  expect_equal(t2[[length(t2)]]$id, scalar("CY2012Q1"))
-  expect_equal(t2[[length(t2)]]$label, scalar("March 2012"))
+  expect_equal(t2[[length(t2)]]$id, scalar("CY2010Q1"))
+  expect_equal(t2[[length(t2)]]$label, scalar("March 2010"))
   expect_true(length(t2) >= 32)
   expect_length(params$survey_prevalence_options, 4)
   expect_equal(params$survey_prevalence_options[[1]]$id,
