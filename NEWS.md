@@ -1,3 +1,7 @@
+# hintr 0.0.30
+
+* Remove "survey_year" from required columns in survey datasets.
+
 # hintr 0.0.28
 
 * Add default values for area level and calendar quarter to generate estimates for

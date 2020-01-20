@@ -40,6 +40,6 @@
     }
   },
   "additonalProperties": true,
-  "required": [ "indicator", "survey_id", "survey_year", "area_id",
+  "required": [ "indicator", "survey_id", "area_id",
     "sex", "age_group", "n_cluster", "n_obs", "est", "se", "ci_l", "ci_u" ]
 }
