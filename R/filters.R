@@ -107,26 +107,26 @@ get_model_output_filters <- function(data) {
     list(
       id = scalar("area"),
       column_id = scalar("area_id"),
-      label = scalar("Area"),
+      label = scalar(t_("OUTPUT_FILTER_AREA")),
       options = scalar(NA),
       use_shape_regions = scalar(TRUE)
     ),
     list(
       id = scalar("quarter"),
       column_id = scalar("calendar_quarter"),
-      label = scalar("Period"),
+      label = scalar(t_("OUTPUT_FILTER_PERIOD")),
       options = get_quarter_filters(data)
     ),
     list(
       id = scalar("sex"),
       column_id = scalar("sex"),
-      label = scalar("Sex"),
+      label = scalar(t_("OUTPUT_FILTER_SEX")),
       options = get_sex_filters(data)
     ),
     list(
       id = scalar("age"),
       column_id = scalar("age_group"),
-      label = scalar("Age"),
+      label = scalar(t_("OUTPUT_FILTER_AGE")),
       options = get_age_filters(data)
     )
   )
