@@ -180,12 +180,12 @@ do_validate_survey <- function(survey, shape) {
   assert_single_country(data, "survey")
   assert_column_names(
     colnames(data),
-    c("area_id", "survey_id", "survey_year", "sex", "age_group",
+    c("area_id", "survey_id", "sex", "age_group",
       "indicator", "n_cluster", "n_obs", "est", "se", "ci_l", "ci_u"))
   assert_consistent_regions(read_regions(shape, "shape"),
                             read_regions(survey, "survey"),
                             "survey")
-  assert_unique_combinations(data, c("area_id", "survey_id", "survey_year", "sex", "age_group", "indicator"))
+  assert_unique_combinations(data, c("area_id", "survey_id", "sex", "age_group", "indicator"))
   assert_expected_values(data, "sex", c("male", "female", "both"))
   assert_expected_values(data, "age_group", naomi::get_age_groups()$age_group)
   assert_column_positive_numeric(data, c("n_cluster", "n_obs", "est", "se", "ci_l", "ci_u"))

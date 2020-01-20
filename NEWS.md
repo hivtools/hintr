@@ -2,6 +2,10 @@
 
 * Extend time options back to Q1 2010 to support household survey datasets back to 2010 (Burkina Faso).
 
+# hintr 0.0.30
+
+* Remove "survey_year" from required columns in survey datasets.
+
 # hintr 0.0.28
 
 * Add default values for area level and calendar quarter to generate estimates for
