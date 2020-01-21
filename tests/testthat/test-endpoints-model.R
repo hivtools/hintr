@@ -358,7 +358,7 @@ test_that("erroring model run returns useful messages", {
   trace <- vcapply(result_parsed$errors[[1]]$trace, identity)
   expect_true("rrq:::rrq_worker_main()" %in% trace)
   expect_true("stop(\"test error\")" %in% trace)
-  expect_match("^# [[:xdigit:]]+$", trace[[1]])
+  expect_match(trace[[1]], "^# [[:xdigit:]]+$")
 
   ## Check logging:
   res$headers[["Content-Type"]] <- "application/json"
