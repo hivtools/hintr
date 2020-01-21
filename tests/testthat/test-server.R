@@ -1,5 +1,6 @@
 context("server")
 
+gc()
 test_that("Root", {
   server <- hintr_server()
 
