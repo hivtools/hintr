@@ -1,12 +1,12 @@
 run_model <- function(data, options, path_results, path_prerun = NULL) {
   if (use_mock_model()) {
     progress_start <- list(
-      list(
+      started = list(
         started = TRUE,
         complete = FALSE,
         name = t_("RUN_MODEL_MOCK_START")
       ),
-      list(
+      complete = list(
         started = FALSE,
         complete = FALSE,
         name = t_("RUN_MODEL_MOCK_FINISH")
@@ -17,12 +17,12 @@ run_model <- function(data, options, path_results, path_prerun = NULL) {
                               class = c("progress", "condition")))
     Sys.sleep(5)
     progress_complete <- list(
-      list(
+      started = list(
         started = TRUE,
         complete = TRUE,
         name = t_("RUN_MODEL_MOCK_START")
       ),
-      list(
+      complete = list(
         started = TRUE,
         complete = FALSE,
         name = t_("RUN_MODEL_MOCK_FINISH")
