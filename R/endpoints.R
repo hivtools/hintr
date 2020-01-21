@@ -357,10 +357,23 @@ hintr_response <- function(value, schema, include_version = FALSE,
 hintr_errors <- function(errors) {
   f <- function(i) {
     detail <- errors[[i]]
+    trace <- attr(detail, "trace", exact = TRUE)
+    key <- ids::proquint(n_words = 3)
+
     ret <- list(error = scalar(names(errors)[[i]]),
                 detail = scalar(detail),
-                key = scalar(ids::proquint(n_words = 3)))
-    ret$trace <- attr(detail, "trace", exact = TRUE)
+                key = scalar(key))
+
+    ## For now, we format the information about the error code into
+    ## the stack trace.  This *should* go somewhere in the UI but
+    ## doing that well requires a bit of thinking and more work on the
+    ## frontend than we probably want to do right now.  Done this way,
+    ## the error is visible at the beginning of the stack trace and
+    ## can be passed along to administrators without being in the face
+    ## of the users.
+    if (length(trace) > 0L) {
+      ret$trace <- c(sprintf("# %s", key), trace)
+    }
     ret
   }
   lapply(seq_along(errors), f)
