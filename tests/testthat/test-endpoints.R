@@ -420,12 +420,12 @@ test_that("endpoint_plotting_metadata returns default data for missing country",
 
 test_that("can convert model status to scalar", {
   progress <- list(
-    list(
+    started = list(
       started = TRUE,
       complete = FALSE,
       name = "Started mock model"
     ),
-    list(
+    complete = list(
       started = FALSE,
       complete = FALSE,
       name = "Finished mock model"
