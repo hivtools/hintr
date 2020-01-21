@@ -123,6 +123,36 @@ endpoint_model_result <- function(queue) {
   }
 }
 
+endpoint_model_debug <- function(queue) {
+  function(req, res, id) {
+    response <- with_success(queue$queue$task_data(id))
+    if (!response$success) {
+      response$errors <- hintr_errors(list(
+        "INVALID_TASK" = response$message))
+      res$status <- 400
+      return(hintr_response(response, "ModelDebugResponse"))
+    }
+
+    data <- response$value
+    files <- vcapply(data$objects$data, identity, USE.NAMES = FALSE)
+    tmp <- tempfile()
+    path <- file.path(tmp, id)
+    dir.create(path, FALSE, TRUE)
+
+    path_files <- file.path(path, "files")
+    dir.create(path_files)
+    file_copy(files, file.path(path_files, basename(files)))
+    saveRDS(data, file.path(path, "data.rds"))
+
+    on.exit(unlink(tmp, recursive = TRUE))
+
+    dest <- paste0(id, ".zip")
+    dest_full <- file.path(tmp, dest)
+    withr::with_dir(tmp, zip::zipr(dest, id))
+    list(bytes = read_binary(file.path(tmp, dest)), id = id)
+  }
+}
+
 is_error <- function(x) {
   inherits(x, "error")
 }
