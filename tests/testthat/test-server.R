@@ -521,6 +521,17 @@ test_that("version information is returned", {
                   c("hintr", "naomi", "rrq", "traduire"))
 })
 
+test_that("Incorrect debug key gives reasonable error", {
+  server <- hintr_server()
+  server <- list(url = "http://localhost:9000")
+  r <- httr::GET(paste0(server$url, "/model/debug/abc"))
+  expect_equal(httr::status_code(r), 400)
+  response <- response_from_json(r)
+  expect_equal(response$status, "failure")
+  expect_equal(response$errors[[1]]$error, "INVALID_TASK")
+  expect_equal(response$errors[[1]]$detail, "Task 'abc' not found")
+})
+
 test_that("worker information is returned", {
   server <- hintr_server()
   r <- httr::GET(paste0(server$url, "/hintr/worker/status"))
