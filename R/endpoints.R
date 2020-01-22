@@ -148,7 +148,6 @@ endpoint_model_debug <- function(queue) {
     on.exit(unlink(tmp, recursive = TRUE))
 
     dest <- paste0(id, ".zip")
-    dest_full <- file.path(tmp, dest)
     withr::with_dir(tmp, zip::zipr(dest, id))
     list(bytes = read_binary(file.path(tmp, dest)), id = id)
   }
