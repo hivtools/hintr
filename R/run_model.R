@@ -1,4 +1,10 @@
-run_model <- function(data, options, path_results, path_prerun = NULL) {
+run_model <- function(data, options, path_results, path_prerun = NULL,
+                      language = NULL) {
+  if (!is.null(language)) {
+    reset <- traduire::translator_set_language(language)
+    on.exit(reset())
+  }
+
   if (use_mock_model()) {
     progress_start <- list(
       started = list(

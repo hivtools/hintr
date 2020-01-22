@@ -463,6 +463,63 @@ test_that("model run can be cancelled", {
                "Model run was cancelled by user")
 })
 
+test_that("translation", {
+  test_redis_available()
+  test_mock_model_available()
+  ## Create request data
+  data <- list(
+    pjnz = "path/to/pjnz",
+    shape = "path",
+    population = "path",
+    survey = "path",
+    programme = "path",
+    anc = "path"
+  )
+  options = list()
+  req <- list(postBody = '
+              {
+              "data": {
+              "pjnz": "path/to/file",
+              "shape": "path/to/file",
+              "population": "path/to/file",
+              "survey": "path/to/file",
+              "programme": "path/to/file",
+              "anc": "path/to/file"
+              },
+              "options": {}
+              }')
+
+  ## Create mock response
+  res <- MockPlumberResponse$new()
+
+  ## Call the endpoint
+  queue <- Queue$new()
+  model_submit <- endpoint_model_submit(queue)
+  model_status <- endpoint_model_status(queue)
+
+  response <- local({
+    reset <- traduire::translator_set_language("fr", package = "hintr")
+    on.exit(reset())
+    model_submit(req, res, data, options, cfg$version_info)
+  })
+
+  response <- jsonlite::parse_json(response)
+  id <- response$data$id
+
+  ## Query for status
+  testthat::try_again(5, {
+    result <- queue$queue$task_wait(id)
+    res <- MockPlumberResponse$new()
+    status <- model_status(NULL, res, id)
+  })
+
+  value <- jsonlite::parse_json(status)
+  expect_equal(value$data$progress[[1]]$name,
+               "Maquette commencée")
+  expect_equal(value$data$progress[[2]]$name,
+               "Maquette terminée")
+})
+
 test_that("failed cancel sends reasonable message", {
   test_redis_available()
   test_mock_model_available()
