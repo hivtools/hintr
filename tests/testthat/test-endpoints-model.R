@@ -356,6 +356,7 @@ test_that("erroring model run returns useful messages", {
   trace <- vcapply(result_parsed$errors[[1]]$trace, identity)
   expect_true("rrq:::rrq_worker_main()" %in% trace)
   expect_true("stop(\"test error\")" %in% trace)
+  expect_match(trace[[1]], "^# [[:xdigit:]]+$")
 
   ## Check logging:
   res$headers[["Content-Type"]] <- "application/json"
@@ -463,6 +464,131 @@ test_that("model run can be cancelled", {
                "Model run was cancelled by user")
 })
 
+test_that("translation of progress", {
+  test_redis_available()
+  test_mock_model_available()
+  ## Create request data
+  data <- list(
+    pjnz = "path/to/pjnz",
+    shape = "path",
+    population = "path",
+    survey = "path",
+    programme = "path",
+    anc = "path"
+  )
+  options = list()
+  req <- list(postBody = '
+              {
+              "data": {
+              "pjnz": "path/to/file",
+              "shape": "path/to/file",
+              "population": "path/to/file",
+              "survey": "path/to/file",
+              "programme": "path/to/file",
+              "anc": "path/to/file"
+              },
+              "options": {}
+              }')
+
+  ## Create mock response
+  res <- MockPlumberResponse$new()
+
+  ## Call the endpoint
+  queue <- Queue$new()
+  model_submit <- endpoint_model_submit(queue)
+  model_status <- endpoint_model_status(queue)
+
+  response <- with_hintr_language(
+    "fr",
+    model_submit(req, res, data, options, cfg$version_info))
+
+  response <- jsonlite::parse_json(response)
+  id <- response$data$id
+
+  ## Query for status
+  testthat::try_again(5, {
+    result <- queue$queue$task_wait(id)
+    res <- MockPlumberResponse$new()
+    status <- model_status(NULL, res, id)
+  })
+
+  value <- jsonlite::parse_json(status)
+  expect_equal(value$data$progress[[1]]$name,
+               "Maquette commencée")
+  expect_equal(value$data$progress[[2]]$name,
+               "Maquette terminée")
+})
+
+test_that("error messages from naomi are translated", {
+  test_redis_available()
+  data <- list(
+    pjnz = file.path("testdata", "Malawi2019.PJNZ"),
+    shape = file.path("testdata", "malawi.geojson"),
+    population = file.path("testdata", "population.csv"),
+    survey = file.path("testdata", "survey.csv"),
+    programme = file.path("testdata", "programme.csv"),
+    anc = file.path("testdata", "anc.csv")
+  )
+  options <- list(
+    area_scope = "MWI",
+    area_level = 0,
+    calendar_quarter_t1 = "CY2016Q1",
+    calendar_quarter_t2 = "CY2018Q3",
+    calendar_quarter_t3 = "CY2019Q2",
+    survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
+    survey_art_coverage = "MWI2016PHIA",
+    survey_recently_infected = "MWI2016PHIA",
+    include_art_t1 = "true",
+    include_art_t2 = "true",
+    anc_prevalence_year1 = 2016,
+    anc_prevalence_year2 = 2018,
+    anc_art_coverage_year1 = 2016,
+    anc_art_coverage_year2 = 2018,
+    spectrum_population_calibration = "none",
+    spectrum_plhiv_calibration_level = "none",
+    spectrum_plhiv_calibration_strat = "sex_age_group",
+    spectrum_artnum_calibration_level = "none",
+    spectrum_artnum_calibration_strat = "age_coarse",
+    artattend_log_gamma_offset = -4L,
+    artattend = "false",
+    rng_seed = 17,
+    no_of_samples = 20,
+    max_iter = 250,
+    permissive = "false"
+  )
+  req <- list(postBody = '
+              {
+              "data": {
+              "pjnz": "path/to/file",
+              "shape": "path/to/file",
+              "population": "path/to/file",
+              "survey": "path/to/file",
+              "programme": "path/to/file",
+              "anc": "path/to/file"
+              },
+              "options": {}
+              }')
+  res <- MockPlumberResponse$new()
+
+  queue <- withr::with_envvar(c("USE_MOCK_MODEL" = "false"),
+                              Queue$new())
+  model_submit <- endpoint_model_submit(queue)
+  model_result <- endpoint_model_result(queue)
+
+  response <- with_hintr_language(
+    "fr",
+    model_submit(req, res, data, options, cfg$version_info))
+
+  id <- jsonlite::parse_json(response)$data$id
+  queue$queue$task_wait(id)
+
+  result <- model_result(NULL, res, id)
+  result <- jsonlite::parse_json(result)
+  expect_length(result$errors, 1)
+  expect_equal(result$errors[[1]]$detail,
+               "Impossible d’ajuster le modèle au niveau du pays. Choisissez un niveau différent.")
+})
+
 test_that("failed cancel sends reasonable message", {
   test_redis_available()
   test_mock_model_available()
@@ -484,4 +610,77 @@ test_that("failed cancel sends reasonable message", {
   expect_match(response$errors[[1]]$detail,
                "Task [[:xdigit:]]+ is not running \\(MISSING\\)")
   expect_is(response$errors[[1]]$key, "character")
+})
+
+test_that("Debug endpoint returns debug information", {
+  ## this one needs legit filenames available
+  test_redis_available()
+  test_mock_model_available()
+  ## Create request data
+  data <- list(
+    pjnz = "testdata/Malawi2019.PJNZ",
+    shape = file.path("testdata", "malawi.geojson"),
+    population = file.path("testdata", "population.csv"),
+    survey = file.path("testdata", "survey.csv"),
+    programme = file.path("testdata", "programme.csv"),
+    anc = NULL)
+  options = list(a = 1, b = 2)
+
+  req <- list(postBody = '
+              {
+              "data": {
+              "pjnz": "path/to/file",
+              "shape": "path/to/file",
+              "population": "path/to/file",
+              "survey": "path/to/file",
+              "programme": "path/to/file",
+              "anc": "path/to/file"
+              },
+              "options": {}
+              }')
+
+  ## Create mock response
+  res <- MockPlumberResponse$new()
+
+  ## Call the endpoint
+  queue <- Queue$new()
+  model_submit <- endpoint_model_submit(queue)
+  model_debug <- endpoint_model_debug(queue)
+
+  response <- model_submit(req, res, data, options, cfg$version_info)
+  response <- jsonlite::parse_json(response)
+  expect_equal(response$status, "success")
+  expect_true("id" %in% names(response$data))
+  expect_equal(res$status, 200)
+
+  id <- response$data$id
+  bin <- model_debug(NULL, NULL, id)
+  tmp <- tempfile()
+  dest <- tempfile()
+  writeBin(bin$bytes, tmp)
+  zip::unzip(tmp, exdir = dest)
+  expect_equal(dir(dest), id)
+  expect_setequal(
+    dir(file.path(dest, id)),
+    c("data.rds", "files"))
+  info <- readRDS(file.path(dest, id, "data.rds"))
+  expect_equal(info$objects$options, list(a = 1, b = 2))
+  expect_setequal(
+    dir(file.path(dest, id, "files")),
+    basename(unlist(data, FALSE, FALSE)))
+})
+
+
+test_that("Debug endpoint errors on nonexistant id", {
+  test_redis_available()
+  res <- MockPlumberResponse$new()
+  queue <- Queue$new()
+  model_debug <- endpoint_model_debug(queue)
+  id <- ids::random_id()
+  response <- model_debug(list(), res, id)
+  response_parsed <- jsonlite::parse_json(response)
+  expect_equal(res$status, 400)
+  err <- response_parsed$errors[[1]]
+  expect_equal(err$error, "INVALID_TASK")
+  expect_match(err$detail, "Task '[[:xdigit:]]+' not found")
 })

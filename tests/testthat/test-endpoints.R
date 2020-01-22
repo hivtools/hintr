@@ -108,7 +108,7 @@ test_that("plumber api can be built", {
                c("baseline-individual", "baseline-combined",
                  "survey-and-programme", "options"))
   expect_equal(names(api$routes$model),
-               c("options", "submit", "status", "result", "cancel"))
+               c("options", "submit", "status", "result", "cancel", "debug"))
   expect_equal(names(api$routes$meta), "plotting")
 })
 
@@ -190,6 +190,25 @@ test_that("serializer_zip sets headers and streams bytes", {
   expect_equal(output$headers$`Content-Type`, "application/octet-stream")
   expect_equal(output$headers$`Content-Disposition`,
                'attachment; filename="test_12345.zip"')
+})
+
+test_that("serializer_zip passes errors along as json", {
+  req <- '{"test":"example request"}'
+  res <- MockPlumberResponse$new()
+  errorHandler <- function(req, res, e) {
+    e$message
+  }
+
+  serializer <- serializer_zip("test")
+  res$status <- 400
+  value <- list(status = scalar("failure"),
+                errors = hintr_errors(list(ERROR = "message")))
+  output <- serializer(value, req, res, errorHandler)
+  expect_equal(output$headers$`Content-Type`, "application/json")
+  response <- jsonlite::parse_json(output$body)
+  expect_equal(response$status, "failure")
+  expect_equal(response$errors[[1]]$error, "ERROR")
+  expect_equal(response$errors[[1]]$detail, "message")
 })
 
 test_that("Schemas are draft-04", {

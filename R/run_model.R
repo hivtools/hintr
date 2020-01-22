@@ -1,4 +1,15 @@
-run_model <- function(data, options, path_results, path_prerun = NULL) {
+run_model <- function(data, options, path_results, path_prerun = NULL,
+                      language = NULL) {
+  if (!is.null(language)) {
+    reset_hintr <- traduire::translator_set_language(language)
+    reset_naomi <-
+      traduire::translator_set_language(language, package = "naomi")
+    on.exit({
+      reset_hintr()
+      reset_naomi()
+    })
+  }
+
   if (use_mock_model()) {
     progress_start <- list(
       started = list(

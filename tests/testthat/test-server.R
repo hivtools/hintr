@@ -183,6 +183,27 @@ test_that("model interactions", {
     expect_false(response$data$progress[[2]]$complete)
   })
 
+  r <- httr::GET(paste0(server$url, "/model/debug/", response$data$id))
+  expect_equal(httr::status_code(r), 200)
+  expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
+  expect_match(httr::headers(r)$`content-disposition`,
+               'attachment; filename="naomi_debug_\\w+.zip"')
+  bin <- httr::content(r, "raw")
+  zip <- tempfile(fileext = ".zip")
+  writeBin(bin, zip)
+  tmp <- tempfile()
+  dir.create(tmp)
+  zip::unzip(zip, exdir = tmp)
+  expect_equal(dir(tmp), response$data$id)
+  expect_setequal(dir(file.path(tmp, response$data$id)),
+                  c("data.rds", "files"))
+  dat <- readRDS(file.path(tmp, response$data$id, "data.rds"))
+  expect_equal(dat$objects$data$pjnz, "testdata/Malawi2019.PJNZ")
+
+  path <- download_debug(response$data$id, server = server$url)
+  expect_equal(dir(path, recursive = TRUE),
+               dir(file.path(tmp, response$data$id), recursive = TRUE))
+
   ## Get the result
   r <- httr::GET(paste0(server$url, "/model/result/", response$data$id))
   expect_equal(httr::status_code(r), 200)
@@ -504,6 +525,16 @@ test_that("version information is returned", {
                   c("hintr", "naomi", "rrq", "traduire"))
 })
 
+test_that("Incorrect debug key gives reasonable error", {
+  server <- hintr_server()
+  r <- httr::GET(paste0(server$url, "/model/debug/abc"))
+  expect_equal(httr::status_code(r), 400)
+  response <- response_from_json(r)
+  expect_equal(response$status, "failure")
+  expect_equal(response$errors[[1]]$error, "INVALID_TASK")
+  expect_equal(response$errors[[1]]$detail, "Task 'abc' not found")
+})
+
 test_that("worker information is returned", {
   server <- hintr_server()
   r <- httr::GET(paste0(server$url, "/hintr/worker/status"))
@@ -622,23 +653,6 @@ test_that("404 pages have sensible schema", {
                "GET /meaning-of-life is not a valid hintr path")
 })
 
-test_that("Error handler is triggered", {
-  ## This test is ugly because it probably should be fixed.
-  server <- hintr_server()
-  r <- httr::GET(paste0(server$url, "/download/summary/asdfasdfa"))
-  expect_equal(r$status_code, 500)
-  expect_equal(r$headers[["content-type"]], "application/json")
-
-  dat <- httr::content(r, "parsed", encoding = "UTF-8")
-  expect_equal(dat$status, "failure")
-  expect_equal(dat$errors[[1]]$error,
-               "SERVER_ERROR")
-  detail <- paste("Unexpected server error in '<call missing>' :",
-                  "'$ operator is invalid for atomic vectors' while doing",
-                  "'GET /download/summary/asdfasdfa'")
-  expect_equal(dat$errors[[1]]$detail, detail)
-})
-
 test_that("translation", {
   server <- hintr_server()
 
@@ -725,4 +739,13 @@ test_that("model run can be cancelled", {
                "MODEL_RUN_FAILED")
   expect_equal(dat$errors[[1]]$detail,
                "Model run was cancelled by user")
+})
+
+test_that("download_debug prevents overwriting", {
+  tmp <- tempfile()
+  id <- "abc"
+  dir.create(file.path(tmp, id), FALSE, TRUE)
+  expect_error(
+    download_debug(id, dest = tmp),
+    "Path 'abc' already exists at destination")
 })

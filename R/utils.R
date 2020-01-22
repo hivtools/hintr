@@ -87,3 +87,8 @@ throttle <- function(f, every) {
 no_error <- function(expr) {
   tryCatch(expr, error = function(e) NULL)
 }
+
+
+read_binary <- function(path) {
+  readBin(path, "raw", n = file.size(path))
+}
