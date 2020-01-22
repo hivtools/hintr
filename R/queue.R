@@ -40,8 +40,9 @@ Queue <- R6::R6Class(
     submit = function(data, options) {
       results_dir <- self$results_dir
       prerun_dir <- self$prerun_dir
+      language <- traduire::translator()$language()
       self$queue$enqueue_(quote(
-        hintr:::run_model(data, options, results_dir, prerun_dir)))
+        hintr:::run_model(data, options, results_dir, prerun_dir, language)))
     },
 
     status = function(id) {
