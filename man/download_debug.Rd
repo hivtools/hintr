@@ -4,7 +4,7 @@
 \alias{download_debug}
 \title{Get debug output from naomi}
 \usage{
-download_debug(id, server = NULL, dest = tempfile())
+download_debug(id, server = NULL, dest = tempfile(), verbose = TRUE)
 }
 \arguments{
 \item{id}{The model run id to download. This will be printed at
@@ -17,6 +17,8 @@ the staging instance.  You can change this if running locally.}
 \item{dest}{The destination for the downloaded data.  The actual
 data will be unpacked into a directory corresponding to the run
 id within this, so it is safe to use a common directory.}
+
+\item{verbose}{Add a progress bar}
 }
 \description{
 Get debug output from naomi
