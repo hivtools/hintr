@@ -1,3 +1,7 @@
+# hintr 0.0.33
+
+* Language preference is passed through to naomi during model runs.
+
 # hintr 0.0.32
 
 * New debug endpoint for locally getting a copy of failing data.
