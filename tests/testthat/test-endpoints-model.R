@@ -463,7 +463,7 @@ test_that("model run can be cancelled", {
                "Model run was cancelled by user")
 })
 
-test_that("translation", {
+test_that("translation of progress", {
   test_redis_available()
   test_mock_model_available()
   ## Create request data
@@ -497,11 +497,9 @@ test_that("translation", {
   model_submit <- endpoint_model_submit(queue)
   model_status <- endpoint_model_status(queue)
 
-  response <- local({
-    reset <- traduire::translator_set_language("fr", package = "hintr")
-    on.exit(reset())
-    model_submit(req, res, data, options, cfg$version_info)
-  })
+  response <- with_hintr_language(
+    "fr",
+    model_submit(req, res, data, options, cfg$version_info))
 
   response <- jsonlite::parse_json(response)
   id <- response$data$id
@@ -518,6 +516,76 @@ test_that("translation", {
                "Maquette commencée")
   expect_equal(value$data$progress[[2]]$name,
                "Maquette terminée")
+})
+
+test_that("error messages from naomi are translated", {
+  test_redis_available()
+  data <- list(
+    pjnz = file.path("testdata", "Malawi2019.PJNZ"),
+    shape = file.path("testdata", "malawi.geojson"),
+    population = file.path("testdata", "population.csv"),
+    survey = file.path("testdata", "survey.csv"),
+    programme = file.path("testdata", "programme.csv"),
+    anc = file.path("testdata", "anc.csv")
+  )
+  options <- list(
+    area_scope = "MWI",
+    area_level = 0,
+    calendar_quarter_t1 = "CY2016Q1",
+    calendar_quarter_t2 = "CY2018Q3",
+    calendar_quarter_t3 = "CY2019Q2",
+    survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
+    survey_art_coverage = "MWI2016PHIA",
+    survey_recently_infected = "MWI2016PHIA",
+    include_art_t1 = "true",
+    include_art_t2 = "true",
+    anc_prevalence_year1 = 2016,
+    anc_prevalence_year2 = 2018,
+    anc_art_coverage_year1 = 2016,
+    anc_art_coverage_year2 = 2018,
+    spectrum_population_calibration = "none",
+    spectrum_plhiv_calibration_level = "none",
+    spectrum_plhiv_calibration_strat = "sex_age_group",
+    spectrum_artnum_calibration_level = "none",
+    spectrum_artnum_calibration_strat = "age_coarse",
+    artattend_log_gamma_offset = -4L,
+    artattend = "false",
+    rng_seed = 17,
+    no_of_samples = 20,
+    max_iter = 250,
+    permissive = "false"
+  )
+  req <- list(postBody = '
+              {
+              "data": {
+              "pjnz": "path/to/file",
+              "shape": "path/to/file",
+              "population": "path/to/file",
+              "survey": "path/to/file",
+              "programme": "path/to/file",
+              "anc": "path/to/file"
+              },
+              "options": {}
+              }')
+  res <- MockPlumberResponse$new()
+
+  queue <- withr::with_envvar(c("USE_MOCK_MODEL" = "false"),
+                              Queue$new())
+  model_submit <- endpoint_model_submit(queue)
+  model_result <- endpoint_model_result(queue)
+
+  response <- with_hintr_language(
+    "fr",
+    model_submit(req, res, data, options, cfg$version_info))
+
+  id <- jsonlite::parse_json(response)$data$id
+  queue$queue$task_wait(id)
+
+  result <- model_result(NULL, res, id)
+  result <- jsonlite::parse_json(result)
+  expect_length(result$errors, 1)
+  expect_equal(result$errors[[1]]$detail,
+               "Impossible d’ajuster le modèle au niveau du pays. Choisissez un niveau différent.")
 })
 
 test_that("failed cancel sends reasonable message", {

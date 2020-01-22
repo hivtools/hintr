@@ -1,8 +1,13 @@
 run_model <- function(data, options, path_results, path_prerun = NULL,
                       language = NULL) {
   if (!is.null(language)) {
-    reset <- traduire::translator_set_language(language)
-    on.exit(reset())
+    reset_hintr <- traduire::translator_set_language(language)
+    reset_naomi <-
+      traduire::translator_set_language(language, package = "naomi")
+    on.exit({
+      reset_hintr()
+      reset_naomi()
+    })
   }
 
   if (use_mock_model()) {
