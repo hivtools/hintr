@@ -200,6 +200,10 @@ test_that("model interactions", {
   dat <- readRDS(file.path(tmp, response$data$id, "data.rds"))
   expect_equal(dat$objects$data$pjnz, "testdata/Malawi2019.PJNZ")
 
+  path <- download_debug(response$data$id, server = server$url)
+  expect_equal(dir(path, recursive = TRUE),
+               dir(file.path(tmp, response$data$id), recursive = TRUE))
+
   ## Get the result
   r <- httr::GET(paste0(server$url, "/model/result/", response$data$id))
   expect_equal(httr::status_code(r), 200)
