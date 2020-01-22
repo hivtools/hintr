@@ -183,6 +183,23 @@ test_that("model interactions", {
     expect_false(response$data$progress[[2]]$complete)
   })
 
+  r <- httr::GET(paste0(server$url, "/model/debug/", response$data$id))
+  expect_equal(httr::status_code(r), 200)
+  expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
+  expect_match(httr::headers(r)$`content-disposition`,
+               'attachment; filename="naomi_debug_\\w+.zip"')
+  bin <- httr::content(r, "raw")
+  zip <- tempfile(fileext = ".zip")
+  writeBin(bin, zip)
+  tmp <- tempfile()
+  dir.create(tmp)
+  zip::unzip(zip, exdir = tmp)
+  expect_equal(dir(tmp), response$data$id)
+  expect_setequal(dir(file.path(tmp, response$data$id)),
+                  c("data.rds", "files"))
+  dat <- readRDS(file.path(tmp, response$data$id, "data.rds"))
+  expect_equal(dat$objects$data$pjnz, "testdata/Malawi2019.PJNZ")
+
   ## Get the result
   r <- httr::GET(paste0(server$url, "/model/result/", response$data$id))
   expect_equal(httr::status_code(r), 200)
