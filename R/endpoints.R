@@ -108,7 +108,8 @@ endpoint_model_result <- function(queue) {
                        value = process_result(queue$result(id)))
     } else if (task_status == "ERROR") {
       result <- queue$result(id)
-      error_data <- structure(result$message, trace = result$trace)
+      trace <- c(sprintf("# %s", id), result$trace)
+      error_data <- structure(result$message, trace = trace)
       response <- error(MODEL_RUN_FAILED = error_data)
     } else if (task_status == "ORPHAN") {
       response <- error(MODEL_RUN_FAILED = t_("MODEL_RESULT_CRASH"))
@@ -119,6 +120,36 @@ endpoint_model_result <- function(queue) {
     }
 
     hintr_response(response, "ModelResultResponse")
+  }
+}
+
+endpoint_model_debug <- function(queue) {
+  function(req, res, id) {
+    response <- with_success(queue$queue$task_data(id))
+    if (!response$success) {
+      response$errors <- hintr_errors(list(
+        "INVALID_TASK" = response$message))
+      res$status <- 400
+      ## Dummy response type, as with the download endpoints
+      return(hintr_response(response, "ModelResultResponse"))
+    }
+
+    data <- response$value
+    files <- unique(unlist(data$objects$data, FALSE, FALSE))
+    tmp <- tempfile()
+    path <- file.path(tmp, id)
+    dir.create(path, FALSE, TRUE)
+
+    path_files <- file.path(path, "files")
+    dir.create(path_files)
+    file_copy(files, file.path(path_files, basename(files)))
+    saveRDS(data, file.path(path, "data.rds"))
+
+    on.exit(unlink(tmp, recursive = TRUE))
+
+    dest <- paste0(id, ".zip")
+    withr::with_dir(tmp, zip::zipr(dest, id))
+    list(bytes = read_binary(file.path(tmp, dest)), id = id)
   }
 }
 
@@ -447,6 +478,9 @@ serializer_json_hintr <- function() {
 
 serializer_zip <- function(filename) {
   function(val, req, res, errorHandler) {
+    if (res$status >= 300) {
+      return(serializer_json_hintr()(val, req, res, errorHandler))
+    }
     tryCatch({
       res$setHeader("Content-Type", "application/octet-stream")
       short_id <- substr(val$id, 1, 5)

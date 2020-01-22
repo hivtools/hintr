@@ -1,3 +1,7 @@
+# hintr 0.0.32
+
+* New debug endpoint for locally getting a copy of failing data.
+
 # hintr 0.0.31
 
 * Extend time options back to Q1 2010 to support household survey datasets back to 2010 (Burkina Faso).
