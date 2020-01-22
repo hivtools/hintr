@@ -200,7 +200,8 @@ test_that("model interactions", {
   dat <- readRDS(file.path(tmp, response$data$id, "data.rds"))
   expect_equal(dat$objects$data$pjnz, "testdata/Malawi2019.PJNZ")
 
-  path <- download_debug(response$data$id, server = server$url)
+  path <- download_debug(response$data$id, server = server$url,
+                         verbose = FALSE)
   expect_equal(dir(path, recursive = TRUE),
                dir(file.path(tmp, response$data$id), recursive = TRUE))
 

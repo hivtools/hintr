@@ -13,8 +13,11 @@
 ##'   data will be unpacked into a directory corresponding to the run
 ##'   id within this, so it is safe to use a common directory.
 ##'
+##' @param verbose Add a progress bar
+##'
 ##' @export
-download_debug <- function(id, server = NULL, dest = tempfile()) {
+download_debug <- function(id, server = NULL, dest = tempfile(),
+                           verbose = TRUE) {
   if (is.null(server)) {
     server <- "http://naomi.dide.ic.ac.uk:8888"
   }
@@ -22,7 +25,8 @@ download_debug <- function(id, server = NULL, dest = tempfile()) {
     stop(sprintf("Path '%s' already exists at destination '%s'", id, dest))
   }
   url <- sprintf("%s/model/debug/%s", server, id)
-  r <- httr::GET(url)
+  progress <- if (verbose) httr::progress() else NULL
+  r <- httr::GET(url, progress)
   httr::stop_for_status(r)
 
   zip <- tempfile(fileext = ".zip")
