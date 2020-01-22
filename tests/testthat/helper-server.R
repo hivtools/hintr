@@ -86,3 +86,12 @@ hintr_server <- function(n_tries = 10, poll = 0.5, results_dir = tempdir()) {
 response_from_json <- function(x) {
   jsonlite::parse_json(httr::content(x, "text", encoding = "UTF-8"))
 }
+
+hintr_server_blocking <- function() {
+  queue_id <- paste0("hintr:", ids::random_id())
+  port <- get_free_port()
+  results_dir <- tempdir()
+  message(sprintf("id:   %s", queue_id))
+  message(sprintf("port: %s", port))
+  hintr:::api(port = port, queue_id = queue_id, results_dir = results_dir)
+}
