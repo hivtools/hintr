@@ -523,7 +523,6 @@ test_that("version information is returned", {
 
 test_that("Incorrect debug key gives reasonable error", {
   server <- hintr_server()
-  server <- list(url = "http://localhost:9000")
   r <- httr::GET(paste0(server$url, "/model/debug/abc"))
   expect_equal(httr::status_code(r), 400)
   response <- response_from_json(r)
