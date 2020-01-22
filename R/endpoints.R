@@ -478,6 +478,9 @@ serializer_json_hintr <- function() {
 
 serializer_zip <- function(filename) {
   function(val, req, res, errorHandler) {
+    if (res$status >= 300) {
+      return(serializer_json_hintr()(val, req, res, errorHandler))
+    }
     tryCatch({
       res$setHeader("Content-Type", "application/octet-stream")
       short_id <- substr(val$id, 1, 5)
