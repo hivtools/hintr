@@ -653,24 +653,6 @@ test_that("404 pages have sensible schema", {
                "GET /meaning-of-life is not a valid hintr path")
 })
 
-test_that("Error handler is triggered", {
-  testthat::skip("This is fixed now, but this test should be rewritten")
-  ## This test is ugly because it probably should be fixed.
-  server <- hintr_server()
-  r <- httr::GET(paste0(server$url, "/download/summary/asdfasdfa"))
-  expect_equal(r$status_code, 500)
-  expect_equal(r$headers[["content-type"]], "application/json")
-
-  dat <- httr::content(r, "parsed", encoding = "UTF-8")
-  expect_equal(dat$status, "failure")
-  expect_equal(dat$errors[[1]]$error,
-               "SERVER_ERROR")
-  detail <- paste("Unexpected server error in '<call missing>' :",
-                  "'$ operator is invalid for atomic vectors' while doing",
-                  "'GET /download/summary/asdfasdfa'")
-  expect_equal(dat$errors[[1]]$detail, detail)
-})
-
 test_that("translation", {
   server <- hintr_server()
 
