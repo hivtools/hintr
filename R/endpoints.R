@@ -130,7 +130,8 @@ endpoint_model_debug <- function(queue) {
       response$errors <- hintr_errors(list(
         "INVALID_TASK" = response$message))
       res$status <- 400
-      return(hintr_response(response, "ModelDebugResponse"))
+      ## Dummy response type, as with the download endpoints
+      return(hintr_response(response, "ModelResultResponse"))
     }
 
     data <- response$value
