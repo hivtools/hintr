@@ -135,7 +135,7 @@ endpoint_model_debug <- function(queue) {
     }
 
     data <- response$value
-    files <- vcapply(data$objects$data, identity, USE.NAMES = FALSE)
+    files <- unique(unlist(data$objects$data, FALSE, FALSE))
     tmp <- tempfile()
     path <- file.path(tmp, id)
     dir.create(path, FALSE, TRUE)

@@ -498,7 +498,7 @@ test_that("Debug endpoint returns debug information", {
     population = file.path("testdata", "population.csv"),
     survey = file.path("testdata", "survey.csv"),
     programme = file.path("testdata", "programme.csv"),
-    anc = file.path("testdata", "anc.csv"))
+    anc = NULL)
   options = list(a = 1, b = 2)
 
   req <- list(postBody = '
