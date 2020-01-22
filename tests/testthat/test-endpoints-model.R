@@ -38,8 +38,6 @@ test_that("endpoint model run queues a model run", {
   expect_true("id" %in% names(response$data))
   expect_equal(res$status, 200)
 
-  queue$queue$task_data(response$data$id)
-
   ## Wait for complete and query for status
   ## Query for status
   testthat::try_again(5, {
