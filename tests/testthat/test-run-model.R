@@ -175,3 +175,73 @@ test_that("real model can be run", {
                     "meta_area.csv", "meta_indicator.csv", "meta_period.csv")
                   %in% file_list$Name))
 })
+
+test_that("real model can be run", {
+  convert_csv <- function(path) {
+    dest <- tempfile(fileext = ".csv")
+    write.csv2(read_csv(path), dest, row.names = FALSE)
+    dest
+  }
+  data <- list(
+    pjnz = file.path("testdata", "Malawi2019.PJNZ"),
+    shape = file.path("testdata", "malawi.geojson"),
+    population = convert_csv(file.path("testdata", "population.csv")),
+    survey = convert_csv(file.path("testdata", "survey.csv")),
+    programme = convert_csv(file.path("testdata", "programme.csv")),
+    anc = convert_csv(file.path("testdata", "anc.csv"))
+  )
+  options <- list(
+    area_scope = "MWI",
+    area_level = 4,
+    calendar_quarter_t1 = "CY2016Q1",
+    calendar_quarter_t2 = "CY2018Q3",
+    calendar_quarter_t3 = "CY2019Q2",
+    survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
+    survey_art_coverage = "MWI2016PHIA",
+    survey_recently_infected = "MWI2016PHIA",
+    include_art_t1 = "true",
+    include_art_t2 = "true",
+    anc_prevalence_year1 = 2016,
+    anc_prevalence_year2 = 2018,
+    anc_art_coverage_year1 = 2016,
+    anc_art_coverage_year2 = 2018,
+    spectrum_population_calibration = "none",
+    spectrum_plhiv_calibration_level = "none",
+    spectrum_plhiv_calibration_strat = "sex_age_group",
+    spectrum_artnum_calibration_level = "none",
+    spectrum_artnum_calibration_strat = "age_coarse",
+    artattend_log_gamma_offset = -4L,
+    artattend = "false",
+    rng_seed = 17,
+    no_of_samples = 20,
+    max_iter = 250,
+    permissive = "false"
+  )
+  withr::with_envvar(c("USE_MOCK_MODEL" = "false"), {
+    model_run <- run_model(data, options, tempdir())
+  })
+
+  expect_equal(names(model_run),
+               c("output_path", "spectrum_path", "summary_path"))
+
+  output <- readRDS(model_run$output_path)
+  expect_equal(colnames(output),
+               c("area_level", "area_level_label", "area_id", "area_name",
+                 "sex", "age_group", "age_group_id", "age_group_label",
+                 "calendar_quarter", "quarter_id", "quarter_label", "indicator",
+                 "indicator_id", "indicator_label", "mean",
+                 "se", "median", "mode", "lower", "upper"))
+  expect_true(nrow(output) > 84042)
+
+  file_list <- unzip(model_run$spectrum_path, list = TRUE)
+  expect_true(all(c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
+                    "meta_area.csv", "meta_indicator.csv", "meta_period.csv")
+                  %in% file_list$Name))
+
+  ## TODO: replace with checks for spectrum digest once function to create
+  ## that has been added mrc-636
+  file_list <- unzip(model_run$summary_path, list = TRUE)
+  expect_true(all(c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
+                    "meta_area.csv", "meta_indicator.csv", "meta_period.csv")
+                  %in% file_list$Name))
+})
