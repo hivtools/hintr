@@ -64,3 +64,14 @@ test_that("read csv removes empty rows", {
              path)
   expect_equal(nrow(read_csv(path)), 4)
 })
+
+test_that("read csv can read semicolon delimited files", {
+  path <- tempfile()
+  data <- data.frame(a = 1:4, b = 1:4)
+  dir.create(path)
+  path1 <- file.path(path, "input1.csv")
+  path2 <- file.path(path, "input2.csv")
+  write.csv(data, path1)
+  write.csv2(data, path2)
+  expect_equal(read_csv(path1), read_csv(path2))
+})
