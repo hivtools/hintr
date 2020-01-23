@@ -176,7 +176,8 @@ test_that("real model can be run", {
                   %in% file_list$Name))
 })
 
-test_that("real model can be run", {
+test_that("real model can be run with csv2 data", {
+  testthat::skip_on_covr() # slow so don't run over again
   convert_csv <- function(path) {
     dest <- tempfile(fileext = ".csv")
     write.csv2(read_csv(path), dest, row.names = FALSE)
