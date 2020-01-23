@@ -19,8 +19,15 @@ read_csv_regions <- function(csv_file) {
   unique(data$area_id)
 }
 
-read_csv <- function(...) {
-  data <- utils::read.csv(..., stringsAsFactors = FALSE)
+read_csv <- function(file, ...) {
+  header <- readLines(file, 1)
+  if (!grepl(",", header) && grepl(";", header)) {
+    read <- utils::read.csv2
+  } else {
+    read <- utils::read.csv
+  }
+
+  data <- read(file, ..., stringsAsFactors = FALSE)
   na_or_empty_rows <- rowSums(is.na(data)) + rowSums(data == "", na.rm = TRUE)
   data[na_or_empty_rows != ncol(data), ]
 }
