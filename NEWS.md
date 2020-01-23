@@ -1,3 +1,7 @@
+# hintr 0.0.34
+
+* Accept semicolon delimited data as csv inputs (common in countries with non-Anglo number formats)
+
 # hintr 0.0.33
 
 * Language preference is passed through to naomi during model runs.
