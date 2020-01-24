@@ -140,6 +140,10 @@ endpoint_model_debug <- function(queue) {
     path <- file.path(tmp, id)
     dir.create(path, FALSE, TRUE)
 
+    data$sessionInfo <- utils::sessionInfo()
+    data$objects$data <- lapply(data$objects$data,
+                                function(x) if (!is.null(x)) basename(x))
+
     path_files <- file.path(path, "files")
     dir.create(path_files)
     file_copy(files, file.path(path_files, basename(files)))

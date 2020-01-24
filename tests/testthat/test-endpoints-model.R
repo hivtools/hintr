@@ -653,6 +653,10 @@ test_that("Debug endpoint returns debug information", {
   expect_true("id" %in% names(response$data))
   expect_equal(res$status, 200)
 
+  basename2 <- function(x) {
+    if (is.null(x)) NULL else basename(x)
+  }
+
   id <- response$data$id
   bin <- model_debug(NULL, NULL, id)
   tmp <- tempfile()
@@ -665,6 +669,8 @@ test_that("Debug endpoint returns debug information", {
     c("data.rds", "files"))
   info <- readRDS(file.path(dest, id, "data.rds"))
   expect_equal(info$objects$options, list(a = 1, b = 2))
+  expect_is(info$sessionInfo, "sessionInfo")
+  expect_equal(info$objects$data, lapply(data, basename2))
   expect_setequal(
     dir(file.path(dest, id, "files")),
     basename(unlist(data, FALSE, FALSE)))
