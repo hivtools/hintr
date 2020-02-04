@@ -316,7 +316,7 @@ test_that("can get defaults for bar chart", {
   expect_length(age_options, 17)
   expect_equal(age_options[[1]], list(
     id = scalar("00-04"),
-    label = scalar("0-4")
+    label = scalar("00-04")
   ))
   expect_equal(age_options[[length(age_options)]], list(
     id = scalar("80+"),
