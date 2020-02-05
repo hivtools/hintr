@@ -84,6 +84,8 @@ test_that("run with prerun", {
     spectrum_plhiv_calibration_strat = "sex_age_group",
     spectrum_artnum_calibration_level = "none",
     spectrum_artnum_calibration_strat = "age_coarse",
+    spectrum_infections_calibration_level = "none",
+    spectrum_infections_calibration_strat = "age_coarse",
     artattend_log_gamma_offset = -4L,
     artattend = "false",
     rng_seed = 17,
