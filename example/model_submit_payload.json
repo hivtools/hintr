@@ -1,11 +1,35 @@
 {
   "data": {
-    "pjnz": "src/tests/testthat/testdata/Malawi2019.PJNZ",
-    "shape": "src/tests/testthat/testdata/malawi.geojson",
-    "population": "src/tests/testthat/testdata/population.csv",
-    "survey": "src/tests/testthat/testdata/survey.csv",
-    "programme": "src/tests/testthat/testdata/programme.csv",
-    "anc": "src/tests/testthat/testdata/anc.csv"
+    "pjnz": {
+      "path": "src/tests/testthat/testdata/Malawi2019.PJNZ",
+      "filename": "Malawi2019.PJNZ",
+      "hash": "12345"
+    },
+    "shape": {
+      "path": "src/tests/testthat/testdata/alawi.geojson",
+      "filename": "malawi.geojson",
+      "hash": "12345"
+    },
+    "population": {
+      "path": "src/tests/testthat/testdata/population.csv",
+      "filename": "population.csv",
+      "hash": "12345"
+    },
+    "survey": {
+      "path": "src/tests/testthat/testdata/survey.csv",
+      "filename": "survey.csv",
+      "hash": "12345"
+    },
+    "programme": {
+      "path": "src/tests/testthat/testdata/programme.csv",
+      "filename": "programme.csv",
+      "hash": "12345"
+    },
+    "anc": {
+      "path": "src/tests/testthat/testdata/anc.csv",
+      "filename": "anc.csv",
+      "hash": "12345"
+    }
   },
   "options": {
     "area_scope": "MWI",
@@ -13,7 +37,10 @@
     "calendar_quarter_t1": "CY2016Q1",
     "calendar_quarter_t2": "CY2018Q3",
     "calendar_quarter_t3": "CY2019Q2",
-    "survey_prevalence": ["MWI2016PHIA", "MWI2015DHS"],
+    "survey_prevalence": [
+      "MWI2016PHIA",
+      "MWI2015DHS"
+    ],
     "survey_art_coverage": "MWI2016PHIA",
     "survey_recently_infected": "MWI2016PHIA",
     "include_art_t1": "true",
