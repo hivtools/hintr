@@ -332,7 +332,8 @@ download <- function(queue, type) {
                    "summary" = response$value$summary_path)
     out <- list(
       bytes = readBin(path, "raw", n = file.size(path)),
-      id = id
+      id = id,
+      metadata =  response$value$metadata
     )
     out
   }
@@ -483,14 +484,13 @@ serializer_json_hintr <- function() {
 serializer_zip <- function(filename) {
   function(val, req, res, errorHandler) {
     if (res$status >= 300) {
-      return(serializer_json_hintr()(val, req, res, errorHandler))
+      return(serializer_json_hintr() (val, req, res, errorHandler))
     }
     tryCatch({
       res$setHeader("Content-Type", "application/octet-stream")
-      short_id <- substr(val$id, 1, 5)
       res$setHeader("Content-Disposition",
-                    sprintf('attachment; filename="%s_%s.zip"',
-                            filename, short_id))
+                    sprintf('attachment; filename="%s_%s_%s.zip"',
+                            val$metadata$areas, iso_time_str(), filename))
       res$body <- val$bytes
       return(res$toResponse())
     }, error = function(e) {

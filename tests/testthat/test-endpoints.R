@@ -183,13 +183,16 @@ test_that("serializer_zip sets headers and streams bytes", {
 
   serializer <- serializer_zip("test")
 
-  output <- serializer(list(bytes = "value", id = "1234567"), req, res,
+  output <- serializer(list(bytes = "value",
+                            id = "1234567",
+                            metadata = list(areas = "MWI")),
+                       req, res,
                        errorHandler)
   expect_equal(output$body, "value")
   expect_equal(names(output$headers), c("Content-Type", "Content-Disposition"))
   expect_equal(output$headers$`Content-Type`, "application/octet-stream")
-  expect_equal(output$headers$`Content-Disposition`,
-               'attachment; filename="test_12345.zip"')
+  expect_match(output$headers$`Content-Disposition`,
+               'attachment; filename="MWI_\\d+-\\d+_test.zip"')
 })
 
 test_that("serializer_zip passes errors along as json", {
