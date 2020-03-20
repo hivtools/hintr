@@ -5,12 +5,12 @@ test_that("endpoint model run queues a model run", {
   test_mock_model_available()
   ## Create request data
   data <- list(
-    pjnz = list(path = "path/to/pjnz", hash = "12345", filename:"original"),
-    shape = list(path = "path/to/shape", hash = "12345", filename:"original"),
-    population = list(path = "path/to/pop", hash = "12345", filename:"original"),
-    survey = list(path = "path/to/survey", hash = "12345", filename:"original"),
-    programme = list(path = "path/to/programme", hash = "12345", filename:"original"),
-    anc = list(path = "path/to/anc", hash = "12345", filename:"original")
+    pjnz = list(path = "path/to/pjnz", hash = "12345", filename = "original"),
+    shape = list(path = "path/to/shape", hash = "12345", filename = "original"),
+    population = list(path = "path/to/pop", hash = "12345", filename = "original"),
+    survey = list(path = "path/to/survey", hash = "12345", filename = "original"),
+    programme = list(path = "path/to/programme", hash = "12345", filename = "original"),
+    anc = list(path = "path/to/anc", hash = "12345", filename = "original")
   )
   options = list()
   req <- list(postBody = '
@@ -159,12 +159,12 @@ test_that("endpoint_run_model returns error if queueing fails", {
   test_redis_available()
   ## Create request data
   data <- list(
-    pjnz = list(path = "path/to/pjnz", hash = "12345", filename:"original"),
-    shape = list(path = "path/to/shape", hash = "12345", filename:"original"),
-    population = list(path = "path/to/pop", hash = "12345", filename:"original"),
-    survey = list(path = "path/to/survey", hash = "12345", filename:"original"),
-    programme = list(path = "path/to/programme", hash = "12345", filename:"original"),
-    anc = list(path = "path/to/anc", hash = "12345", filename:"original")
+    pjnz = list(path = "path/to/pjnz", hash = "12345", filename = "original"),
+    shape = list(path = "path/to/shape", hash = "12345", filename = "original"),
+    population = list(path = "path/to/pop", hash = "12345", filename = "original"),
+    survey = list(path = "path/to/survey", hash = "12345", filename = "original"),
+    programme = list(path = "path/to/programme", hash = "12345", filename = "original"),
+    anc = list(path = "path/to/anc", hash = "12345", filename = "original")
   )
   options = list(
     programme = TRUE,
@@ -273,12 +273,12 @@ test_that("endpoint_run_status returns error if query for status fails", {
 test_that("querying for result of incomplete jobs returns useful error", {
   test_redis_available()
   data <- list(
-    pjnz = list(path = "path/to/pjnz", hash = "12345", filename:"original"),
-    shape = list(path = "path/to/shape", hash = "12345", filename:"original"),
-    population = list(path = "path/to/pop", hash = "12345", filename:"original"),
-    survey = list(path = "path/to/survey", hash = "12345", filename:"original"),
-    programme = list(path = "path/to/programme", hash = "12345", filename:"original"),
-    anc = list(path = "path/to/anc", hash = "12345", filename:"original")
+    pjnz = list(path = "path/to/pjnz", hash = "12345", filename = "original"),
+    shape = list(path = "path/to/shape", hash = "12345",  filename = "original"),
+    population = list(path = "path/to/pop", hash = "12345", filename = "original"),
+    survey = list(path = "path/to/survey", hash = "12345", filename = "original"),
+    programme = list(path = "path/to/programme", hash = "12345", filename = "original"),
+    anc = list(path = "path/to/anc", hash = "12345", filename = "original")
   )
   options = list()
   req <- list(postBody = '
@@ -398,12 +398,12 @@ test_that("model run can be cancelled", {
   test_mock_model_available()
   ## Create request data
   data <- list(
-    pjnz = list(path = "path/to/pjnz", hash = "12345", filename:"original"),
-    shape = list(path = "path/to/shape", hash = "12345", filename:"original"),
-    population = list(path = "path/to/pop", hash = "12345", filename:"original"),
-    survey = list(path = "path/to/survey", hash = "12345", filename:"original"),
-    programme = list(path = "path/to/programme", hash = "12345", filename:"original"),
-    anc = list(path = "path/to/anc", hash = "12345", filename:"original")
+    pjnz = list(path = "path/to/pjnz", hash = "12345", filename = "original"),
+    shape = list(path = "path/to/shape", hash = "12345", filename = "original"),
+    population = list(path = "path/to/pop", hash = "12345", filename = "original"),
+    survey = list(path = "path/to/survey", hash = "12345", filename = "original"),
+    programme = list(path = "path/to/programme", hash = "12345", filename = "original"),
+    anc = list(path = "path/to/anc", hash = "12345", filename = "original")
   )
   options = list()
   req <- list(postBody = '
@@ -469,12 +469,12 @@ test_that("translation of progress", {
   test_mock_model_available()
   ## Create request data
   data <- list(
-    pjnz = list(path = "path/to/pjnz", hash = "12345", filename:"original"),
-    shape = list(path = "path/to/shape", hash = "12345", filename:"original"),
-    population = list(path = "path/to/pop", hash = "12345", filename:"original"),
-    survey = list(path = "path/to/survey", hash = "12345", filename:"original"),
-    programme = list(path = "path/to/programme", hash = "12345", filename:"original"),
-    anc = list(path = "path/to/anc", hash = "12345", filename:"original")
+    pjnz = list(path = "path/to/pjnz", hash = "12345", filename = "original"),
+    shape = list(path = "path/to/shape", hash = "12345", filename = "original"),
+    population = list(path = "path/to/pop", hash = "12345", filename = "original"),
+    survey = list(path = "path/to/survey", hash = "12345", filename = "original"),
+    programme = list(path = "path/to/programme", hash = "12345", filename = "original"),
+    anc = list(path = "path/to/anc", hash = "12345", filename = "original")
   )
   options = list()
   req <- list(postBody = '
@@ -530,12 +530,12 @@ test_that("error messages from naomi are translated", {
     anc = file.path("testdata", "anc.csv")
   )
   data <- list(
-    pjnz = list(path = file.path("testdata", "Malawi2019.PJNZ"), hash = "12345", filename:"original"),
-    shape = list(path = file.path("testdata", "malawi.geojson"), hash = "12345", filename:"original"),
-    population = list(path = file.path("testdata", "population.csv"), hash = "12345", filename:"original"),
-    survey = list(path = file.path("testdata", "survey.csv"), hash = "12345", filename:"original"),
-    programme = list(path = file.path("testdata", "programme.csv"), hash = "12345", filename:"original"),
-    anc = list(path = file.path("testdata", "anc.csv"), hash = "12345", filename:"original")
+    pjnz = list(path = file.path("testdata", "Malawi2019.PJNZ"), hash = "12345", filename = "original"),
+    shape = list(path = file.path("testdata", "malawi.geojson"), hash = "12345", filename = "original"),
+    population = list(path = file.path("testdata", "population.csv"), hash = "12345", filename = "original"),
+    survey = list(path = file.path("testdata", "survey.csv"), hash = "12345", filename = "original"),
+    programme = list(path = file.path("testdata", "programme.csv"), hash = "12345", filename = "original"),
+    anc = list(path = file.path("testdata", "anc.csv"), hash = "12345", filename = "original")
   )
   options <- list(
     area_scope = "MWI",
@@ -628,11 +628,11 @@ test_that("Debug endpoint returns debug information", {
   test_mock_model_available()
   ## Create request data
   data <- list(
-    pjnz = list(path = file.path("testdata", "Malawi2019.PJNZ"), hash = "12345", filename:"original"),
-    shape = list(path = file.path("testdata", "malawi.geojson"), hash = "12345", filename:"original"),
-    population = list(path = file.path("testdata", "population.csv"), hash = "12345", filename:"original"),
-    survey = list(path = file.path("testdata", "survey.csv"), hash = "12345", filename:"original"),
-    programme = list(path = file.path("testdata", "programme.csv"), hash = "12345", filename:"original"),
+    pjnz = list(path = file.path("testdata", "Malawi2019.PJNZ"), hash = "12345", filename = "original"),
+    shape = list(path = file.path("testdata", "malawi.geojson"), hash = "12345", filename = "original"),
+    population = list(path = file.path("testdata", "population.csv"), hash = "12345", filename = "original"),
+    survey = list(path = file.path("testdata", "survey.csv"), hash = "12345", filename = "original"),
+    programme = list(path = file.path("testdata", "programme.csv"), hash = "12345", filename = "original"),
     anc = NULL
   )
   options = list(a = 1, b = 2)
