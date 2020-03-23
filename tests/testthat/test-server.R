@@ -187,7 +187,7 @@ test_that("model interactions", {
   expect_equal(httr::status_code(r), 200)
   expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
   expect_match(httr::headers(r)$`content-disposition`,
-               'attachment; filename="MWI_\\d+-\\d_naomi_debug.zip"')
+               'attachment; filename=\"[a-z0-9]+_\\d+-\\d+_naomi_debug.zip\"')
   bin <- httr::content(r, "raw")
   zip <- tempfile(fileext = ".zip")
   writeBin(bin, zip)

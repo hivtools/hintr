@@ -153,7 +153,8 @@ endpoint_model_debug <- function(queue) {
 
     dest <- paste0(id, ".zip")
     withr::with_dir(tmp, zip::zipr(dest, id))
-    list(bytes = read_binary(file.path(tmp, dest)), id = id)
+    list(bytes = read_binary(file.path(tmp, dest)),
+         metadata = list(areas = id))
   }
 }
 
