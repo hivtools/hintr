@@ -187,7 +187,7 @@ test_that("model interactions", {
   expect_equal(httr::status_code(r), 200)
   expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
   expect_match(httr::headers(r)$`content-disposition`,
-               'attachment; filename=\"[a-z0-9]+_\\d+-\\d+_naomi_debug.zip\"')
+               'attachment; filename="[a-z0-9]+_\\d+-\\d+_naomi_debug.zip"')
   bin <- httr::content(r, "raw")
   zip <- tempfile(fileext = ".zip")
   writeBin(bin, zip)
@@ -568,7 +568,7 @@ test_that("spectrum file download streams bytes", {
     expect_equal(httr::status_code(r), 200)
     expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
     expect_match(httr::headers(r)$`content-disposition`,
-                 'attachment; filename="MWI_\\d+-\\d_naomi_spectrum_diges.zip"')
+                 'attachment; filename="MWI_\\d+-\\d+_naomi_spectrum_digest.zip"')
     ## Size of bytes is close to expected
     size <- as.numeric(httr::headers(r)$`content-length`)
     expect_true(size - size/10 <
@@ -582,7 +582,7 @@ test_that("spectrum file download streams bytes", {
   expect_equal(httr::status_code(r), 200)
   expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
   expect_match(httr::headers(r)$`content-disposition`,
-    'attachment; filename="MWI_\\d+-\\d_naomi_spectrum_digest.zip"')
+    'attachment; filename="MWI_\\d+-\\d+_naomi_spectrum_digest.zip"')
 })
 
 test_that("summary file download streams bytes", {
@@ -607,7 +607,7 @@ test_that("summary file download streams bytes", {
     expect_equal(httr::status_code(r), 200)
     expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
     expect_match(httr::headers(r)$`content-disposition`,
-                 'attachment; filename="MWI_\\d+-\\d_naomi_summary.zip"')
+                 'attachment; filename="MWI_\\d+-\\d+_naomi_summary.zip"')
     ## Size of bytes is close to expected
     size <- as.numeric(httr::headers(r)$`content-length`)
     expect_true(size - size/10 <
@@ -621,7 +621,7 @@ test_that("summary file download streams bytes", {
   expect_equal(httr::status_code(r), 200)
   expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
   expect_match(httr::headers(r)$`content-disposition`,
-               'attachment; filename="MWI_\\d+-\\d_naomi_summary.zip"')
+               'attachment; filename="MWI_\\d+-\\d+_naomi_summary.zip"')
 })
 
 test_that("can quit", {

@@ -43,7 +43,8 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
                               class = c("progress", "condition")))
     return(list(output_path = system_file("output", "malawi_output.rds"),
          spectrum_path = system_file("output", "malawi_spectrum_download.zip"),
-         summary_path = system_file("output", "malawi_summary_download.zip")))
+         summary_path = system_file("output", "malawi_summary_download.zip"),
+         metadata = list(areas = "MWI")))
   }
 
   if (!is.null(path_prerun)) {
