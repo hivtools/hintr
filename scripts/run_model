@@ -15,7 +15,7 @@ dat <- docopt::docopt(usage)
 
 payload <- jsonlite::fromJSON(dat$payload)
 invisible(lapply(payload$data, function(x) {
-  if (!file.exists(x)) {
+  if (!file.exists(x$path)) {
     stop(sprintf("Input file %s doesn't exist.", x))
   }
 }))

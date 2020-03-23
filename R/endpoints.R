@@ -13,11 +13,11 @@
 #' @keywords internal
 endpoint_model_options <- function(req, res, shape, survey, programme = NULL, anc = NULL) {
   response <- with_success({
-                             ## Shape and survey must exist
-                             assert_file_exists(shape$path)
-                             assert_file_exists(survey$path)
-                             do_endpoint_model_options(shape, survey, programme, anc)
-                           })
+    ## Shape and survey must exist
+    assert_file_exists(shape$path)
+    assert_file_exists(survey$path)
+    do_endpoint_model_options(shape, survey, programme, anc)
+  })
   if (response$success) {
     response$value <- json_verbatim(response$value)
   } else {
@@ -40,8 +40,8 @@ endpoint_model_options <- function(req, res, shape, survey, programme = NULL, an
 #' @keywords internal
 endpoint_model_options_validate <- function(req, res, data, options) {
   response <- with_success({
-                             do_validate_model_options(data, options)
-                           })
+    do_validate_model_options(data, options)
+  })
   if (!response$success) {
     response$errors <- hintr_errors(list(
       "INVALID_OPTIONS" = response$message
@@ -180,9 +180,9 @@ endpoint_validate_baseline <- function(req, res, type, file) {
                           shape = do_validate_shape,
                           population = do_validate_population)
   response <- with_success({
-                             assert_file_exists(file$path)
-                             validate_func(file)
-                           })
+    assert_file_exists(file$path)
+    validate_func(file)
+  })
   if (response$success) {
     response$value <- input_response(response$value, type, file)
   } else {
@@ -215,10 +215,10 @@ endpoint_validate_survey_programme <- function(req, res, type, file, shape) {
   # mrc-663
   shape <- file_object(shape)
   response <- with_success({
-                             assert_file_exists(file$path)
-                             assert_file_exists(shape$path)
-                             validate_func(file, shape)
-                           })
+    assert_file_exists(file$path)
+    assert_file_exists(shape$path)
+    validate_func(file, shape)
+  })
   if (response$success) {
     response$value <- input_response(response$value, type, file)
   } else {
@@ -472,10 +472,10 @@ prepare_status_response <- function(value, id) {
 serializer_json_hintr <- function() {
   function(val, req, res, errorHandler) {
     tryCatch({
-               res$setHeader("Content-Type", "application/json")
-               res$body <- to_json(val)
-               return(res$toResponse())
-             }, error = function(e) {
+      res$setHeader("Content-Type", "application/json")
+      res$body <- to_json(val)
+      return(res$toResponse())
+    }, error = function(e) {
       errorHandler(req, res, e)
     })
   }
@@ -487,14 +487,14 @@ serializer_zip <- function(filename) {
       return(serializer_json_hintr()(val, req, res, errorHandler))
     }
     tryCatch({
-               res$setHeader("Content-Type", "application/octet-stream")
-               short_id <- substr(val$id, 1, 5)
-               res$setHeader("Content-Disposition",
-                             sprintf('attachment; filename="%s_%s.zip"',
-                                     filename, short_id))
-               res$body <- val$bytes
-               return(res$toResponse())
-             }, error = function(e) {
+      res$setHeader("Content-Type", "application/octet-stream")
+      short_id <- substr(val$id, 1, 5)
+      res$setHeader("Content-Disposition",
+                    sprintf('attachment; filename="%s_%s.zip"',
+                            filename, short_id))
+      res$body <- val$bytes
+      return(res$toResponse())
+    }, error = function(e) {
       errorHandler(req, res, e)
     })
   }
