@@ -663,8 +663,8 @@ test_that("Debug endpoint returns debug information", {
   expect_true("id" %in% names(response$data))
   expect_equal(res$status, 200)
 
-  basename2 <- function(x) {
-    if (is.null(x)) NULL else basename(x)
+  file_with_basename <- function(x) {
+    if (is.null(x)) NULL else list(path = basename(x$path), hash = x$hash, filename = x$filename)
   }
 
   id <- response$data$id
@@ -680,10 +680,11 @@ test_that("Debug endpoint returns debug information", {
   info <- readRDS(file.path(dest, id, "data.rds"))
   expect_equal(info$objects$options, list(a = 1, b = 2))
   expect_is(info$sessionInfo, "sessionInfo")
-  expect_equal(info$objects$data, lapply(data, basename2))
+  expect_equal(info$objects$data, lapply(data, file_with_basename))
   expect_setequal(
     dir(file.path(dest, id, "files")),
-    basename(unlist(data, FALSE, FALSE)))
+    basename(unlist(lapply(data, function(x) x$path), FALSE, FALSE))
+  )
 })
 
 
