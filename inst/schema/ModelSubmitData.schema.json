@@ -2,12 +2,12 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "pjnz": { "$ref": "FilePath.schema.json" },
-    "shape": { "$ref": "FilePath.schema.json" },
-    "population": { "$ref": "FilePath.schema.json" },
-    "survey": { "$ref": "FilePath.schema.json" },
-    "programme": { "$ref": "FilePath.schema.json" },
-    "anc": { "$ref": "FilePath.schema.json" }
+    "pjnz": { "$ref": "SessionFile.schema.json" },
+    "shape": { "$ref": "SessionFile.schema.json" },
+    "population": { "$ref": "SessionFile.schema.json" },
+    "survey": { "$ref": "SessionFile.schema.json" },
+    "programme": { "$ref": "SessionFile.schema.json" },
+    "anc": { "$ref": "SessionFile.schema.json" }
   },
   "additionalProperties": false,
   "required": [

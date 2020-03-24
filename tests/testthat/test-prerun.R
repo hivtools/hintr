@@ -57,12 +57,24 @@ test_that("run with prerun", {
                      "malawi_summary_download.zip")
 
   data <- list(
-    pjnz = file.path("testdata", "Malawi2019.PJNZ"),
-    shape = file.path("testdata", "malawi.geojson"),
-    population = file.path("testdata", "population.csv"),
-    survey = file.path("testdata", "survey.csv"),
-    programme = file.path("testdata", "programme.csv"),
-    anc = file.path("testdata", "anc.csv")
+    pjnz = list(filename = "Malawi2019.PJNZ",
+                path = file.path("testdata", "Malawi2019.PJNZ"),
+                hash = "a123"),
+    shape = list(filename = "malawi.geojson",
+                 path = file.path("testdata", "malawi.geojson"),
+                 hash = "a123"),
+    population = list(filename = "population.csv",
+                      path = file.path("testdata", "population.csv"),
+                      hash = "a123"),
+    survey = list(filename = "survey.csv",
+                  path = file.path("testdata", "survey.csv"),
+                  hash = "a123"),
+    programme = list(filename = "programme.csv",
+                     path = file.path("testdata", "programme.csv"),
+                     hash = "a123"),
+    anc = list(filename = "anc.csv",
+               path = file.path("testdata", "anc.csv"),
+               hash = "a123")
   )
   options <- list(
     area_scope = "MWI",
