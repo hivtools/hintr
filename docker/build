@@ -10,6 +10,7 @@ EOF
 
 cat << EOF > $HERE/Dockerfile.test
 FROM $TAG_SHA
+
 RUN install_packages --repo=https://mrc-ide.github.io/drat \
         mockery \
         covr \

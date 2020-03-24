@@ -32,7 +32,7 @@ docker run --rm --network=$NAME_NETWORK \
       --mount type=volume,src=$NAME_VOLUME,dst=/uploads \
       --mount type=volume,src=$NAME_VOLUME,dst=/results \
       --name hintr_tests hintr_tests:${GIT_SHA}\
-      -c "R CMD check *.tar.gz"
+      -c "R CMD check *.tar.gz --no-manual"
 
 if [ $? == 1 ]; then
     echo "FAIL"
