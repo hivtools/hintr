@@ -491,7 +491,8 @@ serializer_zip <- function(filename) {
       res$setHeader("Content-Type", "application/octet-stream")
       res$setHeader("Content-Disposition",
                     sprintf('attachment; filename="%s_%s_%s.zip"',
-                            val$metadata$areas, iso_time_str(), filename))
+                            paste(val$metadata$areas, collapse = ", "),
+                            iso_time_str(), filename))
       res$body <- val$bytes
       return(res$toResponse())
     }, error = function(e) {
