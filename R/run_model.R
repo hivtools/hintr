@@ -49,6 +49,7 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
 
   if (!is.null(path_prerun)) {
     p <- PrerunModelResults$new(path_prerun)
+    data <- naomi:::format_data_input(data)
     inputs <- naomi:::naomi_info_input(data)
     if (p$exists(inputs)) {
       message("Found prerun model results")

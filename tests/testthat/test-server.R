@@ -198,7 +198,7 @@ test_that("model interactions", {
   expect_setequal(dir(file.path(tmp, response$data$id)),
                   c("data.rds", "files"))
   dat <- readRDS(file.path(tmp, response$data$id, "data.rds"))
-  expect_equal(dat$objects$data$pjnz, "Malawi2019.PJNZ")
+  expect_equal(dat$objects$data$pjnz$filename, "Malawi2019.PJNZ")
 
   path <- download_debug(response$data$id, server = server$url,
                          verbose = FALSE)

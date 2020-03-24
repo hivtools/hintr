@@ -11,7 +11,7 @@
 #'
 #' @return Function to generate model options from input data.
 #' @keywords internal
-endpoint_model_options <- function(req, res, shape, survey, programme =  NULL, anc = NULL) {
+endpoint_model_options <- function(req, res, shape, survey, programme = NULL, anc = NULL) {
   response <- with_success({
     ## Shape and survey must exist
     assert_file_exists(shape$path)
@@ -135,14 +135,15 @@ endpoint_model_debug <- function(queue) {
     }
 
     data <- response$value
-    files <- unique(unlist(data$objects$data, FALSE, FALSE))
+    files <- unique(unlist(lapply(data$objects$data, function(x) if (!is.null(x)) x$path), FALSE, FALSE))
     tmp <- tempfile()
     path <- file.path(tmp, id)
     dir.create(path, FALSE, TRUE)
 
     data$sessionInfo <- utils::sessionInfo()
     data$objects$data <- lapply(data$objects$data,
-                                function(x) if (!is.null(x)) basename(x))
+                                function(x)
+                                  if (!is.null(x)) list(path = basename(x$path), hash = x$hash, filename = x$filename))
 
     path_files <- file.path(path, "files")
     dir.create(path_files)

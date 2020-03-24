@@ -1,11 +1,35 @@
 {
   "data": {
-    "pjnz": "tests/testthat/testdata/Malawi2019.PJNZ",
-    "shape": "tests/testthat/testdata/malawi.geojson",
-    "population": "tests/testthat/testdata/population.csv",
-    "survey": "tests/testthat/testdata/survey.csv",
-    "art_number": "tests/testthat/testdata/programme.csv",
-    "anc_testing": "tests/testthat/testdata/anc.csv"
+    "pjnz": {
+      "filename": "Malawi2019.PJNZ",
+      "path": "tests/testthat/testdata/Malawi2019.PJNZ",
+      "hash": "a123"
+    },
+    "shape": {
+      "filename": "malawi.geojson",
+      "path": "tests/testthat/testdata/malawi.geojson",
+      "hash": "a123"
+    },
+    "population": {
+      "filename": "population.csv",
+      "path": "tests/testthat/testdata/population.csv",
+      "hash": "a123"
+    },
+    "survey": {
+      "filename": "survey.csv",
+      "path": "tests/testthat/testdata/survey.csv",
+      "hash": "a123"
+    },
+    "art_number": {
+      "filename": "programme.csv",
+      "path": "tests/testthat/testdata/programme.csv",
+      "hash": "a123"
+    },
+    "anc_testing": {
+      "filename": "anc.csv",
+      "path": "tests/testthat/testdata/anc.csv",
+      "hash": "a123"
+    }
   },
   "options": {
     "area_scope": "MWI",
