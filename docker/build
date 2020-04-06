@@ -1,7 +1,15 @@
 #!/usr/bin/env bash
-set -e
+set -ex
 HERE=$(dirname $0)
 . $HERE/common
+
+function cleanup {
+    echo "Cleaning up"
+    rm -rf $PACKAGE_ROOT/naomi
+    rm -f $PACKAGE_ROOT/docker/Dockerfile.worker
+    rm -f $PACKAGE_ROOT/docker/Dockerfile.test
+}
+trap cleanup EXIT
 
 cat << EOF > $HERE/Dockerfile.worker
 FROM $TAG_SHA
@@ -23,30 +31,25 @@ ENTRYPOINT ["/bin/bash"]
 EOF
 
 rm -rf naomi
-
 git clone https://github.com/mrc-ide/naomi
+if [ -z $NAOMI_SHA ]; then
+    git -C $PACKAGE_ROOT/naomi checkout $NAOMI_SHA
+fi
 
 docker build --pull \
        -t $TAG_SHA \
-       -t $TAG_BRANCH \
-       -t $TAG_VERSION \
        -f docker/Dockerfile \
-       .
+       $PACKAGE_ROOT
 
 docker build \
        -t $TAG_WORKER_SHA \
-       -t $TAG_WORKER_BRANCH \
-       -t $TAG_WORKER_VERSION \
        -f docker/Dockerfile.worker \
-       .
+       $PACKAGE_ROOT
 
 docker build \
       -t hintr_tests:${GIT_SHA} \
       -f docker/Dockerfile.test \
-      .
-
-rm -f docker/Dockerfile.worker
-rm -f docker/Dockerfile.test
+      $PACKAGE_ROOT
 
 # We always push the SHA tagged versions, for debugging if the tests
 # after this step fail
