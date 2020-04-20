@@ -611,9 +611,9 @@ test_that("summary file download streams bytes", {
     ## Size of bytes is close to expected
     size <- as.numeric(httr::headers(r)$`content-length`)
     expect_true(size - size/10 <
-      file.size(system_file("output", "malawi_summary_download.zip")))
+      file.size(system_file("output", "malawi_naomi_coarse_age_groups.zip")))
     expect_true(size + size/10 >
-      file.size(system_file("output", "malawi_summary_download.zip")))
+      file.size(system_file("output", "malawi_naomi_coarse_age_groups.zip")))
   })
 
   ## Headers can be retrieved

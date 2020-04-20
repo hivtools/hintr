@@ -27,9 +27,9 @@ api_build <- function(queue) {
   pr$handle("HEAD", "/download/spectrum/<id>", endpoint_download_spectrum(queue),
             serializer = serializer_zip("naomi_spectrum_digest"))
   pr$handle("GET", "/download/summary/<id>", endpoint_download_summary(queue),
-            serializer = serializer_zip("naomi_summary"))
+            serializer = serializer_zip("naomi_coarse_age_groups"))
   pr$handle("HEAD", "/download/summary/<id>", endpoint_download_summary(queue),
-            serializer = serializer_zip("naomi_summary"))
+            serializer = serializer_zip("naomi_coarse_age_groups"))
   pr$handle("GET", "/hintr/version", endpoint_hintr_version,
             serializer = serializer_json_hintr())
   pr$handle("GET", "/hintr/worker/status", endpoint_hintr_worker_status(queue),
