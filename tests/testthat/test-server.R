@@ -606,8 +606,9 @@ test_that("summary file download streams bytes", {
     r <- httr::GET(paste0(server$url, "/download/summary/", response$data$id))
     expect_equal(httr::status_code(r), 200)
     expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
-    expect_match(httr::headers(r)$`content-disposition`,
-                 'attachment; filename="MWI_\\d+-\\d+_naomi_summary.zip"')
+    expect_match(
+      httr::headers(r)$`content-disposition`,
+      'attachment; filename="MWI_\\d+-\\d+_naomi_coarse_age_groups.zip"')
     ## Size of bytes is close to expected
     size <- as.numeric(httr::headers(r)$`content-length`)
     expect_true(size - size/10 <
@@ -620,8 +621,9 @@ test_that("summary file download streams bytes", {
   r <- httr::HEAD(paste0(server$url, "/download/summary/", response$data$id))
   expect_equal(httr::status_code(r), 200)
   expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
-  expect_match(httr::headers(r)$`content-disposition`,
-               'attachment; filename="MWI_\\d+-\\d+_naomi_summary.zip"')
+  expect_match(
+    httr::headers(r)$`content-disposition`,
+    'attachment; filename="MWI_\\d+-\\d+_naomi_coarse_age_groups.zip"')
 })
 
 test_that("can quit", {
