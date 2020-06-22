@@ -2,18 +2,18 @@ context("model-options")
 
 test_that("can build JSON from template", {
   json <- build_json("test <+param1+>", list(param1 = scalar("test string")))
-  expect_equal(json, 'test "test string"')
+  expect_equivalent(json, 'test "test string"')
 
   json <- build_json("<+param1+> test, <+param_2+>",
                      list(param1 = scalar("x"), param_2 = scalar("y")))
-  expect_equal(json, '"x" test, "y"')
+  expect_equivalent(json, '"x" test, "y"')
 
   json <- build_json('{"options": <+options+>, "test": <+test+>}',
                      list(options = c(scalar("MWI"),
                                       scalar("MWI_1_1"),
                                       scalar("MWI_1_2")),
                           test = scalar("test_value")))
-  expect_equal(json,
+  expect_equivalent(json,
                '{"options": ["MWI","MWI_1_1","MWI_1_2"], "test": "test_value"}')
 
   json <- build_json('{"options": <+options+>, "test": <+test+>, "text": "Age < 5"}',
@@ -25,16 +25,16 @@ test_that("can build JSON from template", {
                        list(id = scalar("MWI_1_2"),
                             label = scalar("Central"))),
                        test = scalar("test_value")))
-  expect_equal(json,
+  expect_equivalent(json,
                '{"options": [{"id":"MWI","label":"Malawi"},{"id":"MWI_1_1","label":"Northern"},{"id":"MWI_1_2","label":"Central"}], "test": "test_value", "text": "Age < 5"}')
 
   ## Additional params are ignored
   json <- build_json("test <+param+>", list(param = scalar("test"), param2 = scalar("test2")))
-  expect_equal(json, 'test "test"')
+  expect_equivalent(json, 'test "test"')
 
   ## Null params
   json <- build_json('{"options": <+param+>}', list(param = scalar(NULL)))
-  expect_equal(json, '{"options": {}}')
+  expect_equivalent(json, '{"options": {}}')
 })
 
 test_that("JSON build fails if params are missing", {
