@@ -28,7 +28,11 @@ validate_schemas <- function() {
 }
 
 scalar <- function(val) {
-  jsonlite::unbox(val)
+  if ("scalar" %in% class(val)) {
+    val
+  } else {
+    jsonlite::unbox(val)
+  }
 }
 
 get_input_response_schema <- function(type) {
