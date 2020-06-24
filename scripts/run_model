@@ -26,14 +26,14 @@ INLA:::inla.dynload.workaround()
 
 output <- naomi::hintr_run_model(payload$data,
                                  payload$options,
-                                 dat$`output-path`,
-                                 dat$`spectrum-path`,
-                                 dat$`summary-path`)
+                                 dat$output_path,
+                                 dat$spectrum_path,
+                                 dat$summary_path)
 
-message(sprintf("Saving output at %s", normalizePath(dat$`output-path`,
+message(sprintf("Saving output at %s", normalizePath(dat$output_path,
                                                      mustWork = TRUE)))
 message(
-  sprintf("Saving spectrum download at %s", normalizePath(dat$`spectrum-path`,
+  sprintf("Saving spectrum download at %s", normalizePath(dat$spectrum_path,
                                                           mustWork = TRUE)))
-message(sprintf("Saving output at %s", normalizePath(dat$`summary-path`,
+message(sprintf("Saving output at %s", normalizePath(dat$summary_path,
                                                      mustWork = TRUE)))
