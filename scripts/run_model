@@ -12,6 +12,7 @@ Options:
 " -> usage
 
 dat <- docopt::docopt(usage)
+names(dat) <- gsub("-", "_", names(dat), fixed = TRUE)
 
 payload <- jsonlite::fromJSON(dat$payload)
 invisible(lapply(payload$data, function(x) {
