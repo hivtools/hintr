@@ -238,7 +238,7 @@ endpoint_model_cancel <- function(queue) {
         list("FAILED_TO_CANCEL" = response$message))
       res$status <- 400
     } else {
-      response$value <- scalar(NA)
+      response$value <- json_verbatim("null")
     }
     hintr_response(response, "ModelCancelResponse")
   }

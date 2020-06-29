@@ -108,7 +108,7 @@ get_model_output_filters <- function(data) {
       id = scalar("area"),
       column_id = scalar("area_id"),
       label = scalar(t_("OUTPUT_FILTER_AREA")),
-      options = scalar(NA),
+      options = json_verbatim("null"),
       use_shape_regions = scalar(TRUE)
     ),
     list(

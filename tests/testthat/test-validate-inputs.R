@@ -5,7 +5,7 @@ test_that("PJNZ can be validated and return data", {
   expect_equal(do_validate_pjnz(pjnz),
                list(data = list(country = scalar("Botswana"),
                                 iso3 = scalar("BWA")),
-                    filters = scalar(NA)))
+                    filters = json_verbatim("null")))
 })
 
 test_that("country can be read", {
@@ -51,8 +51,8 @@ test_that("do_validate_population validates population file", {
   population <- file_object(file.path("testdata", "population.csv"))
   pop <- do_validate_population(population)
   ## No actual data to return but has been validated
-  expect_true(is.na(pop$data))
-  expect_true(is.na(pop$filters))
+  expect_equal(pop$data, json_verbatim("null"))
+  expect_equal(pop$filters, json_verbatim("null"))
 })
 
 test_that("empty rows are ignored in validation", {
@@ -82,8 +82,8 @@ test_that("empty rows are ignored in validation", {
   population <- file_object(path)
   pop <- do_validate_population(population)
   ## No actual data to return but has been validated
-  expect_true(is.na(pop$data))
-  expect_true(is.na(pop$filters))
+  expect_equal(pop$data, json_verbatim("null"))
+  expect_equal(pop$filters, json_verbatim("null"))
 })
 
 test_that("do_validate_programme validates programme file", {

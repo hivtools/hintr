@@ -17,7 +17,7 @@ do_validate_pjnz <- function(pjnz) {
   list(
     data = list(country = scalar(countries[[1]]),
                 iso3 = scalar(read_pjnz_iso3_from_path(pjnz_paths[[1]]))),
-    filters = scalar(NA)
+    filters = json_verbatim("null")
   )
 }
 
@@ -93,8 +93,8 @@ do_validate_population <- function(population) {
   assert_single_source(population)
   assert_no_na(population, "population")
   assert_column_positive_numeric(population, "population")
-  list(data = scalar(NA),
-       filters = scalar(NA))
+  list(data = json_verbatim("null"),
+       filters = json_verbatim("null"))
 }
 
 #' Validate programme ART data file.
