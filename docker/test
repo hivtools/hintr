@@ -20,6 +20,8 @@ function cleanup {
     docker volume rm $NAME_VOLUME > /dev/null || true
 }
 
+trap cleanup EXIT
+
 docker network create $NAME_NETWORK
 docker volume create $NAME_VOLUME
 
@@ -30,7 +32,7 @@ docker run --rm -d --network=$NAME_NETWORK \
        -p 8888:8888 \
        -e REDIS_URL=redis://redis:6379 \
        -e USE_MOCK_MODEL=true \
-       --mount type=volume,src=$NAME_VOLUME,dst=/uploads \
+       --mount type=volume,src=$NAME_VOLUapiME,dst=/uploads \
        --mount type=volume,src=$NAME_VOLUME,dst=/results \
        --name $NAME_SERVER mrcide/hintr:42445ab
 
