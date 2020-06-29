@@ -1,55 +1,28 @@
-FROM rocker/r-ver:3.6.0
+FROM mrcide/naomi-base:latest
 
-RUN apt-get update && apt-get -y install \
-        libcurl4-openssl-dev \
-        libgdal-dev \
+RUN apt-get update && apt-get -y install --no-install-recommends \
         libhiredis-dev \
         libjq-dev \
-        libprotobuf-dev \
-        libssh-dev \
-        libudunits2-dev \
-        libv8-dev \
-        libxml2-dev \
-        protobuf-compiler \
-        zlib1g-dev
-
-COPY docker/bin /usr/local/bin/
-RUN sed  -i'' '/mran.microsoft.com/d' /usr/local/lib/R/etc/Rprofile.site
+        && apt-get clean \
+        && rm -rf /var/lib/apt/lists/*
 
 RUN install_packages --repo=https://mrc-ide.github.io/drat \
-        Matrix \
-        TMB \
-        assertthat \
-        data.tree \
         docopt \
-        dplyr \
-        forcats \
         geojsonio \
-        ggplot2 \
         glue \
-        gridExtra \
-        here \
         jsonlite \
-        magrittr \
         methods \
-        mvtnorm \
         plumber \
         ps \
         remotes \
-        rlang \
-        sf \
-        spdep \
-        specio \
-        testthat \
-        tidyr \
-        zip \
-        zoo
+        rlang
+
+COPY docker/bin /usr/local/bin/
 
 RUN install_packages --repo=https://inla.r-inla-download.org/R/stable \
         INLA
 
 RUN install_remote \
-        mrc-ide/eppasm \
         mrc-ide/heartbeatr \
         mrc-ide/rrq \
         reside-ic/traduire
