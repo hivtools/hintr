@@ -23,7 +23,7 @@ RUN install_remote \
         mrc-ide/heartbeatr \
         mrc-ide/rrq \
         reside-ic/traduire \
-        reside-ic/jsonvalidate
+        ropensci/jsonvalidate
 
 COPY . /src
 RUN R CMD INSTALL /src/naomi
