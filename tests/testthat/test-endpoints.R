@@ -117,7 +117,7 @@ test_that("format_response_data correctly formats data and validates it", {
   file <- list(path = "path", hash = "12345", filename = "original.pjnz")
   with_mock("hintr:::validate_json_schema" = mock_validate, {
     response <- input_response(list(data = list(country = scalar("Botswana")),
-                                    filters = scalar(NA)),
+                                    filters = json_verbatim("null")),
                                "pjnz",
                                 file)
   })

@@ -28,7 +28,11 @@ validate_schemas <- function() {
 }
 
 scalar <- function(val) {
-  jsonlite::unbox(val)
+  if (inherits(val, "scalar")) {
+    val
+  } else {
+    jsonlite::unbox(val)
+  }
 }
 
 get_input_response_schema <- function(type) {
@@ -48,4 +52,3 @@ json_verbatim <- function(x) {
 to_json <- function(x) {
   jsonlite::toJSON(x, json_verbatim = TRUE, na = "null")
 }
-

@@ -238,7 +238,7 @@ endpoint_model_cancel <- function(queue) {
         list("FAILED_TO_CANCEL" = response$message))
       res$status <- 400
     } else {
-      response$value <- scalar(NA)
+      response$value <- json_verbatim("null")
     }
     hintr_response(response, "ModelCancelResponse")
   }
@@ -452,7 +452,15 @@ prepare_status_response <- function(value, id) {
     }
   }
 
-  response_value <- lapply(value[names(value) != "progress"], scalar)
+  json_or_scalar <- function(x) {
+    if (inherits(x, "json")) {
+      x
+    } else {
+      scalar(x)
+    }
+  }
+
+  response_value <- lapply(value[names(value) != "progress"], json_or_scalar)
   response_value$progress <- lapply(unname(value$progress), set_scalar)
   response_value$id <- scalar(id)
   response_value

@@ -21,10 +21,6 @@ invisible(lapply(payload$data, function(x) {
   }
 }))
 
-## Don't use dynamic libaries as these don't currently work on travis with
-## up to date INLA build
-INLA:::inla.dynload.workaround()
-
 output <- naomi::hintr_run_model(payload$data,
                                  payload$options,
                                  dat$output_path,

@@ -15,12 +15,12 @@ Options:
     }
     path
   }
-  dat <- docopt::docopt(usage, args)
+  dat <- docopt_parse(usage, args)
   list(port = as.integer(dat$port),
        queue_id = dat$queue_id,
        workers = as.integer(dat$workers),
-       results_dir = validate_path(dat[["results-dir"]]),
-       prerun_dir = validate_path(dat[["prerun-dir"]]))
+       results_dir = validate_path(dat[["results_dir"]]),
+       prerun_dir = validate_path(dat[["prerun_dir"]]))
 }
 
 main_api <- function(args = commandArgs(TRUE)) {
@@ -33,7 +33,7 @@ main_api <- function(args = commandArgs(TRUE)) {
 main_worker_args <- function(args = commandArgs(TRUE)) {
   usage <- "Usage:
 hintr_worker [<queue_id>]"
-  dat <- docopt::docopt(usage, args)
+  dat <- docopt_parse(usage, args)
   list(queue_id = dat$queue_id)
 }
 
@@ -52,8 +52,14 @@ Options:
 --output=PATH    Path to output file [default: output.rds]
 --spectrum=PATH  Path to spectrum file [default: spectrum.zip]
 --summary=PATH   Path to summary file [default: summary.zip]"
-  args <- docopt::docopt(usage, args)
+  args <- docopt_parse(usage, args)
   h <- prerun_import(args$prerun, args$path,
                      args$output, args$spectrum, args$summary)
   message(sprintf("Imported data as '%s'", h))
+}
+
+docopt_parse <- function(usage, args) {
+  dat <- docopt::docopt(usage, args)
+  names(dat) <- gsub("-", "_", names(dat), fixed = TRUE)
+  dat
 }

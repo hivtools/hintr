@@ -19,13 +19,11 @@ RUN install_packages --repo=https://mrc-ide.github.io/drat \
 
 COPY docker/bin /usr/local/bin/
 
-RUN install_packages --repo=https://inla.r-inla-download.org/R/stable \
-        INLA
-
 RUN install_remote \
         mrc-ide/heartbeatr \
         mrc-ide/rrq \
-        reside-ic/traduire
+        reside-ic/traduire \
+        ropensci/jsonvalidate
 
 COPY . /src
 RUN R CMD INSTALL /src/naomi
