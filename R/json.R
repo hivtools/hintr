@@ -28,7 +28,7 @@ validate_schemas <- function() {
 }
 
 scalar <- function(val) {
-  if ("scalar" %in% class(val)) {
+  if (inherits(val, "scalar")) {
     val
   } else {
     jsonlite::unbox(val)
@@ -52,4 +52,3 @@ json_verbatim <- function(x) {
 to_json <- function(x) {
   jsonlite::toJSON(x, json_verbatim = TRUE, na = "null")
 }
-
