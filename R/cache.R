@@ -38,9 +38,11 @@ set_cache <- function(id) {
 }
 
 clear_cache <- function(id) {
-  x <- hintenv$cache[[id]]
-  if (!is.null(x)) {
-    x$destroy()
-    hintenv$cache[[id]] <- NULL
+  if (!is.null(id)) {
+    x <- hintenv$cache[[id]]
+    if (!is.null(x)) {
+      x$destroy()
+      hintenv$cache[[id]] <- NULL
+    }
   }
 }

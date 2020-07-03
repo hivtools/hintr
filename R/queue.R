@@ -89,13 +89,19 @@ Queue <- R6::R6Class(
       self$queue$destroy(delete = TRUE)
     },
 
-    finalize = function(queue) {
+    cleanup = function() {
       clear_cache(self$queue$keys$queue_id)
-      if (self$cleanup_on_exit) {
+      if (self$cleanup_on_exit && !is.null(self$queue$con)) {
         message(t_("QUEUE_STOPPING_WORKERS"))
         self$queue$worker_stop()
         self$destroy()
       }
+    }
+  ),
+
+  private = list(
+    finalize = function() {
+      self$cleanup()
     }
   )
 )

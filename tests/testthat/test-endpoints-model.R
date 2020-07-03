@@ -30,7 +30,7 @@ test_that("endpoint model run queues a model run", {
   res <- MockPlumberResponse$new()
 
   ## Call the endpoint
-  queue <- Queue$new()
+  queue <- test_queue()
   model_submit <- endpoint_model_submit(queue)
   response <- model_submit(req, res, data, options, cfg$version_info)
   response <- jsonlite::parse_json(response)
@@ -184,7 +184,7 @@ test_that("endpoint_run_model returns error if queueing fails", {
 
   ## Create mocks
   res <- MockPlumberResponse$new()
-  queue <- Queue$new()
+  queue <- test_queue()
   mock_submit <- function(data, options) { stop("Failed to queue") }
 
   ## Call the endpoint
@@ -203,7 +203,7 @@ test_that("querying for status of missing job returns useful message", {
   test_redis_available()
 
   res <- MockPlumberResponse$new()
-  queue <- Queue$new()
+  queue <- test_queue()
   model_status <- endpoint_model_status(queue)
   status <- model_status(NULL, res, "ID")
   status <- jsonlite::parse_json(status)
@@ -219,7 +219,7 @@ test_that("querying for result of missing job returns useful error", {
   test_redis_available()
 
   res <- MockPlumberResponse$new()
-  queue <- Queue$new()
+  queue <- test_queue()
   model_result <- endpoint_model_result(queue)
   result <- model_result(NULL, res, "ID")
   result <- jsonlite::parse_json(result)
@@ -234,7 +234,7 @@ test_that("querying for result of missing job returns useful error", {
 test_that("querying for an orphan task returns sensible error", {
   test_redis_available()
   res <- MockPlumberResponse$new()
-  queue <- Queue$new(workers = 0)
+  queue <- test_queue(workers = 0)
   model_result <- endpoint_model_result(queue)
 
   id <- ids::random_id()
@@ -255,7 +255,7 @@ test_that("endpoint_run_status returns error if query for status fails", {
 
   ## Create mocks
   res <- MockPlumberResponse$new()
-  queue <- Queue$new()
+  queue <- test_queue()
   mock_status <- function(data, parameters) { stop("Failed to get status") }
 
   ## Call the endpoint
@@ -300,7 +300,7 @@ test_that("querying for result of incomplete jobs returns useful error", {
   res <- MockPlumberResponse$new()
 
   ## Call the endpoint
-  queue <- Queue$new()
+  queue <- test_queue()
   model_submit <- endpoint_model_submit(queue)
   response <- model_submit(req, res, data, options, cfg$version_info)
   response <- jsonlite::parse_json(response)
@@ -376,7 +376,7 @@ test_that("running model with old version throws an error", {
   res <- MockPlumberResponse$new()
 
   ## Call the endpoint
-  queue <- Queue$new()
+  queue <- test_queue()
   model_submit <- endpoint_model_submit(queue)
   version <- list(
     hintr = "0.0.12",
@@ -419,7 +419,7 @@ test_that("model run can be cancelled", {
               "options": {}
               }')
 
-  queue <- Queue$new()
+  queue <- test_queue()
 
   model_submit <- endpoint_model_submit(queue)
   model_cancel <- endpoint_model_cancel(queue)
@@ -494,7 +494,7 @@ test_that("translation of progress", {
   res <- MockPlumberResponse$new()
 
   ## Call the endpoint
-  queue <- Queue$new()
+  queue <- test_queue()
   model_submit <- endpoint_model_submit(queue)
   model_status <- endpoint_model_status(queue)
 
@@ -581,7 +581,7 @@ test_that("error messages from naomi are translated", {
   res <- MockPlumberResponse$new()
 
   queue <- withr::with_envvar(c("USE_MOCK_MODEL" = "false"),
-                              Queue$new())
+                              test_queue())
   model_submit <- endpoint_model_submit(queue)
   model_result <- endpoint_model_result(queue)
 
@@ -603,7 +603,7 @@ test_that("failed cancel sends reasonable message", {
   test_redis_available()
   test_mock_model_available()
   ## Create request data
-  queue <- Queue$new()
+  queue <- test_queue()
   model_cancel <- endpoint_model_cancel(queue)
 
   id <- ids::random_id()
@@ -653,7 +653,7 @@ test_that("Debug endpoint returns debug information", {
   res <- MockPlumberResponse$new()
 
   ## Call the endpoint
-  queue <- Queue$new()
+  queue <- test_queue()
   model_submit <- endpoint_model_submit(queue)
   model_debug <- endpoint_model_debug(queue)
 
@@ -691,7 +691,7 @@ test_that("Debug endpoint returns debug information", {
 test_that("Debug endpoint errors on nonexistant id", {
   test_redis_available()
   res <- MockPlumberResponse$new()
-  queue <- Queue$new()
+  queue <- test_queue()
   model_debug <- endpoint_model_debug(queue)
   id <- ids::random_id()
   response <- model_debug(list(), res, id)
