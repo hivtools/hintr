@@ -30,7 +30,7 @@ test_that("indicator download returns bytes", {
   res <- MockPlumberResponse$new()
 
   ## Call the endpoint
-  queue <- Queue$new()
+  queue <- test_queue()
   model_submit <- endpoint_model_submit(queue)
   response <- model_submit(req, res, data, options, cfg$version_info)
   response <- jsonlite::parse_json(response)
@@ -79,7 +79,7 @@ test_that("spectrum download returns bytes", {
   res <- MockPlumberResponse$new()
 
   ## Call the endpoint
-  queue <- Queue$new()
+  queue <- test_queue()
   model_submit <- endpoint_model_submit(queue)
   response <- model_submit(req, res, data, options, cfg$version_info)
   response <- jsonlite::parse_json(response)

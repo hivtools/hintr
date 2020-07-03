@@ -11,7 +11,7 @@ test_that("endpoint hintr works", {
 
 test_that("endpoint worker status works", {
   test_redis_available()
-  queue <- Queue$new()
+  queue <- test_queue()
   endpoint <- endpoint_hintr_worker_status(queue)
 
   response <- jsonlite::parse_json(endpoint())
@@ -29,7 +29,7 @@ test_that("endpoint worker status works", {
 
 test_that("stop calls quit and stop_workers", {
   test_redis_available()
-  queue <- Queue$new(workers = 0)
+  queue <- test_queue(workers = 0)
   unlockBinding("worker_stop", queue$queue)
   queue$queue$worker_stop <- mockery::mock()
   mock_quit <- mockery::mock()
