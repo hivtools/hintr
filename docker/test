@@ -28,7 +28,10 @@ docker volume create $NAME_VOLUME
 docker run --rm -d --network=$NAME_NETWORK --network-alias=redis \
        --name hintr_redis redis
 
-docker run --rm $TAG_SHA test_self
+docker run --rm \
+       --network=$NAME_NETWORK \
+       -e REDIS_URL=redis://redis:6379 \
+       $TAG_SHA test_self
 
 docker run --rm -d --network=$NAME_NETWORK \
        -p 8888:8888 \
