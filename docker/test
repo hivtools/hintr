@@ -6,8 +6,6 @@ HERE=$(dirname $0)
 # In case we switch agents between steps
 [ ! -z $(docker images -q $TAG_SHA) ] || docker pull $TAG_SHA
 
-docker run --rm $TAG_SHA test_self
-
 NAME_REDIS=hintr_redis
 NAME_SERVER=hintr_server
 NAME_NETWORK=hintr_network
@@ -29,6 +27,8 @@ docker volume create $NAME_VOLUME
 
 docker run --rm -d --network=$NAME_NETWORK --network-alias=redis \
        --name hintr_redis redis
+
+docker run --rm $TAG_SHA test_self
 
 docker run --rm -d --network=$NAME_NETWORK \
        -p 8888:8888 \
