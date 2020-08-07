@@ -4,6 +4,8 @@
   "properties": {
     "indicator": { "type": "string" },
     "value_column": { "type": "string" },
+    "error_low_column": { "type": "string" },
+    "error_high_column": { "type": "string" },
     "indicator_column": { "type": "string" },
     "indicator_value": { "type": "string" },
     "name": { "type": "string" },
@@ -13,5 +15,5 @@
     "invert_scale": { "type": "boolean" }
   },
   "additionalProperties": false,
-  "required": [ "indicator", "value_column", "name", "min", "max", "colour", "invert_scale" ]
+  "required": [ "indicator", "value_column", "name", "min", "max", "colour", "invert_scale", "error_low_column", "error_high_column" ]
 }

@@ -45,8 +45,9 @@ get_choropleth_metadata <- function(output) {
   metadata <- naomi::get_plotting_metadata(iso3)
   metadata <- metadata[
     metadata$data_type == "output" & metadata$plot_type == "choropleth",
-    c("indicator", "value_column", "indicator_column", "indicator_value",
-      "name", "min", "max", "colour", "invert_scale")]
+    c("indicator", "value_column", "error_low_column", "error_high_column",
+      "indicator_column", "indicator_value", "name", "min", "max", "colour",
+      "invert_scale")]
   metadata[order(as.numeric(metadata$indicator_value)), ]
 }
 

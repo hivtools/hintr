@@ -1,5 +1,5 @@
 ## Always validate schemas in tests
-Sys.setenv("VALIDATE_JSON_SCHEMAS" = "true")
+Sys.setenv("VALIDATE_JSON_SCHEMAS" = "false")
 
 build_validate_request <- function(pjnz) {
   list(
