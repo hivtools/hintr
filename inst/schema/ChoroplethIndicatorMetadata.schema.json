@@ -15,5 +15,5 @@
     "invert_scale": { "type": "boolean" }
   },
   "additionalProperties": false,
-  "required": [ "indicator", "value_column", "name", "min", "max", "colour", "invert_scale", "error_low_column", "error_high_column" ]
+  "required": [ "indicator", "value_column", "name", "min", "max", "colour", "invert_scale" ]
 }
