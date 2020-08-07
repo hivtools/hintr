@@ -639,7 +639,10 @@ test_that("can quit", {
     error = identity)
   expect_is(r, "error")
 
-  expect_false(server$process$is_alive())
+  testthat::try_again(10, {
+    expect_false(server$process$is_alive())
+    Sys.sleep(1)
+  })
 })
 
 test_that("404 pages have sensible schema", {
