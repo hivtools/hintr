@@ -28,6 +28,15 @@ docker volume create $NAME_VOLUME
 docker run --rm -d --network=$NAME_NETWORK --network-alias=redis \
        --name hintr_redis redis
 
+docker run --rm --network=$NAME_NETWORK \
+       -e REDIS_URL=redis://redis:6379 \
+       -e VALIDATE_JSON_SCHEMAS=true \
+       -e USE_MOCK_MODEL=true \
+       --mount type=volume,src=$NAME_VOLUME,dst=/uploads \
+       --mount type=volume,src=$NAME_VOLUME,dst=/results \
+       --name hintr_tests hintr_tests:${GIT_SHA} \
+       /usr/local/bin/R CMD check --as-cran hintr_$PACKAGE_VERSION.tar.gz
+
 docker run --rm -d --network=$NAME_NETWORK \
        -p 8888:8888 \
        -e REDIS_URL=redis://redis:6379 \

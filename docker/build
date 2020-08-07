@@ -23,8 +23,6 @@ RUN install_packages --repo=https://mrc-ide.github.io/drat \
         mockery \
         covr \
         ssh
-RUN install_remote \
-        ropensci/jsonvalidate
 WORKDIR /src
 RUN R CMD build .
 ENTRYPOINT ["/bin/bash"]
