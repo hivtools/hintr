@@ -1,3 +1,7 @@
+# hintr 0.0.36
+
+* Return uncertainty range metadata from model result for choropleth
+
 # hintr 0.0.34
 
 * Accept semicolon delimited data as csv inputs (common in countries with non-Anglo number formats)
