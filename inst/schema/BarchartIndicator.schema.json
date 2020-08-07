@@ -24,6 +24,6 @@
       "type": "string"
     }
   },
-  "additonalProperties": "false",
+  "additionalProperties": false,
   "required": [ "indicator", "value_column", "indicator_column", "indicator_value", "name", "error_low_column", "error_high_column" ]
 }

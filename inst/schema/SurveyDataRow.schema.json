@@ -39,7 +39,7 @@
       "type": [ "number", "null" ]
     }
   },
-  "additonalProperties": true,
+  "additionalProperties": true,
   "required": [ "indicator", "survey_id", "area_id",
     "sex", "age_group", "n_cluster", "n_obs", "est", "se", "ci_l", "ci_u" ]
 }

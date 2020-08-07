@@ -12,6 +12,6 @@
     },
     "defaults": { "$ref": "BarchartDefaults.schema.json" }
   },
-  "additonalProperties": "false",
+  "additionalProperties": false,
   "required": [ "indicators", "filters" ]
 }
