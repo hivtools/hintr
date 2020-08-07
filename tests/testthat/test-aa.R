@@ -1,6 +1,6 @@
 context("aa")
 
-local({
+test_that("validation stuff", {
   files <- dir(system_file("schema"), full.names = TRUE)
  # jsonvalidate::json_validator("/home/rob/projects/hintr/inst/schema/Filter.schema.json", engine = "ajv")
   jsonvalidate::json_validator("/home/rob/projects/hintr/inst/schema/ModelResultResponse.schema.json", engine = "ajv")
