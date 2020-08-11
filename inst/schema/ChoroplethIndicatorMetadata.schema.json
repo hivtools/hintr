@@ -4,6 +4,8 @@
   "properties": {
     "indicator": { "type": "string" },
     "value_column": { "type": "string" },
+    "error_low_column": { "type": "string" },
+    "error_high_column": { "type": "string" },
     "indicator_column": { "type": "string" },
     "indicator_value": { "type": "string" },
     "name": { "type": "string" },

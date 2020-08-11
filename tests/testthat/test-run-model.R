@@ -47,6 +47,8 @@ test_that("model can be run and filters extracted", {
   expect_equal(choropleth$filters[[2]]$options[[2]]$label,
                scalar("September 2018"))
   expect_equal(nrow(choropleth$indicators), 10)
+  expect_true(all(!is.null(choropleth$indicators$error_low_column)))
+  expect_true(all(!is.null(choropleth$indicators$error_high_column)))
   expect_true(all(c("prevalence", "art_coverage", "current_art", "population",
                     "plhiv", "incidence", "new_infections", "receiving_art",
                     "anc_prevalence", "anc_art_coverage") %in%
