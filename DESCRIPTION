@@ -22,7 +22,7 @@ Imports:
     heartbeatr,
     ids,
     jsonlite (>= 1.2.2),
-    naomi (>= 1.0.1),
+    naomi (>= 1.0.2),
     plumber,
     R6,
     redux,
