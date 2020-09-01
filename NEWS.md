@@ -1,3 +1,7 @@
+# hintr 0.1.0
+
+* Switch API implementation to use pkgapi
+
 # hintr 0.0.36
 
 * Return uncertainty range metadata from model result for choropleth

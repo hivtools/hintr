@@ -95,3 +95,15 @@ read_binary <- function(path) {
 iso_time_str <- function(time = Sys.time()) {
   strftime(time, "%Y%m%d-%H%M%S")
 }
+
+schema_root <- function() {
+  system_file("schema")
+}
+
+is_error <- function(x) {
+  inherits(x, "error")
+}
+
+is_pkgapi_error <- function(e) {
+  inherits(e, "pkgapi_error")
+}

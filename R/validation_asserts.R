@@ -152,8 +152,8 @@ assert_anc_client_numbers <- function(data) {
 
 #' Check for unique combinations of values in each row of selected columns
 #'
-#' @param data
-#' @param columns_for_unique
+#' @param data Data to check
+#' @param columns_for_unique Columns to check for unique
 #'
 #' @return TRUE if the required combinations are unique, else throws error
 #' @keywords internal

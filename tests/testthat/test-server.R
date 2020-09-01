@@ -5,7 +5,7 @@ test_that("Root", {
 
   r <- httr::GET(server$url)
   expect_equal(httr::status_code(r), 200)
-  expect_equal(response_from_json(r), "Welcome to hintr")
+  expect_equal(response_from_json(r)$data, "Welcome to hintr")
 })
 
 test_that("validate pjnz", {
@@ -13,18 +13,18 @@ test_that("validate pjnz", {
 
   payload <- file.path("payload", "validate_pjnz_payload.json")
   r <- httr::POST(paste0(server$url, "/validate/baseline-individual"),
-                  body = httr::upload_file(payload),
+                  body = httr::upload_file(payload, type = "application/json"),
                   encode = "json")
   expect_equal(httr::status_code(r), 200)
   expect_equal(
     response_from_json(r),
     list(status = "success",
-         errors = list(),
+         errors = NULL,
          data = list(hash = "12345",
                      type = "pjnz",
-                     data = list(country = "Botswana",
-                                 iso3 = "BWA"),
-                     filename = "original.PJNZ",
+                     data = list(country = "Malawi",
+                                 iso3 = "MWI"),
+                     filename = "Malawi2019.PJNZ",
                      filters = NULL)))
 })
 
@@ -33,13 +33,13 @@ test_that("validate shape", {
 
   payload <- file.path("payload", "validate_shape_payload.json")
   r <- httr::POST(paste0(server$url, "/validate/baseline-individual"),
-                  body = httr::upload_file(payload),
+                  body = httr::upload_file(payload, type = "application/json"),
                   encode = "json")
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
 
   expect_equal(response$status, "success")
-  expect_equal(response$errors, list())
+  expect_equal(response$errors, NULL)
   expect_equal(response$data$hash, "12345")
   expect_equal(response$data$filename, "original.geojson")
   expect_equal(response$data$type, "shape")
@@ -53,12 +53,12 @@ test_that("validate population", {
 
   payload <- file.path("payload", "validate_population_payload.json")
   r <- httr::POST(paste0(server$url, "/validate/baseline-individual"),
-                  body = httr::upload_file(payload),
+                  body = httr::upload_file(payload, type = "application/json"),
                   encode = "json")
   expect_equal(httr::status_code(r), 200)
   expect_equal(response_from_json(r),
                list(status = "success",
-                    errors = list(),
+                    errors = NULL,
                     data = list(hash = "12345",
                                 type = "population",
                                 data = NULL,
@@ -72,12 +72,12 @@ test_that("validate programme", {
   payload <- file.path("payload", "validate_programme_payload.json")
   r <- httr::POST(
     paste0(server$url, "/validate/survey-and-programme"),
-    body = httr::upload_file(payload),
+    body = httr::upload_file(payload, type = "application/json"),
     encode = "json")
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
   expect_equal(response$status, "success")
-  expect_equal(response$errors, list())
+  expect_equal(response$errors, NULL)
   expect_equal(response$data$hash, "12345")
   expect_equal(response$data$filename, "original.csv")
   expect_equal(response$data$type, "programme")
@@ -95,12 +95,12 @@ test_that("validate ANC", {
   payload <- file.path("payload", "validate_anc_payload.json")
   r <- httr::POST(
     paste0(server$url, "/validate/survey-and-programme"),
-    body = httr::upload_file(payload),
+    body = httr::upload_file(payload, type = "application/json"),
     encode = "json")
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
   expect_equal(response$status, "success")
-  expect_equal(response$errors, list())
+  expect_equal(response$errors, NULL)
   expect_equal(response$data$hash, "12345")
   expect_equal(response$data$filename, "original.csv")
   expect_equal(response$data$type, "anc")
@@ -117,12 +117,12 @@ test_that("validate survey", {
   payload <- file.path("payload", "validate_survey_payload.json")
   r <- httr::POST(
     paste0(server$url, "/validate/survey-and-programme"),
-    body = httr::upload_file(payload),
+    body = httr::upload_file(payload, type = "application/json"),
     encode = "json")
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
   expect_equal(response$status, "success")
-  expect_equal(response$errors, list())
+  expect_equal(response$errors, NULL)
   expect_equal(response$data$hash, "12345")
   expect_equal(response$data$filename, "original.csv")
   expect_equal(response$data$type, "survey")
@@ -139,12 +139,12 @@ test_that("validate baseline", {
 
   payload <- file.path("payload", "validate_baseline_payload.json")
   r <- httr::POST(paste0(server$url, "/validate/baseline-combined"),
-                  body = httr::upload_file(payload),
+                  body = httr::upload_file(payload, type = "application/json"),
                   encode = "json")
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
   expect_equal(response$status, "success")
-  expect_equal(response$errors, list())
+  expect_equal(response$errors, NULL)
   expect_equal(response$data$consistent, TRUE)
 })
 
@@ -155,12 +155,12 @@ test_that("model interactions", {
 
   ## Submit a model run
   r <- httr::POST(paste0(server$url, "/model/submit"),
-                  body = httr::upload_file(payload),
+                  body = httr::upload_file(payload, type = "application/json"),
                   encode = "json")
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
   expect_equal(response$status, "success")
-  expect_equal(response$errors, list())
+  expect_equal(response$errors, NULL)
   expect_equal(names(response$data), c("id"))
 
   ## Get the status
@@ -170,7 +170,7 @@ test_that("model interactions", {
     expect_equal(httr::status_code(r), 200)
     response <- response_from_json(r)
     expect_equal(response$status, "success")
-    expect_equal(response$errors, list())
+    expect_equal(response$errors, NULL)
     expect_equal(response$data$done, TRUE)
     expect_equal(response$data$status, "COMPLETE")
     expect_equal(response$data$success, TRUE)
@@ -200,17 +200,12 @@ test_that("model interactions", {
   dat <- readRDS(file.path(tmp, response$data$id, "data.rds"))
   expect_equal(dat$objects$data$pjnz$filename, "Malawi2019.PJNZ")
 
-  path <- download_debug(response$data$id, server = server$url,
-                         verbose = FALSE)
-  expect_equal(dir(path, recursive = TRUE),
-               dir(file.path(tmp, response$data$id), recursive = TRUE))
-
   ## Get the result
   r <- httr::GET(paste0(server$url, "/model/result/", response$data$id))
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
   expect_equal(response$status, "success")
-  expect_equal(response$errors, list())
+  expect_equal(response$errors, NULL)
   expect_equal(httr::status_code(r), 200)
   expect_equal(names(response$data), c("data", "plottingMetadata"))
   expect_equal(names(response$data$data[[1]]),
@@ -277,13 +272,14 @@ test_that("real model can be run by API", {
 
     ## Submit a model run
     r <- httr::POST(paste0(server$url, "/model/submit"),
-                    body = httr::upload_file(payload),
+                    body = httr::upload_file(payload,
+                                             type = "application/json"),
                     encode = "json")
   })
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
   expect_equal(response$status, "success")
-  expect_equal(response$errors, list())
+  expect_equal(response$errors, NULL)
   expect_equal(names(response$data), c("id"))
 
   ## Get the status
@@ -293,7 +289,7 @@ test_that("real model can be run by API", {
     expect_equal(httr::status_code(r), 200)
     response <- response_from_json(r)
     expect_equal(response$status, "success")
-    expect_equal(response$errors, list())
+    expect_equal(response$errors, NULL)
     expect_equal(response$data$done, TRUE)
     expect_equal(response$data$status, "COMPLETE")
     expect_equal(response$data$success, TRUE)
@@ -312,7 +308,7 @@ test_that("real model can be run by API", {
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
   expect_equal(response$status, "success")
-  expect_equal(response$errors, list())
+  expect_equal(response$errors, NULL)
   expect_equal(httr::status_code(r), 200)
   expect_equal(names(response$data), c("data", "plottingMetadata"))
   expect_equal(names(response$data$data[[1]]),
@@ -397,12 +393,12 @@ test_that("model run options are exposed", {
   server <- hintr_server()
   options <- file.path("payload", "model_run_options_payload.json")
   r <- httr::POST(paste0(server$url, "/model/options"),
-                  body = httr::upload_file(options),
+                  body = httr::upload_file(options, type = "application/json"),
                   encode = "json")
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
   expect_equal(response$status, "success")
-  expect_equal(response$errors, list())
+  expect_equal(response$errors, NULL)
   expect_equal(names(response$data), "controlSections")
   expect_length(response$data$controlSections, 7)
 
@@ -442,7 +438,7 @@ test_that("model run options are exposed", {
   survey_section <- response$data$controlSections[[2]]
   expect_true(
     length(survey_section$controlGroups[[1]]$controls[[1]]$options) >
-    32
+      32
   )
   expect_length(
     survey_section$controlGroups[[2]]$controls[[1]]$options,
@@ -497,7 +493,7 @@ test_that("model run options are exposed", {
   expect_true(!is.null(response$version))
   expect_equal(names(response$version), c("hintr", "naomi", "rrq", "traduire"))
   expect_true(all(grepl("^(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$", response$version)))
-  })
+})
 
 test_that("model options can be validated", {
   skip("Skipping model option validation endpoint not implemented mrc-592")
@@ -505,13 +501,13 @@ test_that("model options can be validated", {
   payload <- setup_submit_payload()
 
   r <- httr::POST(paste0(server$url, "/validate/options"),
-                  body = httr::upload_file(payload),
+                  body = httr::upload_file(payload, type = "application/json"),
                   encode = "json")
 
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
   expect_equal(response$status, "success")
-  expect_equal(response$errors, list())
+  expect_equal(response$errors, NULL)
   expect_equal(names(response$data), "valid")
   expect_equal(response$data$valid, TRUE)
 })
@@ -553,12 +549,12 @@ test_that("spectrum file download streams bytes", {
 
   ## Run a model
   r <- httr::POST(paste0(server$url, "/model/submit"),
-                  body = httr::upload_file(payload),
+                  body = httr::upload_file(payload, type = "application/json"),
                   encode = "json")
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
   expect_equal(response$status, "success")
-  expect_equal(response$errors, list())
+  expect_equal(response$errors, NULL)
   expect_equal(names(response$data), c("id"))
 
   ## Get the download
@@ -572,9 +568,9 @@ test_that("spectrum file download streams bytes", {
     ## Size of bytes is close to expected
     size <- as.numeric(httr::headers(r)$`content-length`)
     expect_true(size - size/10 <
-      file.size(system_file("output", "malawi_spectrum_download.zip")))
+                  file.size(system_file("output", "malawi_spectrum_download.zip")))
     expect_true(size + size/10 >
-      file.size(system_file("output", "malawi_spectrum_download.zip")))
+                  file.size(system_file("output", "malawi_spectrum_download.zip")))
   })
 
   ## Headers can be retrieved
@@ -582,7 +578,7 @@ test_that("spectrum file download streams bytes", {
   expect_equal(httr::status_code(r), 200)
   expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
   expect_match(httr::headers(r)$`content-disposition`,
-    'attachment; filename="MWI_\\d+-\\d+_naomi_spectrum_digest.zip"')
+               'attachment; filename="MWI_\\d+-\\d+_naomi_spectrum_digest.zip"')
 })
 
 test_that("summary file download streams bytes", {
@@ -592,12 +588,12 @@ test_that("summary file download streams bytes", {
 
   ## Run a model
   r <- httr::POST(paste0(server$url, "/model/submit"),
-                  body = httr::upload_file(payload),
+                  body = httr::upload_file(payload, type = "application/json"),
                   encode = "json")
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
   expect_equal(response$status, "success")
-  expect_equal(response$errors, list())
+  expect_equal(response$errors, NULL)
   expect_equal(names(response$data), c("id"))
 
   ## Get the download
@@ -612,9 +608,9 @@ test_that("summary file download streams bytes", {
     ## Size of bytes is close to expected
     size <- as.numeric(httr::headers(r)$`content-length`)
     expect_true(size - size/10 <
-      file.size(system_file("output", "malawi_summary_download.zip")))
+                  file.size(system_file("output", "malawi_summary_download.zip")))
     expect_true(size + size/10 >
-      file.size(system_file("output", "malawi_summary_download.zip")))
+                  file.size(system_file("output", "malawi_summary_download.zip")))
   })
 
   ## Headers can be retrieved
@@ -664,7 +660,7 @@ test_that("translation", {
 
   r <- httr::GET(server$url, httr::add_headers("Accept-Language" = "fr"))
   expect_equal(httr::status_code(r), 200)
-  expect_equal(response_from_json(r), "Bienvenue chez hintr")
+  expect_equal(response_from_json(r)$data, "Bienvenue chez hintr")
 })
 
 test_that("crashed worker can be detected", {
@@ -678,7 +674,7 @@ test_that("crashed worker can be detected", {
   ## Submit a model run
   payload <- setup_submit_payload()
   r <- httr::POST(paste0(server$url, "/model/submit"),
-                  body = httr::upload_file(payload),
+                  body = httr::upload_file(payload, type = "application/json"),
                   encode = "json")
   httr::stop_for_status(r)
   id <- response_from_json(r)$data$id
@@ -718,7 +714,7 @@ test_that("model run can be cancelled", {
 
   ## Submit a model run
   r <- httr::POST(paste0(server$url, "/model/submit"),
-                  body = httr::upload_file(payload),
+                  body = httr::upload_file(payload, type = "application/json"),
                   encode = "json")
   expect_equal(httr::status_code(r), 200)
   id <- response_from_json(r)$data$id

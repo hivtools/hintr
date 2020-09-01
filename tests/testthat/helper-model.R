@@ -18,10 +18,13 @@ test_mock_model_available <- function() {
   }))
 }
 
-setup_submit_payload <- function() {
+setup_submit_payload <- function(version = NULL) {
   path <- tempfile()
+  if (is.null(version)) {
+    version <- to_json(cfg$version_info)
+  }
   payload <- readLines("payload/model_submit_payload.json")
-  payload <- gsub("<version_info>", to_json(cfg$version_info), payload, fixed = TRUE)
+  payload <- gsub("<version_info>", version, payload, fixed = TRUE)
   writeLines(payload, path)
   path
 }

@@ -1,6 +1,6 @@
 Package: hintr
 Title: R API for calling naomi district level HIV model
-Version: 0.0.36
+Version: 0.1.0
 Authors@R: 
     person(given = "Robert",
            family = "Ashton",
@@ -12,7 +12,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
 Additional_repositories: https://mrc-ide.github.io/drat
 Imports:
     digest,
@@ -23,13 +23,13 @@ Imports:
     ids,
     jsonlite (>= 1.2.2),
     naomi (>= 1.0.1),
-    plumber,
+    pkgapi (>= 0.0.9),
     R6,
     redux,
     rrq (>= 0.2.6),
     specio (>= 0.1.4),
     storr,
-    traduire (>= 0.0.4),
+    traduire (>= 0.0.5),
     zip
 Suggests:
     callr,

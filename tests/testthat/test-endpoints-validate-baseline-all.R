@@ -5,97 +5,52 @@ context("endpoints-validate-baseline")
 gc()
 
 test_that("endpoint_validate_baseline_combined correctly validates data", {
-  pjnz <- file.path("testdata", "Malawi2019.PJNZ")
-  shape <- file.path("testdata", "malawi.geojson")
-  population <- file.path("testdata", "population.csv")
-  req <- list(postBody =
-                '{"pjnz": "path/to/file",
-                  "shape": "path/to/file",
-                  "population": "path/to/file"}')
-  res <- MockPlumberResponse$new()
-  response <- endpoint_validate_baseline_combined(req, res, pjnz, shape, population)
-  response <- jsonlite::parse_json(response)
-  expect_equal(response$status, "success")
-  expect_equal(response$errors, list())
-  expect_equal(response$data$consistent, TRUE)
-  expect_equal(res$status, 200)
+  input <- validate_baseline_all_input(file.path("testdata", "Malawi2019.PJNZ"),
+                                       file.path("testdata", "malawi.geojson"),
+                                       file.path("testdata", "population.csv"))
+  response <- validate_baseline_combined(input)
+  expect_equal(response$consistent, scalar(TRUE))
 })
 
 test_that("endpoint_validate_baseline_combined returns error on invalid data", {
-  pjnz <- file.path("testdata", "Malawi2019.PJNZ")
-  shape <- file.path("testdata", "malawi.geojson")
-  population <- file.path("testdata", "population.csv")
-  req <- list(postBody =
-                '{"pjnz": "path/to/file",
-                  "shape": "path/to/file",
-                  "population": "path/to/file"}')
+  input <- validate_baseline_all_input(file.path("testdata", "Malawi2019.PJNZ"),
+                                       file.path("testdata", "malawi.geojson"),
+                                       file.path("testdata", "population.csv"))
   mock_read_iso3 <- mockery::mock("BLZ")
   with_mock("hintr:::read_iso3" = mock_read_iso3, {
-    res <- MockPlumberResponse$new()
-    response <- endpoint_validate_baseline_combined(req, res, pjnz, shape,
-                                                    population)
-    response <- jsonlite::parse_json(response)
+    error <- expect_error(validate_baseline_combined(input))
   })
-  expect_equal(response$status, "failure")
-  expect_length(response$errors, 1)
-  expect_equal(response$errors[[1]]$error, "INVALID_BASELINE")
-  expect_equal(response$errors[[1]]$detail,
-               "Countries aren't consistent got MWI from pjnz and BLZ from shape.")
-  expect_equal(response$data, structure(list(), names = character(0)))
-  expect_equal(res$status, 400)
+  expect_equal(error$data[[1]]$error, scalar("INVALID_BASELINE"))
+  expect_equal(
+    error$data[[1]]$detail,
+    scalar("Countries aren't consistent got MWI from pjnz and BLZ from shape."))
+  expect_equal(error$status_code, 400)
 })
 
 test_that("validation works with muliple PJNZ files", {
   skip_if_sensitive_data_missing()
-  pjnz <- file.path("testdata", "sensitive", "ZMB", "data",
-                    "zmb_all_pjnz_extract.zip")
-  shape <- file.path("testdata", "sensitive", "ZMB", "data",
-                     "zmb_areas.geojson")
-  req <- list(postBody =
-                '{"pjnz": "path/to/file",
-                  "shape": "path/to/file",
-                  "population": "path/to/file"}')
-  res <- MockPlumberResponse$new()
-  response <- endpoint_validate_baseline_combined(req, res, pjnz, shape, NULL)
-  response <- jsonlite::parse_json(response)
-  expect_equal(response$status, "success")
-  expect_equal(response$errors, list())
-  expect_equal(response$data$consistent, TRUE)
-  expect_equal(res$status, 200)
+  input <- validate_baseline_all_input(
+    file.path("testdata", "sensitive", "ZMB", "data",
+              "zmb_all_pjnz_extract.zip"),
+    file.path("testdata", "sensitive", "ZMB", "data",
+              "zmb_areas.geojson"),
+    NULL)
+  response <- validate_baseline_combined(input)
+  expect_equal(response$consistent, scalar(TRUE))
 })
 
-test_that("validation works with inconsistent ", {
+test_that("validation works with inconsistent data", {
   skip_if_sensitive_data_missing()
-  pjnz <- file.path("testdata", "sensitive", "ZMB", "data",
-                    "zmb_all_pjnz_extract.zip")
-  shape <- file.path("testdata", "malawi.geojson")
-  req <- list(postBody =
-                '{"pjnz": "path/to/file",
-                  "shape": "path/to/file",
-                  "population": "path/to/file"}')
-  res <- MockPlumberResponse$new()
-  response <- endpoint_validate_baseline_combined(req, res, pjnz, shape, NULL)
-  response <- jsonlite::parse_json(response)
-  expect_equal(response$status, "failure")
-  expect_length(response$errors, 1)
-  expect_equal(response$errors[[1]]$error, "INVALID_BASELINE")
-  expect_equal(response$errors[[1]]$detail,
-               "Countries aren't consistent got ZMB from pjnz and MWI from shape.")
-  expect_equal(res$status, 400)
-
-  skip("TODO: enable validation of shape + PJNZ region codes mrc-1156")
-  res <- MockPlumberResponse$new()
-  mock_read_iso3 <- mockery::mock("ZMB")
-  with_mock("hintr:::read_iso3" = mock_read_iso3, {
-    response <- endpoint_validate_baseline_combined(req, res, pjnz, shape, NULL)
-  })
-  response <- jsonlite::parse_json(response)
-  expect_equal(response$status, "failure")
-  expect_length(response$errors, 1)
-  expect_equal(response$errors[[1]]$error, "INVALID_BASELINE")
-  expect_match(response$errors[[1]]$detail,
-               "Shape file contains spectrum region codes missing from PJNZ files: 0
-PJNZ files contain spectrum region codes missing from shape file: .*", perl = TRUE)
-  expect_equal(res$status, 400)
+  input <- validate_baseline_all_input(
+    file.path("testdata", "sensitive", "ZMB", "data",
+              "zmb_all_pjnz_extract.zip"),
+    file.path("testdata", "malawi.geojson"),
+    NULL)
+  error <- expect_error(validate_baseline_combined(input))
+  expect_equal(error$data[[1]]$error, scalar("INVALID_BASELINE"))
+  expect_equal(
+    error$data[[1]]$detail,
+    scalar("Countries aren't consistent got ZMB from pjnz and MWI from shape."))
+  expect_equal(error$status_code, 400)
 })
 
