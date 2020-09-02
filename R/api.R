@@ -53,7 +53,7 @@ api <- function(port = 8888, queue_id = NULL, workers = 2,
   queue <- Queue$new(queue_id, workers, results_dir = results_dir,
                      prerun_dir = prerun_dir)
   api <- api_build(queue)
-  api$run(port = port)
+  api$run(host = "0.0.0.0", port = port)
   # nocov end
 }
 
