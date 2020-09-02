@@ -49,12 +49,13 @@ set +e
 for attempt in $(seq 10); do
     echo "Attempt $attempt"
     RESPONSE=$(curl --silent http://localhost:8888)
-    if [ "$RESPONSE" == '"Welcome to hintr"' ]; then
+    if [ "$RESPONSE" == '{"status":"success","errors":null,"data":"Welcome to hintr"}' ]; then
         echo "SUCCESS"
         exit 0
     fi
     sleep 0.5
 done
+
 
 echo "FAIL"
 exit 1
