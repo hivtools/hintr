@@ -763,3 +763,19 @@ test_that("download_debug prevents overwriting", {
     download_debug(id, dest = tmp),
     "Path 'abc' already exists at destination")
 })
+
+test_that("endpoint_model_submit can be run without anc or programme data", {
+  test_mock_model_available()
+  server <- hintr_server()
+  payload <- setup_submit_payload(include_anc_art = FALSE)
+
+  ## Run a model
+  r <- httr::POST(paste0(server$url, "/model/submit"),
+                  body = httr::upload_file(payload, type = "application/json"),
+                  encode = "json")
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+  expect_equal(response$errors, NULL)
+  expect_equal(names(response$data), c("id"))
+})
