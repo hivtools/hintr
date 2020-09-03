@@ -43,7 +43,7 @@ test_that("input_response correctly formats data and validates it", {
 
 test_that("Schemas are draft-04", {
   meta <- readLines("http://json-schema.org/draft-04/schema")
-  path <- system.file("schema", package = "hintr", mustWork = TRUE)
+  path <- system_file("schema")
   files <- dir(path, full.names = TRUE, pattern = "\\.schema\\.json$")
   for (f in files) {
     expect_true(jsonvalidate::json_validate(f, meta))
@@ -51,7 +51,7 @@ test_that("Schemas are draft-04", {
 })
 
 test_that("Schemas do not use const", {
-  path <- system.file("schema", package = "hintr", mustWork = TRUE)
+  path <- system_file("schema")
 
   check1 <- function(x) {
     if ("const" %in% names(x)) {
@@ -71,7 +71,7 @@ test_that("Schemas do not use const", {
 test_that("schemas always contain a type", {
   ## This added to fix bugs caused by missing types in schema marking query
   ## json as valid. See mrc-652 for example.
-  path <- system.file("schema", package = "hintr", mustWork = TRUE)
+  path <- system_file("schema")
 
   has_properties <- function(x) {
     "properties" %in% names(x)

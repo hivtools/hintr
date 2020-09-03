@@ -203,7 +203,8 @@ download <- function(queue, type, filename) {
         "Content-Disposition" =
           sprintf('attachment; filename="%s_%s_%s.zip"',
                   paste(res$metadata$areas, collapse = ", "),
-                  iso_time_str(), filename)))
+                  iso_time_str(), filename),
+        "Content-Length" = length(bytes)))
       bytes
     },
     error = function(e) {

@@ -1,8 +1,7 @@
 context("errors")
 
 test_that("validate errors", {
-  path <- system.file("schema/Response.schema.json", mustWork = TRUE,
-                      package = "hintr")
+  path <- system_file("schema/Response.schema.json")
   v <- jsonvalidate::json_validator(path, "ajv")
 
   mock_id <- mockery::mock(scalar("fake_key"), cycle = TRUE)

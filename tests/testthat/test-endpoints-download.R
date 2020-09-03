@@ -18,7 +18,7 @@ test_that("indicator download returns bytes", {
   download <- summary(response$id)
   expect_type(download, "raw")
   expect_length(download, file.size(
-    system.file("output", "malawi_summary_download.zip", package = "hintr")))
+    system_file("output", "malawi_summary_download.zip")))
 })
 
 test_that("spectrum download returns bytes", {
@@ -39,7 +39,7 @@ test_that("spectrum download returns bytes", {
   download <- spectrum(response$id)
   expect_type(download, "raw")
   expect_length(download, file.size(
-    system.file("output", "malawi_spectrum_download.zip", package = "hintr")))
+    system_file("output", "malawi_spectrum_download.zip")))
 })
 
 test_that("download returns useful error if model run fails", {

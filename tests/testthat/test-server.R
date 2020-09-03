@@ -565,12 +565,12 @@ test_that("spectrum file download streams bytes", {
     expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
     expect_match(httr::headers(r)$`content-disposition`,
                  'attachment; filename="MWI_\\d+-\\d+_naomi_spectrum_digest.zip"')
-    ## Size of bytes is close to expected
-    size <- as.numeric(httr::headers(r)$`content-length`)
-    expect_true(size - size/10 <
-                  file.size(system_file("output", "malawi_spectrum_download.zip")))
-    expect_true(size + size/10 >
-                  file.size(system_file("output", "malawi_spectrum_download.zip")))
+
+    size <- length(httr::content(r))
+    content_length <- as.numeric(httr::headers(r)$`content-length`)
+    expect_equal(size, content_length)
+    expect_equal(size, file.size(
+      system_file("output", "malawi_spectrum_download.zip")))
   })
 
   ## Headers can be retrieved
@@ -579,6 +579,12 @@ test_that("spectrum file download streams bytes", {
   expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
   expect_match(httr::headers(r)$`content-disposition`,
                'attachment; filename="MWI_\\d+-\\d+_naomi_spectrum_digest.zip"')
+
+  size <- length(httr::content(r))
+  content_length <- as.numeric(httr::headers(r)$`content-length`)
+  expect_equal(size, 0)
+  expect_equal(content_length, file.size(
+    system_file("output", "malawi_spectrum_download.zip")))
 })
 
 test_that("summary file download streams bytes", {
@@ -605,12 +611,12 @@ test_that("summary file download streams bytes", {
     expect_match(
       httr::headers(r)$`content-disposition`,
       'attachment; filename="MWI_\\d+-\\d+_naomi_coarse_age_groups.zip"')
-    ## Size of bytes is close to expected
-    size <- as.numeric(httr::headers(r)$`content-length`)
-    expect_true(size - size/10 <
-                  file.size(system_file("output", "malawi_summary_download.zip")))
-    expect_true(size + size/10 >
-                  file.size(system_file("output", "malawi_summary_download.zip")))
+
+    size <- length(httr::content(r))
+    content_length <- as.numeric(httr::headers(r)$`content-length`)
+    expect_equal(size, content_length)
+    expect_equal(size, file.size(
+      system_file("output", "malawi_summary_download.zip")))
   })
 
   ## Headers can be retrieved
@@ -620,6 +626,12 @@ test_that("summary file download streams bytes", {
   expect_match(
     httr::headers(r)$`content-disposition`,
     'attachment; filename="MWI_\\d+-\\d+_naomi_coarse_age_groups.zip"')
+
+  size <- length(httr::content(r))
+  content_length <- as.numeric(httr::headers(r)$`content-length`)
+  expect_equal(size, 0)
+  expect_equal(content_length, file.size(
+    system_file("output", "malawi_summary_download.zip")))
 })
 
 test_that("can quit", {
