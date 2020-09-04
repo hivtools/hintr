@@ -643,9 +643,6 @@ test_that("summary file download streams bytes", {
     system_file("output", "malawi_summary_download.zip")))
 })
 
-## Add garbage collects to avoid intermittent failures
-gc()
-
 test_that("can quit", {
   test_mock_model_available()
   server <- hintr_server()
