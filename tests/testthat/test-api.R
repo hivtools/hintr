@@ -285,6 +285,9 @@ test_that("endpoint_model_options", {
   expect_true(all(grepl("^(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$", body$version)))
 })
 
+## Add garbage collects to avoid intermittent failures
+gc()
+
 test_that("endpoint_model_options works", {
   test_redis_available()
   queue <- test_queue(workers = 0)
@@ -413,6 +416,9 @@ test_that("api can call endpoint_model_options_validate", {
   expect_null(body$errors)
   expect_true(body$data$valid)
 })
+
+## Add garbage collects to avoid intermittent failures
+gc()
 
 test_that("endpoint_model_submit can be run", {
   test_redis_available()
@@ -679,6 +685,9 @@ test_that("returning_json_version adds version", {
                unclass(cfg$version_info$traduire))
 })
 
+## Add garbage collects to avoid intermittent failures
+gc()
+
 test_that("endpoint_download_spectrum can be run", {
   test_redis_available()
   test_mock_model_available()
@@ -941,6 +950,9 @@ test_that("api can call endpoint_model_debug", {
   ## Download contains data
   expect_true(length(res$body) > 1000000)
 })
+
+## Add garbage collects to avoid intermittent failures
+gc()
 
 test_that("endpoint_hintr_version works", {
   endpoint <- endpoint_hintr_version()
