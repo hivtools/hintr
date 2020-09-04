@@ -749,13 +749,16 @@ test_that("model run can be cancelled", {
   expect_equal(dat$status, "success")
   expect_null(dat$data)
 
-  r <- httr::GET(paste0(server$url, "/model/status/", id))
-  expect_equal(httr::status_code(r), 200)
-  dat <- response_from_json(r)
-  expect_equal(dat$status, "success")
-  expect_true(dat$data$done)
-  expect_equal(dat$data$status, "INTERRUPTED")
-  expect_false(dat$data$success)
+  testthat::try_again(5, {
+    Sys.sleep(1)
+    r <- httr::GET(paste0(server$url, "/model/status/", id))
+    expect_equal(httr::status_code(r), 200)
+    dat <- response_from_json(r)
+    expect_equal(dat$status, "success")
+    expect_true(dat$data$done)
+    expect_equal(dat$data$status, "INTERRUPTED")
+    expect_false(dat$data$success)
+  })
 
   r <- httr::GET(paste0(server$url, "/model/result/", id))
   expect_equal(httr::status_code(r), 400)
