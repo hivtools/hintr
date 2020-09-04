@@ -8,15 +8,15 @@
     "selected_filter_options": {
       "type": "object",
       "patternProperties": {
-        "^.*$": { 
+        "^.*$": {
           "type": "array",
           "items": { "$ref": "FilterOption.schema.json" }
         }
       },
-      "additonalProperties": true,
+      "additionalProperties": true,
       "required": [ "area", "quarter", "age", "sex" ]
     }
   },
-  "additonalProperties": false,
+  "additionalProperties": false,
   "required": [ "indicator_id", "x_axis_id", "disaggregate_by_id", "selected_filter_options" ]
 }

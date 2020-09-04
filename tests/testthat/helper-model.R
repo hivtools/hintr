@@ -18,10 +18,17 @@ test_mock_model_available <- function() {
   }))
 }
 
-setup_submit_payload <- function() {
+setup_submit_payload <- function(version = NULL, include_anc_art = TRUE) {
   path <- tempfile()
-  payload <- readLines("payload/model_submit_payload.json")
-  payload <- gsub("<version_info>", to_json(cfg$version_info), payload, fixed = TRUE)
+  if (is.null(version)) {
+    version <- to_json(cfg$version_info)
+  }
+  if (include_anc_art) {
+    payload <- readLines("payload/model_submit_payload.json")
+  } else {
+    payload <- readLines("payload/model_submit_payload_minimal.json")
+  }
+  payload <- gsub("<version_info>", version, payload, fixed = TRUE)
   writeLines(payload, path)
   path
 }

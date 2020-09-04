@@ -2,10 +2,12 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
+    "data" : { "$ref": "ModelSubmitData.schema.json" },
     "options" : { "type": "object" }
   },
   "additionalProperties": false,
   "required": [
+    "data",
     "options"
   ]
 }

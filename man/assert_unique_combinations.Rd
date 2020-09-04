@@ -7,7 +7,9 @@
 assert_unique_combinations(data, columns_for_unique)
 }
 \arguments{
-\item{columns_for_unique}{}
+\item{data}{Data to check}
+
+\item{columns_for_unique}{Columns to check for unique}
 }
 \value{
 TRUE if the required combinations are unique, else throws error

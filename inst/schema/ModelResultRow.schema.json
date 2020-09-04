@@ -30,7 +30,7 @@
       "type": [ "number", "null" ]
     }
   },
-  "additonalProperties": true,
+  "additionalProperties": true,
   "required": [ "area_id", "sex", "age_group", "calendar_quarter", "indicator_id",
     "mode", "mean", "lower", "upper" ]
 }

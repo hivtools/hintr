@@ -19,16 +19,6 @@
       "path": "testdata/survey.csv",
       "filename": "survey.csv",
       "hash": "12345"
-    },
-    "programme": {
-      "path": "testdata/programme.csv",
-      "filename": "programme.csv",
-      "hash": "12345"
-    },
-    "anc": {
-      "path": "testdata/anc.csv",
-      "filename": "anc.csv",
-      "hash": "12345"
     }
   },
   "options": {
@@ -40,12 +30,6 @@
     "survey_prevalence": ["MWI2016PHIA", "MWI2015DHS"],
     "survey_art_coverage": "MWI2016PHIA",
     "survey_recently_infected": "MWI2016PHIA",
-    "include_art_t1": "true",
-    "include_art_t2": "true",
-    "anc_prevalence_year1": 2016,
-    "anc_prevalence_year2": 2018,
-    "anc_art_coverage_year1": 2016,
-    "anc_art_coverage_year2": 2018,
     "spectrum_population_calibration": "none",
     "spectrum_plhiv_calibration_level": "none",
     "spectrum_plhiv_calibration_strat": "sex_age_group",
@@ -60,5 +44,5 @@
     "max_iter": 250,
     "permissive": false
   },
-  "version": {"hintr":"0.1.0","naomi":"1.0.2","rrq":"0.2.6","traduire":"0.0.5"}
+  "version": <version_info>
 }

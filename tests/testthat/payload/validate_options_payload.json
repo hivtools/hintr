@@ -59,6 +59,5 @@
     "no_of_samples": 20,
     "max_iter": 250,
     "permissive": false
-  },
-  "version": {"hintr":"0.1.0","naomi":"1.0.2","rrq":"0.2.6","traduire":"0.0.5"}
+  }
 }
