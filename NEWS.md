@@ -1,3 +1,7 @@
+# hintr 0.1.1
+
+* Fix file naming to work with old model runs where country name is not available
+
 # hintr 0.1.0
 
 * Switch API implementation to use pkgapi
