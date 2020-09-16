@@ -793,6 +793,16 @@ test_that("api can call endpoint_download_summary", {
     system_file("output", "malawi_summary_download.zip")))
 })
 
+test_that("content disposition header is formatted correctly", {
+  expect_match(build_content_disp_header("MWI", "naomi_spectrum_digest"),
+               'attachment; filename="MWI_\\d+-\\d+_naomi_spectrum_digest.zip"')
+  expect_match(build_content_disp_header(NULL, "naomi_spectrum_digest"),
+               'attachment; filename="\\d+-\\d+_naomi_spectrum_digest.zip"')
+  expect_match(
+    build_content_disp_header(c("MWI.1", "MWI.2"), "naomi_spectrum_digest"),
+    'attachment; filename="MWI.1_MWI.2_\\d+-\\d+_naomi_spectrum_digest.zip"')
+})
+
 test_that("returning_binary_head ensures no body in response", {
   returning <- returning_binary_head()
   data <- charToRaw("test")

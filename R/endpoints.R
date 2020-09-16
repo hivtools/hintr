@@ -200,10 +200,8 @@ download <- function(queue, type, filename) {
                      "summary" = res$summary_path)
       bytes <- readBin(path, "raw", n = file.size(path))
       bytes <- pkgapi::pkgapi_add_headers(bytes, list(
-        "Content-Disposition" =
-          sprintf('attachment; filename="%s_%s_%s.zip"',
-                  paste(res$metadata$areas, collapse = ", "),
-                  iso_time_str(), filename),
+        "Content-Disposition" = build_content_disp_header(res$metadata$areas,
+                                                          filename),
         "Content-Length" = length(bytes)))
       bytes
     },
@@ -215,6 +213,11 @@ download <- function(queue, type, filename) {
       }
     })
   }
+}
+
+build_content_disp_header <- function(areas, filename) {
+  sprintf('attachment; filename="%s.zip"',
+          paste(c(areas, iso_time_str(), filename), collapse = "_"))
 }
 
 download_model_debug <- function(queue) {
