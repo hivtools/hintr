@@ -65,7 +65,7 @@ test_that("endpoint_baseline_individual works", {
   expect_equal(body$data$data$iso3, "MWI")
   expect_equal(body$data$filename, "Malawi2019.PJNZ")
   expect_equal(body$data$filters, NULL)
-  expect_equal(body$data$fromADR, scalar(FALSE))
+  expect_equal(body$data$fromADR, FALSE)
 })
 
 test_that("endpoint_baseline_combined", {
@@ -117,7 +117,7 @@ test_that("endpoint_validate_survey_programme works with programme data", {
   expect_null(body$errors)
   expect_equal(body$data$filename, "original.csv")
   expect_equal(body$data$hash, "12345")
-  expect_equal(body$data$fromADR, scalar(FALSE))
+  expect_equal(body$data$fromADR, FALSE)
   ## Sanity check that data has been returned
   expect_true(nrow(body$data$data) >= 200)
   expect_equal(typeof(body$data$data[, "current_art"]), "double")
@@ -150,7 +150,7 @@ test_that("endpoint_validate_survey_programme works with anc data", {
   expect_null(body$errors)
   expect_equal(body$data$filename, "original.csv")
   expect_equal(body$data$hash, "12345")
-  expect_equal(body$data$fromADR, scalar(FALSE))
+  expect_equal(body$data$fromADR, FALSE)
   ## Sanity check that data has been returned
   expect_true(nrow(body$data$data) >= 200)
   expect_equal(typeof(body$data$data[, "prevalence"]), "double")
@@ -182,7 +182,7 @@ test_that("endpoint_validate_survey_programme works with survey data", {
   expect_equal(body$status, "success")
   expect_null(body$errors)
   expect_equal(body$data$filename, "original.csv")
-  expect_equal(body$data$fromADR, scalar(FALSE))
+  expect_equal(body$data$fromADR, FALSE)
   expect_equal(body$data$hash, "12345")
   ## Sanity check that data has been returned
   expect_true(nrow(body$data$data) >= 20000)
