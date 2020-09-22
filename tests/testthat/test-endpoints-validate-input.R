@@ -8,6 +8,7 @@ test_that("validate_baseline correctly validates data", {
   expect_equal(response$data$country, scalar("Botswana"))
   expect_equal(response$data$iso3, scalar("BWA"))
   expect_equal(response$filename, scalar("original"))
+  expect_equal(response$fromADR, scalar(FALSE))
 })
 
 test_that("validate_baseline returns useful error if file does not exist", {
@@ -44,6 +45,7 @@ test_that("endpoint_validate_baseline can take zip of PJNZ extracts", {
   expect_equal(response$data$country, scalar("Zambia"))
   expect_equal(response$data$iso3, scalar("ZMB"))
   expect_equal(response$filename, scalar("original"))
+  expect_equal(response$fromADR, scalar(FALSE))
 })
 
 test_that("error thrown if zip contains non PJNZ files", {
@@ -124,6 +126,7 @@ test_that("can have null spectrum region code for country level region", {
   data <- jsonlite::fromJSON(response$data)
   expect_true(all(c("type", "features") %in% names(data)))
   expect_equal(names(response$filters), c("regions", "level_labels"))
+  expect_equal(response$fromADR, scalar(FALSE))
 })
 
 test_that("endpoint_validate_baseline supports population file", {
@@ -134,4 +137,5 @@ test_that("endpoint_validate_baseline supports population file", {
   expect_equal(response$filename, scalar("original"))
   expect_equal(response$hash, scalar("12345"))
   expect_equal(response$data, json_null())
+  expect_equal(response$fromADR, scalar(FALSE))
 })

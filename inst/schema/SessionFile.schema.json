@@ -4,8 +4,9 @@
   "properties": {
     "path" : { "$ref": "FilePath.schema.json" },
     "hash" : { "type": "string" },
-    "filename" : { "type": "string" }
+    "filename" : { "type": "string" },
+    "fromADR":  {"type": "boolean"}
   },
   "additionalProperties": false,
-  "required": ["filename", "hash", "path"]
+  "required": ["filename", "hash", "path", "fromADR"]
 }

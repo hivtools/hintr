@@ -9,6 +9,7 @@ test_that("endpoint_validate_survey_programme supports programme file", {
 
   expect_equal(response$filename, scalar("original"))
   expect_equal(response$hash, scalar("12345"))
+  expect_equal(response$fromADR, scalar(FALSE))
   ## Sanity check that data has been returned
   expect_true(nrow(response$data) >= 200)
   expect_equal(typeof(response$data[, "current_art"]), "double")
@@ -37,6 +38,7 @@ test_that("endpoint_validate_survey_programme supports ANC file", {
 
   expect_equal(response$filename, scalar("original"))
   expect_equal(response$hash, scalar("12345"))
+  expect_equal(response$fromADR, scalar(FALSE))
   ## Sanity check that data has been returned
   expect_true(nrow(response$data) >= 200)
   expect_equal(typeof(response$data[, "prevalence"]), "double")
@@ -68,6 +70,7 @@ test_that("endpoint_validate_survey_programme supports survey file", {
 
   expect_equal(response$filename, scalar("original"))
   expect_equal(response$hash, scalar("12345"))
+  expect_equal(response$fromADR, scalar(FALSE))
   ## Sanity check that data has been returned
   expect_true(nrow(response$data) >= 20000)
   expect_equal(typeof(response$data[, "est"]), "double")
