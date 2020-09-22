@@ -51,5 +51,6 @@ docker build \
 
 # We always push the SHA tagged versions, for debugging if the tests
 # after this step fail
+docker push hintr_tests:${GIT_SHA}
 docker push $TAG_SHA
 docker push $TAG_WORKER_SHA
