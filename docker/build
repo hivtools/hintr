@@ -45,12 +45,12 @@ docker build \
        $PACKAGE_ROOT
 
 docker build \
-      -t hintr_tests:${GIT_SHA} \
+      -t $TAG_HINTR_TESTS \
       -f docker/Dockerfile.test \
       $PACKAGE_ROOT
 
 # We always push the SHA tagged versions, for debugging if the tests
 # after this step fail
-docker push hintr_tests:${GIT_SHA}
+docker push $TAG_HINTR_TESTS
 docker push $TAG_SHA
 docker push $TAG_WORKER_SHA
