@@ -1,4 +1,4 @@
-FROM mrcide/naomi-base:add-latex-lib
+FROM mrcide/naomi-base:latest
 
 RUN apt-get update && apt-get -y install --no-install-recommends \
         libhiredis-dev \
