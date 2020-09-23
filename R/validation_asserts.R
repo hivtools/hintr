@@ -183,6 +183,7 @@ assert_single_country <- function(data, type) {
   UseMethod("assert_single_country", data)
 }
 
+##' @export
 assert_single_country.geojson <- function(data, type) {
   ## TODO: geojson will contain the spectrum ID perhaps that will make a more
   ## appropriate check of single country? See once geojson has been updated by
@@ -193,10 +194,12 @@ assert_single_country.geojson <- function(data, type) {
   assert_single_country(country, type)
 }
 
+##' @export
 assert_single_country.data.frame <- function(data, type) {
   assert_single_country(substr(data$area_id, 1, 3), type)
 }
 
+##' @export
 assert_single_country.character <- function(data, type) {
   if (length(unique(data)) == 0) {
     stop(t_("VALIDATION_SINGLE_COUNTRY_NO_REGIONS",
