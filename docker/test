@@ -53,7 +53,7 @@ for attempt in $(seq 10); do
         echo "SUCCESS"
         exit 0
     fi
-    sleep 0.5
+    sleep 1
 done
 
 
