@@ -10,6 +10,8 @@ test_that("Root", {
   expect_equal(response_from_json(r)$data, "Welcome to hintr")
 })
 
+gc()
+
 test_that("validate pjnz", {
   server <- hintr_server()
 
