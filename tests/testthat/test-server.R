@@ -10,8 +10,6 @@ test_that("Root", {
   expect_equal(response_from_json(r)$data, "Welcome to hintr")
 })
 
-gc()
-
 test_that("validate pjnz", {
   server <- hintr_server()
 
@@ -69,8 +67,6 @@ test_that("validate population", {
                                 filename = "original.csv",
                                 filters = NULL)))
 })
-
-gc()
 
 test_that("validate programme", {
   server <- hintr_server()
@@ -153,8 +149,6 @@ test_that("validate baseline", {
   expect_equal(response$errors, NULL)
   expect_equal(response$data$consistent, TRUE)
 })
-
-gc()
 
 test_that("model interactions", {
   test_mock_model_available()
@@ -546,8 +540,6 @@ test_that("Incorrect debug key gives reasonable error", {
   expect_equal(response$errors[[1]]$detail, "Task 'abc' not found")
 })
 
-gc()
-
 test_that("worker information is returned", {
   server <- hintr_server()
   r <- httr::GET(paste0(server$url, "/hintr/worker/status"))
@@ -685,8 +677,6 @@ test_that("404 pages have sensible schema", {
   expect_equal(dat$errors[[1]]$detail,
                "GET /meaning-of-life is not a valid hintr path")
 })
-
-gc()
 
 test_that("translation", {
   server <- hintr_server()

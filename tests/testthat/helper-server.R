@@ -62,6 +62,7 @@ hintr_server <- function(n_tries = 10, poll = 0.5, results_dir = tempdir()) {
       TRUE
     }, error = function(e) FALSE)
     if (ok) {
+      withr::defer_parent(process$kill())
       return(list(process = process, url = url, port = port,
                   queue_id = queue_id))
     }
