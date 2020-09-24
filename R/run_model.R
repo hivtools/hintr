@@ -24,7 +24,7 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
       )
     )
 
-    signalCondition(structure(list(message = progress_start),
+    signalCondition(structure(progress_start,
                               class = c("progress", "condition")))
     Sys.sleep(5)
     progress_complete <- list(
@@ -39,7 +39,7 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
         name = t_("RUN_MODEL_MOCK_FINISH")
       )
     )
-    signalCondition(structure(list(message = progress_complete),
+    signalCondition(structure(progress_complete,
                               class = c("progress", "condition")))
     return(list(output_path = system_file("output", "malawi_output.rds"),
          spectrum_path = system_file("output", "malawi_spectrum_download.zip"),
