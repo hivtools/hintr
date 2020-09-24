@@ -34,7 +34,7 @@ docker run --rm --network=$NAME_NETWORK \
        -e USE_MOCK_MODEL=true \
        --mount type=volume,src=$NAME_VOLUME,dst=/uploads \
        --mount type=volume,src=$NAME_VOLUME,dst=/results \
-       --name hintr_tests hintr_tests:${GIT_SHA} \
+       --name $NAME_HINTR_TESTS $TAG_HINTR_TESTS \
        /usr/local/bin/R CMD check --as-cran hintr_$PACKAGE_VERSION.tar.gz
 
 docker run --rm -d --network=$NAME_NETWORK \
@@ -53,7 +53,7 @@ for attempt in $(seq 10); do
         echo "SUCCESS"
         exit 0
     fi
-    sleep 0.5
+    sleep 1
 done
 
 

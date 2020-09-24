@@ -143,6 +143,6 @@ stitch_options_template <- function(options_template) {
 #' @keywords internal
 do_validate_model_options <- function(data, options) {
   list(
-    valid = scalar(naomi::validate_model_options(data, options))
+    valid = scalar(naomi:::validate_model_options(data, options))
   )
 }

@@ -22,6 +22,7 @@ api_build <- function(queue) {
   api$registerHook("preroute", api_preroute)
   api$registerHook("postserialize", api_postserialize)
   api$set404Handler(hintr_404_handler)
+  api$setDocs(FALSE)
   api
 }
 

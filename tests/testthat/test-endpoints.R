@@ -2,7 +2,7 @@ context("endpoints")
 
 test_that("plumber api can be built", {
   api <- api_build(NULL)
-  expect_s3_class(api, "plumber")
+  expect_s3_class(api, "Plumber")
   expect_length(api$routes, 6)
   expect_equal(names(api$routes),
                c("", "validate", "model", "meta", "download", "hintr"))
