@@ -664,6 +664,8 @@ test_that("can quit", {
     error = identity)
   expect_is(r, "error")
 
+  ## Sleep to give time for process to be killed before checking
+  Sys.sleep(2)
   testthat::try_again(10, {
     expect_false(server$process$is_alive())
     Sys.sleep(1)
