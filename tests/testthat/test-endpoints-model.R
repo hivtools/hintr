@@ -281,12 +281,13 @@ test_that("model run can be cancelled", {
   expect_true("id" %in% names(response))
   id <- response$id
 
-  running <- queue$queue$worker_task_id()
-  expect_equal(scalar(unname(running)), id)
-  worker <- names(running)
+  ## Mock model run sleeps for 5, sleep here for 1 to ensure it has
+  ## started and will be running
+  Sys.sleep(1)
   expect_equal(queue$queue$task_status(id), setNames("RUNNING", id))
 
   ## Cancel the run
+  worker <- queue$queue$worker_list()
   cancel_model <- model_cancel(queue)
   response <- cancel_model(id)
   expect_equal(response, json_null())
