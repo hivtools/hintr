@@ -33,3 +33,7 @@ hintr_init_traduire <- function() {
                                 languages = languages,
                                 fallback = "en")
 }
+
+hintr_translator_unregister <- function() {
+  traduire::translator_unregister()
+}
