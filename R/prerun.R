@@ -39,20 +39,21 @@ PrerunModelResults <- R6::R6Class(
       ret <- list(
         output_path = file.path(private$path, hash, "output.rds"),
         spectrum_path = file.path(private$path, hash, "spectrum.zip"),
-        summary_path = file.path(private$path, hash, "summary.zip"))
+        coarse_output_path = file.path(private$path, hash, "coarse-output.zip"))
       stopifnot(all(file.exists(vcapply(ret, identity))))
       ret
     },
 
     import = function(path, output = "output.rds",
-                      spectrum = "spectrum.zip", summary = "summary.zip") {
+                      spectrum = "spectrum.zip",
+                      coarse_output = "coarse-output.zip") {
       if (!file.exists(path)) {
         stop(sprintf("Import directory %s does not exist", path))
       }
       output <- private$validate_path(output, path)
       spectrum <- private$validate_path(spectrum, path)
-      summary <- private$validate_path(summary, path)
-      hash <- hash_info_inputs(read_info_inputs(summary))
+      coarse_output <- private$validate_path(coarse_output, path)
+      hash <- hash_info_inputs(read_info_inputs(coarse_output))
       import <- file.path(private$path, hash)
       if (file.exists(import)) {
         stop("This set of data has been imported already")
@@ -60,7 +61,7 @@ PrerunModelResults <- R6::R6Class(
       dir.create(import)
       file_copy(output, file.path(import, "output.rds"))
       file_copy(spectrum, file.path(import, "spectrum.zip"))
-      file_copy(summary, file.path(import, "summary.zip"))
+      file_copy(coarse_output, file.path(import, "coarse-output.zip"))
       invisible(hash)
     }
   ))
@@ -72,11 +73,12 @@ PrerunModelResults <- R6::R6Class(
 ##' @param path Path to your results
 ##' @param output Path, within \code{path} to your output file
 ##' @param spectrum Path, within \code{path} to your spectrum file
-##' @param summary Path, within \code{path} to your summary file
+##' @param coarse_output Path, within \code{path} to your coarse output file
 ##' @export
 prerun_import <- function(prerun, path, output = "output.rds",
-                          spectrum = "spectrum.zip", summary = "summary.zip") {
-  PrerunModelResults$new(prerun)$import(path, output, spectrum, summary)
+                          spectrum = "spectrum.zip",
+                          coarse_output = "coarse-output.zip") {
+  PrerunModelResults$new(prerun)$import(path, output, spectrum, coarse_output)
 }
 
 ##' Push prerun model results to naomi.dide.ic.ac.uk
@@ -85,14 +87,15 @@ prerun_import <- function(prerun, path, output = "output.rds",
 ##' @inheritParams prerun_import
 ##' @export
 prerun_push <- function(path, output = "output.rds",
-                        spectrum = "spectrum.zip", summary = "summary.zip") {
+                        spectrum = "spectrum.zip",
+                        coarse_output = "coarse-output.zip") {
   loadNamespace("ssh")
   session <- ssh::ssh_connect("incoming@naomi.dide.ic.ac.uk")
   on.exit(ssh::ssh_disconnect(session))
   id <- ids::random_id(1, 6)
   dest <- sprintf("incoming/%s", id)
   args <- c("./hintr_prerun_import", dest, "--output", output,
-            "--spectrum", spectrum, "--summary", summary)
+            "--spectrum", spectrum, "--coarse-output", coarse_output)
   command <- paste(args, collapse = " ")
   ssh::scp_upload(session, path, dest)
   code <- ssh::ssh_exec_wait(session, command)

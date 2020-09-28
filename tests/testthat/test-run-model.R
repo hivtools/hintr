@@ -155,8 +155,8 @@ test_that("real model can be run", {
   withr::with_envvar(c("USE_MOCK_MODEL" = "false"), {
     model_run <- run_model(data, options, tempdir())
   })
-  expect_equal(names(model_run),
-               c("output_path", "spectrum_path", "summary_path", "metadata"))
+  expect_equal(names(model_run), c("output_path", "spectrum_path",
+                                   "coarse_output_path", "metadata"))
 
   output <- readRDS(model_run$output_path)
   expect_equal(colnames(output),
@@ -174,7 +174,7 @@ test_that("real model can be run", {
 
   ## TODO: replace with checks for spectrum digest once function to create
   ## that has been added mrc-636
-  file_list <- unzip(model_run$summary_path, list = TRUE)
+  file_list <- unzip(model_run$coarse_output_path, list = TRUE)
   expect_true(all(c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
                     "meta_area.csv", "meta_indicator.csv", "meta_period.csv")
                   %in% file_list$Name))
@@ -228,8 +228,8 @@ test_that("real model can be run with csv2 data", {
     model_run <- run_model(data, options, tempdir())
   })
 
-  expect_equal(names(model_run),
-               c("output_path", "spectrum_path", "summary_path", "metadata"))
+  expect_equal(names(model_run), c("output_path", "spectrum_path",
+                                   "coarse_output_path", "metadata"))
 
   output <- readRDS(model_run$output_path)
   expect_equal(colnames(output),
@@ -247,7 +247,7 @@ test_that("real model can be run with csv2 data", {
 
   ## TODO: replace with checks for spectrum digest once function to create
   ## that has been added mrc-636
-  file_list <- unzip(model_run$summary_path, list = TRUE)
+  file_list <- unzip(model_run$coarse_output_path, list = TRUE)
   expect_true(all(c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
                     "meta_area.csv", "meta_indicator.csv", "meta_period.csv")
                   %in% file_list$Name))
