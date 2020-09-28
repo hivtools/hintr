@@ -21,6 +21,16 @@ test_that("validate_baseline returns useful error if file does not exist", {
   expect_equal(error$status_code, 400)
 })
 
+test_that("validate_baseline returns useful error if file has wrong extension", {
+  input <- validate_baseline_input(file.path("testdata", "malawi.geojson"), "pjnz")
+  error <- expect_error(validate_baseline(input))
+  expect_equal(error$data[[1]]$error, scalar("INVALID_FILE"))
+  expect_equal(error$data[[1]]$detail,
+               scalar(
+                 "File must be of type PJNZ, zip, got type geojson."))
+  expect_equal(error$status_code, 400)
+})
+
 test_that("endpoint_validate_baseline validates the data in the response", {
   input <- validate_baseline_input(file.path("testdata", "Botswana2018.PJNZ"),
                                    "pjnz")

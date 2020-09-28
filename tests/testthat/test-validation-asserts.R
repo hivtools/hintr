@@ -154,14 +154,13 @@ test_that("can test region codes are consistent", {
 })
 
 test_that("can check file extensions", {
-  expect_true(assert_file_extension("testdata/anc.csv", "csv"))
-  expect_true(assert_file_extension("testdata/Botswana2018.PJNZ",
+  expect_true(assert_file_extension(list(path = "testdata/anc.csv", hash = "1234", fromADR = FALSE), "csv"))
+  expect_true(assert_file_extension(list(path = "testdata/Botswana2018.PJNZ"),
                                     c("PJNZ", "zip")))
-  expect_true(assert_file_extension("testdata/Botswana2018.pjnz",
+  expect_true(assert_file_extension(list(path = "testdata/Botswana2018.pjnz"),
                                     c("PJNZ", "zip")))
-  expect_error(assert_file_extension("testdata/anc.csv",
-                                     c("PJNZ", "zip")),
-               "File must be of type PJNZ, zip, got type csv.")
+  expect_error(assert_file_extension(list(path = "testdata/anc.csv", hash = "1234", fromADR = FALSE), c("PJNZ", "zip")),
+               "^File must be of type PJNZ, zip, got type csv.$")
 })
 
 test_that("can check region file spectrum codes are valid", {
