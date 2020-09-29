@@ -16,6 +16,8 @@ api_build <- function(queue) {
   api$handle(endpoint_download_spectrum_head(queue))
   api$handle(endpoint_download_coarse_output(queue))
   api$handle(endpoint_download_coarse_output_head(queue))
+  api$handle(endpoint_download_summary(queue))
+  api$handle(endpoint_download_summary_head(queue))
   api$handle(endpoint_hintr_version())
   api$handle(endpoint_hintr_worker_status(queue))
   api$handle(endpoint_hintr_stop(queue))
@@ -303,6 +305,21 @@ endpoint_download_coarse_output_head <- function(queue) {
   pkgapi::pkgapi_endpoint$new("HEAD",
                               "/download/coarse-output/<id>",
                               download_coarse_output(queue),
+                              returning = returning_binary_head(),
+                              validate = FALSE)
+}
+
+endpoint_download_summary <- function(queue) {
+  pkgapi::pkgapi_endpoint$new("GET",
+                              "/download/summary/<id>",
+                              download_summary(queue),
+                              returning = pkgapi::pkgapi_returning_binary())
+}
+
+endpoint_download_summary_head <- function(queue) {
+  pkgapi::pkgapi_endpoint$new("HEAD",
+                              "/download/summary/<id>",
+                              download_summary(queue),
                               returning = returning_binary_head(),
                               validate = FALSE)
 }

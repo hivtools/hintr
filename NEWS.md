@@ -1,3 +1,7 @@
+# hintr 0.1.3
+
+* Add endpoint for downloading dummy summary report
+
 # hintr 0.1.1
 
 * Fix file naming to work with old model runs where country name is not available

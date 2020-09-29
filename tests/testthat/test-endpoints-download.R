@@ -42,6 +42,26 @@ test_that("spectrum download returns bytes", {
     system_file("output", "malawi_spectrum_download.zip")))
 })
 
+test_that("summary download returns bytes", {
+  test_redis_available()
+  test_mock_model_available()
+
+  ## Setup payload
+  path <- setup_submit_payload()
+
+  ## Run the model
+  queue <- test_queue(workers = 1)
+  model_submit <- submit_model(queue)
+  response <- model_submit(readLines(path))
+  expect_true("id" %in% names(response))
+
+  out <- queue$queue$task_wait(response$id)
+  summary <- download_summary(queue)
+  download <- summary(response$id)
+  expect_type(download, "raw")
+  expect_length(download, file.size(system_file("dummy_summary_report.html")))
+})
+
 test_that("download returns useful error if model run fails", {
   test_redis_available()
   test_mock_model_available()

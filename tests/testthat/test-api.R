@@ -916,6 +916,83 @@ test_that("api endpoint_download_coarse_output_head returns headers only", {
   expect_equal(res$body, "")
 })
 
+test_that("endpoint_download_summary can be run", {
+  test_redis_available()
+  test_mock_model_available()
+
+  queue <- test_queue(workers = 1)
+  run_endpoint <- endpoint_model_submit(queue)
+  path <- setup_submit_payload()
+  run_response <- run_endpoint$run(readLines(path))
+  expect_equal(run_response$status_code, 200)
+  out <- queue$queue$task_wait(run_response$data$id)
+
+  endpoint <- endpoint_download_summary(queue)
+  response <- endpoint$run(run_response$data$id)
+
+  expect_equal(response$status_code, 200)
+  expect_match(
+    response$headers$`Content-Disposition`,
+    'attachment; filename="MWI_\\d+-\\d+_summary_report.zip"')
+  size <- length(response$data)
+  expect_equal(response$headers$`Content-Length`, size)
+  expect_equal(size, file.size(system_file("dummy_summary_report.html")))
+
+  ## HEAD endpoint
+  endpoint <- endpoint_download_coarse_output_head(queue)
+  response <- endpoint$run(run_response$data$id)
+
+  expect_equal(response$status_code, 200)
+  expect_equal(response$content_type, "application/octet-stream")
+  expect_match(
+    response$headers$`Content-Disposition`,
+    'attachment; filename="MWI_\\d+-\\d+_naomi_coarse_age_groups.zip"')
+  expect_equal(response$headers$`Content-Length`, file.size(
+    system_file("output", "malawi_coarse_output_download.zip")))
+  expect_null(response$body, NULL)
+})
+
+test_that("api can call endpoint_download_summary", {
+  test_redis_available()
+  test_mock_model_available()
+
+  queue <- test_queue(workers = 1)
+  api <- api_build(queue)
+
+  ## Run the model
+  path <- setup_submit_payload()
+  res <- api$request("POST", "/model/submit",
+                     body = readLines(path))
+  expect_equal(res$status, 200)
+  response <- jsonlite::fromJSON(res$body)
+  out <- queue$queue$task_wait(response$data$id)
+
+  ## Get result
+  res <- api$request("GET", paste0("/download/summary/", response$data$id))
+
+  expect_equal(res$status, 200)
+  expect_equal(res$headers$`Content-Type`, "application/octet-stream")
+  expect_match(
+    res$headers$`Content-Disposition`,
+    'attachment; filename="MWI_\\d+-\\d+_summary_report.zip"')
+  size <- length(res$body)
+  expect_equal(res$headers$`Content-Length`, size)
+  expect_equal(size, file.size(system_file("dummy_summary_report.html")))
+
+  ## HEAD endpoint
+  res <- api$request("HEAD", paste0("/download/summary/", response$data$id))
+
+  expect_equal(res$status, 200)
+  expect_equal(res$headers$`Content-Type`, "application/octet-stream")
+  expect_match(
+    res$headers$`Content-Disposition`,
+    'attachment; filename="MWI_\\d+-\\d+_summary_report.zip"')
+  expect_equal(res$headers$`Content-Length`,
+               file.size(system_file("dummy_summary_report.html")))
+  ## Plumber uses an empty string to represent an empty body
+  expect_equal(res$body, "")
+})
+
 test_that("endpoint_model_debug can be run", {
   test_redis_available()
   test_mock_model_available()
