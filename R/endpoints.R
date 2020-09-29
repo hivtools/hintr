@@ -3,6 +3,7 @@ input_response <- function(value, type, file) {
                             type = scalar(type),
                             data = value$data,
                             filename = scalar(file$filename),
+                            fromADR = scalar(file$fromADR),
                             filters = value$filters)
   validate_json_schema(to_json(ret), get_input_response_schema(type), "data")
   ret
