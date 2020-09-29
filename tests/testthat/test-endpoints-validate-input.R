@@ -8,6 +8,7 @@ test_that("validate_baseline correctly validates data", {
   expect_equal(response$data$country, scalar("Botswana"))
   expect_equal(response$data$iso3, scalar("BWA"))
   expect_equal(response$filename, scalar("original"))
+  expect_equal(response$fromADR, scalar(FALSE))
 })
 
 test_that("validate_baseline returns useful error if file does not exist", {
@@ -17,6 +18,16 @@ test_that("validate_baseline returns useful error if file does not exist", {
   expect_equal(error$data[[1]]$detail,
                scalar(
                  "File at path path/to/file does not exist. Create it, or fix the path."))
+  expect_equal(error$status_code, 400)
+})
+
+test_that("validate_baseline returns useful error if file has wrong extension", {
+  input <- validate_baseline_input(file.path("testdata", "malawi.geojson"), "pjnz")
+  error <- expect_error(validate_baseline(input))
+  expect_equal(error$data[[1]]$error, scalar("INVALID_FILE"))
+  expect_equal(error$data[[1]]$detail,
+               scalar(
+                 "File must be of type PJNZ, zip, got type geojson."))
   expect_equal(error$status_code, 400)
 })
 
@@ -44,6 +55,7 @@ test_that("endpoint_validate_baseline can take zip of PJNZ extracts", {
   expect_equal(response$data$country, scalar("Zambia"))
   expect_equal(response$data$iso3, scalar("ZMB"))
   expect_equal(response$filename, scalar("original"))
+  expect_equal(response$fromADR, scalar(FALSE))
 })
 
 test_that("error thrown if zip contains non PJNZ files", {
@@ -124,6 +136,7 @@ test_that("can have null spectrum region code for country level region", {
   data <- jsonlite::fromJSON(response$data)
   expect_true(all(c("type", "features") %in% names(data)))
   expect_equal(names(response$filters), c("regions", "level_labels"))
+  expect_equal(response$fromADR, scalar(FALSE))
 })
 
 test_that("endpoint_validate_baseline supports population file", {
@@ -134,4 +147,5 @@ test_that("endpoint_validate_baseline supports population file", {
   expect_equal(response$filename, scalar("original"))
   expect_equal(response$hash, scalar("12345"))
   expect_equal(response$data, json_null())
+  expect_equal(response$fromADR, scalar(FALSE))
 })

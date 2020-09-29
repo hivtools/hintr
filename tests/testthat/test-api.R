@@ -42,7 +42,6 @@ test_that("change language based on header", {
 test_that("endpoint_baseline_individual", {
   endpoint <- endpoint_baseline_individual()
   response <- endpoint$run(readLines("payload/validate_pjnz_payload.json"))
-
   expect_equal(response$status_code, 200)
   expect_null(response$error)
   expect_equal(response$data$hash, scalar("12345"))
@@ -50,6 +49,7 @@ test_that("endpoint_baseline_individual", {
   expect_equal(response$data$data$iso3, scalar("MWI"))
   expect_equal(response$data$filename, scalar("Malawi2019.PJNZ"))
   expect_equal(response$data$filters, json_null())
+  expect_equal(response$data$fromADR, scalar(FALSE))
 })
 
 test_that("endpoint_baseline_individual works", {
@@ -65,6 +65,7 @@ test_that("endpoint_baseline_individual works", {
   expect_equal(body$data$data$iso3, "MWI")
   expect_equal(body$data$filename, "Malawi2019.PJNZ")
   expect_equal(body$data$filters, NULL)
+  expect_equal(body$data$fromADR, FALSE)
 })
 
 test_that("endpoint_baseline_combined", {
@@ -97,6 +98,7 @@ test_that("endpoint_validate_survey_programme programme", {
   expect_null(response$error)
   expect_equal(response$data$filename, scalar("original.csv"))
   expect_equal(response$data$hash, scalar("12345"))
+  expect_equal(response$data$fromADR, scalar(FALSE))
   ## Sanity check that data has been returned
   expect_true(nrow(response$data$data) >= 200)
   expect_equal(typeof(response$data$data[, "current_art"]), "double")
@@ -115,6 +117,7 @@ test_that("endpoint_validate_survey_programme works with programme data", {
   expect_null(body$errors)
   expect_equal(body$data$filename, "original.csv")
   expect_equal(body$data$hash, "12345")
+  expect_equal(body$data$fromADR, FALSE)
   ## Sanity check that data has been returned
   expect_true(nrow(body$data$data) >= 200)
   expect_equal(typeof(body$data$data[, "current_art"]), "double")
@@ -128,6 +131,7 @@ test_that("endpoint_validate_survey_programme anc", {
   expect_null(response$error)
   expect_equal(response$data$filename, scalar("original.csv"))
   expect_equal(response$data$hash, scalar("12345"))
+  expect_equal(response$data$fromADR, scalar(FALSE))
   ## Sanity check that data has been returned
   expect_true(nrow(response$data$data) >= 200)
   expect_equal(typeof(response$data$data[, "prevalence"]), "double")
@@ -146,6 +150,7 @@ test_that("endpoint_validate_survey_programme works with anc data", {
   expect_null(body$errors)
   expect_equal(body$data$filename, "original.csv")
   expect_equal(body$data$hash, "12345")
+  expect_equal(body$data$fromADR, FALSE)
   ## Sanity check that data has been returned
   expect_true(nrow(body$data$data) >= 200)
   expect_equal(typeof(body$data$data[, "prevalence"]), "double")
@@ -160,6 +165,7 @@ test_that("endpoint_validate_survey_programme survey", {
   expect_null(response$error)
   expect_equal(response$data$filename, scalar("original.csv"))
   expect_equal(response$data$hash, scalar("12345"))
+  expect_equal(response$data$fromADR, scalar(FALSE))
   ## Sanity check that data has been returned
   expect_true(nrow(response$data$data) >= 20000)
   expect_equal(typeof(response$data$data[, "est"]), "double")
@@ -176,6 +182,7 @@ test_that("endpoint_validate_survey_programme works with survey data", {
   expect_equal(body$status, "success")
   expect_null(body$errors)
   expect_equal(body$data$filename, "original.csv")
+  expect_equal(body$data$fromADR, FALSE)
   expect_equal(body$data$hash, "12345")
   ## Sanity check that data has been returned
   expect_true(nrow(body$data$data) >= 20000)
@@ -694,7 +701,8 @@ test_that("returning_json_version adds version", {
     filename = scalar("original"),
     type = scalar("population"),
     data = json_null(),
-    filters = json_null()
+    filters = json_null(),
+    fromADR = FALSE
   )
   version_out <- returning_with_version$process(input)
   out <- returning$process(input)
