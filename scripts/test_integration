@@ -2,4 +2,4 @@
 
 ## testthat imports pkgload so we can assume that's present here
 
-testthat::test_dir("tests/integration", pkgload::load_all(".")$env)
+testthat::test_dir("tests/integration", env = pkgload::load_all(".")$env)
