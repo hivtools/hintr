@@ -1087,3 +1087,62 @@ test_that("404 errors have sensible schema", {
                "GET /meaning-of-life is not a valid hintr path")
   expect_equal(response$data, setNames(list(), list()))
 })
+
+test_that("endpoint_model_calibrate can be run", {
+  test_redis_available()
+  test_mock_model_available()
+  queue <- test_queue(workers = 1)
+  model_run <- endpoint_model_submit(queue)
+  path <- setup_submit_payload()
+  run_response <- model_run$run(readLines(path))
+  expect_equal(run_response$status_code, 200)
+  expect_true(!is.null(run_response$data$id))
+
+  endpoint <- endpoint_model_calibrate(queue)
+  out <- queue$queue$task_wait(run_response$data$id)
+  calibration_options <- list(
+    "calibrate_option_1" = scalar("placeholder")
+  )
+  response <- endpoint$run(run_response$data$id,
+                           jsonlite::toJSON(calibration_options))
+
+  expect_equal(response$status_code, 200)
+  expect_equal(names(response$data), c("data", "plottingMetadata"))
+  expect_equal(colnames(response$data$data),
+               c("area_id", "sex", "age_group", "calendar_quarter",
+                 "indicator_id", "mode", "mean", "lower", "upper"))
+  expect_true(nrow(response$data$data) > 84042)
+  expect_equal(names(response$data$plottingMetadata),
+               c("barchart", "choropleth"))
+})
+
+test_that("api can call endpoint_model_calibrate", {
+  test_redis_available()
+  test_mock_model_available()
+  queue <- test_queue(workers = 1)
+  api <- api_build(queue)
+  path <- setup_submit_payload()
+  res <- api$request("POST", "/model/submit",
+                     body = readLines(path))
+  expect_equal(res$status, 200)
+  body <- jsonlite::fromJSON(res$body)
+  expect_equal(body$status, "success")
+  expect_true(!is.null(body$data$id))
+
+  out <- queue$queue$task_wait(body$data$id)
+  calibrate_path <- setup_calibrate_payload()
+  res <- api$request("POST", sprintf("/model/calibrate/%s", body$data$id),
+                     body = readLines(calibrate_path))
+  expect_equal(res$status, 200)
+  body <- jsonlite::fromJSON(res$body)
+
+  expect_equal(body$status, "success")
+  expect_null(body$errors)
+  expect_equal(names(body$data), c("data", "plottingMetadata"))
+  expect_equal(colnames(body$data$data),
+               c("area_id", "sex", "age_group", "calendar_quarter",
+                 "indicator_id", "mode", "mean", "lower", "upper"))
+  expect_true(nrow(body$data$data) > 84042)
+  expect_equal(names(body$data$plottingMetadata),
+               c("barchart", "choropleth"))
+})

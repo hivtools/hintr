@@ -430,3 +430,44 @@ test_that("Debug endpoint errors on nonexistant id", {
                scalar("Task '1234' not found"))
   expect_equal(error$status_code, 400)
 })
+
+test_that("can calibrate a model result", {
+  test_redis_available()
+  test_mock_model_available()
+
+  ## Setup payload
+  path <- setup_submit_payload()
+
+  ## Call the endpoint
+  queue <- test_queue(workers = 1)
+  model_submit <- submit_model(queue)
+  response <- model_submit(readLines(path))
+  expect_true("id" %in% names(response))
+
+  ## Wait for complete and query for status
+  ## Query for status
+  result <- queue$queue$task_wait(response$id)
+  status_endpoint <- model_status(queue)
+  status <- status_endpoint(response$id)
+  expect_equal(status$status, scalar("COMPLETE"))
+
+  ## Get the result
+  get_model_result <- model_result(queue)
+  result <- get_model_result(response$id)
+
+  ## Calibrate the result
+  mock_calibrate <- mockery::mock(queue$result(response$id))
+  calibration_options <- list(
+    "calibrate_option_1" = scalar("placeholder")
+  )
+  with_mock("hintr:::calibrate_result" = mock_calibrate, {
+    calibrate <- model_calibrate(queue)
+    calibrated_result <- calibrate(response$id,
+                                   jsonlite::toJSON(calibration_options))
+  })
+
+  expect_equal(calibrated_result, result)
+  args <- mockery::mock_args(mock_calibrate)
+  expect_equal(args[[1]][[1]], queue$result(response$id))
+  expect_equal(args[[1]][[2]], calibration_options)
+})

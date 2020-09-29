@@ -32,3 +32,14 @@ setup_submit_payload <- function(version = NULL, include_anc_art = TRUE) {
   writeLines(payload, path)
   path
 }
+
+setup_calibrate_payload <- function(version = NULL) {
+  path <- tempfile()
+  if (is.null(version)) {
+    version <- to_json(cfg$version_info)
+  }
+  payload <- readLines("payload/model_calibrate_payload.json")
+  payload <- gsub("<version_info>", version, payload, fixed = TRUE)
+  writeLines(payload, path)
+  path
+}

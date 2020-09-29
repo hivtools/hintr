@@ -12,6 +12,7 @@ api_build <- function(queue) {
   api$handle(endpoint_model_cancel(queue))
   api$handle(endpoint_model_debug(queue))
   api$handle(endpoint_model_calibration_options())
+  api$handle(endpoint_model_calibrate(queue))
   api$handle(endpoint_plotting_metadata())
   api$handle(endpoint_download_spectrum(queue))
   api$handle(endpoint_download_spectrum_head(queue))
@@ -266,6 +267,20 @@ endpoint_model_calibration_options <- function() {
   pkgapi::pkgapi_endpoint$new("POST",
                               "/model/calibration-options",
                               calibration_options,
+                              returning = response,
+                              validate = TRUE)
+}
+
+endpoint_model_calibrate <- function(queue) {
+  input <- pkgapi::pkgapi_input_body_json("input",
+                                          "ModelCalibrateRequest.schema",
+                                          schema_root())
+  response <- pkgapi::pkgapi_returning_json("ModelResultResponse.schema",
+                                            schema_root())
+  pkgapi::pkgapi_endpoint$new("POST",
+                              "/model/calibrate/<id>",
+                              model_calibrate(queue),
+                              input,
                               returning = response,
                               validate = TRUE)
 }

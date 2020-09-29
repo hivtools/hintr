@@ -152,22 +152,47 @@ model_status <- function(queue) {
 
 model_result <- function(queue) {
   function(id) {
-    task_status <- queue$queue$task_status(id)
-    if (task_status == "COMPLETE") {
-      process_result(queue$result(id))
-    } else if (task_status == "ERROR") {
-      result <- queue$result(id)
-      trace <- c(sprintf("# %s", id), result$trace)
-      hintr_error(result$message, "MODEL_RUN_FAILED", trace = trace)
-    } else if (task_status == "ORPHAN") {
-      hintr_error(t_("MODEL_RESULT_CRASH"), "MODEL_RUN_FAILED")
-    } else if (task_status == "INTERRUPTED") {
-      hintr_error(t_("MODEL_RUN_CANCELLED"), "MODEL_RUN_FAILED")
-    } else { # ~= MISSING, PENDING, RUNNING
-      hintr_error(t_("MODEL_RESULT_MISSING"), "FAILED_TO_RETRIEVE_RESULT")
-    }
+    verify_result_available(queue, id)
+    process_result(queue$result(id))
   }
 }
+
+verify_result_available <- function(queue, id) {
+  task_status <- queue$queue$task_status(id)
+  if (task_status == "COMPLETE") {
+    invisible(TRUE)
+  } else if (task_status == "ERROR") {
+    result <- queue$result(id)
+    trace <- c(sprintf("# %s", id), result$trace)
+    hintr_error(result$message, "MODEL_RUN_FAILED", trace = trace)
+  } else if (task_status == "ORPHAN") {
+    hintr_error(t_("MODEL_RESULT_CRASH"), "MODEL_RUN_FAILED")
+  } else if (task_status == "INTERRUPTED") {
+    hintr_error(t_("MODEL_RUN_CANCELLED"), "MODEL_RUN_FAILED")
+  } else { # ~= MISSING, PENDING, RUNNING
+    hintr_error(t_("MODEL_RESULT_MISSING"), "FAILED_TO_RETRIEVE_RESULT")
+  }
+}
+
+model_calibrate <- function(queue) {
+  function(id, input) {
+    verify_result_available(queue, id)
+    calibration_options <- jsonlite::fromJSON(input)
+    calibrated_result <- calibrate_result(queue$result(id), calibration_options)
+    process_result(calibrated_result)
+  }
+}
+
+## TODO: Temporary placeholder function just returns result without
+## calibration. To be replaced by call to naomi calibration function once
+## implemented
+calibrate_result <- function(result, input) {
+  ## TODO: when naomi supported call naomi calibration function
+  ## Either in naomi or here we will need to read out paths to results and use
+  ## to construct R objects needed for calibration
+  result
+}
+
 
 model_cancel <- function(queue) {
   function(id) {
