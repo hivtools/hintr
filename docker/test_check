@@ -28,5 +28,7 @@ docker run --rm --network=$NAME_NETWORK \
        -e VALIDATE_JSON_SCHEMAS=true \
        -e USE_MOCK_MODEL=true \
        -e _R_CHECK_CRAN_INCOMING_=FALSE \
-       --name $NAME_HINTR_TESTS $TAG_HINTR_TESTS \
-       /usr/local/bin/R CMD check --as-cran hintr_$PACKAGE_VERSION.tar.gz
+       --entrypoint R \
+       --name $NAME_HINTR_TESTS \
+       $TAG_HINTR_TESTS \
+       CMD check --as-cran hintr_$PACKAGE_VERSION.tar.gz
