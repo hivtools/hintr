@@ -1100,11 +1100,8 @@ test_that("endpoint_model_calibrate can be run", {
 
   endpoint <- endpoint_model_calibrate(queue)
   out <- queue$queue$task_wait(run_response$data$id)
-  calibration_options <- list(
-    "calibrate_option_1" = scalar("placeholder")
-  )
-  response <- endpoint$run(run_response$data$id,
-                           jsonlite::toJSON(calibration_options))
+  path <- setup_calibrate_payload()
+  response <- endpoint$run(run_response$data$id, readLines(path))
 
   expect_equal(response$status_code, 200)
   expect_equal(names(response$data), c("data", "plottingMetadata"))

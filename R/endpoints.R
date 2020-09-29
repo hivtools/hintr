@@ -178,6 +178,9 @@ model_calibrate <- function(queue) {
   function(id, input) {
     verify_result_available(queue, id)
     calibration_options <- jsonlite::fromJSON(input)
+    if (!is_current_version(calibration_options$version)) {
+      hintr_error(t_("MODEL_SUBMIT_OLD"), "VERSION_OUT_OF_DATE")
+    }
     calibrated_result <- calibrate_result(queue$result(id), calibration_options)
     process_result(calibrated_result)
   }

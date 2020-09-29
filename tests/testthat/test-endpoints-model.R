@@ -438,7 +438,7 @@ test_that("can calibrate a model result", {
   ## Setup payload
   path <- setup_submit_payload()
 
-  ## Call the endpoint
+  ## Start model run
   queue <- test_queue(workers = 1)
   model_submit <- submit_model(queue)
   response <- model_submit(readLines(path))
@@ -457,17 +457,47 @@ test_that("can calibrate a model result", {
 
   ## Calibrate the result
   mock_calibrate <- mockery::mock(queue$result(response$id))
-  calibration_options <- list(
-    "calibrate_option_1" = scalar("placeholder")
-  )
+  path <- setup_calibrate_payload()
   with_mock("hintr:::calibrate_result" = mock_calibrate, {
     calibrate <- model_calibrate(queue)
-    calibrated_result <- calibrate(response$id,
-                                   jsonlite::toJSON(calibration_options))
+    calibrated_result <- calibrate(response$id, readLines(path))
   })
 
   expect_equal(calibrated_result, result)
   args <- mockery::mock_args(mock_calibrate)
   expect_equal(args[[1]][[1]], queue$result(response$id))
-  expect_equal(args[[1]][[2]], calibration_options)
+  expect_equal(names(args[[1]][[2]]), c("options", "version"))
+})
+
+test_that("model calibration fails is version out of date", {
+  test_redis_available()
+  test_mock_model_available()
+
+  ## Setup payload
+  path <- setup_submit_payload()
+
+  ## Start model run
+  queue <- test_queue(workers = 1)
+  model_submit <- submit_model(queue)
+  response <- model_submit(readLines(path))
+  expect_true("id" %in% names(response))
+
+  ## Wait for complete
+  result <- queue$queue$task_wait(response$id)
+
+  path <- setup_calibrate_payload('{
+                               "hintr": "0.0.12",
+                               "naomi": "0.0.15",
+                               "rrq": "0.2.1"
+                               }')
+
+  ## Call the endpoint
+  calibrate <- model_calibrate(queue)
+  error <- expect_error(calibrate(response$id, readLines(path)))
+
+  expect_equal(error$data[[1]]$error, scalar("VERSION_OUT_OF_DATE"))
+  expect_equal(error$data[[1]]$detail, scalar(
+    paste0("Trying to run model with",
+           " old version of options. Update model run options")))
+  expect_equal(error$status, 400)
 })
