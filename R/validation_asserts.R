@@ -304,8 +304,8 @@ assert_file_exists <- function(file) {
   invisible(TRUE)
 }
 
-assert_file_extension <- function(file_path, types) {
-  extension <- tools::file_ext(file_path)
+assert_file_extension <- function(file, types) {
+  extension <- tools::file_ext(file$path)
   if (!any(tolower(extension) %in% tolower(types))) {
     stop(t_("VALIDATION_FILE_EXTENSION",
             list(expected = collapse(types), got = extension)))

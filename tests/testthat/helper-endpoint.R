@@ -8,7 +8,8 @@ validate_baseline_input <- function(file_path, type) {
       "file": {
         "path": "%s",
         "hash": "12345",
-        "filename": "original"
+        "filename": "original",
+        "fromADR": false
       }
     }', type, file_path)
 }
@@ -22,7 +23,8 @@ model_options_input <- function(shape, survey, programme, anc) {
         '{
         "path": "%s",
         "hash": "12345",
-        "filename": "original"
+        "filename": "original",
+        "fromADR": false
       }', x)
     }
   }
@@ -60,7 +62,8 @@ validate_programme_survey_input <- function(file_path, type, shape) {
       "file": {
         "path": "%s",
         "hash": "12345",
-        "filename": "original"
+        "filename": "original",
+        "fromADR": false
       },
       "shape": "%s"
     }', type, file_path, shape)

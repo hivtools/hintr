@@ -3,7 +3,8 @@
   "file": {
       "path": "tests/testthat/testdata/anc.csv",
       "filename": "anc.csv",
-      "hash": "12345"
+      "hash": "12345",
+      "fromADR": false
   },
   "shape": "tests/testthat/testdata/malawi.geojson"
 }

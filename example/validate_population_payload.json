@@ -3,6 +3,7 @@
   "file": {
       "path": "tests/testthat/testdata/population.csv",
       "filename": "population.csv",
-      "hash": "12345"
+      "hash": "12345",
+      "fromADR": false
   }
 }

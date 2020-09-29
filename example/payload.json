@@ -3,6 +3,7 @@
   "file": {
       "path": "tests/testthat/testdata/Botswana2018.PJNZ",
       "filename": "Botswana2018.PJNZ",
-      "hash": "12345"
+      "hash": "12345",
+      "fromADR": false
   }
 }

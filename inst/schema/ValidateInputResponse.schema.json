@@ -6,6 +6,7 @@
       "properties": {
         "hash": { "$ref": "FileName.schema.json" },
         "filename" : { "type": "string" },
+        "fromADR":  {"type": "boolean"},
         "type": {
           "type": "string",
           "enum": [ "pjnz" ]
@@ -22,6 +23,7 @@
       "properties": {
         "hash": { "$ref": "FileName.schema.json" },
         "filename" : { "type": "string" },
+        "fromADR":  {"type": "boolean"},
         "type": {
           "type": "string",
           "enum": [ "shape" ]
@@ -47,6 +49,7 @@
       "properties": {
         "hash": { "$ref": "FileName.schema.json" },
         "filename" : { "type": "string" },
+        "fromADR":  {"type": "boolean"},
         "type": {
           "type": "string",
           "enum": [ "population" ]
@@ -63,6 +66,7 @@
       "properties": {
         "hash": { "$ref": "FileName.schema.json" },
         "filename" : { "type": "string" },
+        "fromADR":  {"type": "boolean"},
         "type": {
           "type": "string",
           "enum": [ "programme" ]
@@ -79,6 +83,7 @@
       "properties": {
         "hash": { "$ref": "FileName.schema.json" },
         "filename" : { "type": "string" },
+        "fromADR":  {"type": "boolean"},
         "type": {
           "type": "string",
           "enum": [ "anc" ]
@@ -95,6 +100,7 @@
       "properties": {
         "hash": { "$ref": "FileName.schema.json" },
         "filename" : { "type": "string" },
+        "fromADR":  {"type": "boolean"},
         "type": {
           "type": "string",
           "enum": [ "survey" ]

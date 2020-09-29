@@ -3,6 +3,7 @@
   "file": {
     "path": "testdata/malawi.geojson",
     "filename": "original.geojson",
-    "hash": "12345"
+    "hash": "12345",
+    "fromADR": false
   }
 }
