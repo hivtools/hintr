@@ -5,6 +5,7 @@ HERE=$(dirname $0)
 
 # In case we switch agents between steps
 [ ! -z $(docker images -q $TAG_SHA) ] || docker pull $TAG_SHA
+[ ! -z $(docker images -q $TAG_WORKER_SHA) ] || docker pull $TAG_WORKER_SHA
 
 # Push the human-readable tagged versions here (the SHA versions were
 # pushed during build)
