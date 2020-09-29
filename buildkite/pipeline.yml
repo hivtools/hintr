@@ -4,8 +4,8 @@ steps:
 
   - wait
 
-  - label: ":hammer: Test"
-    command: docker/test
+  - label: ":hammer: Unit tests"
+    command: docker/test_check
 
   - wait
 
