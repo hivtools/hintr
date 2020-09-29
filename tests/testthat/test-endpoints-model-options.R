@@ -232,3 +232,20 @@ test_that("invalid model options returns error", {
   expect_equal(error$data[[1]]$detail, scalar("Invalid options"))
   expect_equal(error$status_code, 400)
 })
+
+test_that("can get calibration options", {
+  options <- calibration_options()
+  expect_length(options, 1)
+  expect_true(any(grepl("Calibration options", options)))
+  expect_true(any(grepl("controlSections", options)))
+})
+
+test_that("failing to get calibration options throws hintr error", {
+  mock_calibration_options <- mockery::mock(stop("Failed to get options"))
+  with_mock("naomi::get_model_calibration_options" = mock_calibration_options, {
+    error <- expect_error(calibration_options())
+  })
+  expect_equal(error$data[[1]]$error, scalar("INVALID_CALIBRATION_OPTIONS"))
+  expect_equal(error$data[[1]]$detail, scalar("Failed to get options"))
+  expect_equal(error$status_code, 400)
+})
