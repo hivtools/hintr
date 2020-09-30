@@ -3,6 +3,7 @@
   "file": {
       "path": "src/tests/testthat/testdata/malawi.geojson",
       "filename": "malawi.geojson",
-      "hash": "12345"
+      "hash": "12345",
+      "fromADR": false
   }
 }

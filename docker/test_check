@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -ex
+HERE=$(dirname $0)
+. $HERE/common
+
+# In case we switch agents between steps
+[ ! -z $(docker images -q $TAG_SHA) ] || docker pull $TAG_SHA
+
+NAME_REDIS=hintr_redis
+NAME_NETWORK=hintr_network
+
+function cleanup {
+    echo "Cleaning up"
+    docker kill $NAME_REDIS > /dev/null || true
+    docker kill hintr_tests > /dev/null || true
+    docker network rm $NAME_NETWORK > /dev/null || true
+}
+
+trap cleanup EXIT
+
+docker network create $NAME_NETWORK
+
+docker run --rm -d --network=$NAME_NETWORK --network-alias=redis \
+       --name $NAME_REDIS redis
+
+docker run --rm --network=$NAME_NETWORK \
+       -e REDIS_URL=redis://redis:6379 \
+       -e VALIDATE_JSON_SCHEMAS=true \
+       -e USE_MOCK_MODEL=true \
+       -e _R_CHECK_CRAN_INCOMING_=FALSE \
+       --entrypoint R \
+       --name $NAME_HINTR_TESTS \
+       $TAG_HINTR_TESTS \
+       CMD check --as-cran hintr_$PACKAGE_VERSION.tar.gz
