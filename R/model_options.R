@@ -15,7 +15,7 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
   has_art <- !is.null(programme)
   has_anc <- !is.null(anc)
   options_template <- naomi::get_model_options_template(has_art, has_anc)
-  options_stitched <- stitch_options_template(options_template)
+  options_stitched <- build_options_from_template(options_template)
 
   ## General options
   json <- hintr_geojson_read(shape)
@@ -128,7 +128,7 @@ get_time_options <- function() {
 #'
 #' @return The stiched together options template
 #' @keywords internal
-stitch_options_template <- function(options_template) {
+build_options_from_template <- function(options_template) {
   paste('{"controlSections": [ ',
         paste(options_template, collapse = ", ")
         , ']}', collapse = "")

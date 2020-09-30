@@ -22,6 +22,15 @@ model_options <- function(input) {
   })
 }
 
+calibration_options <- function() {
+  tryCatch({
+    json_verbatim(
+      build_options_from_template(naomi::get_model_calibration_options()))
+  }, error = function(e) {
+    hintr_error(e$message, "INVALID_CALIBRATION_OPTIONS")
+  })
+}
+
 root_endpoint <- function() {
   scalar(t_("WELCOME"))
 }
