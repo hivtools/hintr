@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -ex
+HERE=$(dirname $0)
+. $HERE/common
+
+# In case we switch agents between steps
+[ ! -z $(docker images -q $TAG_SHA) ] || docker pull $TAG_SHA
+
+NAME_REDIS=hintr_redis
+NAME_SERVER=hintr_server
+NAME_NETWORK=hintr_network
+NAME_VOLUME=hintr_volume
+
+function cleanup {
+    echo "Cleaning up"
+    docker kill $NAME_REDIS > /dev/null || true
+    docker kill $NAME_SERVER > /dev/null || true
+    docker kill hintr_tests > /dev/null || true
+    docker network rm $NAME_NETWORK > /dev/null || true
+    docker volume rm $NAME_VOLUME > /dev/null || true
+}
+
+trap cleanup EXIT
+
+docker network create $NAME_NETWORK
+docker volume create $NAME_VOLUME
+
+docker run --rm -d --network=$NAME_NETWORK --network-alias=redis \
+       --name hintr_redis redis
+
+# Ensure that we have the same files as the installed package
+rm -rf inst/output
+docker run -it --rm --user="$(id -u):$(id -g)" \
+       --mount type=bind,src="$(pwd)",dst=/hintr \
+       --entrypoint cp \
+       $TAG_HINTR_TESTS \
+       -r /usr/local/lib/R/site-library/hintr/output /hintr/inst/output
+
+## Run the integration tests:
+docker run -it --rm --network=$NAME_NETWORK \
+       -e REDIS_URL=redis://redis:6379 \
+       -e VALIDATE_JSON_SCHEMAS=true \
+       -e USE_MOCK_MODEL=true \
+       --mount type=volume,src=$NAME_VOLUME,dst=/uploads \
+       --mount type=volume,src=$NAME_VOLUME,dst=/results \
+       --mount type=bind,src="$(pwd)",dst=/hintr,readonly \
+       --workdir /hintr \
+       --name $NAME_HINTR_TESTS \
+       --entrypoint Rscript \
+       $TAG_HINTR_TESTS \
+       scripts/test_integration
