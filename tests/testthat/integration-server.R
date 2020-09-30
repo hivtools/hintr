@@ -805,3 +805,50 @@ test_that("endpoint_model_submit can be run without anc or programme data", {
   expect_equal(response$errors, NULL)
   expect_equal(names(response$data), c("id"))
 })
+
+
+test_that("model can be calibrated", {
+  test_mock_model_available()
+  payload <- setup_submit_payload()
+  server <- hintr_server()
+
+  ## Submit a model run
+  r <- httr::POST(paste0(server$url, "/model/submit"),
+                  body = httr::upload_file(payload, type = "application/json"),
+                  encode = "json")
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+  expect_equal(response$errors, NULL)
+  expect_equal(names(response$data), c("id"))
+
+  ## Get the status
+  testthat::try_again(4, {
+    Sys.sleep(2)
+    r <- httr::GET(paste0(server$url, "/model/status/", response$data$id))
+    expect_equal(httr::status_code(r), 200)
+    response <- response_from_json(r)
+    expect_equal(response$status, "success")
+    expect_equal(response$data$status, "COMPLETE")
+    expect_equal(response$data$success, TRUE)
+  })
+
+  ## Calibrate
+  payload <- setup_calibrate_payload()
+  r <- httr::POST(paste0(server$url, "/model/calibrate/", response$data$id),
+                 body = httr::upload_file(payload, type = "application/json"),
+                 encode = "json")
+  expect_equal(httr::status_code(r), 200)
+
+  ## Response has same content as model result endpoint
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+  expect_equal(response$errors, NULL)
+  expect_equal(names(response$data), c("data", "plottingMetadata"))
+  expect_equal(names(response$data$data[[1]]),
+               c("area_id", "sex", "age_group", "calendar_quarter",
+                 "indicator_id", "mode", "mean", "lower", "upper"))
+  expect_true(length(response$data$data) > 84042)
+  expect_equal(names(response$data$plottingMetadata),
+               c("barchart", "choropleth"))
+})
