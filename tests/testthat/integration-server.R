@@ -652,6 +652,7 @@ test_that("summary file download streams bytes", {
 })
 
 test_that("can quit", {
+  skip("Test is flakey")
   test_mock_model_available()
   server <- hintr_server()
 

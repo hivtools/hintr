@@ -4,8 +4,14 @@ steps:
 
   - wait
 
-  - label: ":hammer: Test"
-    command: docker/test
+  - label: ":hammer: Unit tests"
+    command: docker/test_check
+
+  - label: ":hammer_and_pick: Integration tests"
+    command: docker/test_integration
+
+  - label: ":docker: Docker connection test"
+    command: docker/test_connection
 
   - wait
 

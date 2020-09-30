@@ -25,7 +25,7 @@ RUN install_packages --repo=https://mrc-ide.github.io/drat \
         ssh
 WORKDIR /src
 RUN R CMD build .
-ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT [ "/bin/bash", "-l", "-c" ]
 EOF
 
 rm -rf naomi
