@@ -33,7 +33,8 @@ Queue <- R6::R6Class(
 
     start = function(workers) {
       if (workers > 0L) {
-        rrq::worker_spawn(self$queue, workers)
+        ids <- rrq::worker_spawn(self$queue, workers)
+        self$queue$message_send_and_wait("TIMEOUT_SET", 300, ids)
       }
     },
 

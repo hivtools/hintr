@@ -82,3 +82,12 @@ test_that("queue_id is returned if supplied", {
     c("HINTR_QUEUE_ID" = NA),
     expect_equal(hintr_queue_id("myqueue", TRUE), "myqueue"))
 })
+
+test_that("test queue starts workers with timeout", {
+  queue <- test_queue(workers = 2)
+  timeout <- queue$queue$message_send_and_wait("TIMEOUT_GET",
+                                               queue$queue$worker_list())
+  expect_length(timeout, 2)
+  expect_equal(timeout[[1]][["timeout"]], 300.0)
+  expect_equal(timeout[[2]][["timeout"]], 300.0)
+})
