@@ -423,7 +423,7 @@ test_that("api can call endpoint_model_options_validate", {
 
 test_that("endpoint_model_submit can be run", {
   test_redis_available()
-  queue <- test_queue(workers = 1)
+  queue <- test_queue(workers = 0)
   endpoint <- endpoint_model_submit(queue)
   path <- setup_submit_payload()
   response <- endpoint$run(readLines(path))
