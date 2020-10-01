@@ -93,7 +93,7 @@ Queue <- R6::R6Class(
       clear_cache(self$queue$keys$queue_id)
       if (self$cleanup_on_exit && !is.null(self$queue$con)) {
         message(t_("QUEUE_STOPPING_WORKERS"))
-        self$queue$worker_stop()
+        self$queue$worker_stop(type = "kill")
         self$destroy()
       }
     }
