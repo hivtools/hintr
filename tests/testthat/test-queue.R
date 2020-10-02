@@ -10,11 +10,16 @@ test_that("queue works as intended", {
   worker_1 <- queue$queue$worker_list()[[1]]
   worker_2 <- queue$queue$worker_list()[[2]]
 
-  expect_equal(nrow(queue$queue$worker_log_tail(worker_1)), 1)
-  expect_equal(queue$queue$worker_log_tail(worker_1)$command, "ALIVE")
+  expect_equal(nrow(queue$queue$worker_log_tail(worker_1, 3)), 3)
+  expect_equal(queue$queue$worker_log_tail(worker_1, 3)[1, "command"], "ALIVE")
+  expect_equal(queue$queue$worker_log_tail(worker_1, 3)[3, "message"],
+               "TIMEOUT_SET")
 
-  expect_equal(nrow(queue$queue$worker_log_tail(worker_2)), 1)
-  expect_equal(queue$queue$worker_log_tail(worker_2)$command, "ALIVE")
+  expect_equal(nrow(queue$queue$worker_log_tail(worker_2, 3)), 3)
+  expect_equal(queue$queue$worker_log_tail(worker_2, 3)[1, "command"], "ALIVE")
+  expect_equal(queue$queue$worker_log_tail(worker_2, 3)[3, "message"],
+               "TIMEOUT_SET")
+
 
   expect_length(queue$queue$task_list(), 0)
 
@@ -81,4 +86,13 @@ test_that("queue_id is returned if supplied", {
   withr::with_envvar(
     c("HINTR_QUEUE_ID" = NA),
     expect_equal(hintr_queue_id("myqueue", TRUE), "myqueue"))
+})
+
+test_that("test queue starts workers with timeout", {
+  queue <- test_queue(workers = 2)
+  timeout <- queue$queue$message_send_and_wait("TIMEOUT_GET",
+                                               queue$queue$worker_list())
+  expect_length(timeout, 2)
+  expect_equal(timeout[[1]][["timeout"]], 300.0)
+  expect_equal(timeout[[2]][["timeout"]], 300.0)
 })
