@@ -1,9 +1,5 @@
 context("endpoints-validate-baseline")
 
-## Force a garbage collect here, as otherwise we get a really
-## difficult to deal with error.
-gc()
-
 test_that("endpoint_validate_baseline_combined correctly validates data", {
   input <- validate_baseline_all_input(file.path("testdata", "Malawi2019.PJNZ"),
                                        file.path("testdata", "malawi.geojson"),

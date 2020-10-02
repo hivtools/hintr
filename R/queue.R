@@ -33,7 +33,8 @@ Queue <- R6::R6Class(
 
     start = function(workers) {
       if (workers > 0L) {
-        rrq::worker_spawn(self$queue, workers)
+        ids <- rrq::worker_spawn(self$queue, workers)
+        self$queue$message_send_and_wait("TIMEOUT_SET", 300, ids)
       }
     },
 
@@ -93,7 +94,7 @@ Queue <- R6::R6Class(
       clear_cache(self$queue$keys$queue_id)
       if (self$cleanup_on_exit && !is.null(self$queue$con)) {
         message(t_("QUEUE_STOPPING_WORKERS"))
-        self$queue$worker_stop()
+        self$queue$worker_stop(type = "kill")
         self$destroy()
       }
     }

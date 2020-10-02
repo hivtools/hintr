@@ -97,9 +97,6 @@ test_that("error thrown if more than 1 country with a 0 spectrum region code", {
   expect_equal(error$status_code, 400)
 })
 
-## Add garbage collects to avoid intermittent failures
-gc()
-
 test_that("validate_baseline supports shape files", {
   input <- validate_baseline_input(file.path("testdata", "malawi.geojson"),
                                    "shape")
