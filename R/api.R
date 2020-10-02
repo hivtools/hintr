@@ -11,6 +11,7 @@ api_build <- function(queue) {
   api$handle(endpoint_model_result(queue))
   api$handle(endpoint_model_cancel(queue))
   api$handle(endpoint_model_debug(queue))
+  api$handle(endpoint_model_calibration_options())
   api$handle(endpoint_plotting_metadata())
   api$handle(endpoint_download_spectrum(queue))
   api$handle(endpoint_download_spectrum_head(queue))
@@ -258,6 +259,15 @@ endpoint_model_debug <- function(queue) {
                               "/model/debug/<id>",
                               download_model_debug(queue),
                               returning = pkgapi::pkgapi_returning_binary())
+}
+
+endpoint_model_calibration_options <- function() {
+  response <- returning_json_version("ModelRunOptions.schema", schema_root())
+  pkgapi::pkgapi_endpoint$new("POST",
+                              "/model/calibration-options",
+                              calibration_options,
+                              returning = response,
+                              validate = TRUE)
 }
 
 endpoint_plotting_metadata <- function() {

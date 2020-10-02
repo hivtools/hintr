@@ -1,7 +1,5 @@
 context("server")
 
-gc()
-
 test_that("Root", {
   server <- hintr_server()
 
@@ -270,9 +268,6 @@ test_that("model interactions", {
   })
 })
 
-## Add garbage collects to avoid intermittent failures
-gc()
-
 test_that("real model can be run by API", {
   payload <- setup_submit_payload()
   ## Results can be stored in specified results directory
@@ -375,9 +370,6 @@ test_that("real model can be run by API", {
                     "anc_prevalence", "anc_art_coverage"))
   })
 })
-
-## Add garbage collects to avoid intermittent failures
-gc()
 
 test_that("plotting metadata is exposed", {
   server <- hintr_server()
@@ -601,8 +593,6 @@ test_that("spectrum file download streams bytes", {
     system_file("output", "malawi_spectrum_download.zip")))
 })
 
-## Add garbage collects to avoid intermittent failures
-gc()
 
 test_that("coarse_output file download streams bytes", {
   test_mock_model_available()
@@ -788,9 +778,6 @@ test_that("download_debug prevents overwriting", {
     download_debug(id, dest = tmp),
     "Path 'abc' already exists at destination")
 })
-
-## Add garbage collects to avoid intermittent failures
-gc()
 
 test_that("endpoint_model_submit can be run without anc or programme data", {
   test_mock_model_available()
