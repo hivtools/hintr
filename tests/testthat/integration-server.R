@@ -593,7 +593,8 @@ test_that("spectrum file download streams bytes", {
     system_file("output", "malawi_spectrum_download.zip")))
 })
 
-test_that("summary file download streams bytes", {
+
+test_that("coarse_output file download streams bytes", {
   test_mock_model_available()
   server <- hintr_server()
   payload <- setup_submit_payload()
@@ -611,7 +612,8 @@ test_that("summary file download streams bytes", {
   ## Get the download
   testthat::try_again(4, {
     Sys.sleep(2)
-    r <- httr::GET(paste0(server$url, "/download/summary/", response$data$id))
+    r <- httr::GET(paste0(server$url, "/download/coarse-output/",
+                          response$data$id))
     expect_equal(httr::status_code(r), 200)
     expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
     expect_match(
@@ -622,11 +624,12 @@ test_that("summary file download streams bytes", {
     content_length <- as.numeric(httr::headers(r)$`content-length`)
     expect_equal(size, content_length)
     expect_equal(size, file.size(
-      system_file("output", "malawi_summary_download.zip")))
+      system_file("output", "malawi_coarse_output_download.zip")))
   })
 
   ## Headers can be retrieved
-  r <- httr::HEAD(paste0(server$url, "/download/summary/", response$data$id))
+  r <- httr::HEAD(paste0(server$url, "/download/coarse-output/",
+                         response$data$id))
   expect_equal(httr::status_code(r), 200)
   expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
   expect_match(
@@ -637,7 +640,7 @@ test_that("summary file download streams bytes", {
   content_length <- as.numeric(httr::headers(r)$`content-length`)
   expect_equal(size, 0)
   expect_equal(content_length, file.size(
-    system_file("output", "malawi_summary_download.zip")))
+    system_file("output", "malawi_coarse_output_download.zip")))
 })
 
 test_that("can quit", {

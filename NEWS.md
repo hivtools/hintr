@@ -1,3 +1,9 @@
+# hintr 0.1.2
+
+* Rename /download/summary endpoint to /download/coarse-output to be more
+  representative of actual content and in preparation for adding an endpoint
+  for downloading summary report
+
 # hintr 0.1.1
 
 * Fix file naming to work with old model runs where country name is not available

@@ -194,8 +194,8 @@ download_spectrum <- function(queue) {
   download(queue, "spectrum", "naomi_spectrum_digest")
 }
 
-download_summary <- function(queue) {
-  download(queue, "summary", "naomi_coarse_age_groups")
+download_coarse_output <- function(queue) {
+  download(queue, "coarse_output", "naomi_coarse_age_groups")
 }
 
 download <- function(queue, type, filename) {
@@ -207,7 +207,7 @@ download <- function(queue, type, filename) {
       }
       path <- switch(type,
                      "spectrum" = res$spectrum_path,
-                     "summary" = res$summary_path)
+                     "coarse_output" = res$coarse_output_path)
       bytes <- readBin(path, "raw", n = file.size(path))
       bytes <- pkgapi::pkgapi_add_headers(bytes, list(
         "Content-Disposition" = build_content_disp_header(res$metadata$areas,
