@@ -458,10 +458,8 @@ test_that("can calibrate a model result", {
   ## Calibrate the result
   mock_calibrate <- mockery::mock(queue$result(response$id))
   path <- setup_calibrate_payload()
-  with_mock("hintr:::calibrate_result" = mock_calibrate, {
-    calibrate <- model_calibrate(queue)
-    calibrated_result <- calibrate(response$id, readLines(path))
-  })
+  calibrate <- model_calibrate(queue)
+  calibrated_result <- calibrate(response$id, readLines(path))
 
   expect_equal(calibrated_result, result)
   args <- mockery::mock_args(mock_calibrate)

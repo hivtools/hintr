@@ -1,6 +1,6 @@
 # hintr 0.1.3
 
-* Add placeholder model calibration endpoint
+* Add model calibration endpoint
 
 # hintr 0.1.1
 

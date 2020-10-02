@@ -181,21 +181,12 @@ model_calibrate <- function(queue) {
     if (!is_current_version(calibration_options$version)) {
       hintr_error(t_("MODEL_SUBMIT_OLD"), "VERSION_OUT_OF_DATE")
     }
-    calibrated_result <- calibrate_result(queue$result(id), calibration_options)
+    browser()
+    calibrated_result <- naomi::hintr_calibrate(queue$result(id),
+                                                calibration_options)
     process_result(calibrated_result)
   }
 }
-
-## TODO: Temporary placeholder function just returns result without
-## calibration. To be replaced by call to naomi calibration function once
-## implemented
-calibrate_result <- function(result, input) {
-  ## TODO: when naomi supported call naomi calibration function
-  ## Either in naomi or here we will need to read out paths to results and use
-  ## to construct R objects needed for calibration
-  result
-}
-
 
 model_cancel <- function(queue) {
   function(id) {
