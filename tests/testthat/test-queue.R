@@ -10,11 +10,16 @@ test_that("queue works as intended", {
   worker_1 <- queue$queue$worker_list()[[1]]
   worker_2 <- queue$queue$worker_list()[[2]]
 
-  expect_equal(nrow(queue$queue$worker_log_tail(worker_1)), 1)
-  expect_equal(queue$queue$worker_log_tail(worker_1)$command, "ALIVE")
+  expect_equal(nrow(queue$queue$worker_log_tail(worker_1, 3)), 3)
+  expect_equal(queue$queue$worker_log_tail(worker_1, 3)[1, "command"], "ALIVE")
+  expect_equal(queue$queue$worker_log_tail(worker_1, 3)[3, "message"],
+               "TIMEOUT_SET")
 
-  expect_equal(nrow(queue$queue$worker_log_tail(worker_2)), 1)
-  expect_equal(queue$queue$worker_log_tail(worker_2)$command, "ALIVE")
+  expect_equal(nrow(queue$queue$worker_log_tail(worker_2, 3)), 3)
+  expect_equal(queue$queue$worker_log_tail(worker_2, 3)[1, "command"], "ALIVE")
+  expect_equal(queue$queue$worker_log_tail(worker_2, 3)[3, "message"],
+               "TIMEOUT_SET")
+
 
   expect_length(queue$queue$task_list(), 0)
 
