@@ -6,8 +6,9 @@ mock_model <- list(
   output_path = system.file("output", "malawi_output.rds", package = "hintr"),
   spectrum_path = system.file("output", "malawi_spectrum_download.zip",
                               package = "hintr"),
-  summary_path = system.file("output", "malawi_coarse_output_download.zip",
-                             package = "hintr"))
+  coarse_output_path =
+    system.file("output", "malawi_coarse_output_download.zip",
+                package = "hintr"))
 
 test_mock_model_available <- function() {
   invisible(lapply(mock_model, function(x) {
@@ -17,6 +18,15 @@ test_mock_model_available <- function() {
     }
   }))
 }
+
+## Model output as returned by
+## hintr version 0.1.1 and naomi version 1.0.3
+mock_model_v0.1.1 <- list(
+  output_path = system.file("output", "malawi_output.rds", package = "hintr"),
+  spectrum_path = system.file("output", "malawi_spectrum_download.zip",
+                              package = "hintr"),
+  summary_path = system.file("output", "malawi_coarse_output_download.zip",
+                             package = "hintr"))
 
 setup_submit_payload <- function(version = NULL, include_anc_art = TRUE) {
   path <- tempfile()
