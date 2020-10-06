@@ -14,11 +14,11 @@ test_that("indicator download returns bytes", {
   expect_true("id" %in% names(response))
 
   out <- queue$queue$task_wait(response$id)
-  summary <- download_summary(queue)
-  download <- summary(response$id)
+  coarse_output <- download_coarse_output(queue)
+  download <- coarse_output(response$id)
   expect_type(download, "raw")
   expect_length(download, file.size(
-    system_file("output", "malawi_summary_download.zip")))
+    system_file("output", "malawi_coarse_output_download.zip")))
 })
 
 test_that("spectrum download returns bytes", {

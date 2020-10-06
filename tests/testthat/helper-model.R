@@ -6,7 +6,7 @@ mock_model <- list(
   output_path = system.file("output", "malawi_output.rds", package = "hintr"),
   spectrum_path = system.file("output", "malawi_spectrum_download.zip",
                               package = "hintr"),
-  summary_path = system.file("output", "malawi_summary_download.zip",
+  summary_path = system.file("output", "malawi_coarse_output_download.zip",
                              package = "hintr"))
 
 test_mock_model_available <- function() {

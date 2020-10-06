@@ -2,7 +2,7 @@
 
 paths <- list(output_path = "inst/output/malawi_output.rds",
               spectrum_path = "inst/output/malawi_spectrum_download.zip",
-              summary_path = "inst/output/malawi_summary_download.zip")
+              coarse_output_path = "inst/output/malawi_coarse_output_download.zip")
 
 dir.create("inst/output", showWarnings = FALSE)
 invisible(lapply(paths, function(path) {
@@ -16,7 +16,7 @@ out <- system2("./scripts/run_model",
     "--payload", "./scripts/payload.json",
     "--output-path", paths$output_path,
     "--spectrum-path", paths$spectrum_path,
-    "--summary-path", paths$summary_path))
+    "--coarse-output-path", paths$coarse_output_path))
 
 if (out != 0) {
   quit(save = "no", status = 1)

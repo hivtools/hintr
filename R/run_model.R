@@ -43,7 +43,8 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
                               class = c("progress", "condition")))
     return(list(output_path = system_file("output", "malawi_output.rds"),
          spectrum_path = system_file("output", "malawi_spectrum_download.zip"),
-         summary_path = system_file("output", "malawi_summary_download.zip"),
+         coarse_output_path =
+           system_file("output", "malawi_coarse_output_download.zip"),
          metadata = list(areas = "MWI")))
   }
 
@@ -60,7 +61,7 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
   path_results <- normalizePath(path_results, mustWork = TRUE)
   output_path <- tempfile(tmpdir = path_results, fileext = ".rds")
   spectrum_path <- tempfile(tmpdir = path_results, fileext = ".zip")
-  summary_path <- tempfile(tmpdir = path_results, fileext = ".zip")
+  coarse_output_path <- tempfile(tmpdir = path_results, fileext = ".zip")
 
   ## Fix some labels to match what naomi requires
   data$art_number <- data$programme
@@ -69,7 +70,7 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
   data$anc <- NULL
 
   naomi::hintr_run_model(data, options, output_path, spectrum_path,
-                         summary_path)
+                         coarse_output_path)
 }
 
 select_data <- function(data) {

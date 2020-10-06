@@ -1,14 +1,14 @@
 #!/usr/bin/env Rscript
 "Run a model and save outputs at specified paths
 Usage:
-  run_model (--payload=<payload> --output-path=<output-path> --spectrum-path=<spectrum-path> --summary-path=<summary-path>)
+  run_model (--payload=<payload> --output-path=<output-path> --spectrum-path=<spectrum-path> --coarse-output-path=<coarse-output-path>)
 
 Options:
-  -h --help                        Show this screen.
-  --payload=<payload>              Path to model run payload.
-  --output-path=<output-path>      Path to output data RDS.
-  --spectrum-path=<spectrum-path>  Path to spectrum zip download.
-  --summary-path=<summary-path>    Path to summary zip download.
+  -h --help                                    Show this screen.
+  --payload=<payload>                          Path to model run payload.
+  --output-path=<output-path>                  Path to output data RDS.
+  --spectrum-path=<spectrum-path>              Path to spectrum zip download.
+  --coarse-output-path=<coarse-output-path>    Path to summary zip download.
 " -> usage
 
 dat <- docopt::docopt(usage)
@@ -25,12 +25,12 @@ output <- naomi::hintr_run_model(payload$data,
                                  payload$options,
                                  dat$output_path,
                                  dat$spectrum_path,
-                                 dat$summary_path)
+                                 dat$coarse_output_path)
 
 message(sprintf("Saving output at %s", normalizePath(dat$output_path,
                                                      mustWork = TRUE)))
 message(
   sprintf("Saving spectrum download at %s", normalizePath(dat$spectrum_path,
                                                           mustWork = TRUE)))
-message(sprintf("Saving output at %s", normalizePath(dat$summary_path,
+message(sprintf("Saving output at %s", normalizePath(dat$coarse_output_path,
                                                      mustWork = TRUE)))

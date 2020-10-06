@@ -769,7 +769,7 @@ test_that("api can call endpoint_download_spectrum", {
     system_file("output", "malawi_spectrum_download.zip")))
 })
 
-test_that("endpoint_download_summary can be run", {
+test_that("endpoint_download_coarse_output can be run", {
   test_redis_available()
   test_mock_model_available()
 
@@ -780,7 +780,7 @@ test_that("endpoint_download_summary can be run", {
   expect_equal(run_response$status_code, 200)
   out <- queue$queue$task_wait(run_response$data$id)
 
-  endpoint <- endpoint_download_summary(queue)
+  endpoint <- endpoint_download_coarse_output(queue)
   response <- endpoint$run(run_response$data$id)
 
   expect_equal(response$status_code, 200)
@@ -790,10 +790,10 @@ test_that("endpoint_download_summary can be run", {
   size <- length(response$data)
   expect_equal(response$headers$`Content-Length`, size)
   expect_equal(size, file.size(
-    system_file("output", "malawi_summary_download.zip")))
+    system_file("output", "malawi_coarse_output_download.zip")))
 })
 
-test_that("api can call endpoint_download_summary", {
+test_that("api can call endpoint_download_coarse_output", {
   test_redis_available()
   test_mock_model_available()
 
@@ -809,7 +809,8 @@ test_that("api can call endpoint_download_summary", {
   out <- queue$queue$task_wait(response$data$id)
 
   ## Get result
-  res <- api$request("GET", paste0("/download/summary/", response$data$id))
+  res <- api$request("GET", paste0("/download/coarse-output/",
+                                   response$data$id))
 
   expect_equal(res$status, 200)
   expect_equal(res$headers$`Content-Type`, "application/octet-stream")
@@ -819,7 +820,7 @@ test_that("api can call endpoint_download_summary", {
   size <- length(res$body)
   expect_equal(res$headers$`Content-Length`, size)
   expect_equal(size, file.size(
-    system_file("output", "malawi_summary_download.zip")))
+    system_file("output", "malawi_coarse_output_download.zip")))
 })
 
 test_that("content disposition header is formatted correctly", {
@@ -890,7 +891,7 @@ test_that("api endpoint_download_spectrum_head returns headers only", {
   expect_equal(res$body, "")
 })
 
-test_that("endpoint_download_summary_head returns headers only", {
+test_that("endpoint_download_coarse_output_head returns headers only", {
   test_redis_available()
   test_mock_model_available()
 
@@ -901,7 +902,7 @@ test_that("endpoint_download_summary_head returns headers only", {
   expect_equal(run_response$status_code, 200)
   out <- queue$queue$task_wait(run_response$data$id)
 
-  endpoint <- endpoint_download_summary_head(queue)
+  endpoint <- endpoint_download_coarse_output_head(queue)
   response <- endpoint$run(run_response$data$id)
 
   expect_equal(response$status_code, 200)
@@ -910,11 +911,11 @@ test_that("endpoint_download_summary_head returns headers only", {
     response$headers$`Content-Disposition`,
     'attachment; filename="MWI_\\d+-\\d+_naomi_coarse_age_groups.zip"')
   expect_equal(response$headers$`Content-Length`, file.size(
-    system_file("output", "malawi_summary_download.zip")))
+    system_file("output", "malawi_coarse_output_download.zip")))
   expect_null(response$body, NULL)
 })
 
-test_that("api endpoint_download_summary_head returns headers only", {
+test_that("api endpoint_download_coarse_output_head returns headers only", {
   test_redis_available()
   test_mock_model_available()
 
@@ -930,7 +931,8 @@ test_that("api endpoint_download_summary_head returns headers only", {
   out <- queue$queue$task_wait(response$data$id)
 
   ## Get result
-  res <- api$request("HEAD", paste0("/download/summary/", response$data$id))
+  res <- api$request("HEAD", paste0("/download/coarse-output/",
+                                    response$data$id))
 
   expect_equal(res$status, 200)
   expect_equal(res$headers$`Content-Type`, "application/octet-stream")
@@ -938,7 +940,7 @@ test_that("api endpoint_download_summary_head returns headers only", {
     res$headers$`Content-Disposition`,
     'attachment; filename="MWI_\\d+-\\d+_naomi_coarse_age_groups.zip"')
   expect_equal(res$headers$`Content-Length`, file.size(
-    system_file("output", "malawi_summary_download.zip")))
+    system_file("output", "malawi_coarse_output_download.zip")))
   ## Plumber uses an empty string to represent an empty body
   expect_equal(res$body, "")
 })
