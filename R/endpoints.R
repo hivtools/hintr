@@ -205,9 +205,20 @@ download <- function(queue, type, filename) {
       if (is_error(res)) {
         hintr_error(res$message, "MODEL_RUN_FAILED")
       }
+      ## We renamed download from "summary" to "coarse_output" to be more
+      ## representative of the actual content of the download and in
+      ## preparation for adding a summary report.
+      ## To be backwards compatible with old model results from the app
+      ## we need to fallback to old name if the new name isn't available in
+      ## the model result.
+      if ("coarse_output_path" %in% names(res)) {
+        coarse_output <- res$coarse_output_path
+      } else {
+        coarse_output <- res$summary_path
+      }
       path <- switch(type,
                      "spectrum" = res$spectrum_path,
-                     "coarse_output" = res$coarse_output_path)
+                     "coarse_output" = coarse_output)
       bytes <- readBin(path, "raw", n = file.size(path))
       bytes <- pkgapi::pkgapi_add_headers(bytes, list(
         "Content-Disposition" = build_content_disp_header(res$metadata$areas,
