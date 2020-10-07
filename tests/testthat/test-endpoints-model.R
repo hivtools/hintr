@@ -432,70 +432,80 @@ test_that("Debug endpoint errors on nonexistant id", {
 })
 
 test_that("can calibrate a model result", {
-  test_redis_available()
   test_mock_model_available()
 
-  ## Setup payload
-  path <- setup_submit_payload()
-
-  ## Start model run
-  queue <- test_queue(workers = 1)
-  model_submit <- submit_model(queue)
-  response <- model_submit(readLines(path))
-  expect_true("id" %in% names(response))
-
-  ## Wait for complete and query for status
-  ## Query for status
-  result <- queue$queue$task_wait(response$id)
-  status_endpoint <- model_status(queue)
-  status <- status_endpoint(response$id)
-  expect_equal(status$status, scalar("COMPLETE"))
-
-  ## Get the result
-  get_model_result <- model_result(queue)
-  result <- get_model_result(response$id)
+  ## Mock model run
+  queue <- test_queue(workers = 0)
+  unlockBinding("result", queue)
+  ## Clone model output as it modifies in place
+  out <- clone_model_output(mock_model)
+  queue$result <- mockery::mock(out)
+  unlockBinding("queue", queue)
+  unlockBinding("task_status", queue$queue)
+  queue$queue$task_status <- mockery::mock("COMPLETE")
 
   ## Calibrate the result
-  mock_calibrate <- mockery::mock(queue$result(response$id))
   path <- setup_calibrate_payload()
   calibrate <- model_calibrate(queue)
-  calibrated_result <- calibrate(response$id, readLines(path))
+  calibrated_result <- calibrate("id", readLines(path))
 
-  expect_equal(calibrated_result, result)
-  args <- mockery::mock_args(mock_calibrate)
-  expect_equal(args[[1]][[1]], queue$result(response$id))
-  expect_equal(names(args[[1]][[2]]), c("options", "version"))
+  ## Verify data has been returned
+  expect_equal(names(calibrated_result), c("data", "plottingMetadata"))
+  expect_equal(colnames(calibrated_result$data),
+               c("area_id", "sex", "age_group", "calendar_quarter",
+                 "indicator_id", "mode", "mean", "lower", "upper"))
+  expect_true(nrow(calibrated_result$data) > 84042)
+  expect_equal(names(calibrated_result$plottingMetadata),
+               c("barchart", "choropleth"))
 })
 
 test_that("model calibration fails is version out of date", {
-  test_redis_available()
   test_mock_model_available()
 
-  ## Setup payload
-  path <- setup_submit_payload()
+  ## Mock model run
+  queue <- test_queue(workers = 0)
+  unlockBinding("result", queue)
+  ## Clone model output as it modifies in place
+  out <- clone_model_output(mock_model)
+  queue$result <- mockery::mock(out)
+  unlockBinding("queue", queue)
+  unlockBinding("task_status", queue$queue)
+  queue$queue$task_status <- mockery::mock("COMPLETE")
 
-  ## Start model run
-  queue <- test_queue(workers = 1)
-  model_submit <- submit_model(queue)
-  response <- model_submit(readLines(path))
-  expect_true("id" %in% names(response))
-
-  ## Wait for complete
-  result <- queue$queue$task_wait(response$id)
-
+  ## Calibrate the result
   path <- setup_calibrate_payload('{
                                "hintr": "0.0.12",
                                "naomi": "0.0.15",
                                "rrq": "0.2.1"
                                }')
-
-  ## Call the endpoint
   calibrate <- model_calibrate(queue)
-  error <- expect_error(calibrate(response$id, readLines(path)))
+  error <- expect_error(calibrate("id", readLines(path)))
 
   expect_equal(error$data[[1]]$error, scalar("VERSION_OUT_OF_DATE"))
   expect_equal(error$data[[1]]$detail, scalar(
     paste0("Trying to run model with",
            " old version of options. Update model run options")))
   expect_equal(error$status, 400)
+})
+
+test_that("trying to calibrate old model result returns error", {
+  test_mock_model_available()
+
+  ## Mock model run
+  queue <- test_queue(workers = 0)
+  unlockBinding("result", queue)
+  ## Clone model output as it modifies in place
+  out <- clone_model_output(mock_model_v0.1.2)
+  queue$result <- mockery::mock(out)
+  unlockBinding("queue", queue)
+  unlockBinding("task_status", queue$queue)
+  queue$queue$task_status <- mockery::mock("COMPLETE")
+
+  ## Calibrate the result
+  path <- setup_calibrate_payload()
+  calibrate <- model_calibrate(queue)
+  error <- expect_error(calibrate("id", readLines(path)))
+
+  expect_equal(error$message, paste0("Can't calibrate this model output please",
+                                     " re-run model and try calibration again"))
 })

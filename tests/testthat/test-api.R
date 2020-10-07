@@ -1079,19 +1079,21 @@ test_that("404 errors have sensible schema", {
 })
 
 test_that("endpoint_model_calibrate can be run", {
-  test_redis_available()
   test_mock_model_available()
-  queue <- test_queue(workers = 1)
-  model_run <- endpoint_model_submit(queue)
-  path <- setup_submit_payload()
-  run_response <- model_run$run(readLines(path))
-  expect_equal(run_response$status_code, 200)
-  expect_true(!is.null(run_response$data$id))
+
+  ## Mock model run
+  queue <- test_queue(workers = 0)
+  unlockBinding("result", queue)
+  ## Clone model output as it modifies in place
+  out <- clone_model_output(mock_model)
+  queue$result <- mockery::mock(out)
+  unlockBinding("queue", queue)
+  unlockBinding("task_status", queue$queue)
+  queue$queue$task_status <- mockery::mock("COMPLETE")
 
   endpoint <- endpoint_model_calibrate(queue)
-  out <- queue$queue$task_wait(run_response$data$id)
   path <- setup_calibrate_payload()
-  response <- endpoint$run(run_response$data$id, readLines(path))
+  response <- endpoint$run("id", readLines(path))
 
   expect_equal(response$status_code, 200)
   expect_equal(names(response$data), c("data", "plottingMetadata"))
@@ -1104,21 +1106,21 @@ test_that("endpoint_model_calibrate can be run", {
 })
 
 test_that("api can call endpoint_model_calibrate", {
-  test_redis_available()
   test_mock_model_available()
-  queue <- test_queue(workers = 1)
-  api <- api_build(queue)
-  path <- setup_submit_payload()
-  res <- api$request("POST", "/model/submit",
-                     body = readLines(path))
-  expect_equal(res$status, 200)
-  body <- jsonlite::fromJSON(res$body)
-  expect_equal(body$status, "success")
-  expect_true(!is.null(body$data$id))
 
-  out <- queue$queue$task_wait(body$data$id)
+  ## Mock model run
+  queue <- test_queue(workers = 0)
+  unlockBinding("result", queue)
+  ## Clone model output as it modifies in place
+  out <- clone_model_output(mock_model)
+  queue$result <- mockery::mock(out)
+  unlockBinding("queue", queue)
+  unlockBinding("task_status", queue$queue)
+  queue$queue$task_status <- mockery::mock("COMPLETE")
+
+  api <- api_build(queue)
   calibrate_path <- setup_calibrate_payload()
-  res <- api$request("POST", sprintf("/model/calibrate/%s", body$data$id),
+  res <- api$request("POST", "/model/calibrate/id",
                      body = readLines(calibrate_path))
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body)
