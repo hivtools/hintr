@@ -82,3 +82,20 @@ test_that("download returns useful error if model result can't be retrieved", {
   expect_equal(error$status_code, 400)
 })
 
+test_that("download works with v0.1.1 model run result", {
+  test_redis_available()
+  test_mock_model_available()
+
+  ## Setup payload
+  path <- setup_submit_payload()
+
+  ## Return v0.1.1 model results
+  queue <- MockQueue$new()
+  unlockBinding("result", queue)
+  queue$result <- mockery::mock(mock_model_v0.1.1)
+  coarse_output <- download_coarse_output(queue)
+  download <- coarse_output("id")
+  expect_type(download, "raw")
+  expect_length(download, file.size(
+    system_file("output", "malawi_coarse_output_download.zip")))
+})
