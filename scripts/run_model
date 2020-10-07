@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 "Run a model and save outputs at specified paths
 Usage:
-  run_model (--payload=<payload> --output-path=<output-path> --spectrum-path=<spectrum-path> --coarse-output-path=<coarse-output-path>)
+  run_model (--payload=<payload> --output-path=<output-path> --spectrum-path=<spectrum-path> --coarse-output-path=<coarse-output-path> --calibration-path=<calibration-path>)
 
 Options:
   -h --help                                    Show this screen.
@@ -9,6 +9,7 @@ Options:
   --output-path=<output-path>                  Path to output data RDS.
   --spectrum-path=<spectrum-path>              Path to spectrum zip download.
   --coarse-output-path=<coarse-output-path>    Path to summary zip download.
+  --calibration-path=<calibration-path>        Path to calibration data.
 " -> usage
 
 dat <- docopt::docopt(usage)
@@ -25,7 +26,8 @@ output <- naomi::hintr_run_model(payload$data,
                                  payload$options,
                                  dat$output_path,
                                  dat$spectrum_path,
-                                 dat$coarse_output_path)
+                                 dat$coarse_output_path,
+                                 dat$calibration_path)
 
 message(sprintf("Saving output at %s", normalizePath(dat$output_path,
                                                      mustWork = TRUE)))
@@ -34,3 +36,5 @@ message(
                                                           mustWork = TRUE)))
 message(sprintf("Saving output at %s", normalizePath(dat$coarse_output_path,
                                                      mustWork = TRUE)))
+message(sprintf("Saving calibration at %s",
+                normalizePath(dat$calibration_path, mustWork = TRUE)))
