@@ -432,6 +432,7 @@ test_that("Debug endpoint errors on nonexistant id", {
 })
 
 test_that("can calibrate a model result", {
+  testthat::skip("blocked on bug fix in naomi")
   test_mock_model_available()
 
   ## Mock model run
