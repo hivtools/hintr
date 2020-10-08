@@ -10,7 +10,7 @@
     "error_low_column": { "type": "string" },
     "error_high_column": { "type": "string" },
     "scale": { "type": "number" },
-    "accuracy": { "type": "number" },
+    "accuracy": { "type": [ "number", "null" ] },
     "format": { "type": "string" }
   },
   "additionalProperties": false,
