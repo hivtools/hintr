@@ -2,6 +2,10 @@
 
 * Return number formatting metadata from /meta/plotting/ and /model/result endpoints
 
+# hintr 0.1.3
+
+* Add model calibration endpoint
+
 # hintr 0.1.2
 
 * Rename /download/summary endpoint to /download/coarse-output to be more
