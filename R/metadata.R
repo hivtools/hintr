@@ -27,7 +27,10 @@ build_indicator_metadata <- function(metadata) {
     min = scalar(metadata$min),
     max = scalar(metadata$max),
     colour = scalar(metadata$colour),
-    invert_scale = scalar(metadata$invert_scale)
+    invert_scale = scalar(metadata$invert_scale),
+    scale = scalar(metadata$scale),
+    accuracy = scalar(metadata$accuracy),
+    format = scalar(metadata$format)
   )
 }
 
@@ -36,7 +39,8 @@ get_barchart_metadata <- function(output) {
   metadata <- metadata[
     metadata$data_type == "output" & metadata$plot_type == "barchart",
     c("indicator", "value_column", "error_low_column", "error_high_column",
-      "indicator_column", "indicator_value", "name")]
+      "indicator_column", "indicator_value", "name", "scale", "accuracy",
+      "format")]
   metadata[order(as.numeric(metadata$indicator_value)), ]
 }
 
@@ -47,7 +51,7 @@ get_choropleth_metadata <- function(output) {
     metadata$data_type == "output" & metadata$plot_type == "choropleth",
     c("indicator", "value_column", "error_low_column", "error_high_column",
       "indicator_column", "indicator_value", "name", "min", "max", "colour",
-      "invert_scale")]
+      "invert_scale", "scale", "accuracy", "format")]
   metadata[order(as.numeric(metadata$indicator_value)), ]
 }
 
