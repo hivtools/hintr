@@ -8,7 +8,10 @@ mock_model <- list(
                               package = "hintr"),
   coarse_output_path =
     system.file("output", "malawi_coarse_output_download.zip",
-                package = "hintr"))
+                package = "hintr"),
+  calibration_path = system.file("output", "malawi_calibration.rds",
+                                 package = "hintr"))
+class(mock_model) <- "hintr_output"
 
 test_mock_model_available <- function() {
   invisible(lapply(mock_model, function(x) {
@@ -18,6 +21,17 @@ test_mock_model_available <- function() {
     }
   }))
 }
+
+## Model output as returned by
+## hintr version 0.1.2 and naomi version 1.0.4
+mock_model_v0.1.2 <- list(
+  output_path = system.file("output", "malawi_output.rds", package = "hintr"),
+  spectrum_path = system.file("output", "malawi_spectrum_download.zip",
+                              package = "hintr"),
+  coarse_output_path =
+    system.file("output", "malawi_coarse_output_download.zip",
+                package = "hintr"))
+class(mock_model_v0.1.2) <- "hintr_output"
 
 ## Model output as returned by
 ## hintr version 0.1.1 and naomi version 1.0.3
@@ -41,4 +55,38 @@ setup_submit_payload <- function(version = NULL, include_anc_art = TRUE) {
   payload <- gsub("<version_info>", version, payload, fixed = TRUE)
   writeLines(payload, path)
   path
+}
+
+setup_calibrate_payload <- function(version = NULL) {
+  path <- tempfile()
+  if (is.null(version)) {
+    version <- to_json(cfg$version_info)
+  }
+  payload <- readLines("payload/model_calibrate_payload.json")
+  payload <- gsub("<version_info>", version, payload, fixed = TRUE)
+  writeLines(payload, path)
+  path
+}
+
+
+clone_model_output <- function(output) {
+  output_path <- tempfile()
+  file.copy(output$output_path, output_path)
+  spectrum_path <- tempfile(fileext = ".zip")
+  file.copy(output$spectrum_path, spectrum_path)
+  coarse_output_path <- tempfile(fileext = ".zip")
+  file.copy(output$coarse_output_path, coarse_output_path)
+  if (!is.null(output$calibration_path)) {
+    calibration_path <- tempfile(fileext = ".rds")
+    file.copy(output$calibration_path, calibration_path)
+  } else {
+    calibration_path <- NULL
+  }
+  out <- list(output_path = output_path,
+              spectrum_path = spectrum_path,
+              coarse_output_path = coarse_output_path,
+              calibration_path = calibration_path,
+              metadata = output$metadata)
+  class(out) <- "hintr_output"
+  out
 }

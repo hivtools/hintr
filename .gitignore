@@ -9,5 +9,6 @@ docker/Dockerfile.worker
 inst/output/malawi_output.rds
 inst/output/malawi_spectrum_download.zip
 inst/output/malawi_coarse_output_download.zip
+inst/output/malawi_calibration.rds
 id_rsa
 tests/testthat/testdata/sensitive

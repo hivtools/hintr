@@ -1077,3 +1077,61 @@ test_that("404 errors have sensible schema", {
                "GET /meaning-of-life is not a valid hintr path")
   expect_equal(response$data, setNames(list(), list()))
 })
+
+test_that("endpoint_model_calibrate can be run", {
+  test_mock_model_available()
+
+  ## Mock model run
+  queue <- test_queue(workers = 0)
+  unlockBinding("result", queue)
+  ## Clone model output as it modifies in place
+  out <- clone_model_output(mock_model)
+  queue$result <- mockery::mock(out)
+  unlockBinding("queue", queue)
+  unlockBinding("task_status", queue$queue)
+  queue$queue$task_status <- mockery::mock("COMPLETE")
+
+  endpoint <- endpoint_model_calibrate(queue)
+  path <- setup_calibrate_payload()
+  response <- endpoint$run("id", readLines(path))
+
+  expect_equal(response$status_code, 200)
+  expect_equal(names(response$data), c("data", "plottingMetadata"))
+  expect_equal(colnames(response$data$data),
+               c("area_id", "sex", "age_group", "calendar_quarter",
+                 "indicator_id", "mode", "mean", "lower", "upper"))
+  expect_true(nrow(response$data$data) > 84042)
+  expect_equal(names(response$data$plottingMetadata),
+               c("barchart", "choropleth"))
+})
+
+test_that("api can call endpoint_model_calibrate", {
+  test_mock_model_available()
+
+  ## Mock model run
+  queue <- test_queue(workers = 0)
+  unlockBinding("result", queue)
+  ## Clone model output as it modifies in place
+  out <- clone_model_output(mock_model)
+  queue$result <- mockery::mock(out)
+  unlockBinding("queue", queue)
+  unlockBinding("task_status", queue$queue)
+  queue$queue$task_status <- mockery::mock("COMPLETE")
+
+  api <- api_build(queue)
+  calibrate_path <- setup_calibrate_payload()
+  res <- api$request("POST", "/model/calibrate/id",
+                     body = readLines(calibrate_path))
+  expect_equal(res$status, 200)
+  body <- jsonlite::fromJSON(res$body)
+
+  expect_equal(body$status, "success")
+  expect_null(body$errors)
+  expect_equal(names(body$data), c("data", "plottingMetadata"))
+  expect_equal(colnames(body$data$data),
+               c("area_id", "sex", "age_group", "calendar_quarter",
+                 "indicator_id", "mode", "mean", "lower", "upper"))
+  expect_true(nrow(body$data$data) > 84042)
+  expect_equal(names(body$data$plottingMetadata),
+               c("barchart", "choropleth"))
+})

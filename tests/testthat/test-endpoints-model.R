@@ -430,3 +430,82 @@ test_that("Debug endpoint errors on nonexistant id", {
                scalar("Task '1234' not found"))
   expect_equal(error$status_code, 400)
 })
+
+test_that("can calibrate a model result", {
+  test_mock_model_available()
+
+  ## Mock model run
+  queue <- test_queue(workers = 0)
+  unlockBinding("result", queue)
+  ## Clone model output as it modifies in place
+  out <- clone_model_output(mock_model)
+  queue$result <- mockery::mock(out)
+  unlockBinding("queue", queue)
+  unlockBinding("task_status", queue$queue)
+  queue$queue$task_status <- mockery::mock("COMPLETE")
+
+  ## Calibrate the result
+  path <- setup_calibrate_payload()
+  calibrate <- model_calibrate(queue)
+  calibrated_result <- calibrate("id", readLines(path))
+
+  ## Verify data has been returned
+  expect_equal(names(calibrated_result), c("data", "plottingMetadata"))
+  expect_equal(colnames(calibrated_result$data),
+               c("area_id", "sex", "age_group", "calendar_quarter",
+                 "indicator_id", "mode", "mean", "lower", "upper"))
+  expect_true(nrow(calibrated_result$data) > 84042)
+  expect_equal(names(calibrated_result$plottingMetadata),
+               c("barchart", "choropleth"))
+})
+
+test_that("model calibration fails is version out of date", {
+  test_mock_model_available()
+
+  ## Mock model run
+  queue <- test_queue(workers = 0)
+  unlockBinding("result", queue)
+  ## Clone model output as it modifies in place
+  out <- clone_model_output(mock_model)
+  queue$result <- mockery::mock(out)
+  unlockBinding("queue", queue)
+  unlockBinding("task_status", queue$queue)
+  queue$queue$task_status <- mockery::mock("COMPLETE")
+
+  ## Calibrate the result
+  path <- setup_calibrate_payload('{
+                               "hintr": "0.0.12",
+                               "naomi": "0.0.15",
+                               "rrq": "0.2.1"
+                               }')
+  calibrate <- model_calibrate(queue)
+  error <- expect_error(calibrate("id", readLines(path)))
+
+  expect_equal(error$data[[1]]$error, scalar("VERSION_OUT_OF_DATE"))
+  expect_equal(error$data[[1]]$detail, scalar(
+    paste0("Trying to run model with",
+           " old version of options. Update model run options")))
+  expect_equal(error$status, 400)
+})
+
+test_that("trying to calibrate old model result returns error", {
+  test_mock_model_available()
+
+  ## Mock model run
+  queue <- test_queue(workers = 0)
+  unlockBinding("result", queue)
+  ## Clone model output as it modifies in place
+  out <- clone_model_output(mock_model_v0.1.2)
+  queue$result <- mockery::mock(out)
+  unlockBinding("queue", queue)
+  unlockBinding("task_status", queue$queue)
+  queue$queue$task_status <- mockery::mock("COMPLETE")
+
+  ## Calibrate the result
+  path <- setup_calibrate_payload()
+  calibrate <- model_calibrate(queue)
+  error <- expect_error(calibrate("id", readLines(path)))
+
+  expect_equal(error$message, paste0("Can't calibrate this model output please",
+                                     " re-run model and try calibration again"))
+})

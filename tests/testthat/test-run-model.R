@@ -156,7 +156,8 @@ test_that("real model can be run", {
     model_run <- run_model(data, options, tempdir())
   })
   expect_equal(names(model_run), c("output_path", "spectrum_path",
-                                   "coarse_output_path", "metadata"))
+                                   "coarse_output_path", "calibration_path",
+                                   "metadata"))
 
   output <- readRDS(model_run$output_path)
   expect_equal(colnames(output),
@@ -229,7 +230,8 @@ test_that("real model can be run with csv2 data", {
   })
 
   expect_equal(names(model_run), c("output_path", "spectrum_path",
-                                   "coarse_output_path", "metadata"))
+                                   "coarse_output_path", "calibration_path",
+                                   "metadata"))
 
   output <- readRDS(model_run$output_path)
   expect_equal(colnames(output),

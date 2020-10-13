@@ -152,20 +152,38 @@ model_status <- function(queue) {
 
 model_result <- function(queue) {
   function(id) {
-    task_status <- queue$queue$task_status(id)
-    if (task_status == "COMPLETE") {
-      process_result(queue$result(id))
-    } else if (task_status == "ERROR") {
-      result <- queue$result(id)
-      trace <- c(sprintf("# %s", id), result$trace)
-      hintr_error(result$message, "MODEL_RUN_FAILED", trace = trace)
-    } else if (task_status == "ORPHAN") {
-      hintr_error(t_("MODEL_RESULT_CRASH"), "MODEL_RUN_FAILED")
-    } else if (task_status == "INTERRUPTED") {
-      hintr_error(t_("MODEL_RUN_CANCELLED"), "MODEL_RUN_FAILED")
-    } else { # ~= MISSING, PENDING, RUNNING
-      hintr_error(t_("MODEL_RESULT_MISSING"), "FAILED_TO_RETRIEVE_RESULT")
+    verify_result_available(queue, id)
+    process_result(queue$result(id))
+  }
+}
+
+verify_result_available <- function(queue, id) {
+  task_status <- queue$queue$task_status(id)
+  if (task_status == "COMPLETE") {
+    invisible(TRUE)
+  } else if (task_status == "ERROR") {
+    result <- queue$result(id)
+    trace <- c(sprintf("# %s", id), result$trace)
+    hintr_error(result$message, "MODEL_RUN_FAILED", trace = trace)
+  } else if (task_status == "ORPHAN") {
+    hintr_error(t_("MODEL_RESULT_CRASH"), "MODEL_RUN_FAILED")
+  } else if (task_status == "INTERRUPTED") {
+    hintr_error(t_("MODEL_RUN_CANCELLED"), "MODEL_RUN_FAILED")
+  } else { # ~= MISSING, PENDING, RUNNING
+    hintr_error(t_("MODEL_RESULT_MISSING"), "FAILED_TO_RETRIEVE_RESULT")
+  }
+}
+
+model_calibrate <- function(queue) {
+  function(id, input) {
+    verify_result_available(queue, id)
+    calibration_options <- jsonlite::fromJSON(input)
+    if (!is_current_version(calibration_options$version)) {
+      hintr_error(t_("MODEL_SUBMIT_OLD"), "VERSION_OUT_OF_DATE")
     }
+    calibrated_result <- naomi::hintr_calibrate(queue$result(id),
+                                                calibration_options$options)
+    process_result(calibrated_result)
   }
 }
 
