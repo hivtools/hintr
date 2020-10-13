@@ -371,7 +371,6 @@ test_that("real model can be run & calibrated by API", {
                     "anc_prevalence", "anc_art_coverage"))
   })
 
-  testthat::skip("blocked on bug fix in naomi")
   ## Calibrate
   payload <- setup_calibrate_payload()
   r <- httr::POST(paste0(server$url, "/model/calibrate/", id),
