@@ -12,8 +12,12 @@
     "min": { "type": "number" },
     "max": { "type": "number" },
     "colour": { "type": "string" },
-    "invert_scale": { "type": "boolean" }
+    "invert_scale": { "type": "boolean" },
+    "scale": { "type": "number" },
+    "accuracy": { "type": [ "number", "null" ] },
+    "format": { "type": "string" }
   },
   "additionalProperties": false,
-  "required": [ "indicator", "value_column", "name", "min", "max", "colour", "invert_scale" ]
+  "required": [ "indicator", "value_column", "name", "min", "max", "colour",
+                "invert_scale", "scale", "accuracy", "format" ]
 }

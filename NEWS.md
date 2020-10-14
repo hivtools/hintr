@@ -1,3 +1,7 @@
+# hintr 0.1.4
+
+* Return number formatting metadata from /meta/plotting/ and /model/result endpoints
+
 # hintr 0.1.3
 
 * Add model calibration endpoint
