@@ -522,7 +522,7 @@ test_that("endpoint_model_result can be run", {
   expect_equal(names(response$data), c("data", "plottingMetadata"))
   expect_equal(colnames(response$data$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
-                 "indicator_id", "mode", "mean", "lower", "upper"))
+                 "indicator", "mode", "mean", "lower", "upper"))
   expect_true(nrow(response$data$data) > 84042)
   expect_equal(names(response$data$plottingMetadata),
                c("barchart", "choropleth"))
@@ -551,7 +551,7 @@ test_that("api can call endpoint_model_result", {
   expect_equal(names(body$data), c("data", "plottingMetadata"))
   expect_equal(colnames(body$data$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
-                 "indicator_id", "mode", "mean", "lower", "upper"))
+                 "indicator", "mode", "mean", "lower", "upper"))
   expect_true(nrow(body$data$data) > 84042)
   expect_equal(names(body$data$plottingMetadata),
                c("barchart", "choropleth"))

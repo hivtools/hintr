@@ -80,7 +80,7 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
 
 select_data <- function(data) {
   columns <- c("area_id", "sex", "age_group", "calendar_quarter",
-               "indicator_id", "mode", "mean", "lower", "upper")
+               "indicator", "mode", "mean", "lower", "upper")
   data[, columns]
 }
 
