@@ -1,6 +1,14 @@
-# hintr 0.1.3
+# hintr 0.1.5
 
 * Add endpoint for downloading dummy summary report
+
+# hintr 0.1.4
+
+* Return number formatting metadata from /meta/plotting/ and /model/result endpoints
+
+# hintr 0.1.3
+
+* Add model calibration endpoint
 
 # hintr 0.1.2
 

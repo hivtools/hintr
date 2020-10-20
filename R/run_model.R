@@ -41,11 +41,15 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
     )
     signalCondition(structure(progress_complete,
                               class = c("progress", "condition")))
-    return(list(output_path = system_file("output", "malawi_output.rds"),
-         spectrum_path = system_file("output", "malawi_spectrum_download.zip"),
-         coarse_output_path =
-           system_file("output", "malawi_coarse_output_download.zip"),
-         metadata = list(areas = "MWI")))
+    output <- list(output_path = system_file("output", "malawi_output.rds"),
+                   spectrum_path = system_file("output", "malawi_spectrum_download.zip"),
+                   coarse_output_path =
+                     system_file("output", "malawi_coarse_output_download.zip"),
+                   calibration_path = system_file("output",
+                                                  "malawi_calibration.rds"),
+                   metadata = list(areas = "MWI"))
+    class(output) <- "hintr_output"
+    return(output)
   }
 
   if (!is.null(path_prerun)) {
@@ -62,6 +66,7 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
   output_path <- tempfile(tmpdir = path_results, fileext = ".rds")
   spectrum_path <- tempfile(tmpdir = path_results, fileext = ".zip")
   coarse_output_path <- tempfile(tmpdir = path_results, fileext = ".zip")
+  calibration_path <- tempfile(tmpdir = path_results, fileext = ".rds")
 
   ## Fix some labels to match what naomi requires
   data$art_number <- data$programme
@@ -70,7 +75,7 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
   data$anc <- NULL
 
   naomi::hintr_run_model(data, options, output_path, spectrum_path,
-                         coarse_output_path)
+                         coarse_output_path, calibration_path)
 }
 
 select_data <- function(data) {

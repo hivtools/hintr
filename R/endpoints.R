@@ -22,6 +22,15 @@ model_options <- function(input) {
   })
 }
 
+calibration_options <- function() {
+  tryCatch({
+    json_verbatim(
+      build_options_from_template(naomi::get_model_calibration_options()))
+  }, error = function(e) {
+    hintr_error(e$message, "INVALID_CALIBRATION_OPTIONS")
+  })
+}
+
 root_endpoint <- function() {
   scalar(t_("WELCOME"))
 }
@@ -143,20 +152,38 @@ model_status <- function(queue) {
 
 model_result <- function(queue) {
   function(id) {
-    task_status <- queue$queue$task_status(id)
-    if (task_status == "COMPLETE") {
-      process_result(queue$result(id))
-    } else if (task_status == "ERROR") {
-      result <- queue$result(id)
-      trace <- c(sprintf("# %s", id), result$trace)
-      hintr_error(result$message, "MODEL_RUN_FAILED", trace = trace)
-    } else if (task_status == "ORPHAN") {
-      hintr_error(t_("MODEL_RESULT_CRASH"), "MODEL_RUN_FAILED")
-    } else if (task_status == "INTERRUPTED") {
-      hintr_error(t_("MODEL_RUN_CANCELLED"), "MODEL_RUN_FAILED")
-    } else { # ~= MISSING, PENDING, RUNNING
-      hintr_error(t_("MODEL_RESULT_MISSING"), "FAILED_TO_RETRIEVE_RESULT")
+    verify_result_available(queue, id)
+    process_result(queue$result(id))
+  }
+}
+
+verify_result_available <- function(queue, id) {
+  task_status <- queue$queue$task_status(id)
+  if (task_status == "COMPLETE") {
+    invisible(TRUE)
+  } else if (task_status == "ERROR") {
+    result <- queue$result(id)
+    trace <- c(sprintf("# %s", id), result$trace)
+    hintr_error(result$message, "MODEL_RUN_FAILED", trace = trace)
+  } else if (task_status == "ORPHAN") {
+    hintr_error(t_("MODEL_RESULT_CRASH"), "MODEL_RUN_FAILED")
+  } else if (task_status == "INTERRUPTED") {
+    hintr_error(t_("MODEL_RUN_CANCELLED"), "MODEL_RUN_FAILED")
+  } else { # ~= MISSING, PENDING, RUNNING
+    hintr_error(t_("MODEL_RESULT_MISSING"), "FAILED_TO_RETRIEVE_RESULT")
+  }
+}
+
+model_calibrate <- function(queue) {
+  function(id, input) {
+    verify_result_available(queue, id)
+    calibration_options <- jsonlite::fromJSON(input)
+    if (!is_current_version(calibration_options$version)) {
+      hintr_error(t_("MODEL_SUBMIT_OLD"), "VERSION_OUT_OF_DATE")
     }
+    calibrated_result <- naomi::hintr_calibrate(queue$result(id),
+                                                calibration_options$options)
+    process_result(calibrated_result)
   }
 }
 
@@ -200,9 +227,20 @@ download <- function(queue, type, filename) {
       if (is_error(res)) {
         hintr_error(res$message, "MODEL_RUN_FAILED")
       }
+      ## We renamed download from "summary" to "coarse_output" to be more
+      ## representative of the actual content of the download and in
+      ## preparation for adding a summary report.
+      ## To be backwards compatible with old model results from the app
+      ## we need to fallback to old name if the new name isn't available in
+      ## the model result.
+      if ("coarse_output_path" %in% names(res)) {
+        coarse_output <- res$coarse_output_path
+      } else {
+        coarse_output <- res$summary_path
+      }
       path <- switch(type,
                      "spectrum" = res$spectrum_path,
-                     "coarse_output" = res$coarse_output_path,
+                     "coarse_output" = coarse_output,
                      "summary" = system_file("dummy_summary_report.html"))
       bytes <- readBin(path, "raw", n = file.size(path))
       bytes <- pkgapi::pkgapi_add_headers(bytes, list(

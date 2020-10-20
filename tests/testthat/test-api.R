@@ -292,9 +292,6 @@ test_that("endpoint_model_options", {
   expect_true(all(grepl("^(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$", body$version)))
 })
 
-## Add garbage collects to avoid intermittent failures
-gc()
-
 test_that("endpoint_model_options works", {
   test_redis_available()
   queue <- test_queue(workers = 0)
@@ -424,12 +421,9 @@ test_that("api can call endpoint_model_options_validate", {
   expect_true(body$data$valid)
 })
 
-## Add garbage collects to avoid intermittent failures
-gc()
-
 test_that("endpoint_model_submit can be run", {
   test_redis_available()
-  queue <- test_queue()
+  queue <- test_queue(workers = 0)
   endpoint <- endpoint_model_submit(queue)
   path <- setup_submit_payload()
   response <- endpoint$run(readLines(path))
@@ -638,6 +632,36 @@ test_that("erroring model run returns useful messages", {
   expect_match(msg[[3]], "error-trace: rrq:::rrq_worker_main")
 })
 
+test_that("endpoint_model_calibration_options", {
+  endpoint <- endpoint_model_calibration_options()
+  response <- endpoint$run()
+
+  expect_equal(response$status_code, 200)
+  expect_null(response$error)
+  body <- jsonlite::parse_json(response$body)
+  expect_equal(names(body$data), "controlSections")
+  expect_true(length(body$data$controlSections) >= 1)
+
+  expect_true(!is.null(body$version))
+  expect_equal(names(body$version), c("hintr", "naomi", "rrq", "traduire"))
+  expect_true(all(grepl("^(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$", body$version)))
+})
+
+test_that("endpoint_model_options works", {
+  test_redis_available()
+  queue <- test_queue(workers = 0)
+  api <- api_build(queue)
+  res <- api$request("POST", "/model/calibration-options")
+  expect_equal(res$status, 200)
+  body <- jsonlite::parse_json(res$body)
+  expect_equal(names(body$data), "controlSections")
+  expect_true(length(body$data$controlSections) >= 1)
+
+  expect_true(!is.null(body$version))
+  expect_equal(names(body$version), c("hintr", "naomi", "rrq", "traduire"))
+  expect_true(all(grepl("^(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$", body$version)))
+})
+
 test_that("endpoint_plotting_metadata can be run", {
   endpoint <- endpoint_plotting_metadata()
   response <- endpoint$run("MWI")
@@ -692,9 +716,6 @@ test_that("returning_json_version adds version", {
   expect_equal(version_response$version$traduire,
                unclass(cfg$version_info$traduire))
 })
-
-## Add garbage collects to avoid intermittent failures
-gc()
 
 test_that("endpoint_download_spectrum can be run", {
   test_redis_available()
@@ -1048,9 +1069,6 @@ test_that("api can call endpoint_model_debug", {
   expect_true(length(res$body) > 1000000)
 })
 
-## Add garbage collects to avoid intermittent failures
-gc()
-
 test_that("endpoint_hintr_version works", {
   endpoint <- endpoint_hintr_version()
   response <- endpoint$run()
@@ -1135,4 +1153,62 @@ test_that("404 errors have sensible schema", {
   expect_equal(response$errors[1, "detail"],
                "GET /meaning-of-life is not a valid hintr path")
   expect_equal(response$data, setNames(list(), list()))
+})
+
+test_that("endpoint_model_calibrate can be run", {
+  test_mock_model_available()
+
+  ## Mock model run
+  queue <- test_queue(workers = 0)
+  unlockBinding("result", queue)
+  ## Clone model output as it modifies in place
+  out <- clone_model_output(mock_model)
+  queue$result <- mockery::mock(out)
+  unlockBinding("queue", queue)
+  unlockBinding("task_status", queue$queue)
+  queue$queue$task_status <- mockery::mock("COMPLETE")
+
+  endpoint <- endpoint_model_calibrate(queue)
+  path <- setup_calibrate_payload()
+  response <- endpoint$run("id", readLines(path))
+
+  expect_equal(response$status_code, 200)
+  expect_equal(names(response$data), c("data", "plottingMetadata"))
+  expect_equal(colnames(response$data$data),
+               c("area_id", "sex", "age_group", "calendar_quarter",
+                 "indicator_id", "mode", "mean", "lower", "upper"))
+  expect_true(nrow(response$data$data) > 84042)
+  expect_equal(names(response$data$plottingMetadata),
+               c("barchart", "choropleth"))
+})
+
+test_that("api can call endpoint_model_calibrate", {
+  test_mock_model_available()
+
+  ## Mock model run
+  queue <- test_queue(workers = 0)
+  unlockBinding("result", queue)
+  ## Clone model output as it modifies in place
+  out <- clone_model_output(mock_model)
+  queue$result <- mockery::mock(out)
+  unlockBinding("queue", queue)
+  unlockBinding("task_status", queue$queue)
+  queue$queue$task_status <- mockery::mock("COMPLETE")
+
+  api <- api_build(queue)
+  calibrate_path <- setup_calibrate_payload()
+  res <- api$request("POST", "/model/calibrate/id",
+                     body = readLines(calibrate_path))
+  expect_equal(res$status, 200)
+  body <- jsonlite::fromJSON(res$body)
+
+  expect_equal(body$status, "success")
+  expect_null(body$errors)
+  expect_equal(names(body$data), c("data", "plottingMetadata"))
+  expect_equal(colnames(body$data$data),
+               c("area_id", "sex", "age_group", "calendar_quarter",
+                 "indicator_id", "mode", "mean", "lower", "upper"))
+  expect_true(nrow(body$data$data) > 84042)
+  expect_equal(names(body$data$plottingMetadata),
+               c("barchart", "choropleth"))
 })
