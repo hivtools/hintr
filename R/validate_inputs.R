@@ -122,7 +122,7 @@ do_validate_programme <- function(programme, shape) {
   assert_unique_combinations(data, c("area_id", "year", "sex", "age_group"))
   assert_expected_values(data, "sex", c("male", "female", "both"))
   art_ages <- naomi::get_age_groups()$age_group
-  art_ages <- art_ages[!art_ages %in% c("00-00", "01-04")]
+  art_ages <- art_ages[!art_ages %in% c("Y000_000", "Y001_004")]
   assert_expected_values(data, "age_group", art_ages)
   assert_column_positive_numeric(data, "current_art")
   assert_year_column(data)
@@ -155,7 +155,7 @@ do_validate_anc <- function(anc, shape) {
                             read_regions(anc, "anc"),
                             "ANC")
   assert_unique_combinations(data, c("area_id", "age_group", "year"))
-  assert_expected_values(data, "age_group", "15-49")
+  assert_expected_values(data, "age_group", "Y015_049")
   assert_year_column(data)
   assert_column_positive_numeric(data, c("anc_clients", "ancrt_known_pos", "ancrt_already_art",
                                          "ancrt_tested", "ancrt_test_pos"))
