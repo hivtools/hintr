@@ -191,8 +191,7 @@ test_that("error thrown when tree can't be constructed", {
 })
 
 test_that("naomi IDs can be mapped to hint IDs", {
-  expect_equal(get_hint_id(2), "prevalence")
-  expect_equal(get_hint_id("2"), "prevalence")
+  expect_equal(get_hint_id("prevalence"), "prevalence")
   expect_equal(get_hint_id("prev"), "prevalence")
   expect_equal(get_hint_id("art_coverage"), "art_coverage")
   expect_error(get_hint_id("missing"),
