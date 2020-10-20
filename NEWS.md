@@ -1,5 +1,9 @@
 # hintr 0.1.4
 
+* Depend on naomi 2.0.0 version for 2021 UNAIDS estimates.
+
+# hintr 0.1.4
+
 * Return number formatting metadata from /meta/plotting/ and /model/result endpoints
 
 # hintr 0.1.3
