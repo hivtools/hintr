@@ -162,7 +162,7 @@ test_that("real model can be run", {
   output <- readRDS(model_run$output_path)
   expect_equal(colnames(output),
                c("area_level", "area_level_label", "area_id", "area_name",
-                 "sex", "age_group", "age_group_id", "age_group_label",
+                 "sex", "age_group", "age_group_label",
                  "calendar_quarter", "quarter_id", "quarter_label", "indicator",
                  "indicator_id", "indicator_label", "mean",
                  "se", "median", "mode", "lower", "upper"))
@@ -236,7 +236,7 @@ test_that("real model can be run with csv2 data", {
   output <- readRDS(model_run$output_path)
   expect_equal(colnames(output),
                c("area_level", "area_level_label", "area_id", "area_name",
-                 "sex", "age_group", "age_group_id", "age_group_label",
+                 "sex", "age_group", "age_group_label",
                  "calendar_quarter", "quarter_id", "quarter_label", "indicator",
                  "indicator_id", "indicator_label", "mean",
                  "se", "median", "mode", "lower", "upper"))

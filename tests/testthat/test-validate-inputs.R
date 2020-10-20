@@ -60,23 +60,23 @@ test_that("empty rows are ignored in validation", {
   ## The rows just contained , delimiters see mrc-1151
   path <- tempfile(fileext = ".csv")
   writeLines(c("area_id,source,calendar_quarter,sex,age_group,population,asfr",
-"MWI_4_1,Census 2018,CY2008Q2,female,00-04,16155.885821168984,",
-"MWI_4_1,Census 2018,CY2008Q2,female,05-09,14445.68972796804,",
-"MWI_4_1,Census 2018,CY2008Q2,male,10-14,12442.49314841828,",
-"MWI_4_1,Census 2018,CY2008Q2,female,15-19,11256.444365995902,",
-"MWI_4_1,Census 2018,CY2008Q2,female,20-24,7753.0536033182025,",
-"MWI_4_1,Census 2018,CY2008Q2,female,25-29,5942.4272195206995,",
-"MWI_4_1,Census 2018,CY2008Q2,female,30-34,5399.44719147703,",
-"MWI_4_1,Census 2018,CY2008Q2,female,35-39,4678.4498127542165,",
-"MWI_4_1,Census 2018,CY2008Q2,female,40-44,3514.76195260583,",
-"MWI_4_1,Census 2018,CY2008Q2,female,45-49,2685.274469895612,",
-"MWI_4_1,Census 2018,CY2008Q2,female,50-54,1973.1838662610244,",
-"MWI_4_1,Census 2018,CY2008Q2,female,55-59,1497.1350625645346,",
-"MWI_4_1,Census 2018,CY2008Q2,female,60-64,1482.1704491131122,",
-"MWI_4_1,Census 2018,CY2008Q2,female,65-69,1276.117945350401,",
-"MWI_4_1,Census 2018,CY2008Q2,female,70-74,1040.0770066208468,",
-"MWI_4_1,Census 2018,CY2008Q2,female,75-79,641.0301937241122,",
-"MWI_4_1,Census 2018,CY2008Q2,female,80+,802.0852823887416,",
+"MWI_4_1,Census 2018,CY2008Q2,female,Y000_004,16155.885821168984,",
+"MWI_4_1,Census 2018,CY2008Q2,female,Y005_009,14445.68972796804,",
+"MWI_4_1,Census 2018,CY2008Q2,male,Y010_014,12442.49314841828,",
+"MWI_4_1,Census 2018,CY2008Q2,female,Y015_019,11256.444365995902,",
+"MWI_4_1,Census 2018,CY2008Q2,female,Y020_024,7753.0536033182025,",
+"MWI_4_1,Census 2018,CY2008Q2,female,Y025_029,5942.4272195206995,",
+"MWI_4_1,Census 2018,CY2008Q2,female,Y030_034,5399.44719147703,",
+"MWI_4_1,Census 2018,CY2008Q2,female,Y035_039,4678.4498127542165,",
+"MWI_4_1,Census 2018,CY2008Q2,female,Y040_044,3514.76195260583,",
+"MWI_4_1,Census 2018,CY2008Q2,female,Y045_049,2685.274469895612,",
+"MWI_4_1,Census 2018,CY2008Q2,female,Y050_054,1973.1838662610244,",
+"MWI_4_1,Census 2018,CY2008Q2,female,Y055_059,1497.1350625645346,",
+"MWI_4_1,Census 2018,CY2008Q2,female,Y060_064,1482.1704491131122,",
+"MWI_4_1,Census 2018,CY2008Q2,female,Y065_069,1276.117945350401,",
+"MWI_4_1,Census 2018,CY2008Q2,female,Y070_074,1040.0770066208468,",
+"MWI_4_1,Census 2018,CY2008Q2,female,Y075_079,641.0301937241122,",
+"MWI_4_1,Census 2018,CY2008Q2,female,Y080_999,802.0852823887416,",
 ",,,,,,",
 ",,,,,,"), path)
   population <- file_object(path)
@@ -96,9 +96,9 @@ test_that("do_validate_programme validates programme file", {
 
   expect_equal(names(data$filters), c("age", "year", "indicators"))
   expected_age_filters <- list(
-    list(id = scalar("15+"),
+    list(id = scalar("Y015_999"),
          label = scalar("15+")),
-    list(id = scalar("00-14"),
+    list(id = scalar("Y000_014"),
          label = scalar("0-14"))
   )
   expect_equal(data$filters$age, expected_age_filters)
@@ -161,7 +161,7 @@ test_that("do_validate_survey validates survey file", {
   expect_true(nrow(data$data) > 20000)
   expect_equal(typeof(data$data$est), "double")
   expect_equal(names(data$filters), c("age", "surveys", "indicators"))
-  expected_ages <- list(id = scalar("15-49"),
+  expected_ages <- list(id = scalar("Y015_049"),
                         label = scalar("15-49"))
   expected_survey <- list(
     list(id = scalar("MWI2016PHIA"),

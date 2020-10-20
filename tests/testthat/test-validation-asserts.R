@@ -182,16 +182,16 @@ test_that("can check region file spectrum codes are valid", {
 
 test_that("can check a column for expected values", {
   data <- data_frame(
-    age_group = c("00-04", "05-09", "10-14"),
+    age_group = c("Y000_004", "Y005_009", "Y010_014"),
     sex = c("male", "female", "female")
   )
 
   expect_true(assert_expected_values(data, "age_group",
-                                     c("00-04", "05-09", "10-14")))
+                                     c("Y000_004", "Y005_009", "Y010_014")))
   expect_true(assert_expected_values(data, "sex", c("male", "female")))
 
-  expect_error(assert_expected_values(data, "age_group", c("00-04")),
-               "Unexpected values in column age_group: 05-09, 10-14")
+  expect_error(assert_expected_values(data, "age_group", c("Y000_004")),
+               "Unexpected values in column age_group: Y005_009, Y010_014")
   expect_error(assert_expected_values(data, "sex", c("male")),
                "Unexpected values in column sex: female")
 
@@ -199,12 +199,12 @@ test_that("can check a column for expected values", {
                "Data does not contain required column: missing_col")
 
   expect_true(assert_expected_values(data, "age_group",
-                                     c("00-04", "05-09", "10-14"),
+                                     c("Y000_004", "Y005_009", "Y010_014"),
                                      all_values = TRUE))
   expect_error(assert_expected_values(data, "age_group",
-                                      c("00-04", "05-09", "10-14", "15-19"),
+                                      c("Y000_004", "Y005_009", "Y010_014", "Y015_019"),
                                       all_values = TRUE),
-               "Column age_group is missing required values: 15-19")
+               "Column age_group is missing required values: Y015_019")
 
 })
 
@@ -255,7 +255,7 @@ test_that("can check the validity of ANC data", {
 
 test_that("can check that certain combinations of column values are unique", {
   data <- data_frame(area_id = rep("XXX_1_1",3), calendar_quarter = rep("CY2000Q2",3),
-                     age_group = rep("00-04",3), sex = c("male", "female", "both"))
+                     age_group = rep("Y000_004",3), sex = c("male", "female", "both"))
 
   cols_for_unique <- c("area_id", "calendar_quarter", "age_group", "sex")
 

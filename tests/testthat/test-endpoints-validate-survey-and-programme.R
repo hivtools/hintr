@@ -101,11 +101,11 @@ test_that("possible filters are returned for data", {
   expect_length(response$filters$age, 2)
   expect_equal(response$filters$age, list(
     list(
-      id = scalar("15+"),
+      id = scalar("Y015_999"),
       label = scalar("15+")
     ),
     list(
-      id = scalar("00-14"),
+      id = scalar("Y000_014"),
       label = scalar("0-14")
     )
   ))
