@@ -59,7 +59,8 @@ test_that("summary download returns bytes", {
   summary <- download_summary(queue)
   download <- summary(response$id)
   expect_type(download, "raw")
-  expect_length(download, file.size(system_file("dummy_summary_report.html")))
+  expect_length(download, file.size(
+    system_file("output", "malawi_summary_report.html")))
 })
 
 test_that("download returns useful error if model run fails", {
@@ -118,4 +119,29 @@ test_that("download works with v0.1.1 model run result", {
   expect_type(download, "raw")
   expect_length(download, file.size(
     system_file("output", "malawi_coarse_output_download.zip")))
+})
+
+test_that("trying to download report for old model run returns error", {
+  test_mock_model_available()
+
+  ## Mock model run
+  queue <- test_queue(workers = 0)
+  unlockBinding("result", queue)
+  ## Clone model output as it modifies in place
+  out <- clone_model_output(mock_model_v0.1.4)
+  queue$result <- mockery::mock(out)
+  unlockBinding("queue", queue)
+  unlockBinding("task_status", queue$queue)
+  queue$queue$task_status <- mockery::mock("COMPLETE")
+
+  ## Try to download missing summary report
+  path <- setup_calibrate_payload()
+  download <- download_summary(queue)
+  error <- expect_error(download("id"))
+
+  expect_equal(error$data[[1]]$error, scalar("MODEL_RESULT_OUT_OF_DATE"))
+  expect_match(error$data[[1]]$detail, scalar(paste0(
+    "Can't download summary report, please re-run model",
+    " and try download again.")))
+  expect_equal(error$status_code, 400)
 })

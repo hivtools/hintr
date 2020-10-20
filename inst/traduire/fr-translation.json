@@ -63,5 +63,6 @@
     "OUTPUT_FILTER_AREA": "Zone",
     "OUTPUT_FILTER_PERIOD": "Période",
     "OUTPUT_FILTER_SEX": "Sexe",
-    "OUTPUT_FILTER_AGE": "Âge"
+    "OUTPUT_FILTER_AGE": "Âge",
+    "MODEL_RESULT_OLD": "Impossible de télécharger {{type}}, veuillez réexécuter le modèle et réessayer de télécharger."
 }

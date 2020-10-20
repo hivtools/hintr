@@ -965,19 +965,20 @@ test_that("endpoint_download_summary can be run", {
     'attachment; filename="MWI_\\d+-\\d+_summary_report.zip"')
   size <- length(response$data)
   expect_equal(response$headers$`Content-Length`, size)
-  expect_equal(size, file.size(system_file("dummy_summary_report.html")))
+  expect_equal(size, file.size(
+    system_file("output", "malawi_summary_report.html")))
 
   ## HEAD endpoint
-  endpoint <- endpoint_download_coarse_output_head(queue)
+  endpoint <- endpoint_download_summary_head(queue)
   response <- endpoint$run(run_response$data$id)
 
   expect_equal(response$status_code, 200)
   expect_equal(response$content_type, "application/octet-stream")
   expect_match(
     response$headers$`Content-Disposition`,
-    'attachment; filename="MWI_\\d+-\\d+_naomi_coarse_age_groups.zip"')
+    'attachment; filename="MWI_\\d+-\\d+_summary_report.zip"')
   expect_equal(response$headers$`Content-Length`, file.size(
-    system_file("output", "malawi_coarse_output_download.zip")))
+    system_file("output", "malawi_summary_report.html")))
   expect_null(response$body, NULL)
 })
 
@@ -1006,7 +1007,8 @@ test_that("api can call endpoint_download_summary", {
     'attachment; filename="MWI_\\d+-\\d+_summary_report.zip"')
   size <- length(res$body)
   expect_equal(res$headers$`Content-Length`, size)
-  expect_equal(size, file.size(system_file("dummy_summary_report.html")))
+  expect_equal(size, file.size(
+    system_file("output", "malawi_summary_report.html")))
 
   ## HEAD endpoint
   res <- api$request("HEAD", paste0("/download/summary/", response$data$id))
@@ -1017,7 +1019,7 @@ test_that("api can call endpoint_download_summary", {
     res$headers$`Content-Disposition`,
     'attachment; filename="MWI_\\d+-\\d+_summary_report.zip"')
   expect_equal(res$headers$`Content-Length`,
-               file.size(system_file("dummy_summary_report.html")))
+               file.size(system_file("output", "malawi_summary_report.html")))
   ## Plumber uses an empty string to represent an empty body
   expect_equal(res$body, "")
 })
