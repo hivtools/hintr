@@ -1,4 +1,4 @@
-# hintr 0.1.4
+# hintr 0.1.5
 
 * Depend on naomi 2.0.0 version for 2021 UNAIDS estimates.
 
