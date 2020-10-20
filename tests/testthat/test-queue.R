@@ -48,8 +48,8 @@ test_that("queue works as intended", {
   ## Result can be retrieved after task has completed
   res <- queue$result(job_id)
   expect_equal(names(res), c("output_path", "spectrum_path",
-                             "coarse_output_path", "calibration_path",
-                             "metadata"))
+                             "coarse_output_path", "summary_report_path",
+                             "calibration_path", "metadata"))
   expect_length(queue$queue$task_list(), 1)
 
   ## task can be cleaned up
