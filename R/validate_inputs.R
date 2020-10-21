@@ -115,7 +115,7 @@ do_validate_programme <- function(programme, shape) {
   assert_single_country(data, "programme")
   assert_column_names(
     colnames(data),
-    c("area_id", "year", "sex", "age_group", "current_art"))
+    c("area_id", "year", "sex", "age_group", "art_current"))
   assert_consistent_regions(read_regions(shape, "shape"),
                             read_regions(programme, "programme"),
                             "programme")
@@ -124,7 +124,7 @@ do_validate_programme <- function(programme, shape) {
   art_ages <- naomi::get_age_groups()$age_group
   art_ages <- art_ages[!art_ages %in% c("Y000_000", "Y001_004")]
   assert_expected_values(data, "age_group", art_ages)
-  assert_column_positive_numeric(data, "current_art")
+  assert_column_positive_numeric(data, "art_current")
   assert_year_column(data)
   list(data = data,
        filters = list("age" = get_age_filters(data),
@@ -150,15 +150,15 @@ do_validate_anc <- function(anc, shape) {
   assert_column_names(
     colnames(data),
     c("area_id", "age_group", "year", "anc_clients",
-      "ancrt_known_pos", "ancrt_already_art", "ancrt_tested", "ancrt_test_pos"))
+      "anc_known_pos", "anc_already_art", "anc_tested", "anc_tested_pos"))
   assert_consistent_regions(read_regions(shape, "shape"),
                             read_regions(anc, "anc"),
                             "ANC")
   assert_unique_combinations(data, c("area_id", "age_group", "year"))
   assert_expected_values(data, "age_group", "Y015_049")
   assert_year_column(data)
-  assert_column_positive_numeric(data, c("anc_clients", "ancrt_known_pos", "ancrt_already_art",
-                                         "ancrt_tested", "ancrt_test_pos"))
+  assert_column_positive_numeric(data, c("anc_clients", "anc_known_pos", "anc_already_art",
+                                         "anc_tested", "anc_tested_pos"))
   assert_anc_client_numbers(data)
   data <- naomi::calculate_prevalence_art_coverage(data)
   list(data = data,
@@ -181,14 +181,16 @@ do_validate_survey <- function(survey, shape) {
   assert_column_names(
     colnames(data),
     c("area_id", "survey_id", "sex", "age_group",
-      "indicator", "n_cluster", "n_obs", "est", "se", "ci_l", "ci_u"))
+      "indicator", "n_clusters", "n_observations",
+      "estimate", "std_error", "ci_lower", "ci_upper"))
   assert_consistent_regions(read_regions(shape, "shape"),
                             read_regions(survey, "survey"),
                             "survey")
   assert_unique_combinations(data, c("area_id", "survey_id", "sex", "age_group", "indicator"))
   assert_expected_values(data, "sex", c("male", "female", "both"))
   assert_expected_values(data, "age_group", naomi::get_age_groups()$age_group)
-  assert_column_positive_numeric(data, c("n_cluster", "n_obs", "est", "se", "ci_l", "ci_u"))
+  assert_column_positive_numeric(data, c("n_clusters", "n_observations",
+                                         "estimate", "std_error", "ci_lower", "ci_upper"))
   list(data = data,
        filters = list("age" = get_age_filters(data),
                       "surveys" = get_survey_filters(data),

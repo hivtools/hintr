@@ -138,12 +138,12 @@ assert_single_source <- function(data) {
 #' @return TRUE if data passes validity checks, else throws error
 #' @keywords internal
 assert_anc_client_numbers <- function(data) {
-  check_pos <- data$ancrt_tested - data$ancrt_test_pos
+  check_pos <- data$anc_tested - data$anc_tested_pos
   if (any(check_pos < 0, na.rm = TRUE)) {
     stop(t_("VALIDATION_ANC_CLIENT_NUMBERS1"))
   }
 
-  check_on_art <- (data$ancrt_test_pos + data$ancrt_known_pos) - data$ancrt_already_art
+  check_on_art <- (data$anc_tested_pos + data$anc_known_pos) - data$anc_already_art
   if (any(check_on_art < 0, na.rm = TRUE)) {
     stop(t_("VALIDATION_ANC_CLIENT_NUMBERS2"))
   }
