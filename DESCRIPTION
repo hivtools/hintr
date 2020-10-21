@@ -23,7 +23,7 @@ Imports:
     ids,
     jsonlite (>= 1.2.2),
     naomi (>= 1.0.7),
-    pkgapi (>= 0.0.9),
+    pkgapi (>= 0.0.10),
     R6,
     redux,
     rrq (>= 0.2.7),
