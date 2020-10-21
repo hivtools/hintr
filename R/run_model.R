@@ -45,6 +45,8 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
                    spectrum_path = system_file("output", "malawi_spectrum_download.zip"),
                    coarse_output_path =
                      system_file("output", "malawi_coarse_output_download.zip"),
+                   summary_report_path =
+                     system_file("output", "malawi_summary_report.html"),
                    calibration_path = system_file("output",
                                                   "malawi_calibration.rds"),
                    metadata = list(areas = "MWI"))
@@ -66,6 +68,7 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
   output_path <- tempfile(tmpdir = path_results, fileext = ".rds")
   spectrum_path <- tempfile(tmpdir = path_results, fileext = ".zip")
   coarse_output_path <- tempfile(tmpdir = path_results, fileext = ".zip")
+  summary_report_path <- tempfile(tmpdir = path_results, fileext = ".html")
   calibration_path <- tempfile(tmpdir = path_results, fileext = ".rds")
 
   ## Fix some labels to match what naomi requires
@@ -75,7 +78,8 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
   data$anc <- NULL
 
   naomi::hintr_run_model(data, options, output_path, spectrum_path,
-                         coarse_output_path, calibration_path)
+                         coarse_output_path, summary_report_path,
+                         calibration_path)
 }
 
 select_data <- function(data) {

@@ -4,13 +4,15 @@ Sys.setenv("USE_MOCK_MODEL" = "true")
 ## Create mock model if files exist
 mock_model <- list(
   output_path = system.file("output", "malawi_output.rds", package = "hintr"),
-  spectrum_path = system.file("output", "malawi_spectrum_download.zip",
-                              package = "hintr"),
+  spectrum_path =
+    system.file("output", "malawi_spectrum_download.zip", package = "hintr"),
   coarse_output_path =
     system.file("output", "malawi_coarse_output_download.zip",
                 package = "hintr"),
-  calibration_path = system.file("output", "malawi_calibration.rds",
-                                 package = "hintr"))
+  summary_report_path =
+    system.file("output", "malawi_summary_report.html", package = "hintr"),
+  calibration_path =
+    system.file("output", "malawi_calibration.rds", package = "hintr"))
 class(mock_model) <- "hintr_output"
 
 test_mock_model_available <- function() {
@@ -21,6 +23,19 @@ test_mock_model_available <- function() {
     }
   }))
 }
+
+## Model output as returned by
+## hintr version 0.1.4 and naomi version 1.0.8
+mock_model_v0.1.4 <- list(
+  output_path = system.file("output", "malawi_output.rds", package = "hintr"),
+  spectrum_path = system.file("output", "malawi_spectrum_download.zip",
+                              package = "hintr"),
+  coarse_output_path =
+    system.file("output", "malawi_coarse_output_download.zip",
+                package = "hintr"),
+  calibration_path = system.file("output", "malawi_calibration.rds",
+                                 package = "hintr"))
+class(mock_model) <- "hintr_output"
 
 ## Model output as returned by
 ## hintr version 0.1.2 and naomi version 1.0.4
@@ -82,10 +97,17 @@ clone_model_output <- function(output) {
   } else {
     calibration_path <- NULL
   }
+  if (!is.null(output$summary_report_path)) {
+    summary_report_path <- tempfile(fileext = ".rds")
+    file.copy(output$summary_report_path, summary_report_path)
+  } else {
+    summary_report_path <- NULL
+  }
   out <- list(output_path = output_path,
               spectrum_path = spectrum_path,
               coarse_output_path = coarse_output_path,
               calibration_path = calibration_path,
+              summary_report_path = summary_report_path,
               metadata = output$metadata)
   class(out) <- "hintr_output"
   out
