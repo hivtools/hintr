@@ -35,7 +35,7 @@ test_that("endpoint model run queues a model run", {
   expect_equal(names(result), c("data", "plottingMetadata"))
   expect_equal(colnames(result$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
-                 "indicator_id", "mode", "mean", "lower", "upper"))
+                 "indicator", "mode", "mean", "lower", "upper"))
   expect_true(nrow(result$data) > 84042)
   expect_equal(names(result$plottingMetadata), c("barchart", "choropleth"))
 
@@ -453,7 +453,7 @@ test_that("can calibrate a model result", {
   expect_equal(names(calibrated_result), c("data", "plottingMetadata"))
   expect_equal(colnames(calibrated_result$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
-                 "indicator_id", "mode", "mean", "lower", "upper"))
+                 "indicator", "mode", "mean", "lower", "upper"))
   expect_true(nrow(calibrated_result$data) > 84042)
   expect_equal(names(calibrated_result$plottingMetadata),
                c("barchart", "choropleth"))

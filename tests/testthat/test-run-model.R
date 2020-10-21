@@ -6,7 +6,7 @@ test_that("model can be run and filters extracted", {
   expect_equal(names(model_run), c("data", "plottingMetadata"))
   expect_equal(names(model_run$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
-                 "indicator_id", "mode", "mean", "lower", "upper"))
+                 "indicator", "mode", "mean", "lower", "upper"))
   expect_true(nrow(model_run$data) > 84042)
   expect_equal(names(model_run$plottingMetadata), c("barchart", "choropleth"))
   barchart <- model_run$plottingMetadata$barchart
@@ -65,7 +65,7 @@ test_that("model without national level results can be processed", {
   expect_equal(names(model_run), c("data", "plottingMetadata"))
   expect_equal(names(model_run$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
-                 "indicator_id", "mode", "mean", "lower", "upper"))
+                 "indicator", "mode", "mean", "lower", "upper"))
   expect_true(nrow(model_run$data) > 84042)
   expect_equivalent(as.data.frame(model_run$data)[1, "area_id"], "MWI_1_1")
   expect_equal(names(model_run$plottingMetadata), c("barchart", "choropleth"))
