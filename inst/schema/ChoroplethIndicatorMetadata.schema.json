@@ -8,6 +8,7 @@
     "error_high_column": { "type": "string" },
     "indicator_column": { "type": "string" },
     "indicator_value": { "type": "string" },
+    "indicator_sort_order": { "type": "number" },
     "name": { "type": "string" },
     "min": { "type": "number" },
     "max": { "type": "number" },
