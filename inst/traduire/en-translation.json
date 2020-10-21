@@ -63,6 +63,6 @@
     "OUTPUT_FILTER_AREA": "Area",
     "OUTPUT_FILTER_PERIOD": "Period",
     "OUTPUT_FILTER_SEX": "Sex",
-    "OUTPUT_FILTER_AGE": "Age"
-
+    "OUTPUT_FILTER_AGE": "Age",
+    "MODEL_RESULT_OLD": "Can't download {{type}}, please re-run model and try download again."
 }

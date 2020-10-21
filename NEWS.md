@@ -1,3 +1,7 @@
+# hintr 0.1.5
+
+* Add endpoint for downloading dummy summary report
+
 # hintr 0.1.4
 
 * Return number formatting metadata from /meta/plotting/ and /model/result endpoints

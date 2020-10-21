@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 "Run a model and save outputs at specified paths
 Usage:
-  run_model (--payload=<payload> --output-path=<output-path> --spectrum-path=<spectrum-path> --coarse-output-path=<coarse-output-path> --calibration-path=<calibration-path>)
+  run_model (--payload=<payload> --output-path=<output-path> --spectrum-path=<spectrum-path> --coarse-output-path=<coarse-output-path> --summary-report-path=<summary-report-path> --calibration-path=<calibration-path>)
 
 Options:
   -h --help                                    Show this screen.
@@ -9,6 +9,7 @@ Options:
   --output-path=<output-path>                  Path to output data RDS.
   --spectrum-path=<spectrum-path>              Path to spectrum zip download.
   --coarse-output-path=<coarse-output-path>    Path to summary zip download.
+  --summary-report-path=<summary-report-path>  Path to summary report download.
   --calibration-path=<calibration-path>        Path to calibration data.
 " -> usage
 
@@ -27,6 +28,7 @@ output <- naomi::hintr_run_model(payload$data,
                                  dat$output_path,
                                  dat$spectrum_path,
                                  dat$coarse_output_path,
+                                 dat$summary_report_path,
                                  dat$calibration_path)
 
 message(sprintf("Saving output at %s", normalizePath(dat$output_path,
@@ -34,7 +36,9 @@ message(sprintf("Saving output at %s", normalizePath(dat$output_path,
 message(
   sprintf("Saving spectrum download at %s", normalizePath(dat$spectrum_path,
                                                           mustWork = TRUE)))
-message(sprintf("Saving output at %s", normalizePath(dat$coarse_output_path,
-                                                     mustWork = TRUE)))
+message(sprintf("Saving coarse output at %s",
+                normalizePath(dat$coarse_output_path, mustWork = TRUE)))
+message(sprintf("Saving summary report at %s",
+                normalizePath(dat$summary_report_path, mustWork = TRUE)))
 message(sprintf("Saving calibration at %s",
                 normalizePath(dat$calibration_path, mustWork = TRUE)))
