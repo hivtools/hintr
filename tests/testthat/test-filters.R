@@ -227,7 +227,7 @@ test_that("can get indicator filters for programme data", {
   filters <- get_indicator_filters(programme, "programme")
 
   expect_length(filters, 1)
-  expect_equal(filters[[1]]$id, scalar("current_art"))
+  expect_equal(filters[[1]]$id, scalar("art_current"))
   expect_equal(filters[[1]]$label, scalar("ART number (attending)"))
 })
 

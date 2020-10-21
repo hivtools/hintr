@@ -75,7 +75,7 @@ test_that("endpoint model run queues a model run", {
   ## Barchart indicators are in numeric id order
   expect_equal(barchart$indicators$indicator,
                c("population", "prevalence", "plhiv", "art_coverage",
-                 "current_art", "receiving_art", "incidence", "new_infections",
+                 "art_current", "receiving_art", "incidence", "new_infections",
                  "anc_prevalence", "anc_art_coverage"))
 
   ## Choropleth
@@ -112,7 +112,7 @@ test_that("endpoint model run queues a model run", {
   ## Choropleth indicators are in numeric id order
   expect_equal(choropleth$indicators$indicator,
                c("population", "prevalence", "plhiv", "art_coverage",
-                 "current_art", "receiving_art", "incidence", "new_infections",
+                 "art_current", "receiving_art", "incidence", "new_infections",
                  "anc_prevalence", "anc_art_coverage"))
 })
 

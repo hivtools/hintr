@@ -239,16 +239,16 @@ test_that("can check data comes from a single source", {
 })
 
 test_that("can check the validity of ANC data", {
-  data <- data_frame(ancrt_test_pos=c(2,3,6), ancrt_known_pos=c(4,5,6),
-                     ancrt_already_art=c(1,1,5), ancrt_tested=c(2,4,9))
+  data <- data_frame(anc_tested_pos=c(2,3,6), anc_known_pos=c(4,5,6),
+                     anc_already_art=c(1,1,5), anc_tested=c(2,4,9))
 
   expect_true(assert_anc_client_numbers(data))
 
-  data$ancrt_tested <- c(2,2,9)
+  data$anc_tested <- c(2,2,9)
   expect_error(assert_anc_client_numbers(data),
                  "The number of people who tested positive is greater than the number of people tested")
-  data$ancrt_already_art <- c(20,1,5)
-  data$ancrt_tested <- c(2,4,9)
+  data$anc_already_art <- c(20,1,5)
+  data$anc_tested <- c(2,4,9)
   expect_error(assert_anc_client_numbers(data),
                  "The number of people already on ART is greater than the number positive \\(those known to be positive \\+ those who tested positive\\)")
 })
@@ -268,16 +268,16 @@ test_that("can check that certain combinations of column values are unique", {
 
 test_that("can check that a column contains only positive numeric values", {
   data <- data_frame(population=c(1, 2, 2, 3),
-                     current_art=c("none", 2, 0, 5),
+                     art_current=c("none", 2, 0, 5),
                      test_pos=c(-1, -3, 2, 4))
 
   expect_true(assert_column_positive_numeric(data, "population"))
-  expect_error(assert_column_positive_numeric(data, "current_art"),
-               "Column current_art is required to be numeric. Non-numeric values were found.")
+  expect_error(assert_column_positive_numeric(data, "art_current"),
+               "Column art_current is required to be numeric. Non-numeric values were found.")
   expect_error(assert_column_positive_numeric(data, "test_pos"),
                "Column test_pos requires positive numeric values. Negative numeric values were found.")
-  expect_error(assert_column_positive_numeric(data, c("population", "current_art")),
-                                              "Column current_art is required to be numeric. Non-numeric values were found.")
+  expect_error(assert_column_positive_numeric(data, c("population", "art_current")),
+                                              "Column art_current is required to be numeric. Non-numeric values were found.")
         })
 
 test_that("can check for non NA values", {

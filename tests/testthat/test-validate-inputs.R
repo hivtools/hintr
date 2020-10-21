@@ -92,7 +92,7 @@ test_that("do_validate_programme validates programme file", {
   data <- do_validate_programme(programme, shape)
   ## Some arbitrary test that the data has actually been returned
   expect_true(nrow(data$data) > 200)
-  expect_equal(typeof(data$data$current_art), "double")
+  expect_equal(typeof(data$data$art_current), "double")
 
   expect_equal(names(data$filters), c("age", "year", "indicators"))
   expected_age_filters <- list(
@@ -107,7 +107,7 @@ test_that("do_validate_programme validates programme file", {
   expect_equal(data$filters$year[[1]]$label, scalar("2018"))
 
   expect_length(data$filters$indicators, 1)
-  expect_equal(data$filters$indicators[[1]]$id, scalar("current_art"))
+  expect_equal(data$filters$indicators[[1]]$id, scalar("art_current"))
   expect_equal(data$filters$indicators[[1]]$label, scalar("ART number (attending)"))
 })
 
@@ -132,7 +132,7 @@ test_that("do_validate_anc validates ANC file and gets data for plotting", {
   expect_equal(data$filters$indicators[[2]]$label, scalar("ART coverage"))
 })
 
-test_that("do_validate_anc doesn't require ancrt_hiv_status column", {
+test_that("do_validate_anc doesn't require anc_hiv_status column", {
   anc <- file_object(file.path("testdata", "anc_without_hiv_status.csv"))
   shape <- file_object(file.path("testdata", "malawi.geojson"))
   data <- do_validate_anc(anc, shape)

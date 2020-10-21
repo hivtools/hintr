@@ -12,7 +12,7 @@ test_that("endpoint_validate_survey_programme supports programme file", {
   expect_equal(response$fromADR, scalar(FALSE))
   ## Sanity check that data has been returned
   expect_true(nrow(response$data) >= 200)
-  expect_equal(typeof(response$data[, "current_art"]), "double")
+  expect_equal(typeof(response$data[, "art_current"]), "double")
 })
 
 test_that("endpoint_validate_survey_programme returns error on invalid programme data", {
@@ -73,7 +73,7 @@ test_that("endpoint_validate_survey_programme supports survey file", {
   expect_equal(response$fromADR, scalar(FALSE))
   ## Sanity check that data has been returned
   expect_true(nrow(response$data) >= 20000)
-  expect_equal(typeof(response$data[, "est"]), "double")
+  expect_equal(typeof(response$data[, "estimate"]), "double")
 })
 
 test_that("endpoint_validate_survey_programme returns error on invalid survey data", {
@@ -114,7 +114,7 @@ test_that("possible filters are returned for data", {
   expect_equal(response$filters$year[[1]]$label, scalar("2018"))
 
   expect_length(response$filters$indicators, 1)
-  expect_equal(response$filters$indicators[[1]]$id, scalar("current_art"))
+  expect_equal(response$filters$indicators[[1]]$id, scalar("art_current"))
   expect_equal(response$filters$indicators[[1]]$label,
                scalar("ART number (attending)"))
 
