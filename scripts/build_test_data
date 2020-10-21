@@ -3,7 +3,8 @@
 paths <- list(output_path = "inst/output/malawi_output.rds",
               spectrum_path = "inst/output/malawi_spectrum_download.zip",
               coarse_output_path = "inst/output/malawi_coarse_output_download.zip",
-              calibration_path = "inst/output/malawi_calibration.rds")
+              calibration_path = "inst/output/malawi_calibration.rds",
+              summary_report_path = "inst/output/malawi_summary_report.html")
 
 dir.create("inst/output", showWarnings = FALSE)
 invisible(lapply(paths, function(path) {
@@ -18,6 +19,7 @@ out <- system2("./scripts/run_model",
     "--output-path", paths$output_path,
     "--spectrum-path", paths$spectrum_path,
     "--coarse-output-path", paths$coarse_output_path,
+    "--summary-report-path", paths$summary_report_path,
     "--calibration-path", paths$calibration_path))
 
 if (out != 0) {

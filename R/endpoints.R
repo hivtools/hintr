@@ -216,6 +216,10 @@ download_coarse_output <- function(queue) {
   download(queue, "coarse_output", "naomi_coarse_age_groups")
 }
 
+download_summary <- function(queue) {
+  download(queue, "summary", "summary_report")
+}
+
 download <- function(queue, type, filename) {
   function(id) {
     tryCatch({
@@ -236,7 +240,13 @@ download <- function(queue, type, filename) {
       }
       path <- switch(type,
                      "spectrum" = res$spectrum_path,
-                     "coarse_output" = coarse_output)
+                     "coarse_output" = coarse_output,
+                     "summary" = res$summary_report_path)
+      if (is.null(path)) {
+        hintr_error(t_("MODEL_RESULT_OLD",
+                       list(type = gsub("_", " ", filename))),
+                    "MODEL_RESULT_OUT_OF_DATE")
+      }
       bytes <- readBin(path, "raw", n = file.size(path))
       bytes <- pkgapi::pkgapi_add_headers(bytes, list(
         "Content-Disposition" = build_content_disp_header(res$metadata$areas,

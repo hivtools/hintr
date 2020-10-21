@@ -156,8 +156,8 @@ test_that("real model can be run", {
     model_run <- run_model(data, options, tempdir())
   })
   expect_equal(names(model_run), c("output_path", "spectrum_path",
-                                   "coarse_output_path", "calibration_path",
-                                   "metadata"))
+                                   "coarse_output_path", "summary_report_path",
+                                   "calibration_path", "metadata"))
 
   output <- readRDS(model_run$output_path)
   expect_equal(colnames(output),
@@ -173,12 +173,12 @@ test_that("real model can be run", {
                     "meta_area.csv", "meta_indicator.csv", "meta_period.csv")
                   %in% file_list$Name))
 
-  ## TODO: replace with checks for spectrum digest once function to create
-  ## that has been added mrc-636
   file_list <- unzip(model_run$coarse_output_path, list = TRUE)
   expect_true(all(c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
                     "meta_area.csv", "meta_indicator.csv", "meta_period.csv")
                   %in% file_list$Name))
+
+  expect_true(file.size(model_run$summary_report_path) > 2000)
 })
 
 test_that("real model can be run with csv2 data", {
@@ -230,8 +230,8 @@ test_that("real model can be run with csv2 data", {
   })
 
   expect_equal(names(model_run), c("output_path", "spectrum_path",
-                                   "coarse_output_path", "calibration_path",
-                                   "metadata"))
+                                   "coarse_output_path", "summary_report_path",
+                                   "calibration_path", "metadata"))
 
   output <- readRDS(model_run$output_path)
   expect_equal(colnames(output),
@@ -247,10 +247,10 @@ test_that("real model can be run with csv2 data", {
                     "meta_area.csv", "meta_indicator.csv", "meta_period.csv")
                   %in% file_list$Name))
 
-  ## TODO: replace with checks for spectrum digest once function to create
-  ## that has been added mrc-636
   file_list <- unzip(model_run$coarse_output_path, list = TRUE)
   expect_true(all(c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
                     "meta_area.csv", "meta_indicator.csv", "meta_period.csv")
                   %in% file_list$Name))
+
+  expect_true(file.size(model_run$summary_report_path) > 2000)
 })
