@@ -14,19 +14,19 @@
     "anc_clients": {
       "type": "number"
     },
-    "ancrt_hiv_status": {
+    "anc_hiv_status": {
       "type": "number"
     },
-    "ancrt_known_pos": {
+    "anc_known_pos": {
       "type": "number"
     },
-    "ancrt_already_art": {
+    "anc_already_art": {
       "type": "number"
     },
-    "ancrt_tested": {
+    "anc_tested": {
       "type": "number"
     },
-    "ancrt_test_pos": {
+    "anc_tested_pos": {
       "type": "number"
     },
     "prevalence": {
@@ -38,6 +38,6 @@
   },
   "additionalProperties": true,
   "required": [ "area_id", "age_group", "year", "anc_clients",
-    "ancrt_known_pos", "ancrt_already_art", "ancrt_tested", "ancrt_test_pos",
+    "anc_known_pos", "anc_already_art", "anc_tested", "anc_tested_pos",
     "prevalence", "art_coverage" ]
 }
