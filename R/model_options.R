@@ -32,7 +32,7 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
   }
   survey_prevalence_options <- get_survey_options("prevalence")
   survey_art_coverage_options <- get_survey_options("art_coverage")
-  survey_recently_infected_options <- get_survey_options("recent")
+  survey_recently_infected_options <- get_survey_options("recent_infected")
 
   ## ART options
   art_year_options <- NULL

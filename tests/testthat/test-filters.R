@@ -192,14 +192,13 @@ test_that("error thrown when tree can't be constructed", {
 
 test_that("naomi IDs can be mapped to hint IDs", {
   expect_equal(get_hint_id("prevalence"), "prevalence")
-  expect_equal(get_hint_id("prev"), "prevalence")
   expect_equal(get_hint_id("art_coverage"), "art_coverage")
   expect_error(get_hint_id("missing"),
                "Failed to locate hint ID from naomi_id missing.")
 })
 
 test_that("can get indicator display name", {
-  expect_equal(get_indicator_display_name("vls"), "Viral load suppression")
+  expect_equal(get_indicator_display_name("viral_suppression_plhiv"), "Viral load suppression")
   expect_equal(get_indicator_display_name("prevalence"), "HIV prevalence")
   expect_error(get_indicator_display_name("missing"),
                "Failed to get display name for hint ID missing.")
@@ -215,9 +214,9 @@ test_that("can get indicator filters for survey data", {
   expect_equal(filters[[1]]$label, scalar("HIV prevalence"))
   expect_equal(filters[[2]]$id, scalar("art_coverage"))
   expect_equal(filters[[2]]$label, scalar("ART coverage"))
-  expect_equal(filters[[3]]$id, scalar("recent"))
+  expect_equal(filters[[3]]$id, scalar("recent_infected"))
   expect_equal(filters[[3]]$label, scalar("Proportion recently infected"))
-  expect_equal(filters[[4]]$id, scalar("vls"))
+  expect_equal(filters[[4]]$id, scalar("viral_suppression_plhiv"))
   expect_equal(filters[[4]]$label, scalar("Viral load suppression"))
 })
 
@@ -239,10 +238,10 @@ test_that("can get indicator filters for anc data", {
   filters <- get_indicator_filters(anc, "anc")
 
   expect_length(filters, 2)
-  expect_equal(filters[[1]]$id, scalar("prevalence"))
-  expect_equal(filters[[1]]$label, scalar("HIV prevalence"))
-  expect_equal(filters[[2]]$id, scalar("art_coverage"))
-  expect_equal(filters[[2]]$label, scalar("ART coverage"))
+  expect_equal(filters[[1]]$id, scalar("anc_prevalence"))
+  expect_equal(filters[[1]]$label, scalar("ANC HIV prevalence"))
+  expect_equal(filters[[2]]$id, scalar("anc_art_coverage"))
+  expect_equal(filters[[2]]$label, scalar("ANC prior ART coverage"))
 })
 
 test_that("error thrown for unknown type", {

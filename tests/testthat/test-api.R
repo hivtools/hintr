@@ -134,8 +134,8 @@ test_that("endpoint_validate_survey_programme anc", {
   expect_equal(response$data$fromADR, scalar(FALSE))
   ## Sanity check that data has been returned
   expect_true(nrow(response$data$data) >= 200)
-  expect_equal(typeof(response$data$data[, "prevalence"]), "double")
-  expect_equal(typeof(response$data$data[, "art_coverage"]), "double")
+  expect_equal(typeof(response$data$data[, "anc_prevalence"]), "double")
+  expect_equal(typeof(response$data$data[, "anc_art_coverage"]), "double")
 })
 
 test_that("endpoint_validate_survey_programme works with anc data", {
@@ -153,8 +153,8 @@ test_that("endpoint_validate_survey_programme works with anc data", {
   expect_equal(body$data$fromADR, FALSE)
   ## Sanity check that data has been returned
   expect_true(nrow(body$data$data) >= 200)
-  expect_equal(typeof(body$data$data[, "prevalence"]), "double")
-  expect_equal(typeof(body$data$data[, "art_coverage"]), "double")
+  expect_equal(typeof(body$data$data[, "anc_prevalence"]), "double")
+  expect_equal(typeof(body$data$data[, "anc_art_coverage"]), "double")
 })
 
 test_that("endpoint_validate_survey_programme survey", {

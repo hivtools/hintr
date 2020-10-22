@@ -129,13 +129,13 @@ test_that("endpoint_plotting_metadata gets metadata", {
   expect_equal(names(response$programme), "choropleth")
   expect_length(response$anc$choropleth$indicators, 2)
   expect_equal(response$anc$choropleth$indicators[[1]]$indicator,
-               scalar("prevalence"))
+               scalar("anc_prevalence"))
   expect_equal(response$anc$choropleth$indicators[[2]]$indicator,
-               scalar("art_coverage"))
+               scalar("anc_art_coverage"))
   expect_equal(response$anc$choropleth$indicators[[1]]$name,
-               scalar("HIV prevalence"))
+               scalar("ANC HIV prevalence"))
   expect_equal(response$anc$choropleth$indicators[[2]]$name,
-               scalar("ART coverage"))
+               scalar("ANC prior ART coverage"))
 })
 
 test_that("endpoint_plotting_metadata returns default data for missing country", {
@@ -152,13 +152,13 @@ test_that("endpoint_plotting_metadata returns default data for missing country",
   expect_equal(names(response$programme), "choropleth")
   expect_length(response$anc$choropleth$indicators, 2)
   expect_equal(response$anc$choropleth$indicators[[1]]$indicator,
-               scalar("prevalence"))
+               scalar("anc_prevalence"))
   expect_equal(response$anc$choropleth$indicators[[2]]$indicator,
-               scalar("art_coverage"))
+               scalar("anc_art_coverage"))
   expect_equal(response$anc$choropleth$indicators[[1]]$name,
-               scalar("HIV prevalence"))
+               scalar("ANC HIV prevalence"))
   expect_equal(response$anc$choropleth$indicators[[2]]$name,
-               scalar("ART coverage"))
+               scalar("ANC prior ART coverage"))
 })
 
 test_that("can convert model status to scalar", {

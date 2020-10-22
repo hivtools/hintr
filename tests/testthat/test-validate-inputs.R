@@ -118,7 +118,7 @@ test_that("do_validate_anc validates ANC file and gets data for plotting", {
 
   expect_true(nrow(data$data) > 200)
   expect_equal(typeof(data$data$area_id), "character")
-  expect_true(all(c("prevalence", "art_coverage") %in% colnames(data$data)))
+  expect_true(all(c("anc_prevalence", "anc_art_coverage") %in% colnames(data$data)))
 
   expect_equal(names(data$filters), c("year", "indicators"))
   expect_length(data$filters$year, 8)
@@ -126,10 +126,10 @@ test_that("do_validate_anc validates ANC file and gets data for plotting", {
   expect_equal(data$filters$year[[1]]$label, scalar("2018"))
 
   expect_length(data$filters$indicators, 2)
-  expect_equal(data$filters$indicators[[1]]$id, scalar("prevalence"))
-  expect_equal(data$filters$indicators[[1]]$label, scalar("HIV prevalence"))
-  expect_equal(data$filters$indicators[[2]]$id, scalar("art_coverage"))
-  expect_equal(data$filters$indicators[[2]]$label, scalar("ART coverage"))
+  expect_equal(data$filters$indicators[[1]]$id, scalar("anc_prevalence"))
+  expect_equal(data$filters$indicators[[1]]$label, scalar("ANC HIV prevalence"))
+  expect_equal(data$filters$indicators[[2]]$id, scalar("anc_art_coverage"))
+  expect_equal(data$filters$indicators[[2]]$label, scalar("ANC prior ART coverage"))
 })
 
 test_that("do_validate_anc doesn't require anc_hiv_status column", {
@@ -139,7 +139,7 @@ test_that("do_validate_anc doesn't require anc_hiv_status column", {
 
   expect_true(nrow(data$data) > 200)
   expect_equal(typeof(data$data$area_id), "character")
-  expect_true(all(c("prevalence", "art_coverage") %in% colnames(data$data)))
+  expect_true(all(c("anc_prevalence", "anc_art_coverage") %in% colnames(data$data)))
 
   expect_equal(names(data$filters), c("year", "indicators"))
   expect_length(data$filters$year, 8)
@@ -147,10 +147,10 @@ test_that("do_validate_anc doesn't require anc_hiv_status column", {
   expect_equal(data$filters$year[[1]]$label, scalar("2018"))
 
   expect_length(data$filters$indicators, 2)
-  expect_equal(data$filters$indicators[[1]]$id, scalar("prevalence"))
-  expect_equal(data$filters$indicators[[1]]$label, scalar("HIV prevalence"))
-  expect_equal(data$filters$indicators[[2]]$id, scalar("art_coverage"))
-  expect_equal(data$filters$indicators[[2]]$label, scalar("ART coverage"))
+  expect_equal(data$filters$indicators[[1]]$id, scalar("anc_prevalence"))
+  expect_equal(data$filters$indicators[[1]]$label, scalar("ANC HIV prevalence"))
+  expect_equal(data$filters$indicators[[2]]$id, scalar("anc_art_coverage"))
+  expect_equal(data$filters$indicators[[2]]$label, scalar("ANC prior ART coverage"))
 })
 
 test_that("do_validate_survey validates survey file", {
@@ -182,10 +182,10 @@ test_that("do_validate_survey validates survey file", {
   expect_equal(data$filters$indicators[[1]]$label, scalar("HIV prevalence"))
   expect_equal(data$filters$indicators[[2]]$id, scalar("art_coverage"))
   expect_equal(data$filters$indicators[[2]]$label, scalar("ART coverage"))
-  expect_equal(data$filters$indicators[[3]]$id, scalar("recent"))
+  expect_equal(data$filters$indicators[[3]]$id, scalar("recent_infected"))
   expect_equal(data$filters$indicators[[3]]$label,
                scalar("Proportion recently infected"))
-  expect_equal(data$filters$indicators[[4]]$id, scalar("vls"))
+  expect_equal(data$filters$indicators[[4]]$id, scalar("viral_suppression_plhiv"))
   expect_equal(data$filters$indicators[[4]]$label,
                scalar("Viral load suppression"))
 })
