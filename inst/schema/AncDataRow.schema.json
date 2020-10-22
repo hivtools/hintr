@@ -29,15 +29,15 @@
     "anc_tested_pos": {
       "type": "number"
     },
-    "prevalence": {
+    "anc_prevalence": {
       "type": "number"
     },
-    "art_coverage": {
+    "anc_art_coverage": {
       "type": "number"
     }
   },
   "additionalProperties": true,
   "required": [ "area_id", "age_group", "year", "anc_clients",
     "anc_known_pos", "anc_already_art", "anc_tested", "anc_tested_pos",
-    "prevalence", "art_coverage" ]
+    "anc_prevalence", "anc_art_coverage" ]
 }
