@@ -11,7 +11,8 @@ Queue <- R6::R6Class(
     initialize = function(queue_id = NULL, workers = 2,
                           cleanup_on_exit = workers > 0,
                           results_dir = tempdir(),
-                          prerun_dir = NULL) {
+                          prerun_dir = NULL,
+                          timeout = Inf) {
       self$cleanup_on_exit <- cleanup_on_exit
       self$results_dir = results_dir
 
@@ -23,7 +24,7 @@ Queue <- R6::R6Class(
       self$queue <- rrq::rrq_controller(queue_id, con)
       self$queue$worker_config_save("localhost", heartbeat_period = 3)
 
-      self$start(workers)
+      self$start(workers, timeout)
 
       message(t_("QUEUE_CACHE"))
       set_cache(queue_id)
@@ -31,10 +32,12 @@ Queue <- R6::R6Class(
       self$prerun_dir <- prerun_dir
     },
 
-    start = function(workers) {
+    start = function(workers, timeout) {
       if (workers > 0L) {
         ids <- rrq::worker_spawn(self$queue, workers)
-        self$queue$message_send_and_wait("TIMEOUT_SET", 300, ids)
+        if (is.finite(timeout) && timeout > 0) {
+          self$queue$message_send_and_wait("TIMEOUT_SET", timeout, ids)
+        }
       }
     },
 
