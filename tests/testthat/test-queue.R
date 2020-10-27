@@ -97,3 +97,13 @@ test_that("test queue starts workers with timeout", {
   expect_equal(timeout[[1]][["timeout"]], 300.0)
   expect_equal(timeout[[2]][["timeout"]], 300.0)
 })
+
+
+test_that("queue starts up normally without a timeout", {
+  queue <- Queue$new(workers = 1)
+  on.exit(queue$cleanup())
+  timeout <- queue$queue$message_send_and_wait("TIMEOUT_GET",
+                                               queue$queue$worker_list(),
+                                               progress = FALSE)
+  expect_equal(timeout[[1]], c("timeout" = Inf, remaining = Inf))
+})
