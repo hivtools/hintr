@@ -4,7 +4,7 @@ test_that("queue works as intended", {
   test_redis_available()
   test_mock_model_available()
 
-  queue <- Queue$new()
+  queue <- Queue$new(timeout = 300)
   expect_equal(queue$queue$worker_len(), 2)
 
   worker_1 <- queue$queue$worker_list()[[1]]
