@@ -1,4 +1,4 @@
-FROM mrcide/naomi-base:latest
+FROM mrcide/naomi-base:mrc-1892
 
 RUN apt-get update && apt-get -y install --no-install-recommends \
         libhiredis-dev \
