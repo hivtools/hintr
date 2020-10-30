@@ -44,7 +44,7 @@ validate_baseline <- function(input) {
   tryCatch({
     assert_file_exists(input$file$path)
     ## This does some validation of the data part of the response
-    ## Is that right to do at this point or does pkgapi have a way to validate
+    ## Is that right to do at this point or does porcelain have a way to validate
     ## subsets of the data?
     input_response(validate_func(input$file), input$type, input$file)
   },
@@ -248,14 +248,14 @@ download <- function(queue, type, filename) {
                     "MODEL_RESULT_OUT_OF_DATE")
       }
       bytes <- readBin(path, "raw", n = file.size(path))
-      bytes <- pkgapi::pkgapi_add_headers(bytes, list(
+      bytes <- porcelain::porcelain_add_headers(bytes, list(
         "Content-Disposition" = build_content_disp_header(res$metadata$areas,
                                                           filename),
         "Content-Length" = length(bytes)))
       bytes
     },
     error = function(e) {
-      if (is_pkgapi_error(e)) {
+      if (is_porcelain_error(e)) {
         stop(e)
       } else {
         hintr_error(e$message, "FAILED_TO_RETRIEVE_RESULT")
@@ -301,14 +301,14 @@ download_model_debug <- function(queue) {
 
       path <- file.path(tmp, dest)
       bytes <- readBin(path, "raw", n = file.size(path))
-      bytes <- pkgapi::pkgapi_add_headers(bytes, list(
+      bytes <- porcelain::porcelain_add_headers(bytes, list(
         "Content-Disposition" =
           sprintf('attachment; filename="%s_%s_naomi_debug.zip"',
                   id, iso_time_str())))
       bytes
     },
     error = function(e) {
-      if (is_pkgapi_error(e)) {
+      if (is_porcelain_error(e)) {
         stop(e)
       } else {
         hintr_error(e$message, "INVALID_TASK")
@@ -358,8 +358,8 @@ prepare_status_response <- function(value, id) {
 
 hintr_error <- function(message, error, status_code = 400L, ...) {
   key <- scalar(ids::proquint(n_words = 3))
-  pkgapi::pkgapi_stop(message, error, errors = NULL, status_code = status_code,
-                      key = key, ...)
+  porcelain::porcelain_stop(message, error, errors = NULL,
+                            status_code = status_code, key = key, ...)
 }
 
 hintr_404_handler <- function(req, res) {
