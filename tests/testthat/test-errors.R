@@ -10,7 +10,7 @@ test_that("validate errors", {
       tryCatch(
         hintr_error(message, error, ...),
         error = function(e) {
-          pkgapi:::pkgapi_process_error(e)
+          porcelain:::porcelain_process_error(e)
         }
       )
     })

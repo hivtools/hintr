@@ -1,5 +1,5 @@
 api_build <- function(queue) {
-  api <- pkgapi::pkgapi$new()
+  api <- porcelain::porcelain$new()
   api$handle(endpoint_root())
   api$handle(endpoint_baseline_individual())
   api$handle(endpoint_baseline_combined())
@@ -116,61 +116,59 @@ api_reset_language <- function(data, req, res, value) {
 }
 
 endpoint_root <- function() {
-  pkgapi::pkgapi_endpoint$new("GET",
-                              "/",
-                              root_endpoint,
-                              returning = pkgapi::pkgapi_returning_json())
+  porcelain::porcelain_endpoint$new(
+    "GET", "/", root_endpoint,
+    returning = porcelain::porcelain_returning_json())
 }
 
 endpoint_baseline_individual <- function() {
   ## TODO: Shouldn't have to paste root here but it isn't picking up the
   ## schema directory automatically
-  input <- pkgapi::pkgapi_input_body_json("input",
-                                          "ValidateInputRequest.schema",
-                                          schema_root())
-  response <- pkgapi::pkgapi_returning_json("ValidateInputResponse.schema",
-                                            schema_root())
-  pkgapi::pkgapi_endpoint$new("POST",
-                              "/validate/baseline-individual",
-                              validate_baseline,
-                              input,
-                              returning = response,
-                              validate = TRUE)
+  input <- porcelain::porcelain_input_body_json("input",
+                                                "ValidateInputRequest.schema",
+                                                schema_root())
+  response <- porcelain::porcelain_returning_json(
+    "ValidateInputResponse.schema", schema_root())
+  porcelain::porcelain_endpoint$new("POST",
+                                    "/validate/baseline-individual",
+                                    validate_baseline,
+                                    input,
+                                    returning = response,
+                                    validate = TRUE)
 }
 
 endpoint_baseline_combined <- function() {
-  input <- pkgapi::pkgapi_input_body_json("input",
-                                          "ValidateBaselineRequest.schema",
-                                          schema_root())
-  response <- pkgapi::pkgapi_returning_json("ValidateBaselineResponse.schema",
-                                            schema_root())
-  pkgapi::pkgapi_endpoint$new("POST",
-                              "/validate/baseline-combined",
-                              validate_baseline_combined,
-                              input,
-                              returning = response,
-                              validate = TRUE)
+  input <- porcelain::porcelain_input_body_json(
+    "input", "ValidateBaselineRequest.schema", schema_root())
+  response <- porcelain::porcelain_returning_json(
+    "ValidateBaselineResponse.schema", schema_root())
+  porcelain::porcelain_endpoint$new("POST",
+                                    "/validate/baseline-combined",
+                                    validate_baseline_combined,
+                                    input,
+                                    returning = response,
+                                    validate = TRUE)
 }
 
 endpoint_validate_survey_programme <- function() {
-  input <- pkgapi::pkgapi_input_body_json(
+  input <- porcelain::porcelain_input_body_json(
     "input", "ValidateSurveyAndProgrammeRequest.schema", schema_root())
-  response <- pkgapi::pkgapi_returning_json("ValidateInputResponse.schema",
-                                            schema_root())
-  pkgapi::pkgapi_endpoint$new("POST",
-                              "/validate/survey-and-programme",
-                              validate_survey_programme,
-                              input,
-                              returning = response,
-                              validate = TRUE)
+  response <- porcelain::porcelain_returning_json(
+    "ValidateInputResponse.schema", schema_root())
+  porcelain::porcelain_endpoint$new("POST",
+                                    "/validate/survey-and-programme",
+                                    validate_survey_programme,
+                                    input,
+                                    returning = response,
+                                    validate = TRUE)
 }
 
 returning_json_version <- function(schema = NULL, root = NULL,
                                    status_code = 200L) {
-  ## This is the same as pkgapi::pkgapi_returning_json except we
+  ## This is the same as porcelain::porcelain_returning_json except we
   ## override the process function to also add version info along side the
   ## data
-  returning  <- pkgapi::pkgapi_returning_json(schema, root, status_code)
+  returning  <- porcelain::porcelain_returning_json(schema, root, status_code)
   response_success <- function(data) {
     list(
       status = jsonlite::unbox("success"),
@@ -186,187 +184,188 @@ returning_json_version <- function(schema = NULL, root = NULL,
 }
 
 endpoint_model_options <- function() {
-  input <- pkgapi::pkgapi_input_body_json("input",
-                                          "ModelRunOptionsRequest.schema",
-                                          schema_root())
+  input <- porcelain::porcelain_input_body_json("input",
+                                                "ModelRunOptionsRequest.schema",
+                                                schema_root())
   response <- returning_json_version("ModelRunOptions.schema", schema_root())
-  pkgapi::pkgapi_endpoint$new("POST",
-                              "/model/options",
-                              model_options,
-                              input,
-                              returning = response,
-                              validate = TRUE)
+  porcelain::porcelain_endpoint$new("POST",
+                                    "/model/options",
+                                    model_options,
+                                    input,
+                                    returning = response,
+                                    validate = TRUE)
 }
 
 endpoint_model_options_validate <- function() {
-  input <- pkgapi::pkgapi_input_body_json("input",
-                                          "ModelOptionsValidateRequest.schema",
-                                          schema_root())
-  response <- pkgapi::pkgapi_returning_json("ModelOptionsValidate.schema",
-                                            schema_root())
-  pkgapi::pkgapi_endpoint$new("POST",
-                              "/validate/options",
-                              model_options_validate,
-                              input,
-                              returning = response,
-                              validate = TRUE)
+  input <- porcelain::porcelain_input_body_json(
+    "input", "ModelOptionsValidateRequest.schema", schema_root())
+  response <- porcelain::porcelain_returning_json("ModelOptionsValidate.schema",
+                                                  schema_root())
+  porcelain::porcelain_endpoint$new("POST",
+                                    "/validate/options",
+                                    model_options_validate,
+                                    input,
+                                    returning = response,
+                                    validate = TRUE)
 }
 
 
 endpoint_model_submit <- function(queue) {
-  input <- pkgapi::pkgapi_input_body_json("input",
-                                          "ModelSubmitRequest.schema",
-                                          schema_root())
-  response <- pkgapi::pkgapi_returning_json("ModelSubmitResponse.schema",
-                                            schema_root())
-  pkgapi::pkgapi_endpoint$new("POST",
-                              "/model/submit",
-                              submit_model(queue),
-                              input,
-                              returning = response,
-                              validate = TRUE)
+  input <- porcelain::porcelain_input_body_json("input",
+                                                "ModelSubmitRequest.schema",
+                                                schema_root())
+  response <- porcelain::porcelain_returning_json("ModelSubmitResponse.schema",
+                                                  schema_root())
+  porcelain::porcelain_endpoint$new("POST",
+                                    "/model/submit",
+                                    submit_model(queue),
+                                    input,
+                                    returning = response,
+                                    validate = TRUE)
 }
 
 endpoint_model_status <- function(queue) {
-  response <- pkgapi::pkgapi_returning_json("ModelStatusResponse.schema",
-                                            schema_root())
-  pkgapi::pkgapi_endpoint$new("GET",
-                              "/model/status/<id>",
-                              model_status(queue),
-                              returning = response,
-                              validate = TRUE)
+  response <- porcelain::porcelain_returning_json("ModelStatusResponse.schema",
+                                                  schema_root())
+  porcelain::porcelain_endpoint$new("GET",
+                                    "/model/status/<id>",
+                                    model_status(queue),
+                                    returning = response,
+                                    validate = TRUE)
 }
 
 endpoint_model_result <- function(queue) {
-  response <- pkgapi::pkgapi_returning_json("ModelResultResponse.schema",
-                                            schema_root())
-  pkgapi::pkgapi_endpoint$new("GET",
-                              "/model/result/<id>",
-                              model_result(queue),
-                              returning = response,
-                              validate = TRUE)
+  response <- porcelain::porcelain_returning_json("ModelResultResponse.schema",
+                                                  schema_root())
+  porcelain::porcelain_endpoint$new("GET",
+                                    "/model/result/<id>",
+                                    model_result(queue),
+                                    returning = response,
+                                    validate = TRUE)
 }
 
 endpoint_model_cancel <- function(queue) {
-  response <- pkgapi::pkgapi_returning_json("ModelCancelResponse.schema",
-                                            schema_root())
-  pkgapi::pkgapi_endpoint$new("POST",
-                              "/model/cancel/<id>",
-                              model_cancel(queue),
-                              returning = response,
-                              validate = TRUE)
+  response <- porcelain::porcelain_returning_json("ModelCancelResponse.schema",
+                                                  schema_root())
+  porcelain::porcelain_endpoint$new("POST",
+                                    "/model/cancel/<id>",
+                                    model_cancel(queue),
+                                    returning = response,
+                                    validate = TRUE)
 }
 
 endpoint_model_debug <- function(queue) {
-  pkgapi::pkgapi_endpoint$new("GET",
-                              "/model/debug/<id>",
-                              download_model_debug(queue),
-                              returning = pkgapi::pkgapi_returning_binary())
+  porcelain::porcelain_endpoint$new(
+    "GET", "/model/debug/<id>", download_model_debug(queue),
+    returning = porcelain::porcelain_returning_binary())
 }
 
 endpoint_model_calibration_options <- function() {
   response <- returning_json_version("ModelRunOptions.schema", schema_root())
-  pkgapi::pkgapi_endpoint$new("POST",
-                              "/model/calibration-options",
-                              calibration_options,
-                              returning = response,
-                              validate = TRUE)
+  porcelain::porcelain_endpoint$new("POST",
+                                    "/model/calibration-options",
+                                    calibration_options,
+                                    returning = response,
+                                    validate = TRUE)
 }
 
 endpoint_model_calibrate <- function(queue) {
-  input <- pkgapi::pkgapi_input_body_json("input",
-                                          "ModelCalibrateRequest.schema",
-                                          schema_root())
-  response <- pkgapi::pkgapi_returning_json("ModelResultResponse.schema",
-                                            schema_root())
-  pkgapi::pkgapi_endpoint$new("POST",
-                              "/model/calibrate/<id>",
-                              model_calibrate(queue),
-                              input,
-                              returning = response,
-                              validate = TRUE)
+  input <- porcelain::porcelain_input_body_json("input",
+                                                "ModelCalibrateRequest.schema",
+                                                schema_root())
+  response <- porcelain::porcelain_returning_json("ModelResultResponse.schema",
+                                                  schema_root())
+  porcelain::porcelain_endpoint$new("POST",
+                                    "/model/calibrate/<id>",
+                                    model_calibrate(queue),
+                                    input,
+                                    returning = response,
+                                    validate = TRUE)
 }
 
 endpoint_plotting_metadata <- function() {
-  response <- pkgapi::pkgapi_returning_json("PlottingMetadataResponse.schema",
-                                            schema_root())
-  pkgapi::pkgapi_endpoint$new("GET",
-                              "/meta/plotting/<iso3>",
-                              plotting_metadata,
-                              returning = response,
-                              validate = TRUE)
+  response <- porcelain::porcelain_returning_json("PlottingMetadataResponse.schema",
+                                                  schema_root())
+  porcelain::porcelain_endpoint$new("GET",
+                                    "/meta/plotting/<iso3>",
+                                    plotting_metadata,
+                                    returning = response,
+                                    validate = TRUE)
 }
 
 ## Return same headers as binary returning but ensure no body is returned.
 returning_binary_head <- function(status_code = 200L) {
-  pkgapi::pkgapi_returning("application/octet-stream",
-                           process = function(data) NULL,
-                           validate = function(body) TRUE)
+  porcelain::porcelain_returning("application/octet-stream",
+                                 process = function(data) NULL,
+                                 validate = function(body) TRUE)
 }
 
 endpoint_download_spectrum <- function(queue) {
-  pkgapi::pkgapi_endpoint$new("GET",
-                              "/download/spectrum/<id>",
-                              download_spectrum(queue),
-                              returning = pkgapi::pkgapi_returning_binary())
+  porcelain::porcelain_endpoint$new(
+    "GET",
+    "/download/spectrum/<id>",
+    download_spectrum(queue),
+    returning = porcelain::porcelain_returning_binary())
 }
 
 endpoint_download_spectrum_head <- function(queue) {
-  pkgapi::pkgapi_endpoint$new("HEAD",
-                              "/download/spectrum/<id>",
-                              download_spectrum(queue),
-                              returning = returning_binary_head(),
-                              validate = FALSE)
+  porcelain::porcelain_endpoint$new("HEAD",
+                                    "/download/spectrum/<id>",
+                                    download_spectrum(queue),
+                                    returning = returning_binary_head(),
+                                    validate = FALSE)
 }
 
 endpoint_download_coarse_output <- function(queue) {
-  pkgapi::pkgapi_endpoint$new("GET",
-                              "/download/coarse-output/<id>",
-                              download_coarse_output(queue),
-                              returning = pkgapi::pkgapi_returning_binary())
+  porcelain::porcelain_endpoint$new(
+    "GET",
+    "/download/coarse-output/<id>",
+    download_coarse_output(queue),
+    returning = porcelain::porcelain_returning_binary())
 }
 
 endpoint_download_coarse_output_head <- function(queue) {
-  pkgapi::pkgapi_endpoint$new("HEAD",
-                              "/download/coarse-output/<id>",
-                              download_coarse_output(queue),
-                              returning = returning_binary_head(),
-                              validate = FALSE)
+  porcelain::porcelain_endpoint$new("HEAD",
+                                    "/download/coarse-output/<id>",
+                                    download_coarse_output(queue),
+                                    returning = returning_binary_head(),
+                                    validate = FALSE)
 }
 
 endpoint_download_summary <- function(queue) {
-  pkgapi::pkgapi_endpoint$new("GET",
-                              "/download/summary/<id>",
-                              download_summary(queue),
-                              returning = pkgapi::pkgapi_returning_binary())
+  porcelain::porcelain_endpoint$new(
+    "GET",
+    "/download/summary/<id>",
+    download_summary(queue),
+    returning = porcelain::porcelain_returning_binary())
 }
 
 endpoint_download_summary_head <- function(queue) {
-  pkgapi::pkgapi_endpoint$new("HEAD",
-                              "/download/summary/<id>",
-                              download_summary(queue),
-                              returning = returning_binary_head(),
-                              validate = FALSE)
+  porcelain::porcelain_endpoint$new("HEAD",
+                                    "/download/summary/<id>",
+                                    download_summary(queue),
+                                    returning = returning_binary_head(),
+                                    validate = FALSE)
 }
 
 endpoint_hintr_version <- function() {
-  response <- pkgapi::pkgapi_returning_json("HintrVersionResponse.schema",
-                                            schema_root())
-  pkgapi::pkgapi_endpoint$new("GET",
-                              "/hintr/version",
-                              function() cfg$version_info,
-                              returning = response,
-                              validate = TRUE)
+  response <- porcelain::porcelain_returning_json("HintrVersionResponse.schema",
+                                                  schema_root())
+  porcelain::porcelain_endpoint$new("GET",
+                                    "/hintr/version",
+                                    function() cfg$version_info,
+                                    returning = response,
+                                    validate = TRUE)
 }
 
 endpoint_hintr_worker_status <- function(queue) {
-  response <- pkgapi::pkgapi_returning_json("HintrWorkerStatus.schema",
-                                            schema_root())
-  pkgapi::pkgapi_endpoint$new("GET",
-                              "/hintr/worker/status",
-                              worker_status(queue),
-                              returning = response,
-                              validate = TRUE)
+  response <- porcelain::porcelain_returning_json("HintrWorkerStatus.schema",
+                                                  schema_root())
+  porcelain::porcelain_endpoint$new("GET",
+                                    "/hintr/worker/status",
+                                    worker_status(queue),
+                                    returning = response,
+                                    validate = TRUE)
 }
 
 endpoint_hintr_stop <- function(queue) {
@@ -374,12 +373,13 @@ endpoint_hintr_stop <- function(queue) {
   ## It will never return anything so this won't ever be called in production,
   ## it exists only so that when we mock hintr_stop this returns without errors
   ## so we can effectively test.
-  returning <- pkgapi::pkgapi_returning(content_type = "application/json",
-                                        process = function(data) json_null(),
-                                        validate = function(body) TRUE)
-  pkgapi::pkgapi_endpoint$new("POST",
-                              "/hintr/stop",
-                              hintr_stop(queue),
-                              returning = returning,
-                              validate = FALSE)
+  returning <- porcelain::porcelain_returning(
+    content_type = "application/json",
+    process = function(data) json_null(),
+    validate = function(body) TRUE)
+  porcelain::porcelain_endpoint$new("POST",
+                                    "/hintr/stop",
+                                    hintr_stop(queue),
+                                    returning = returning,
+                                    validate = FALSE)
 }

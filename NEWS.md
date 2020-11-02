@@ -1,3 +1,7 @@
+# hintr 0.1.6
+
+* Reflect pkgapi rename
+
 # hintr 0.1.5
 
 * Add endpoint for downloading dummy summary report
