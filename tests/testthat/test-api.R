@@ -824,12 +824,12 @@ test_that("api can call endpoint_download_coarse_output", {
 })
 
 test_that("content disposition header is formatted correctly", {
-  expect_match(build_content_disp_header("MWI", "naomi_spectrum_digest"),
+  expect_match(build_content_disp_header("MWI", "naomi_spectrum_digest.zip"),
                'attachment; filename="MWI_\\d+-\\d+_naomi_spectrum_digest.zip"')
-  expect_match(build_content_disp_header(NULL, "naomi_spectrum_digest"),
+  expect_match(build_content_disp_header(NULL, "naomi_spectrum_digest.zip"),
                'attachment; filename="\\d+-\\d+_naomi_spectrum_digest.zip"')
   expect_match(
-    build_content_disp_header(c("MWI.1", "MWI.2"), "naomi_spectrum_digest"),
+    build_content_disp_header(c("MWI.1", "MWI.2"), "naomi_spectrum_digest.zip"),
     'attachment; filename="MWI.1_MWI.2_\\d+-\\d+_naomi_spectrum_digest.zip"')
 })
 
@@ -962,7 +962,7 @@ test_that("endpoint_download_summary can be run", {
   expect_equal(response$status_code, 200)
   expect_match(
     response$headers$`Content-Disposition`,
-    'attachment; filename="MWI_\\d+-\\d+_summary_report.zip"')
+    'attachment; filename="MWI_\\d+-\\d+_summary_report.html"')
   size <- length(response$data)
   expect_equal(response$headers$`Content-Length`, size)
   expect_equal(size, file.size(
@@ -976,7 +976,7 @@ test_that("endpoint_download_summary can be run", {
   expect_equal(response$content_type, "application/octet-stream")
   expect_match(
     response$headers$`Content-Disposition`,
-    'attachment; filename="MWI_\\d+-\\d+_summary_report.zip"')
+    'attachment; filename="MWI_\\d+-\\d+_summary_report.html"')
   expect_equal(response$headers$`Content-Length`, file.size(
     system_file("output", "malawi_summary_report.html")))
   expect_null(response$body, NULL)
@@ -1004,7 +1004,7 @@ test_that("api can call endpoint_download_summary", {
   expect_equal(res$headers$`Content-Type`, "application/octet-stream")
   expect_match(
     res$headers$`Content-Disposition`,
-    'attachment; filename="MWI_\\d+-\\d+_summary_report.zip"')
+    'attachment; filename="MWI_\\d+-\\d+_summary_report.html"')
   size <- length(res$body)
   expect_equal(res$headers$`Content-Length`, size)
   expect_equal(size, file.size(
@@ -1017,7 +1017,7 @@ test_that("api can call endpoint_download_summary", {
   expect_equal(res$headers$`Content-Type`, "application/octet-stream")
   expect_match(
     res$headers$`Content-Disposition`,
-    'attachment; filename="MWI_\\d+-\\d+_summary_report.zip"')
+    'attachment; filename="MWI_\\d+-\\d+_summary_report.html"')
   expect_equal(res$headers$`Content-Length`,
                file.size(system_file("output", "malawi_summary_report.html")))
   ## Plumber uses an empty string to represent an empty body
