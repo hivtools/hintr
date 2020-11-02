@@ -1,6 +1,10 @@
-# hintr 0.1.6
+# hintr 0.1.7
 
 * Depend on naomi 2.0.0 version for 2021 UNAIDS estimates.
+
+# hintr 0.1.6
+
+* Reflect pkgapi rename
 
 # hintr 0.1.5
 

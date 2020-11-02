@@ -688,7 +688,7 @@ test_that("api can call endpoint_plotting_metadata", {
 test_that("returning_json_version adds version", {
   returning_with_version <- returning_json_version(
     "ValidateInputResponse.schema", schema_root())
-  returning <- pkgapi::pkgapi_returning_json(
+  returning <- porcelain::porcelain_returning_json(
     "ValidateInputResponse.schema", schema_root())
   input <- list(
     hash = scalar("12345"),

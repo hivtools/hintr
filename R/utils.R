@@ -104,6 +104,6 @@ is_error <- function(x) {
   inherits(x, "error")
 }
 
-is_pkgapi_error <- function(e) {
-  inherits(e, "pkgapi_error")
+is_porcelain_error <- function(e) {
+  inherits(e, "porcelain_error")
 }
