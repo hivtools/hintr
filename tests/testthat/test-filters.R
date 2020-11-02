@@ -190,20 +190,6 @@ test_that("error thrown when tree can't be constructed", {
                "Got 2 root nodes - tree must have 1 root.")
 })
 
-test_that("naomi IDs can be mapped to hint IDs", {
-  expect_equal(get_hint_id("prevalence"), "prevalence")
-  expect_equal(get_hint_id("art_coverage"), "art_coverage")
-  expect_error(get_hint_id("missing"),
-               "Failed to locate hint ID from naomi_id missing.")
-})
-
-test_that("can get indicator display name", {
-  expect_equal(get_indicator_display_name("viral_suppression_plhiv"), "Viral load suppression")
-  expect_equal(get_indicator_display_name("prevalence"), "HIV prevalence")
-  expect_error(get_indicator_display_name("missing"),
-               "Failed to get display name for hint ID missing.")
-})
-
 test_that("can get indicator filters for survey data", {
   survey_path <- file.path("testdata", "survey.csv")
   survey <- read_csv(survey_path, header = TRUE)

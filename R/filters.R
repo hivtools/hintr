@@ -214,15 +214,6 @@ get_year_filters <- function(data) {
   })
 }
 
-get_indicator_display_name <- function(indicator_id) {
-  metadata <- naomi::get_metadata()
-  display_name <- metadata[metadata$indicator == indicator_id, "name"]
-  if (length(unique(display_name)) != 1) {
-    stop(t_("FILTERS_NO_DISPLAY_NAME", list(id = indicator_id)))
-  }
-  display_name[[1]]
-}
-
 get_level_labels <- function(json) {
   labels <- lapply(json$features, function(feature) {
     list(id = scalar(feature$properties$area_level),
@@ -287,24 +278,4 @@ construct_tree <- function(data, id_column = 1, parent_id_column = 2,
   }
 
   build_immediate_children(data[root_node, id_column])
-}
-
-#' Get hint ID from naomi ID
-#'
-#' @param naomi_id The ID used in Naomi to identify an indicator.
-#'
-#' @return The ID as used in hint.
-#'
-#' @keywords internal
-get_hint_id <- function(naomi_id) {
-  metadata <- naomi::get_metadata()
-  if (naomi_id %in% metadata$indicator) {
-    hint_id <- naomi_id
-  } else if (naomi_id %in% metadata$indicator_value) {
-    hint_id <- metadata[metadata$indicator_value ==
-                          as.character(naomi_id), "indicator"]
-  } else {
-    stop(t_("FILTERS_CANT_GET_HINT_ID", list(id = naomi_id)))
-  }
-  hint_id[[1]]
 }
