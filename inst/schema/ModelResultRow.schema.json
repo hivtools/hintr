@@ -14,8 +14,8 @@
     "calendar_quarter": {
       "type": "string"
     },
-    "indicator_id": {
-      "type": "number"
+    "indicator": {
+      "type": "string"
     },
     "mode": {
       "type": [ "number", "null" ]
@@ -31,6 +31,6 @@
     }
   },
   "additionalProperties": true,
-  "required": [ "area_id", "sex", "age_group", "calendar_quarter", "indicator_id",
+  "required": [ "area_id", "sex", "age_group", "calendar_quarter", "indicator",
     "mode", "mean", "lower", "upper" ]
 }

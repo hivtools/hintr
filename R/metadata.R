@@ -39,9 +39,9 @@ get_barchart_metadata <- function(output) {
   metadata <- metadata[
     metadata$data_type == "output" & metadata$plot_type == "barchart",
     c("indicator", "value_column", "error_low_column", "error_high_column",
-      "indicator_column", "indicator_value", "name", "scale", "accuracy",
-      "format")]
-  metadata[order(as.numeric(metadata$indicator_value)), ]
+      "indicator_column", "indicator_value", "indicator_sort_order",
+      "name", "scale", "accuracy", "format")]
+  metadata[order(metadata$indicator_sort_order), ]
 }
 
 get_choropleth_metadata <- function(output) {
@@ -50,9 +50,10 @@ get_choropleth_metadata <- function(output) {
   metadata <- metadata[
     metadata$data_type == "output" & metadata$plot_type == "choropleth",
     c("indicator", "value_column", "error_low_column", "error_high_column",
-      "indicator_column", "indicator_value", "name", "min", "max", "colour",
+      "indicator_column", "indicator_value", "indicator_sort_order",
+      "name", "min", "max", "colour",
       "invert_scale", "scale", "accuracy", "format")]
-  metadata[order(as.numeric(metadata$indicator_value)), ]
+  metadata[order(metadata$indicator_sort_order), ]
 }
 
 

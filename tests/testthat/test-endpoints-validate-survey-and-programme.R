@@ -12,7 +12,7 @@ test_that("endpoint_validate_survey_programme supports programme file", {
   expect_equal(response$fromADR, scalar(FALSE))
   ## Sanity check that data has been returned
   expect_true(nrow(response$data) >= 200)
-  expect_equal(typeof(response$data[, "current_art"]), "double")
+  expect_equal(typeof(response$data[, "art_current"]), "double")
 })
 
 test_that("endpoint_validate_survey_programme returns error on invalid programme data", {
@@ -41,8 +41,8 @@ test_that("endpoint_validate_survey_programme supports ANC file", {
   expect_equal(response$fromADR, scalar(FALSE))
   ## Sanity check that data has been returned
   expect_true(nrow(response$data) >= 200)
-  expect_equal(typeof(response$data[, "prevalence"]), "double")
-  expect_equal(typeof(response$data[, "art_coverage"]), "double")
+  expect_equal(typeof(response$data[, "anc_prevalence"]), "double")
+  expect_equal(typeof(response$data[, "anc_art_coverage"]), "double")
 })
 
 test_that("endpoint_validate_survey_programme returns error on invalid ANC data", {
@@ -73,7 +73,7 @@ test_that("endpoint_validate_survey_programme supports survey file", {
   expect_equal(response$fromADR, scalar(FALSE))
   ## Sanity check that data has been returned
   expect_true(nrow(response$data) >= 20000)
-  expect_equal(typeof(response$data[, "est"]), "double")
+  expect_equal(typeof(response$data[, "estimate"]), "double")
 })
 
 test_that("endpoint_validate_survey_programme returns error on invalid survey data", {
@@ -101,11 +101,11 @@ test_that("possible filters are returned for data", {
   expect_length(response$filters$age, 2)
   expect_equal(response$filters$age, list(
     list(
-      id = scalar("15+"),
+      id = scalar("Y015_999"),
       label = scalar("15+")
     ),
     list(
-      id = scalar("00-14"),
+      id = scalar("Y000_014"),
       label = scalar("0-14")
     )
   ))
@@ -114,7 +114,7 @@ test_that("possible filters are returned for data", {
   expect_equal(response$filters$year[[1]]$label, scalar("2018"))
 
   expect_length(response$filters$indicators, 1)
-  expect_equal(response$filters$indicators[[1]]$id, scalar("current_art"))
+  expect_equal(response$filters$indicators[[1]]$id, scalar("art_current"))
   expect_equal(response$filters$indicators[[1]]$label,
                scalar("ART number (attending)"))
 
@@ -131,10 +131,10 @@ test_that("possible filters are returned for data", {
   expect_equal(response$filters$year[[1]]$label, scalar("2018"))
 
   expect_length(response$filters$indicators, 2)
-  expect_equal(response$filters$indicators[[1]]$id, scalar("prevalence"))
-  expect_equal(response$filters$indicators[[1]]$label, scalar("HIV prevalence"))
-  expect_equal(response$filters$indicators[[2]]$id, scalar("art_coverage"))
-  expect_equal(response$filters$indicators[[2]]$label, scalar("ART coverage"))
+  expect_equal(response$filters$indicators[[1]]$id, scalar("anc_prevalence"))
+  expect_equal(response$filters$indicators[[1]]$label, scalar("ANC HIV prevalence"))
+  expect_equal(response$filters$indicators[[2]]$id, scalar("anc_art_coverage"))
+  expect_equal(response$filters$indicators[[2]]$label, scalar("ANC prior ART coverage"))
 
   input <- validate_programme_survey_input(
     file.path("testdata", "survey.csv"),
@@ -169,10 +169,10 @@ test_that("possible filters are returned for data", {
   expect_equal(response$filters$indicators[[1]]$label, scalar("HIV prevalence"))
   expect_equal(response$filters$indicators[[2]]$id, scalar("art_coverage"))
   expect_equal(response$filters$indicators[[2]]$label, scalar("ART coverage"))
-  expect_equal(response$filters$indicators[[3]]$id, scalar("recent"))
+  expect_equal(response$filters$indicators[[3]]$id, scalar("recent_infected"))
   expect_equal(response$filters$indicators[[3]]$label,
                scalar("Proportion recently infected"))
-  expect_equal(response$filters$indicators[[4]]$id, scalar("vls"))
+  expect_equal(response$filters$indicators[[4]]$id, scalar("viral_suppression_plhiv"))
   expect_equal(response$filters$indicators[[4]]$label,
                scalar("Viral load suppression"))
 })

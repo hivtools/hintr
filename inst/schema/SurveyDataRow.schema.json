@@ -20,26 +20,30 @@
     "age_group": {
       "type": "string"
     },
-    "n_cluster": {
+    "n_clusters": {
       "type": "number"
     },
-    "n_obs": {
+    "n_observations": {
       "type": "number"
     },
-    "est": {
+    "n_eff_kish": {
+      "type": "number"
+    },      
+    "estimate": {
       "type": "number"
     },
-    "se": {
+    "std_error": {
       "type": "number"
     },
-    "ci_l": {
+    "ci_lower": {
       "type": [ "number", "null" ]
     },
-    "ci_u": {
+    "ci_upper": {
       "type": [ "number", "null" ]
     }
   },
   "additionalProperties": true,
   "required": [ "indicator", "survey_id", "area_id",
-    "sex", "age_group", "n_cluster", "n_obs", "est", "se", "ci_l", "ci_u" ]
+		"sex", "age_group", "n_clusters", "n_observations",
+		"estimate", "std_error", "ci_lower", "ci_upper" ]
 }

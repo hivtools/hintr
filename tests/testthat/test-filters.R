@@ -1,36 +1,36 @@
 context("filters")
 
 test_that("get_age_label correctly maps to label and returns useful error", {
-  expect_equivalent(get_age_labels("50-54"), data_frame(age_group = "50-54",
-                                              age_group_label = "50-54",
-                                              age_group_sort_order = 23))
+  expect_equivalent(get_age_labels("Y050_054"), data_frame(age_group = "Y050_054",
+                                                           age_group_label = "50-54",
+                                                           age_group_sort_order = 23))
 
-  expect_equivalent(get_age_labels(c("00-04", "15-19", "50-54")),
-                    data_frame(age_group = c("00-04", "15-19", "50-54"),
-                               age_group_label = c("00-04", "15-19", "50-54"),
+  expect_equivalent(get_age_labels(c("Y000_004", "Y015_019", "Y050_054")),
+                    data_frame(age_group = c("Y000_004", "Y015_019", "Y050_054"),
+                               age_group_label = c("0-4", "15-19", "50-54"),
                                age_group_sort_order = c(13, 16, 23)))
-  expect_error(get_age_labels("00-90"),
-               "Age groups metadata contains 0 rows for age_group 00-90. Speak to administrator.")
-  expect_error(get_age_labels(c("00-90", "-20-09")),
-               "Age groups metadata contains 0 rows for age_group 00-90, -20-09. Speak to administrator.")
+  expect_error(get_age_labels("Y000_090"),
+               "Age groups metadata contains 0 rows for age_group Y000_090. Speak to administrator.")
+  expect_error(get_age_labels(c("Y000_090", "-20-09")),
+               "Age groups metadata contains 0 rows for age_group Y000_090, -20-09. Speak to administrator.")
 })
 
 test_that("get_age_filters gets available filter options in correct order", {
   data <- data_frame(test = c(1, 2, 3, 4, 5, 6, 7),
-                     age_group = c("45-49", "35-49", "05-09", "45-49", "45-49",
-                                   "45-49", "05-09"))
+                     age_group = c("Y045_049", "Y035_049", "Y005_009", "Y045_049", "Y045_049",
+                                   "Y045_049", "Y005_009"))
   filters <- get_age_filters(data)
   expect_equal(filters, list(
     list(
-      id = scalar("35-49"),
+      id = scalar("Y035_049"),
       label = scalar("35-49")
     ),
     list(
-      id = scalar("05-09"),
-      label = scalar("05-09")
+      id = scalar("Y005_009"),
+      label = scalar("5-9")
     ),
     list(
-      id = scalar("45-49"),
+      id = scalar("Y045_049"),
       label = scalar("45-49")
     )
   ))
@@ -190,22 +190,6 @@ test_that("error thrown when tree can't be constructed", {
                "Got 2 root nodes - tree must have 1 root.")
 })
 
-test_that("naomi IDs can be mapped to hint IDs", {
-  expect_equal(get_hint_id(2), "prevalence")
-  expect_equal(get_hint_id("2"), "prevalence")
-  expect_equal(get_hint_id("prev"), "prevalence")
-  expect_equal(get_hint_id("art_coverage"), "art_coverage")
-  expect_error(get_hint_id("missing"),
-               "Failed to locate hint ID from naomi_id missing.")
-})
-
-test_that("can get indicator display name", {
-  expect_equal(get_indicator_display_name("vls"), "Viral load suppression")
-  expect_equal(get_indicator_display_name("prevalence"), "HIV prevalence")
-  expect_error(get_indicator_display_name("missing"),
-               "Failed to get display name for hint ID missing.")
-})
-
 test_that("can get indicator filters for survey data", {
   survey_path <- file.path("testdata", "survey.csv")
   survey <- read_csv(survey_path, header = TRUE)
@@ -216,9 +200,9 @@ test_that("can get indicator filters for survey data", {
   expect_equal(filters[[1]]$label, scalar("HIV prevalence"))
   expect_equal(filters[[2]]$id, scalar("art_coverage"))
   expect_equal(filters[[2]]$label, scalar("ART coverage"))
-  expect_equal(filters[[3]]$id, scalar("recent"))
+  expect_equal(filters[[3]]$id, scalar("recent_infected"))
   expect_equal(filters[[3]]$label, scalar("Proportion recently infected"))
-  expect_equal(filters[[4]]$id, scalar("vls"))
+  expect_equal(filters[[4]]$id, scalar("viral_suppression_plhiv"))
   expect_equal(filters[[4]]$label, scalar("Viral load suppression"))
 })
 
@@ -228,7 +212,7 @@ test_that("can get indicator filters for programme data", {
   filters <- get_indicator_filters(programme, "programme")
 
   expect_length(filters, 1)
-  expect_equal(filters[[1]]$id, scalar("current_art"))
+  expect_equal(filters[[1]]$id, scalar("art_current"))
   expect_equal(filters[[1]]$label, scalar("ART number (attending)"))
 })
 
@@ -240,10 +224,10 @@ test_that("can get indicator filters for anc data", {
   filters <- get_indicator_filters(anc, "anc")
 
   expect_length(filters, 2)
-  expect_equal(filters[[1]]$id, scalar("prevalence"))
-  expect_equal(filters[[1]]$label, scalar("HIV prevalence"))
-  expect_equal(filters[[2]]$id, scalar("art_coverage"))
-  expect_equal(filters[[2]]$label, scalar("ART coverage"))
+  expect_equal(filters[[1]]$id, scalar("anc_prevalence"))
+  expect_equal(filters[[1]]$label, scalar("ANC HIV prevalence"))
+  expect_equal(filters[[2]]$id, scalar("anc_art_coverage"))
+  expect_equal(filters[[2]]$label, scalar("ANC prior ART coverage"))
 })
 
 test_that("error thrown for unknown type", {
@@ -315,11 +299,11 @@ test_that("can get defaults for bar chart", {
   age_options <- defaults$selected_filter_options$age
   expect_length(age_options, 17)
   expect_equal(age_options[[1]], list(
-    id = scalar("00-04"),
-    label = scalar("00-04")
+    id = scalar("Y000_004"),
+    label = scalar("0-4")
   ))
   expect_equal(age_options[[length(age_options)]], list(
-    id = scalar("80+"),
+    id = scalar("Y080_999"),
     label = scalar("80+")
   ))
 })
@@ -328,11 +312,11 @@ test_that("can get selected filter options", {
   test_mock_model_available()
   output <- readRDS(mock_model$output_path)
   filters <- get_model_output_filters(output)
-  selected_options <- get_selected_filter_options(filters, "age", "00-04")
+  selected_options <- get_selected_filter_options(filters, "age", "Y000_004")
   expect_equal(selected_options, list(
     list(
-      id = scalar("00-04"),
-      label = scalar("00-04")
+      id = scalar("Y000_004"),
+      label = scalar("0-4")
     )
   ))
 

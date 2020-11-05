@@ -6,7 +6,7 @@ test_that("model can be run and filters extracted", {
   expect_equal(names(model_run), c("data", "plottingMetadata"))
   expect_equal(names(model_run$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
-                 "indicator_id", "mode", "mean", "lower", "upper"))
+                 "indicator", "mode", "mean", "lower", "upper"))
   expect_true(nrow(model_run$data) > 84042)
   expect_equal(names(model_run$plottingMetadata), c("barchart", "choropleth"))
   barchart <- model_run$plottingMetadata$barchart
@@ -25,7 +25,7 @@ test_that("model can be run and filters extracted", {
   expect_equal(barchart$filters[[2]]$options[[2]]$id, scalar("CY2018Q3"))
   expect_equal(barchart$filters[[2]]$options[[2]]$label, scalar("September 2018"))
   expect_equal(nrow(barchart$indicators), 10)
-  expect_true(all(c("prevalence", "art_coverage", "current_art", "population",
+  expect_true(all(c("prevalence", "art_coverage", "art_current", "population",
                     "plhiv", "incidence", "new_infections", "receiving_art",
                     "anc_prevalence", "anc_art_coverage") %in%
                     barchart$indicators$indicator))
@@ -49,7 +49,7 @@ test_that("model can be run and filters extracted", {
   expect_equal(nrow(choropleth$indicators), 10)
   expect_true(all(!is.null(choropleth$indicators$error_low_column)))
   expect_true(all(!is.null(choropleth$indicators$error_high_column)))
-  expect_true(all(c("prevalence", "art_coverage", "current_art", "population",
+  expect_true(all(c("prevalence", "art_coverage", "art_current", "population",
                     "plhiv", "incidence", "new_infections", "receiving_art",
                     "anc_prevalence", "anc_art_coverage") %in%
                     choropleth$indicators$indicator))
@@ -65,7 +65,7 @@ test_that("model without national level results can be processed", {
   expect_equal(names(model_run), c("data", "plottingMetadata"))
   expect_equal(names(model_run$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
-                 "indicator_id", "mode", "mean", "lower", "upper"))
+                 "indicator", "mode", "mean", "lower", "upper"))
   expect_true(nrow(model_run$data) > 84042)
   expect_equivalent(as.data.frame(model_run$data)[1, "area_id"], "MWI_1_1")
   expect_equal(names(model_run$plottingMetadata), c("barchart", "choropleth"))
@@ -85,7 +85,7 @@ test_that("model without national level results can be processed", {
   expect_equal(barchart$filters[[2]]$options[[2]]$id, scalar("CY2018Q3"))
   expect_equal(barchart$filters[[2]]$options[[2]]$label, scalar("September 2018"))
   expect_equal(nrow(barchart$indicators), 10)
-  expect_true(all(c("prevalence", "art_coverage", "current_art", "population",
+  expect_true(all(c("prevalence", "art_coverage", "art_current", "population",
                     "plhiv", "incidence", "new_infections", "receiving_art",
                     "anc_prevalence", "anc_art_coverage") %in%
                     barchart$indicators$indicator))
@@ -107,7 +107,7 @@ test_that("model without national level results can be processed", {
   expect_equal(choropleth$filters[[2]]$options[[2]]$label,
                scalar("September 2018"))
   expect_equal(nrow(choropleth$indicators), 10)
-  expect_true(all(c("prevalence", "art_coverage", "current_art", "population",
+  expect_true(all(c("prevalence", "art_coverage", "art_current", "population",
                     "plhiv", "incidence", "new_infections", "receiving_art",
                     "anc_prevalence", "anc_art_coverage") %in%
                     choropleth$indicators$indicator))
@@ -162,9 +162,9 @@ test_that("real model can be run", {
   output <- readRDS(model_run$output_path)
   expect_equal(colnames(output),
                c("area_level", "area_level_label", "area_id", "area_name",
-                 "sex", "age_group", "age_group_id", "age_group_label",
-                 "calendar_quarter", "quarter_id", "quarter_label", "indicator",
-                 "indicator_id", "indicator_label", "mean",
+                 "sex", "age_group", "age_group_label",
+                 "calendar_quarter", "quarter_label", "indicator",
+                 "indicator_label", "mean",
                  "se", "median", "mode", "lower", "upper"))
   expect_true(nrow(output) > 84042)
 
@@ -236,9 +236,9 @@ test_that("real model can be run with csv2 data", {
   output <- readRDS(model_run$output_path)
   expect_equal(colnames(output),
                c("area_level", "area_level_label", "area_id", "area_name",
-                 "sex", "age_group", "age_group_id", "age_group_label",
-                 "calendar_quarter", "quarter_id", "quarter_label", "indicator",
-                 "indicator_id", "indicator_label", "mean",
+                 "sex", "age_group", "age_group_label",
+                 "calendar_quarter", "quarter_label", "indicator",
+                 "indicator_label", "mean",
                  "se", "median", "mode", "lower", "upper"))
   expect_true(nrow(output) > 84042)
 

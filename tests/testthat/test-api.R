@@ -101,7 +101,7 @@ test_that("endpoint_validate_survey_programme programme", {
   expect_equal(response$data$fromADR, scalar(FALSE))
   ## Sanity check that data has been returned
   expect_true(nrow(response$data$data) >= 200)
-  expect_equal(typeof(response$data$data[, "current_art"]), "double")
+  expect_equal(typeof(response$data$data[, "art_current"]), "double")
 })
 
 test_that("endpoint_validate_survey_programme works with programme data", {
@@ -120,7 +120,7 @@ test_that("endpoint_validate_survey_programme works with programme data", {
   expect_equal(body$data$fromADR, FALSE)
   ## Sanity check that data has been returned
   expect_true(nrow(body$data$data) >= 200)
-  expect_equal(typeof(body$data$data[, "current_art"]), "double")
+  expect_equal(typeof(body$data$data[, "art_current"]), "double")
 })
 
 test_that("endpoint_validate_survey_programme anc", {
@@ -134,8 +134,8 @@ test_that("endpoint_validate_survey_programme anc", {
   expect_equal(response$data$fromADR, scalar(FALSE))
   ## Sanity check that data has been returned
   expect_true(nrow(response$data$data) >= 200)
-  expect_equal(typeof(response$data$data[, "prevalence"]), "double")
-  expect_equal(typeof(response$data$data[, "art_coverage"]), "double")
+  expect_equal(typeof(response$data$data[, "anc_prevalence"]), "double")
+  expect_equal(typeof(response$data$data[, "anc_art_coverage"]), "double")
 })
 
 test_that("endpoint_validate_survey_programme works with anc data", {
@@ -153,8 +153,8 @@ test_that("endpoint_validate_survey_programme works with anc data", {
   expect_equal(body$data$fromADR, FALSE)
   ## Sanity check that data has been returned
   expect_true(nrow(body$data$data) >= 200)
-  expect_equal(typeof(body$data$data[, "prevalence"]), "double")
-  expect_equal(typeof(body$data$data[, "art_coverage"]), "double")
+  expect_equal(typeof(body$data$data[, "anc_prevalence"]), "double")
+  expect_equal(typeof(body$data$data[, "anc_art_coverage"]), "double")
 })
 
 test_that("endpoint_validate_survey_programme survey", {
@@ -168,7 +168,7 @@ test_that("endpoint_validate_survey_programme survey", {
   expect_equal(response$data$fromADR, scalar(FALSE))
   ## Sanity check that data has been returned
   expect_true(nrow(response$data$data) >= 20000)
-  expect_equal(typeof(response$data$data[, "est"]), "double")
+  expect_equal(typeof(response$data$data[, "estimate"]), "double")
 })
 
 test_that("endpoint_validate_survey_programme works with survey data", {
@@ -186,7 +186,7 @@ test_that("endpoint_validate_survey_programme works with survey data", {
   expect_equal(body$data$hash, "12345")
   ## Sanity check that data has been returned
   expect_true(nrow(body$data$data) >= 20000)
-  expect_equal(typeof(body$data$data[, "est"]), "double")
+  expect_equal(typeof(body$data$data[, "estimate"]), "double")
 })
 
 test_that("endpoint_model_options", {
@@ -522,7 +522,7 @@ test_that("endpoint_model_result can be run", {
   expect_equal(names(response$data), c("data", "plottingMetadata"))
   expect_equal(colnames(response$data$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
-                 "indicator_id", "mode", "mean", "lower", "upper"))
+                 "indicator", "mode", "mean", "lower", "upper"))
   expect_true(nrow(response$data$data) > 84042)
   expect_equal(names(response$data$plottingMetadata),
                c("barchart", "choropleth"))
@@ -551,7 +551,7 @@ test_that("api can call endpoint_model_result", {
   expect_equal(names(body$data), c("data", "plottingMetadata"))
   expect_equal(colnames(body$data$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
-                 "indicator_id", "mode", "mean", "lower", "upper"))
+                 "indicator", "mode", "mean", "lower", "upper"))
   expect_true(nrow(body$data$data) > 84042)
   expect_equal(names(body$data$plottingMetadata),
                c("barchart", "choropleth"))
@@ -1178,7 +1178,7 @@ test_that("endpoint_model_calibrate can be run", {
   expect_equal(names(response$data), c("data", "plottingMetadata"))
   expect_equal(colnames(response$data$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
-                 "indicator_id", "mode", "mean", "lower", "upper"))
+                 "indicator", "mode", "mean", "lower", "upper"))
   expect_true(nrow(response$data$data) > 84042)
   expect_equal(names(response$data$plottingMetadata),
                c("barchart", "choropleth"))
@@ -1209,7 +1209,7 @@ test_that("api can call endpoint_model_calibrate", {
   expect_equal(names(body$data), c("data", "plottingMetadata"))
   expect_equal(colnames(body$data$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
-                 "indicator_id", "mode", "mean", "lower", "upper"))
+                 "indicator", "mode", "mean", "lower", "upper"))
   expect_true(nrow(body$data$data) > 84042)
   expect_equal(names(body$data$plottingMetadata),
                c("barchart", "choropleth"))

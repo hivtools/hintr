@@ -14,10 +14,10 @@
     "age_group": {
       "type": "string"
     },
-    "current_art": {
+    "art_current": {
       "type": "number"
     }
   },
   "additionalProperties": true,
-  "required": [ "area_id", "year", "sex", "age_group", "current_art" ]
+  "required": [ "area_id", "year", "sex", "age_group", "art_current" ]
 }
