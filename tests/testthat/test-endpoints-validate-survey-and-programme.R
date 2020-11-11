@@ -110,8 +110,8 @@ test_that("possible filters are returned for data", {
     )
   ))
   expect_length(response$filters$year, 8)
-  expect_equal(response$filters$year[[1]]$id, scalar("2018"))
-  expect_equal(response$filters$year[[1]]$label, scalar("2018"))
+  expect_equal(response$filters$year[[1]]$id, scalar("CY2018Q4"))
+  expect_equal(response$filters$year[[1]]$label, scalar("December 2018"))
 
   expect_length(response$filters$indicators, 1)
   expect_equal(response$filters$indicators[[1]]$id, scalar("art_current"))

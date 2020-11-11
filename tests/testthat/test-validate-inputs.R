@@ -103,8 +103,8 @@ test_that("do_validate_programme validates programme file", {
   )
   expect_equal(data$filters$age, expected_age_filters)
   expect_length(data$filters$year, 8)
-  expect_equal(data$filters$year[[1]]$id, scalar("2018"))
-  expect_equal(data$filters$year[[1]]$label, scalar("2018"))
+  expect_equal(data$filters$year[[1]]$id, scalar("CY2018Q4"))
+  expect_equal(data$filters$year[[1]]$label, scalar("December 2018"))
 
   expect_length(data$filters$indicators, 1)
   expect_equal(data$filters$indicators[[1]]$id, scalar("art_current"))

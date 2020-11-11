@@ -128,7 +128,7 @@ do_validate_programme <- function(programme, shape) {
   assert_calendar_quarter_column(data)
   list(data = data,
        filters = list("age" = get_age_filters(data),
-                      "year" = get_year_filters(data),
+                      "year" = get_quarter_filters(data),
                       "indicators" = get_indicator_filters(data, "programme")))
 }
 
