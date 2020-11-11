@@ -1,3 +1,7 @@
+# hintr 0.1.8 
+
+* Revise ART programme data schema to use column `calendar_quarter` instead of `year`.
+
 # hintr 0.1.7
 
 * Depend on naomi 2.0.0 version for 2021 UNAIDS estimates.
