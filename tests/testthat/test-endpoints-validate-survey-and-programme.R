@@ -25,7 +25,7 @@ test_that("endpoint_validate_survey_programme returns error on invalid programme
   expect_equal(error$data[[1]]$error, scalar("INVALID_FILE"))
   expect_equal(
     error$data[[1]]$detail,
-    scalar("Data missing column year."))
+    scalar("Data missing column calendar_quarter."))
   expect_equal(error$status_code, 400)
 })
 
@@ -97,7 +97,7 @@ test_that("possible filters are returned for data", {
     file.path("testdata", "malawi.geojson"))
   response <- validate_survey_programme(input)
 
-  expect_equal(names(response$filters), c("age", "year", "indicators"))
+  expect_equal(names(response$filters), c("age", "calendar_quarter", "indicators"))
   expect_length(response$filters$age, 2)
   expect_equal(response$filters$age, list(
     list(
@@ -109,9 +109,9 @@ test_that("possible filters are returned for data", {
       label = scalar("0-14")
     )
   ))
-  expect_length(response$filters$year, 8)
-  expect_equal(response$filters$year[[1]]$id, scalar("2018"))
-  expect_equal(response$filters$year[[1]]$label, scalar("2018"))
+  expect_length(response$filters$calendar_quarter, 8)
+  expect_equal(response$filters$calendar_quarter[[1]]$id, scalar("CY2018Q4"))
+  expect_equal(response$filters$calendar_quarter[[1]]$label, scalar("December 2018"))
 
   expect_length(response$filters$indicators, 1)
   expect_equal(response$filters$indicators[[1]]$id, scalar("art_current"))

@@ -94,7 +94,7 @@ test_that("do_validate_programme validates programme file", {
   expect_true(nrow(data$data) > 200)
   expect_equal(typeof(data$data$art_current), "double")
 
-  expect_equal(names(data$filters), c("age", "year", "indicators"))
+  expect_equal(names(data$filters), c("age", "calendar_quarter", "indicators"))
   expected_age_filters <- list(
     list(id = scalar("Y015_999"),
          label = scalar("15+")),
@@ -102,9 +102,9 @@ test_that("do_validate_programme validates programme file", {
          label = scalar("0-14"))
   )
   expect_equal(data$filters$age, expected_age_filters)
-  expect_length(data$filters$year, 8)
-  expect_equal(data$filters$year[[1]]$id, scalar("2018"))
-  expect_equal(data$filters$year[[1]]$label, scalar("2018"))
+  expect_length(data$filters$calendar_quarter, 8)
+  expect_equal(data$filters$calendar_quarter[[1]]$id, scalar("CY2018Q4"))
+  expect_equal(data$filters$calendar_quarter[[1]]$label, scalar("December 2018"))
 
   expect_length(data$filters$indicators, 1)
   expect_equal(data$filters$indicators[[1]]$id, scalar("art_current"))

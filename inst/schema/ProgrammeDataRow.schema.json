@@ -5,8 +5,8 @@
     "area_id": {
       "type": "string"
     },
-    "year": {
-      "type": "number"
+    "calendar_quarter": {
+      "type": "string"
     },
     "sex": {
       "type": "string"
@@ -19,5 +19,5 @@
     }
   },
   "additionalProperties": true,
-  "required": [ "area_id", "year", "sex", "age_group", "art_current" ]
+  "required": [ "area_id", "calendar_quarter", "sex", "age_group", "art_current" ]
 }
