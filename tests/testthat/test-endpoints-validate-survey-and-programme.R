@@ -25,7 +25,7 @@ test_that("endpoint_validate_survey_programme returns error on invalid programme
   expect_equal(error$data[[1]]$error, scalar("INVALID_FILE"))
   expect_equal(
     error$data[[1]]$detail,
-    scalar("Data missing column year."))
+    scalar("Data missing column calendar_quarter."))
   expect_equal(error$status_code, 400)
 })
 
