@@ -115,17 +115,17 @@ do_validate_programme <- function(programme, shape) {
   assert_single_country(data, "programme")
   assert_column_names(
     colnames(data),
-    c("area_id", "year", "sex", "age_group", "art_current"))
+    c("area_id", "calendar_quarter", "sex", "age_group", "art_current"))
   assert_consistent_regions(read_regions(shape, "shape"),
                             read_regions(programme, "programme"),
                             "programme")
-  assert_unique_combinations(data, c("area_id", "year", "sex", "age_group"))
+  assert_unique_combinations(data, c("area_id", "calendar_quarter", "sex", "age_group"))
   assert_expected_values(data, "sex", c("male", "female", "both"))
   art_ages <- naomi::get_age_groups()$age_group
   art_ages <- art_ages[!art_ages %in% c("Y000_000", "Y001_004")]
   assert_expected_values(data, "age_group", art_ages)
   assert_column_positive_numeric(data, "art_current")
-  assert_year_column(data)
+  assert_calendar_quarter_column(data)
   list(data = data,
        filters = list("age" = get_age_filters(data),
                       "year" = get_year_filters(data),
