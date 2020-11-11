@@ -6,7 +6,7 @@
       "type": "array",
       "items": { "$ref": "FilterOption.schema.json" }
     },
-    "year": {
+    "calendar_quarter": {
       "type": "array",
       "items": { "$ref": "FilterOption.schema.json" }
     },
@@ -17,6 +17,6 @@
   },
   "additionalProperties": false,
   "required": [
-    "age", "year", "indicators"
+    "age", "calendar_quarter", "indicators"
   ]
 }
