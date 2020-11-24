@@ -36,7 +36,8 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
       complete = list(
         started = TRUE,
         complete = FALSE,
-        name = t_("RUN_MODEL_MOCK_FINISH")
+        name = t_("RUN_MODEL_MOCK_FINISH"),
+        helpText = "model running"
       )
     )
     signalCondition(structure(progress_complete,

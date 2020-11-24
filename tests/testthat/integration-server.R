@@ -187,6 +187,7 @@ test_that("model interactions", {
     expect_true(response$data$progress[[1]]$complete)
     expect_equal(response$data$progress[[2]]$name, "Finished mock model")
     expect_false(response$data$progress[[2]]$complete)
+    expect_equal(response$data$progress[[2]]$helpText, "model running")
   })
 
   r <- httr::GET(paste0(server$url, "/model/debug/", response$data$id))
