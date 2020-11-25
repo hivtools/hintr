@@ -28,6 +28,7 @@ test_that("endpoint model run queues a model run", {
   expect_true(status$progress[[1]]$complete)
   expect_equal(status$progress[[2]]$name, scalar("Finished mock model"))
   expect_false(status$progress[[2]]$complete)
+  expect_equal(status$progress[[2]]$helpText, scalar("model running"))
 
   ## Get the result
   get_model_result <- model_result(queue)

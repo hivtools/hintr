@@ -471,6 +471,7 @@ test_that("endpoint_model_status can be run", {
   expect_true(response$data$progress[[1]]$complete)
   expect_equal(response$data$progress[[2]]$name, scalar("Finished mock model"))
   expect_false(response$data$progress[[2]]$complete)
+  expect_equal(response$data$progress[[2]]$helpText, scalar("model running"))
 })
 
 test_that("api can call endpoint_model_status", {

@@ -1,3 +1,7 @@
+# hintr 0.1.9
+
+* Return helpText from model run
+
 # hintr 0.1.8 
 
 * Revise ART programme data schema to use column `calendar_quarter` instead of `year`.
