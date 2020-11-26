@@ -174,7 +174,7 @@ test_that("do_validate_survey validates survey file", {
          label = scalar("MWI2004DHS"))
   )
   expect_equal(data$filters$age[[1]], expected_ages)
-  expect_length(data$filters$age, 21)
+  expect_length(data$filters$age, 23)
   expect_equal(data$filters$surveys, expected_survey)
 
   expect_length(data$filters$indicators, 4)
