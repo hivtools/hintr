@@ -1,3 +1,8 @@
+# hintr 0.1.11
+
+* Add endpoint `<+calendar_quarter_t1_default+>` to select most recent survey calendar 
+  quarter as default 'time 1' option.
+  
 # hintr 0.1.9
 
 * Return helpText from model run
