@@ -61,7 +61,9 @@ test_that("do_endpoint_model_options correctly builds params list", {
   expect_equal(names(params),
                c("area_scope_options", "area_scope_default",
                  "area_level_options", "area_level_default",
-                 "calendar_quarter_t1_options", "calendar_quarter_t2_options",
+                 "calendar_quarter_t1_options",
+                 "calendar_quarter_t1_default",
+                 "calendar_quarter_t2_options",
                  "survey_prevalence_options", "survey_art_coverage_options",
                  "survey_recently_infected_options",
                  "anc_prevalence_year1_options",
@@ -101,6 +103,9 @@ test_that("do_endpoint_model_options correctly builds params list", {
   expect_equal(t1[[length(t1)]]$id, scalar("CY2010Q1"))
   expect_equal(t1[[length(t1)]]$label, scalar("March 2010"))
   expect_true(length(t1) >= 32)
+
+  expect_equal(params$calendar_quarter_t1_default, "CY2016Q1")
+               
   t2 <- params$calendar_quarter_t2_options
   expect_equal(t2[[length(t2)]]$id, scalar("CY2010Q1"))
   expect_equal(t2[[length(t2)]]$label, scalar("March 2010"))
@@ -139,7 +144,9 @@ test_that("do_endpoint_model_options without programme data", {
   expect_equal(names(params),
                c("area_scope_options", "area_scope_default",
                  "area_level_options", "area_level_default",
-                 "calendar_quarter_t1_options", "calendar_quarter_t2_options",
+                 "calendar_quarter_t1_options",
+                 "calendar_quarter_t1_default",
+                 "calendar_quarter_t2_options",
                  "survey_prevalence_options", "survey_art_coverage_options",
                  "survey_recently_infected_options",
                  "anc_prevalence_year1_options",
