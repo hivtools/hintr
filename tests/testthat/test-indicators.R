@@ -5,7 +5,7 @@ test_that("can get filtered data for indicator", {
   indicator_data <- get_indicator_data(survey, "survey", "art_coverage")
   expect_true(all(indicator_data$indicator == "art_coverage"))
   expect_equal(names(indicator_data),
-               c("indicator", "survey_id", "survey_year", "area_id", "area_name",
+               c("indicator", "survey_id", "survey_mid_calendar_quarter", "area_id", "res_type",
                  "sex", "age_group", "n_clusters", "n_observations", "n_eff_kish",
                  "estimate", "std_error", "ci_lower", "ci_upper"))
   prevalence_data <- get_indicator_data(survey, "survey", "prevalence")
