@@ -143,7 +143,7 @@ test_that("possible filters are returned for data", {
   response <- validate_survey_programme(input)
 
   expect_equal(names(response$filters), c("age", "surveys", "indicators"))
-  expect_length(response$filters$age, 21)
+  expect_length(response$filters$age, 23)
   expect_length(response$filters$surveys, 4)
   expect_equal(response$filters$surveys, list(
     list(
