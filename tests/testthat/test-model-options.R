@@ -362,3 +362,25 @@ test_that("area level is prepopualted to lowest region", {
   expect_equal(json$controlSections[[1]]$controlGroups[[2]]$label, "Area level")
   expect_equal(json$controlSections[[1]]$controlGroups[[2]]$controls[[1]]$value, "4")
 })
+
+
+test_that("integrating time options works", {
+
+  ids1 <- c("CY2015Q4", "CY2018Q3")
+  ids2 <- c("CY2017Q3", "CY2018Q3")
+
+  quarter_ids1 <- naomi::calendar_quarter_to_quarter_id(ids1)
+  quarter_ids2 <- naomi::calendar_quarter_to_quarter_id(ids2)
+  
+  times1 <- lapply(quarter_ids1, quarter_id_to_json_list)
+  times2 <- lapply(quarter_ids2, quarter_id_to_json_list)
+
+  times <- union_time_list(times1, times2)
+
+  expect_equal(time_list_ids(times), c("CY2018Q3", "CY2017Q3", "CY2015Q4"))
+
+  times_asc <- union_time_list(times1, times2, decreasing = FALSE)
+  times_asc2 <- union_time_list(times2, times1, decreasing = FALSE)
+  expect_equal(time_list_ids(times_asc), c("CY2015Q4", "CY2017Q3", "CY2018Q3"))
+  expect_equal(time_list_ids(times_asc2), c("CY2015Q4", "CY2017Q3", "CY2018Q3"))
+})
