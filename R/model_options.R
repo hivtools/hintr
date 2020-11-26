@@ -30,6 +30,8 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
   get_survey_options <- function(indicator) {
     get_survey_filters(get_indicator_data(survey, "survey", indicator))
   }
+
+  most_recent_survey_quarter <- max(read_csv(survey$path)$survey_mid_calendar_quarter)
   survey_prevalence_options <- get_survey_options("prevalence")
   survey_art_coverage_options <- get_survey_options("art_coverage")
   survey_recently_infected_options <- get_survey_options("recent_infected")
@@ -52,6 +54,7 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
     area_level_options = area_level_options,
     area_level_default = area_level_options[[length(area_level_options)]]$id,
     calendar_quarter_t1_options = time_options,
+    calendar_quarter_t1_default = most_recent_survey_quarter,
     calendar_quarter_t2_options = time_options,
     survey_prevalence_options = survey_prevalence_options,
     survey_art_coverage_options = survey_art_coverage_options,
