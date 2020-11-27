@@ -104,8 +104,8 @@ test_that("do_endpoint_model_options correctly builds params list", {
   expect_equal(t1[[length(t1)]]$label, scalar("March 2010"))
   expect_true(length(t1) >= 32)
 
-  expect_equal(params$calendar_quarter_t1_default, "CY2016Q1")
-               
+  expect_equal(params$calendar_quarter_t1_default, scalar("CY2016Q1"))
+
   t2 <- params$calendar_quarter_t2_options
   expect_equal(t2[[length(t2)]]$id, scalar("CY2010Q1"))
   expect_equal(t2[[length(t2)]]$label, scalar("March 2010"))
@@ -208,7 +208,7 @@ test_that("can retrieve validated model options", {
 
   json <- jsonlite::parse_json(json)
   expect_equal(names(json), "controlSections")
-  expect_length(json$controlSections, 7)
+  expect_length(json$controlSections, 6)
 
   general_section <- json$controlSections[[1]]
   expect_length(
@@ -299,7 +299,7 @@ test_that("can retrieve validated model options", {
     art_section$controlGroups[[1]]$controls[[1]]$options[[2]]$label,
     "No")
 
-  advanced_section <- json$controlSections[[7]]
+  advanced_section <- json$controlSections[[6]]
   expect_equal(advanced_section$label, "Advanced")
 })
 
@@ -371,7 +371,7 @@ test_that("integrating time options works", {
 
   quarter_ids1 <- naomi::calendar_quarter_to_quarter_id(ids1)
   quarter_ids2 <- naomi::calendar_quarter_to_quarter_id(ids2)
-  
+
   times1 <- lapply(quarter_ids1, quarter_id_to_json_list)
   times2 <- lapply(quarter_ids2, quarter_id_to_json_list)
 

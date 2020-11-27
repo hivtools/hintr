@@ -9,7 +9,7 @@ test_that("endpoint_model_options returns model options", {
   json <- jsonlite::parse_json(response)
 
   expect_equal(names(json), "controlSections")
-  expect_length(json$controlSections, 7)
+  expect_length(json$controlSections, 6)
 
   general_section <- json$controlSections[[1]]
   expect_length(
@@ -111,7 +111,7 @@ test_that("endpoint_model_options can be run without programme data", {
   json <- jsonlite::parse_json(response)
 
   expect_equal(names(json), "controlSections")
-  expect_length(json$controlSections, 5)
+  expect_length(json$controlSections, 4)
 
   general_section <- json$controlSections[[1]]
   expect_length(

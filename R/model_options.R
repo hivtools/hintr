@@ -32,12 +32,13 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
   }
 
   most_recent_survey_quarter <- max(read_csv(survey$path)$survey_mid_calendar_quarter)
+  most_recent_survey_quarter <- scalar(most_recent_survey_quarter)
 
   ## Union most_recent_survey_quarter with times_list to ensure it is included in options
   most_recent_survey_qid <- naomi::calendar_quarter_to_quarter_id(most_recent_survey_quarter)
   mr_qlist <- list(quarter_id_to_json_list(most_recent_survey_qid))
   time_options <- union_time_list(time_options, mr_qlist, decreasing = TRUE)
-  
+
   survey_prevalence_options <- get_survey_options("prevalence")
   survey_art_coverage_options <- get_survey_options("art_coverage")
   survey_recently_infected_options <- get_survey_options("recent_infected")
