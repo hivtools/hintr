@@ -197,7 +197,7 @@ test_that("endpoint_model_options", {
   expect_null(response$error)
   body <- jsonlite::parse_json(response$body)
   expect_equal(names(body$data), "controlSections")
-  expect_length(body$data$controlSections, 7)
+  expect_length(body$data$controlSections, 6)
 
   general_section <- body$data$controlSections[[1]]
   expect_length(
@@ -301,7 +301,7 @@ test_that("endpoint_model_options works", {
   expect_equal(res$status, 200)
   body <- jsonlite::parse_json(res$body)
   expect_equal(names(body$data), "controlSections")
-  expect_length(body$data$controlSections, 7)
+  expect_length(body$data$controlSections, 6)
 
   general_section <- body$data$controlSections[[1]]
   expect_length(

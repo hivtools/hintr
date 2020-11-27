@@ -76,8 +76,8 @@ test_that("endpoint model run queues a model run", {
   ## Barchart indicators are in numeric id order
   expect_equal(barchart$indicators$indicator,
                c("population", "prevalence", "plhiv", "art_coverage",
-                 "art_current", "receiving_art", "incidence", "new_infections",
-                 "anc_prevalence", "anc_art_coverage"))
+                 "art_current_residents", "art_current", "incidence",
+                 "infections", "anc_prevalence", "anc_art_coverage"))
 
   ## Choropleth
   choropleth <- result$plottingMetadata$choropleth
@@ -113,8 +113,8 @@ test_that("endpoint model run queues a model run", {
   ## Choropleth indicators are in numeric id order
   expect_equal(choropleth$indicators$indicator,
                c("population", "prevalence", "plhiv", "art_coverage",
-                 "art_current", "receiving_art", "incidence", "new_infections",
-                 "anc_prevalence", "anc_art_coverage"))
+                 "art_current_residents", "art_current", "incidence",
+                 "infections", "anc_prevalence", "anc_art_coverage"))
 })
 
 test_that("endpoint_run_model returns error if queueing fails", {

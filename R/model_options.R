@@ -30,6 +30,15 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
   get_survey_options <- function(indicator) {
     get_survey_filters(get_indicator_data(survey, "survey", indicator))
   }
+
+  most_recent_survey_quarter <- max(read_csv(survey$path)$survey_mid_calendar_quarter)
+  most_recent_survey_quarter <- scalar(most_recent_survey_quarter)
+
+  ## Union most_recent_survey_quarter with times_list to ensure it is included in options
+  most_recent_survey_qid <- naomi::calendar_quarter_to_quarter_id(most_recent_survey_quarter)
+  mr_qlist <- list(quarter_id_to_json_list(most_recent_survey_qid))
+  time_options <- union_time_list(time_options, mr_qlist, decreasing = TRUE)
+
   survey_prevalence_options <- get_survey_options("prevalence")
   survey_art_coverage_options <- get_survey_options("art_coverage")
   survey_recently_infected_options <- get_survey_options("recent_infected")
@@ -52,6 +61,7 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
     area_level_options = area_level_options,
     area_level_default = area_level_options[[length(area_level_options)]]$id,
     calendar_quarter_t1_options = time_options,
+    calendar_quarter_t1_default = most_recent_survey_quarter,
     calendar_quarter_t2_options = time_options,
     survey_prevalence_options = survey_prevalence_options,
     survey_art_coverage_options = survey_art_coverage_options,
@@ -114,13 +124,35 @@ get_time_options <- function() {
   end_date <- naomi::convert_quarter_id(as.integer(format(Sys.Date(), "%Y")),
                                         as.integer(current_quarter))
   times <- seq.int(end_date, start_date, -1)
-  lapply(times, function(time) {
-    list(
-      id = scalar(naomi::quarter_id_to_calendar_quarter(time)),
-      label = scalar(naomi::quarter_year_labels(time))
-    )
-  })
+  lapply(times, quarter_id_to_json_list)
 }
+
+quarter_id_to_json_list <- function(time) {
+  list(
+    id = scalar(naomi::quarter_id_to_calendar_quarter(time)),
+    label = scalar(naomi::quarter_year_labels(time))
+  )
+}
+
+sort_time_json_list <- function(time_list, decreasing = TRUE) {
+  ids <- time_list_ids(time_list)
+  time_list[order(ids, decreasing = decreasing)]
+}
+
+time_list_ids <- function(time_list) {
+  unlist(lapply(time_list, "[[", 1))
+}
+
+union_time_list <- function(times1, times2, decreasing = TRUE) {
+  ids1 <- time_list_ids(times1)
+  ids2 <- time_list_ids(times2)
+
+  newidx <- !(ids2 %in% ids1)
+  times_new <- c(times1, times2[newidx])
+
+  sort_time_json_list(times_new, decreasing)
+}
+
 
 #' Stitch together separate sections of the options template
 #'

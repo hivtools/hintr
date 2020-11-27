@@ -61,7 +61,9 @@ test_that("do_endpoint_model_options correctly builds params list", {
   expect_equal(names(params),
                c("area_scope_options", "area_scope_default",
                  "area_level_options", "area_level_default",
-                 "calendar_quarter_t1_options", "calendar_quarter_t2_options",
+                 "calendar_quarter_t1_options",
+                 "calendar_quarter_t1_default",
+                 "calendar_quarter_t2_options",
                  "survey_prevalence_options", "survey_art_coverage_options",
                  "survey_recently_infected_options",
                  "anc_prevalence_year1_options",
@@ -101,6 +103,9 @@ test_that("do_endpoint_model_options correctly builds params list", {
   expect_equal(t1[[length(t1)]]$id, scalar("CY2010Q1"))
   expect_equal(t1[[length(t1)]]$label, scalar("March 2010"))
   expect_true(length(t1) >= 32)
+
+  expect_equal(params$calendar_quarter_t1_default, scalar("CY2016Q1"))
+
   t2 <- params$calendar_quarter_t2_options
   expect_equal(t2[[length(t2)]]$id, scalar("CY2010Q1"))
   expect_equal(t2[[length(t2)]]$label, scalar("March 2010"))
@@ -139,7 +144,9 @@ test_that("do_endpoint_model_options without programme data", {
   expect_equal(names(params),
                c("area_scope_options", "area_scope_default",
                  "area_level_options", "area_level_default",
-                 "calendar_quarter_t1_options", "calendar_quarter_t2_options",
+                 "calendar_quarter_t1_options",
+                 "calendar_quarter_t1_default",
+                 "calendar_quarter_t2_options",
                  "survey_prevalence_options", "survey_art_coverage_options",
                  "survey_recently_infected_options",
                  "anc_prevalence_year1_options",
@@ -201,7 +208,7 @@ test_that("can retrieve validated model options", {
 
   json <- jsonlite::parse_json(json)
   expect_equal(names(json), "controlSections")
-  expect_length(json$controlSections, 7)
+  expect_length(json$controlSections, 6)
 
   general_section <- json$controlSections[[1]]
   expect_length(
@@ -292,7 +299,7 @@ test_that("can retrieve validated model options", {
     art_section$controlGroups[[1]]$controls[[1]]$options[[2]]$label,
     "No")
 
-  advanced_section <- json$controlSections[[7]]
+  advanced_section <- json$controlSections[[6]]
   expect_equal(advanced_section$label, "Advanced")
 })
 
@@ -354,4 +361,26 @@ test_that("area level is prepopualted to lowest region", {
 
   expect_equal(json$controlSections[[1]]$controlGroups[[2]]$label, "Area level")
   expect_equal(json$controlSections[[1]]$controlGroups[[2]]$controls[[1]]$value, "4")
+})
+
+
+test_that("integrating time options works", {
+
+  ids1 <- c("CY2015Q4", "CY2018Q3")
+  ids2 <- c("CY2017Q3", "CY2018Q3")
+
+  quarter_ids1 <- naomi::calendar_quarter_to_quarter_id(ids1)
+  quarter_ids2 <- naomi::calendar_quarter_to_quarter_id(ids2)
+
+  times1 <- lapply(quarter_ids1, quarter_id_to_json_list)
+  times2 <- lapply(quarter_ids2, quarter_id_to_json_list)
+
+  times <- union_time_list(times1, times2)
+
+  expect_equal(time_list_ids(times), c("CY2018Q3", "CY2017Q3", "CY2015Q4"))
+
+  times_asc <- union_time_list(times1, times2, decreasing = FALSE)
+  times_asc2 <- union_time_list(times2, times1, decreasing = FALSE)
+  expect_equal(time_list_ids(times_asc), c("CY2015Q4", "CY2017Q3", "CY2018Q3"))
+  expect_equal(time_list_ids(times_asc2), c("CY2015Q4", "CY2017Q3", "CY2018Q3"))
 })
