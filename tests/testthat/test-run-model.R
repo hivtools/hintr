@@ -24,7 +24,7 @@ test_that("model can be run and filters extracted", {
   expect_length(barchart$filters[[2]]$options, 3)
   expect_equal(barchart$filters[[2]]$options[[2]]$id, scalar("CY2018Q3"))
   expect_equal(barchart$filters[[2]]$options[[2]]$label, scalar("September 2018"))
-  expect_equal(nrow(barchart$indicators), 10)
+  expect_equal(nrow(barchart$indicators), 17)
   expect_true(all(c("population", "prevalence", "plhiv", "art_coverage",
                     "art_current_residents", "art_current", "incidence",
                     "infections", "anc_prevalence", "anc_art_coverage") %in%
@@ -84,7 +84,7 @@ test_that("model without national level results can be processed", {
   expect_length(barchart$filters[[2]]$options, 3)
   expect_equal(barchart$filters[[2]]$options[[2]]$id, scalar("CY2018Q3"))
   expect_equal(barchart$filters[[2]]$options[[2]]$label, scalar("September 2018"))
-  expect_equal(nrow(barchart$indicators), 10)
+  expect_equal(nrow(barchart$indicators), 17)
   expect_true(all(c("population", "prevalence", "plhiv", "art_coverage",
                     "art_current_residents", "art_current", "incidence",
                     "infections", "anc_prevalence", "anc_art_coverage") %in%
