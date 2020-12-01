@@ -1,3 +1,7 @@
+# hintr 0.1.13
+
+* Pin to naomi@issue-142
+
 # hintr 0.1.12
 
 * Pin to naomi@anc-testing-cascade
