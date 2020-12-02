@@ -139,10 +139,7 @@ test_that("endpoint_plotting_metadata gets metadata", {
 })
 
 test_that("endpoint_plotting_metadata returns default data for missing country", {
-  metadata <- testthat::evaluate_promise(plotting_metadata("Missing Country"))
-  expect_equal(metadata$messages, paste0("Country with iso3 code Missing ",
-                                         "Country not in metadata - returning default colour scales.\n"))
-  response <- metadata$result
+  response <- plotting_metadata("Missing Country")
 
   expect_true(all(names(response) %in%
                     c("survey", "anc", "output", "programme")))
