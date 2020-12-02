@@ -82,9 +82,7 @@ test_that("endpoint model run queues a model run", {
                  "infections", "anc_prevalence", "anc_art_coverage",
                  "anc_clients", "anc_plhiv", "anc_already_art",
                  "anc_art_new", "anc_known_pos",
-                 "anc_tested_pos", "anc_tested_neg",
-                 "untreated_plhiv_num", "aware_plhiv_prop",
-                 "unaware_plhiv_num"))
+                 "anc_tested_pos", "anc_tested_neg"))
 
   ## Choropleth
   choropleth <- result$plottingMetadata$choropleth
