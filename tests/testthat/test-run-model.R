@@ -24,13 +24,15 @@ test_that("model can be run and filters extracted", {
   expect_length(barchart$filters[[2]]$options, 3)
   expect_equal(barchart$filters[[2]]$options[[2]]$id, scalar("CY2018Q3"))
   expect_equal(barchart$filters[[2]]$options[[2]]$label, scalar("September 2018"))
-  expect_equal(nrow(barchart$indicators), 17)
+  expect_equal(nrow(barchart$indicators), 20)
   expect_true(all(c("population", "prevalence", "plhiv", "art_coverage",
                     "art_current_residents", "art_current", "incidence",
                     "infections", "anc_prevalence", "anc_art_coverage",
                     "anc_clients", "anc_plhiv", "anc_already_art",
                     "anc_art_new", "anc_known_pos",
-                    "anc_tested_pos", "anc_tested_neg") %in%
+                    "anc_tested_pos", "anc_tested_neg",
+                    "untreated_plhiv_num", "aware_plhiv_prop",
+                    "unaware_plhiv_num") %in%
                     barchart$indicators$indicator))
 
   choropleth <- model_run$plottingMetadata$choropleth
@@ -49,7 +51,7 @@ test_that("model can be run and filters extracted", {
   expect_equal(choropleth$filters[[2]]$options[[2]]$id, scalar("CY2018Q3"))
   expect_equal(choropleth$filters[[2]]$options[[2]]$label,
                scalar("September 2018"))
-  expect_equal(nrow(choropleth$indicators), 17)
+  expect_equal(nrow(choropleth$indicators), 20)
   expect_true(all(!is.null(choropleth$indicators$error_low_column)))
   expect_true(all(!is.null(choropleth$indicators$error_high_column)))
   expect_true(all(c("population", "prevalence", "plhiv", "art_coverage",
@@ -57,7 +59,9 @@ test_that("model can be run and filters extracted", {
                     "infections", "anc_prevalence", "anc_art_coverage",
                     "anc_clients", "anc_plhiv", "anc_already_art",
                     "anc_art_new", "anc_known_pos",
-                    "anc_tested_pos", "anc_tested_neg") %in%
+                    "anc_tested_pos", "anc_tested_neg",
+                    "untreated_plhiv_num", "aware_plhiv_prop",
+                    "unaware_plhiv_num") %in%
                     choropleth$indicators$indicator))
 })
 
@@ -90,13 +94,15 @@ test_that("model without national level results can be processed", {
   expect_length(barchart$filters[[2]]$options, 3)
   expect_equal(barchart$filters[[2]]$options[[2]]$id, scalar("CY2018Q3"))
   expect_equal(barchart$filters[[2]]$options[[2]]$label, scalar("September 2018"))
-  expect_equal(nrow(barchart$indicators), 17)
+  expect_equal(nrow(barchart$indicators), 20)
   expect_true(all(c("population", "prevalence", "plhiv", "art_coverage",
-                      "art_current_residents", "art_current", "incidence",
-                      "infections", "anc_prevalence", "anc_art_coverage",
-                      "anc_clients", "anc_plhiv", "anc_already_art",
-                      "anc_art_new", "anc_known_pos",
-                      "anc_tested_pos", "anc_tested_neg") %in%
+                    "art_current_residents", "art_current", "incidence",
+                    "infections", "anc_prevalence", "anc_art_coverage",
+                    "anc_clients", "anc_plhiv", "anc_already_art",
+                    "anc_art_new", "anc_known_pos",
+                    "anc_tested_pos", "anc_tested_neg",
+                    "untreated_plhiv_num", "aware_plhiv_prop",
+                    "unaware_plhiv_num") %in%
                     barchart$indicators$indicator))
 
   choropleth <- model_run$plottingMetadata$choropleth
@@ -115,13 +121,15 @@ test_that("model without national level results can be processed", {
   expect_equal(choropleth$filters[[2]]$options[[2]]$id, scalar("CY2018Q3"))
   expect_equal(choropleth$filters[[2]]$options[[2]]$label,
                scalar("September 2018"))
-  expect_equal(nrow(choropleth$indicators), 17)
+  expect_equal(nrow(choropleth$indicators), 20)
   expect_true(all(c("population", "prevalence", "plhiv", "art_coverage",
                     "art_current_residents", "art_current", "incidence",
                     "infections", "anc_prevalence", "anc_art_coverage",
                     "anc_clients", "anc_plhiv", "anc_already_art",
                     "anc_art_new", "anc_known_pos",
-                    "anc_tested_pos", "anc_tested_neg") %in%
+                    "anc_tested_pos", "anc_tested_neg",
+                    "untreated_plhiv_num", "aware_plhiv_prop",
+                    "unaware_plhiv_num") %in%
                     choropleth$indicators$indicator))
 
 })

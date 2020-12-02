@@ -1,3 +1,7 @@
+# hintr 0.1.4
+
+* Pin to naomi@aware-of-status
+
 # hintr 0.1.13
 
 * Pin to naomi@issue-142
