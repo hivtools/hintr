@@ -384,3 +384,41 @@ test_that("integrating time options works", {
   expect_equal(time_list_ids(times_asc), c("CY2015Q4", "CY2017Q3", "CY2018Q3"))
   expect_equal(time_list_ids(times_asc2), c("CY2015Q4", "CY2017Q3", "CY2018Q3"))
 })
+
+test_that("model options work when survey_mid_calendar_quarter missing", {
+  shape <- file_object(file.path("testdata", "malawi.geojson"))
+  art <- file_object(file.path("testdata", "programme.csv"))
+  anc <- file_object(file.path("testdata", "anc.csv"))
+
+  ## Setup survey data for testing
+  survey <- file_object(file.path("testdata", "survey.csv"))
+  survey_data <- read_csv(survey$path)
+  survey_data$survey_mid_calendar_quarter <- NULL
+  t <- tempfile()
+  write.csv(survey_data, t)
+  survey$path <- t
+
+  mock_build_json <- mockery::mock('"{"test"}')
+  with_mock("hintr:::build_json" = mock_build_json,  {
+    json <- do_endpoint_model_options(shape, survey, art, anc)
+    args <- mockery::mock_args(mock_build_json)
+  })
+  expect_length(args[[1]], 2)
+  params <- args[[1]][[2]]
+  expect_equal(names(params),
+               c("area_scope_options", "area_scope_default",
+                 "area_level_options", "area_level_default",
+                 "calendar_quarter_t1_options",
+                 "calendar_quarter_t1_default",
+                 "calendar_quarter_t2_options",
+                 "survey_prevalence_options", "survey_art_coverage_options",
+                 "survey_recently_infected_options",
+                 "anc_prevalence_year1_options",
+                 "anc_prevalence_year2_options",
+                 "anc_art_coverage_year1_options",
+                 "anc_art_coverage_year2_options"))
+
+  ## Defaults to most recent time option
+  time_options <- get_time_options()
+  expect_equal(params$calendar_quarter_t1_default, time_options[[1]]$id)
+})

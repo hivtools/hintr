@@ -31,13 +31,21 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
     get_survey_filters(get_indicator_data(survey, "survey", indicator))
   }
 
-  most_recent_survey_quarter <- max(read_csv(survey$path)$survey_mid_calendar_quarter)
-  most_recent_survey_quarter <- scalar(most_recent_survey_quarter)
-
-  ## Union most_recent_survey_quarter with times_list to ensure it is included in options
-  most_recent_survey_qid <- naomi::calendar_quarter_to_quarter_id(most_recent_survey_quarter)
-  mr_qlist <- list(quarter_id_to_json_list(most_recent_survey_qid))
-  time_options <- union_time_list(time_options, mr_qlist, decreasing = TRUE)
+  survey_data <- read_csv(survey$path)
+  survey_mid_calendar_quarter <- survey_data$survey_mid_calendar_quarter
+  if (!is.null(survey_mid_calendar_quarter) &&
+      all(grepl("CY[[:digit:]]{4}Q[[:digit:]]", survey_mid_calendar_quarter))) {
+    most_recent_survey_quarter <- scalar(max(survey_mid_calendar_quarter))
+    ## Union most_recent_survey_quarter with times_list to ensure it is
+    ## included in options
+    most_recent_survey_qid <- naomi::calendar_quarter_to_quarter_id(
+      most_recent_survey_quarter)
+    mr_qlist <- list(quarter_id_to_json_list(most_recent_survey_qid))
+    time_options <- union_time_list(time_options, mr_qlist, decreasing = TRUE)
+  } else {
+    ## Use the most recent time option
+    most_recent_survey_quarter <- time_options[[1]]$id
+  }
 
   survey_prevalence_options <- get_survey_options("prevalence")
   survey_art_coverage_options <- get_survey_options("art_coverage")
