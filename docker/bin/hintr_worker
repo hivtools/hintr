@@ -1,2 +1,5 @@
 #!/usr/bin/env Rscript
+## TMB will try to use as many cores as possible (potentially slowing the
+## rest of the application down) unless we explicitly limit it to only 1 core.
+TMB::openmp(1)
 hintr:::main_worker()
