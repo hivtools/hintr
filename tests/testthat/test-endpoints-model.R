@@ -62,7 +62,7 @@ test_that("endpoint model run queues a model run", {
   expect_equal(barchart$filters[[2]]$options[[2]]$label,
                scalar("September 2018"))
   expect_true(length(barchart$filters[[4]]$options) >= 29)
-  expect_equal(nrow(barchart$indicators), 10)
+  expect_equal(nrow(barchart$indicators), 17)
 
   ## Quarters are in descending order
   calendar_quarters <-
@@ -77,7 +77,10 @@ test_that("endpoint model run queues a model run", {
   expect_equal(barchart$indicators$indicator,
                c("population", "prevalence", "plhiv", "art_coverage",
                  "art_current_residents", "art_current", "incidence",
-                 "infections", "anc_prevalence", "anc_art_coverage"))
+                 "infections", "anc_prevalence", "anc_art_coverage",
+                 "anc_clients", "anc_plhiv", "anc_already_art",
+                 "anc_art_new", "anc_known_pos",
+                 "anc_tested_pos", "anc_tested_neg"))
 
   ## Choropleth
   choropleth <- result$plottingMetadata$choropleth
@@ -100,7 +103,7 @@ test_that("endpoint model run queues a model run", {
   expect_equal(choropleth$filters[[2]]$options[[2]]$label,
                scalar("September 2018"))
   expect_true(length(choropleth$filters[[4]]$options) >= 29)
-  expect_equal(nrow(choropleth$indicators), 10)
+  expect_equal(nrow(choropleth$indicators), 17)
 
   ## Quarters are in descending order
   calendar_quarters <-
@@ -114,7 +117,10 @@ test_that("endpoint model run queues a model run", {
   expect_equal(choropleth$indicators$indicator,
                c("population", "prevalence", "plhiv", "art_coverage",
                  "art_current_residents", "art_current", "incidence",
-                 "infections", "anc_prevalence", "anc_art_coverage"))
+                 "infections", "anc_prevalence", "anc_art_coverage",
+                 "anc_clients", "anc_plhiv", "anc_already_art",
+                 "anc_art_new", "anc_known_pos",
+                 "anc_tested_pos", "anc_tested_neg"))
 })
 
 test_that("endpoint_run_model returns error if queueing fails", {

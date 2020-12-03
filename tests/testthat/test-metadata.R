@@ -1,7 +1,7 @@
 context("metadata")
 
 test_that("can build metadata response", {
-  metadata <- do_plotting_metadata("Malawi")
+  metadata <- do_plotting_metadata("MWI")
   expect_true(all(names(metadata) %in%
                     c("survey", "anc", "output", "programme")))
   expect_equal(names(metadata$survey), "choropleth")
@@ -23,7 +23,8 @@ test_that("error thrown when metadata contains conflicting information", {
   mock_get_plotting_metadata <- mockery::mock(data_frame(
     data_type = rep("survey", 2),
     plot_type = rep("choropleth", 2),
-    indicator = rep("prevalence", 2)
+    indicator = rep("prevalence", 2),
+    indicator_sort_order = c(1, 2)
   ))
   with_mock("naomi::get_plotting_metadata" = mock_get_plotting_metadata, {
     expect_error(do_plotting_metadata("Malawi"),
