@@ -67,10 +67,12 @@
       "properties": {
         "label": { "type": "string" },
         "description": { "type": "string" },
+	"collapsible": { "type": "boolean" },
+	"collapsed" : { "type": "boolean" },
         "controlGroups": { 
           "type": "array", 
           "items": { "$ref": "#/definitions/controlGroup" }
-        }
+	}
       },
       "additionalProperties": false,
       "required": [ "label", "controlGroups" ]
