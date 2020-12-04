@@ -228,6 +228,23 @@ test_that("can check column values for expected patterns", {
 
 })
 
+test_that("assert_calendar_quarter() generalises column name", {
+
+  data <- data.frame("survey_calendar_quarter" = "CY2020Q3",
+                     "survey_year" = 2020)
+  expect_error(
+    assert_calendar_quarter_column(data),
+    "Data does not contain required column: calendar_quarter"
+  )
+  expect_true(assert_calendar_quarter_column(data, "survey_calendar_quarter"))
+
+  expect_error(
+    assert_year_column(data),
+    "Data does not contain required column: year"
+  )
+  expect_true(assert_year_column(data, "survey_year"))
+})
+
 test_that("can check data comes from a single source", {
   data <- data.frame(source=c("NSO", "NSO", "NSO"))
 
