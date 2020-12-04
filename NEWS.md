@@ -1,3 +1,7 @@
+# # hintr 0.1.14
+
+* Pin to naomi@option-output-aware
+
 # hintr 0.1.13
 
 * Pin to naomi@issue-142
