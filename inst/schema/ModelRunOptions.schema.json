@@ -72,7 +72,7 @@
         "controlGroups": { 
           "type": "array", 
           "items": { "$ref": "#/definitions/controlGroup" }
-	}
+        }
       },
       "additionalProperties": false,
       "required": [ "label", "controlGroups" ]
