@@ -67,12 +67,12 @@ assert_column_matches <- function(data, column_name, pattern) {
   invisible(TRUE)
 }
 
-assert_calendar_quarter_column <- function(data) {
-  assert_column_matches(data, "calendar_quarter", "^CY[12][901][0-9]{2}Q[1-4]$")
+assert_calendar_quarter_column <- function(data, col_name = "calendar_quarter") {
+  assert_column_matches(data, col_name, "^CY[12][901][0-9]{2}Q[1-4]$")
 }
 
-assert_year_column <- function(data) {
-  assert_column_matches(data, "year", "^[12][901][0-9][0-9]$")
+assert_year_column <- function(data, col_name = "year") {
+  assert_column_matches(data, col_name, "^[12][901][0-9][0-9]$")
 }
 
 #' Check that the values of a column are not NA

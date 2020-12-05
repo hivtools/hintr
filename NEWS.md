@@ -1,6 +1,11 @@
-# hintr 0.1.4
+# # hintr 0.1.15
 
-* Pin to naomi@aware-of-status
+* Pin to naomi@option-output-aware
+
+# hintr 0.1.14
+
+* Generalize functions `assert_calendar_quarter_column()` and `assert_year_column()` to 
+  accept argument `col_name=` to check columns of required specification with different name.
 
 # hintr 0.1.13
 
