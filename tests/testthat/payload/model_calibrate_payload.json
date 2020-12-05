@@ -5,7 +5,9 @@
     "spectrum_artnum_calibration_level": "none",
     "spectrum_artnum_calibration_strat": "age_coarse",
     "spectrum_infections_calibration_level": "none",
-    "spectrum_infections_calibration_strat": "age_coarse"
+    "spectrum_infections_calibration_strat": "age_coarse",
+    "spectrum_aware_calibration_level": "national",
+    "spectrum_aware_calibration_strat": "age_coarse"
   },
   "version": <version_info>
 }
