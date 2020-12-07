@@ -1,4 +1,4 @@
-# hintr 0.1.16
+# hintr 0.1.17
 
 * Pin to naomi@aware-of-status
 
