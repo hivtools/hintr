@@ -67,11 +67,16 @@ test_that("download returns useful error if model run fails", {
   test_redis_available()
   test_mock_model_available()
 
-  ## Setup payload with options which will throw an error
+  ## Create a population file which deliberately will cause an error
   path <- setup_submit_payload()
-  input <- jsonlite::fromJSON(path)
-  input$options <- NULL
-  writeLines(jsonlite::toJSON(input), path)
+  payload <- readLines(path)
+  payload <- jsonlite::read_json(path)
+  pop <- read.csv(payload$data$population$path)
+  pop$sex <- NULL
+  t <- tempfile()
+  write.csv(pop, t)
+  payload$data$population$path <- t
+  writeLines(jsonlite::toJSON(payload), path)
 
   ## Run the model
   withr::with_envvar(c("USE_MOCK_MODEL" = "false"), {
@@ -86,7 +91,7 @@ test_that("download returns useful error if model run fails", {
   error <- expect_error(spectrum(response$id))
   expect_equal(error$data[[1]]$error, scalar("MODEL_RUN_FAILED"))
   expect_match(error$data[[1]]$detail,
-               scalar("Required model options not supplied:.+"))
+               scalar("Required columns not found: sex"))
   expect_equal(error$status_code, 400)
 })
 

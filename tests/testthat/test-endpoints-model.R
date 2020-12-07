@@ -62,7 +62,7 @@ test_that("endpoint model run queues a model run", {
   expect_equal(barchart$filters[[2]]$options[[2]]$label,
                scalar("September 2018"))
   expect_true(length(barchart$filters[[4]]$options) >= 29)
-  expect_equal(nrow(barchart$indicators), 17)
+  expect_equal(nrow(barchart$indicators), 20)
 
   ## Quarters are in descending order
   calendar_quarters <-
@@ -76,7 +76,9 @@ test_that("endpoint model run queues a model run", {
   ## Barchart indicators are in numeric id order
   expect_equal(barchart$indicators$indicator,
                c("population", "prevalence", "plhiv", "art_coverage",
-                 "art_current_residents", "art_current", "incidence",
+                 "art_current_residents", "art_current",
+                 "untreated_plhiv_num", "aware_plhiv_prop",
+                 "unaware_plhiv_num", "incidence",
                  "infections", "anc_prevalence", "anc_art_coverage",
                  "anc_clients", "anc_plhiv", "anc_already_art",
                  "anc_art_new", "anc_known_pos",
@@ -103,7 +105,7 @@ test_that("endpoint model run queues a model run", {
   expect_equal(choropleth$filters[[2]]$options[[2]]$label,
                scalar("September 2018"))
   expect_true(length(choropleth$filters[[4]]$options) >= 29)
-  expect_equal(nrow(choropleth$indicators), 17)
+  expect_equal(nrow(choropleth$indicators), 20)
 
   ## Quarters are in descending order
   calendar_quarters <-
@@ -116,7 +118,9 @@ test_that("endpoint model run queues a model run", {
   ## Choropleth indicators are in numeric id order
   expect_equal(choropleth$indicators$indicator,
                c("population", "prevalence", "plhiv", "art_coverage",
-                 "art_current_residents", "art_current", "incidence",
+                 "art_current_residents", "art_current",
+                 "untreated_plhiv_num", "aware_plhiv_prop",
+                 "unaware_plhiv_num", "incidence",
                  "infections", "anc_prevalence", "anc_art_coverage",
                  "anc_clients", "anc_plhiv", "anc_already_art",
                  "anc_art_new", "anc_known_pos",
@@ -351,11 +355,16 @@ test_that("error messages from naomi are translated", {
                               test_queue(workers = 1))
 
   model_submit <- submit_model(queue)
-  ## Create an option set which deliberately has an error
+  ## Create a population file which deliberately will cause an error
   path <- setup_submit_payload()
   payload <- readLines(path)
-  payload <- gsub('"area_level": 4', '"area_level": 0', payload, fixed = TRUE)
-  writeLines(payload, path)
+  payload <- jsonlite::read_json(path)
+  pop <- read.csv(payload$data$population$path)
+  pop$sex <- NULL
+  t <- tempfile()
+  write.csv(pop, t)
+  payload$data$population$path <- t
+  writeLines(jsonlite::toJSON(payload), path)
 
   response <- with_hintr_language(
     "fr",
@@ -367,8 +376,7 @@ test_that("error messages from naomi are translated", {
   error <- expect_error(get_result(id))
   expect_equal(error$data[[1]]$error, scalar("MODEL_RUN_FAILED"))
   expect_equal(error$data[[1]]$detail,
-               scalar(paste0("Impossible d’ajuster le modèle au niveau du ",
-                             "pays. Choisissez un niveau différent.")))
+               scalar("Colonnes obligatoires introuvables: sex"))
 })
 
 test_that("failed cancel sends reasonable message", {

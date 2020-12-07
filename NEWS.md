@@ -1,7 +1,10 @@
-# # hintr 0.1.15
+# hintr 0.1.17
+
+* Pin to naomi@aware-of-status
+
+# hintr 0.1.15
 
 * Pin to naomi@option-output-aware
-
 
 # hintr 0.1.14
 
