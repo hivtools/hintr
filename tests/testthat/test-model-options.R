@@ -422,3 +422,53 @@ test_that("model options work when survey_mid_calendar_quarter missing", {
   time_options <- get_time_options()
   expect_equal(params$calendar_quarter_t1_default, time_options[[1]]$id)
 })
+
+test_that("can get survey options & default for different indicators", {
+  survey <- file_object(file.path("testdata", "survey.csv"))
+  prev_options <- get_survey_options(survey, "prevalence")
+  expect_equal(prev_options$default, scalar("MWI2016PHIA"))
+  expect_equal(prev_options$options, list(
+    list(
+      id = scalar("MWI2016PHIA"),
+      label = scalar("MWI2016PHIA")
+    ),
+    list(
+      id = scalar("MWI2015DHS"),
+      label = scalar("MWI2015DHS")
+    ),
+    list(
+      id = scalar("MWI2010DHS"),
+      label = scalar("MWI2010DHS")
+    ),
+    list(
+      id = scalar("MWI2004DHS"),
+      label = scalar("MWI2004DHS")
+    )
+  ))
+
+  art_options <- get_survey_options(survey, "art_coverage")
+  expect_equal(art_options$default, scalar("MWI2016PHIA"))
+  expect_equal(art_options$options, list(
+    list(id = scalar("MWI2016PHIA"),
+         label = scalar("MWI2016PHIA"))
+  ))
+
+  mock_get_indicator_data <- mockery::mock(NULL)
+  recent_infected_options <- get_survey_options(survey, "recent_infected")
+  expect_equal(art_options$default, scalar("MWI2016PHIA"))
+  expect_equal(art_options$options, list(
+    list(id = scalar("MWI2016PHIA"),
+         label = scalar("MWI2016PHIA"))
+  ))
+})
+
+test_that("getting survey options for missing indicator returns NULLs", {
+  survey <- file_object(file.path("testdata", "survey_prevalence_only.csv"))
+  expect_equal(
+    get_survey_options(survey, "art_coverage"),
+    list(
+      options = NULL,
+      default = NULL
+    )
+  )
+})
