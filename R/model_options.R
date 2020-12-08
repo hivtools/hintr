@@ -24,13 +24,6 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
   area_level_options <- get_level_options(json)
   time_options <- get_time_options()
 
-  ## Survey options
-  ## Have to use the metadata to work out where within the output data these
-  ## values can be located
-  get_survey_options <- function(indicator) {
-    get_survey_filters(get_indicator_data(survey, "survey", indicator))
-  }
-
   survey_data <- read_csv(survey$path)
   survey_mid_calendar_quarter <- survey_data$survey_mid_calendar_quarter
   if (!is.null(survey_mid_calendar_quarter) &&
@@ -47,9 +40,14 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
     most_recent_survey_quarter <- time_options[[1]]$id
   }
 
+  browser()
+  survey_options <- get_survey_options(survey$path)
   survey_prevalence_options <- get_survey_options("prevalence")
   survey_art_coverage_options <- get_survey_options("art_coverage")
   survey_recently_infected_options <- get_survey_options("recent_infected")
+
+
+  survey_years <- naomi::calendar_quarter_to_year(survey_prevalence_options)
 
   ## ART options
   art_year_options <- NULL
@@ -185,4 +183,18 @@ do_validate_model_options <- function(data, options) {
   list(
     valid = scalar(naomi:::validate_model_options(data, options))
   )
+}
+
+## Survey options
+## Have to use the metadata to work out where within the output data these
+## values can be located
+get_survey_options <- function(survey_path) {
+  survey_data <- read_csv(survey_path)
+  survey_ids <- sort(unique(data$survey_id), decreasing = TRUE)
+  options <- lapply(survey_ids, function(survey_id) {
+    list(id = scalar(survey_id),
+         label = scalar(survey_id))
+  })
+  list(options = options,
+       default = )
 }
