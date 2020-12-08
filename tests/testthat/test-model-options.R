@@ -135,9 +135,9 @@ test_that("do_endpoint_model_options correctly builds params list", {
                params$anc_art_coverage_year2_options)
 
   expect_equal(params$anc_prevalence_year1_default, scalar("2016"))
-  expect_null(params$anc_prevalence_year2_default)
+  expect_equal(params$anc_prevalence_year2_default, scalar(""))
   expect_equal(params$anc_art_coverage_year1_default, scalar("2016"))
-  expect_null(params$anc_art_coverage_year2_default)
+  expect_equal(params$anc_art_coverage_year2_default, scalar(""))
 })
 
 test_that("do_endpoint_model_options without programme data", {
@@ -233,8 +233,8 @@ test_that("do_endpoint_model_options default anc year2 to 2020 if in data", {
   expect_equal(params$anc_prevalence_year2_default, scalar("2020"))
   expect_equal(params$anc_art_coverage_year2_default, scalar("2020"))
   ## Year 1 defaults are NULL as survey year not in ANC years
-  expect_null(params$anc_prevalence_year1_default)
-  expect_null(params$anc_art_coverage_year1_default)
+  expect_equal(params$anc_prevalence_year1_default, scalar(""))
+  expect_equal(params$anc_art_coverage_year1_default, scalar(""))
 })
 
 test_that("can retrieve validated model options", {
@@ -505,13 +505,13 @@ test_that("can get survey options & default for different indicators", {
   ))
 })
 
-test_that("getting survey options for missing indicator returns NULLs", {
+test_that("getting survey options for missing indicator returns empty values", {
   survey <- file_object(file.path("testdata", "survey_prevalence_only.csv"))
   expect_equal(
     get_survey_options(survey, "art_coverage"),
     list(
       options = NULL,
-      default = NULL
+      default = ""
     )
   )
 })

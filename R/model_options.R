@@ -207,6 +207,9 @@ do_validate_model_options <- function(data, options) {
 get_survey_options <- function(survey, indicator) {
   indicator_data <- get_indicator_data(survey, "survey", indicator)
   if (nrow(indicator_data) == 0) {
+    ## Gets serialised to JSON and requires an obj
+    ## for options NULL -> {}
+    ## a string for default values
     return(list(
       options = NULL,
       default = scalar("")
