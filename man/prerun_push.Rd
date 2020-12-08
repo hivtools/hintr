@@ -8,7 +8,9 @@ prerun_push(
   path,
   output = "output.rds",
   spectrum = "spectrum.zip",
-  summary = "summary.zip"
+  coarse_output = "coarse-output.zip",
+  summary_report = "summary-report.html",
+  calibration = "calibration.rds"
 )
 }
 \arguments{
@@ -18,7 +20,11 @@ prerun_push(
 
 \item{spectrum}{Path, within \code{path} to your spectrum file}
 
-\item{summary}{Path, within \code{path} to your summary file}
+\item{coarse_output}{Path, within \code{path} to your coarse output file}
+
+\item{summary_report}{Path, within \code{path} to your summary report file}
+
+\item{calibration}{Path, within \code{path} to your calibration file}
 }
 \description{
 Push prerun model results to naomi.dide.ic.ac.uk
