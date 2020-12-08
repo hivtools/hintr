@@ -53,8 +53,8 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
 
   ## ANC options
   anc_year_options <- NULL
-  anc_year1_default <- NULL
-  anc_year2_default <- NULL
+  anc_year1_default <- scalar("")
+  anc_year2_default <- scalar("")
   if (has_anc) {
     anc_data <- read_csv(anc$path)
     anc_years <- get_years(anc_data)
@@ -209,11 +209,11 @@ get_survey_options <- function(survey, indicator) {
   if (nrow(indicator_data) == 0) {
     return(list(
       options = NULL,
-      default = NULL
+      default = scalar("")
     ))
   }
   options <- get_survey_filters(indicator_data)
-  option_default <- NULL
+  option_default <- scalar("")
   if (!is.null(indicator_data$survey_mid_calendar_quarter)) {
     indicator_data$year <- naomi::calendar_quarter_to_year(
       indicator_data$survey_mid_calendar_quarter)
