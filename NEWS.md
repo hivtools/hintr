@@ -1,3 +1,7 @@
+# hintr 0.1.18
+
+* Update summary report
+
 # hintr 0.1.17
 
 * Pin to naomi@aware-of-status
