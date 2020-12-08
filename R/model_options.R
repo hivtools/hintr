@@ -53,8 +53,22 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
 
   ## ANC options
   anc_year_options <- NULL
+  anc_year1_default <- NULL
+  anc_year2_default <- NULL
   if (has_anc) {
-    anc_year_options <- get_year_filters(read_csv(anc$path))
+    anc_data <- read_csv(anc$path)
+    anc_years <- get_years(anc_data)
+    anc_year_options <- lapply(anc_years, function(year) {
+      list(id = scalar(as.character(year)),
+           label = scalar(as.character(year)))
+    })
+    if (2020 %in% anc_years) {
+      anc_year2_default <- scalar(as.character(2020))
+    }
+    survey_year <- naomi::calendar_quarter_to_year(most_recent_survey_quarter)
+    if (survey_year %in% anc_years) {
+      anc_year1_default <- scalar(as.character(survey_year))
+    }
   }
 
   params <- list(
@@ -73,7 +87,11 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
     anc_prevalence_year1_options = anc_year_options,
     anc_prevalence_year2_options = anc_year_options,
     anc_art_coverage_year1_options = anc_year_options,
-    anc_art_coverage_year2_options = anc_year_options
+    anc_art_coverage_year2_options = anc_year_options,
+    anc_prevalence_year1_default = anc_year1_default,
+    anc_prevalence_year2_default = anc_year2_default,
+    anc_art_coverage_year1_default = anc_year1_default,
+    anc_art_coverage_year2_default = anc_year2_default
   )
   build_json(options_stitched, params)
 }
@@ -194,18 +212,24 @@ get_survey_options <- function(survey, indicator) {
       default = NULL
     ))
   }
-  indicator_data$year <- naomi::calendar_quarter_to_year(
-    indicator_data$survey_mid_calendar_quarter)
   options <- get_survey_filters(indicator_data)
-  latest_year <- max(indicator_data$year)
-  defaults <- indicator_data[indicator_data$year == max(indicator_data$year),
-                             "survey_id"]
-  if (length(defaults) >= 1) {
-    option_default <- defaults[[1]]
-  } else {
-    option_default <- NULL
+  option_default <- NULL
+  if (!is.null(indicator_data$survey_mid_calendar_quarter)) {
+    indicator_data$year <- naomi::calendar_quarter_to_year(
+      indicator_data$survey_mid_calendar_quarter)
+    latest_year <- max(indicator_data$year)
+    defaults <- indicator_data[indicator_data$year == max(indicator_data$year),
+                               "survey_id"]
+    if (length(defaults) >= 1) {
+      option_default <- scalar(defaults[[1]])
+    }
   }
   list(
     options = options,
     default = option_default)
+}
+
+get_years <- function(data) {
+  years <- unique(data$year)
+  sort(years, decreasing = TRUE)
 }

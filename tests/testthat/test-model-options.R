@@ -64,12 +64,17 @@ test_that("do_endpoint_model_options correctly builds params list", {
                  "calendar_quarter_t1_options",
                  "calendar_quarter_t1_default",
                  "calendar_quarter_t2_options",
-                 "survey_prevalence_options", "survey_art_coverage_options",
+                 "survey_prevalence_options", "survey_prevalence_default",
+                 "survey_art_coverage_options", "survey_art_coverage_default",
                  "survey_recently_infected_options",
                  "anc_prevalence_year1_options",
                  "anc_prevalence_year2_options",
                  "anc_art_coverage_year1_options",
-                 "anc_art_coverage_year2_options"))
+                 "anc_art_coverage_year2_options",
+                 "anc_prevalence_year1_default",
+                 "anc_prevalence_year2_default",
+                 "anc_art_coverage_year1_default",
+                 "anc_art_coverage_year2_default"))
 
   expect_length(params$area_scope_options, 1)
   expect_equal(names(params$area_scope_options[[1]]),
@@ -115,7 +120,9 @@ test_that("do_endpoint_model_options correctly builds params list", {
                scalar("MWI2016PHIA"))
   expect_equal(params$survey_prevalence_options[[1]]$label,
                scalar("MWI2016PHIA"))
+  expect_equal(params$survey_prevalence_default, scalar("MWI2016PHIA"))
   expect_length(params$survey_art_coverage_options, 1)
+  expect_equal(params$survey_art_coverage_default, scalar("MWI2016PHIA"))
   expect_length(params$survey_recently_infected_options, 1)
   expect_length(params$anc_prevalence_year1_options, 8)
   expect_equal(params$anc_prevalence_year1_options[[1]]$id, scalar("2018"))
@@ -126,6 +133,11 @@ test_that("do_endpoint_model_options correctly builds params list", {
                params$anc_art_coverage_year1_options)
   expect_equal(params$anc_prevalence_year1_options,
                params$anc_art_coverage_year2_options)
+
+  expect_equal(params$anc_prevalence_year1_default, scalar("2016"))
+  expect_null(params$anc_prevalence_year2_default)
+  expect_equal(params$anc_art_coverage_year1_default, scalar("2016"))
+  expect_null(params$anc_art_coverage_year2_default)
 })
 
 test_that("do_endpoint_model_options without programme data", {
@@ -147,12 +159,17 @@ test_that("do_endpoint_model_options without programme data", {
                  "calendar_quarter_t1_options",
                  "calendar_quarter_t1_default",
                  "calendar_quarter_t2_options",
-                 "survey_prevalence_options", "survey_art_coverage_options",
+                 "survey_prevalence_options", "survey_prevalence_default",
+                 "survey_art_coverage_options", "survey_art_coverage_default",
                  "survey_recently_infected_options",
                  "anc_prevalence_year1_options",
                  "anc_prevalence_year2_options",
                  "anc_art_coverage_year1_options",
-                 "anc_art_coverage_year2_options"))
+                 "anc_art_coverage_year2_options",
+                 "anc_prevalence_year1_default",
+                 "anc_prevalence_year2_default",
+                 "anc_art_coverage_year1_default",
+                 "anc_art_coverage_year2_default"))
 
   expect_length(params$area_scope_options, 1)
   expect_equal(names(params$area_scope_options[[1]]),
@@ -197,6 +214,27 @@ test_that("do_endpoint_model_options without programme data", {
                scalar("MWI2016PHIA"))
   expect_length(params$survey_art_coverage_options, 1)
   expect_length(params$survey_recently_infected_options, 1)
+})
+
+test_that("do_endpoint_model_options default anc year2 to 2020 if in data", {
+  shape <- file_object(file.path("testdata", "malawi.geojson"))
+  survey <- file_object(file.path("testdata", "survey.csv"))
+  art <- file_object(file.path("testdata", "programme.csv"))
+  anc <- file_object(file.path("testdata", "anc.csv"))
+
+  mock_build_json <- mockery::mock('"{"test"}')
+  mock_get_years <- mockery::mock(c(2020, 2019, 2018))
+  with_mock("hintr:::build_json" = mock_build_json,
+            "hintr:::get_years" = mock_get_years, {
+    json <- do_endpoint_model_options(shape, survey, art, anc)
+    args <- mockery::mock_args(mock_build_json)
+  })
+  params <- args[[1]][[2]]
+  expect_equal(params$anc_prevalence_year2_default, scalar("2020"))
+  expect_equal(params$anc_art_coverage_year2_default, scalar("2020"))
+  ## Year 1 defaults are NULL as survey year not in ANC years
+  expect_null(params$anc_prevalence_year1_default)
+  expect_null(params$anc_art_coverage_year1_default)
 })
 
 test_that("can retrieve validated model options", {
@@ -411,12 +449,17 @@ test_that("model options work when survey_mid_calendar_quarter missing", {
                  "calendar_quarter_t1_options",
                  "calendar_quarter_t1_default",
                  "calendar_quarter_t2_options",
-                 "survey_prevalence_options", "survey_art_coverage_options",
+                 "survey_prevalence_options", "survey_prevalence_default",
+                 "survey_art_coverage_options", "survey_art_coverage_default",
                  "survey_recently_infected_options",
                  "anc_prevalence_year1_options",
                  "anc_prevalence_year2_options",
                  "anc_art_coverage_year1_options",
-                 "anc_art_coverage_year2_options"))
+                 "anc_art_coverage_year2_options",
+                 "anc_prevalence_year1_default",
+                 "anc_prevalence_year2_default",
+                 "anc_art_coverage_year1_default",
+                 "anc_art_coverage_year2_default"))
 
   ## Defaults to most recent time option
   time_options <- get_time_options()
