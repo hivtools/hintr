@@ -511,7 +511,7 @@ test_that("getting survey options for missing indicator returns empty values", {
     get_survey_options(survey, "art_coverage"),
     list(
       options = NULL,
-      default = ""
+      default = scalar("")
     )
   )
 })
