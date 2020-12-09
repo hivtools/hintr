@@ -24,13 +24,6 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
   area_level_options <- get_level_options(json)
   time_options <- get_time_options()
 
-  ## Survey options
-  ## Have to use the metadata to work out where within the output data these
-  ## values can be located
-  get_survey_options <- function(indicator) {
-    get_survey_filters(get_indicator_data(survey, "survey", indicator))
-  }
-
   survey_data <- read_csv(survey$path)
   survey_mid_calendar_quarter <- survey_data$survey_mid_calendar_quarter
   if (!is.null(survey_mid_calendar_quarter) &&
@@ -47,9 +40,10 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
     most_recent_survey_quarter <- time_options[[1]]$id
   }
 
-  survey_prevalence_options <- get_survey_options("prevalence")
-  survey_art_coverage_options <- get_survey_options("art_coverage")
-  survey_recently_infected_options <- get_survey_options("recent_infected")
+  survey_prevalence_options <- get_survey_options(survey, "prevalence")
+  survey_art_coverage_options <- get_survey_options(survey, "art_coverage")
+  survey_recently_infected_options <- get_survey_options(survey,
+                                                         "recent_infected")
 
   ## ART options
   art_year_options <- NULL
@@ -59,8 +53,22 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
 
   ## ANC options
   anc_year_options <- NULL
+  anc_year1_default <- scalar("")
+  anc_year2_default <- scalar("")
   if (has_anc) {
-    anc_year_options <- get_year_filters(read_csv(anc$path))
+    anc_data <- read_csv(anc$path)
+    anc_years <- get_years(anc_data)
+    anc_year_options <- lapply(anc_years, function(year) {
+      list(id = scalar(as.character(year)),
+           label = scalar(as.character(year)))
+    })
+    if (2020 %in% anc_years) {
+      anc_year2_default <- scalar(as.character(2020))
+    }
+    survey_year <- naomi::calendar_quarter_to_year(most_recent_survey_quarter)
+    if (survey_year %in% anc_years) {
+      anc_year1_default <- scalar(as.character(survey_year))
+    }
   }
 
   params <- list(
@@ -71,13 +79,19 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
     calendar_quarter_t1_options = time_options,
     calendar_quarter_t1_default = most_recent_survey_quarter,
     calendar_quarter_t2_options = time_options,
-    survey_prevalence_options = survey_prevalence_options,
-    survey_art_coverage_options = survey_art_coverage_options,
-    survey_recently_infected_options = survey_recently_infected_options,
+    survey_prevalence_options = survey_prevalence_options$options,
+    survey_prevalence_default = survey_prevalence_options$default,
+    survey_art_coverage_options = survey_art_coverage_options$options,
+    survey_art_coverage_default = survey_art_coverage_options$default,
+    survey_recently_infected_options = survey_recently_infected_options$options,
     anc_prevalence_year1_options = anc_year_options,
     anc_prevalence_year2_options = anc_year_options,
     anc_art_coverage_year1_options = anc_year_options,
-    anc_art_coverage_year2_options = anc_year_options
+    anc_art_coverage_year2_options = anc_year_options,
+    anc_prevalence_year1_default = anc_year1_default,
+    anc_prevalence_year2_default = anc_year2_default,
+    anc_art_coverage_year1_default = anc_year1_default,
+    anc_art_coverage_year2_default = anc_year2_default
   )
   build_json(options_stitched, params)
 }
@@ -185,4 +199,40 @@ do_validate_model_options <- function(data, options) {
   list(
     valid = scalar(naomi:::validate_model_options(data, options))
   )
+}
+
+## Survey options
+## Have to use the metadata to work out where within the output data these
+## values can be located
+get_survey_options <- function(survey, indicator) {
+  indicator_data <- get_indicator_data(survey, "survey", indicator)
+  if (nrow(indicator_data) == 0) {
+    ## Gets serialised to JSON and requires an obj
+    ## for options NULL -> {}
+    ## a string for default values
+    return(list(
+      options = NULL,
+      default = scalar("")
+    ))
+  }
+  options <- get_survey_filters(indicator_data)
+  option_default <- scalar("")
+  if (!is.null(indicator_data$survey_mid_calendar_quarter)) {
+    indicator_data$year <- naomi::calendar_quarter_to_year(
+      indicator_data$survey_mid_calendar_quarter)
+    latest_year <- max(indicator_data$year)
+    defaults <- indicator_data[indicator_data$year == max(indicator_data$year),
+                               "survey_id"]
+    if (length(defaults) >= 1) {
+      option_default <- scalar(defaults[[1]])
+    }
+  }
+  list(
+    options = options,
+    default = option_default)
+}
+
+get_years <- function(data) {
+  years <- unique(data$year)
+  sort(years, decreasing = TRUE)
 }

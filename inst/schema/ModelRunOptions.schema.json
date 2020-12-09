@@ -10,20 +10,20 @@
         "required": { "type": "boolean" },
         "value": { "type": "string" },
         "helpText": { "type": "string" },
-        "options": { 
-          "type":  "array", 
-          "items": { 
+        "options": {
+          "type":  "array",
+          "items": {
             "type": "object",
             "properties": {
               "id": { "type": "string" },
               "label": { "type": "string" },
-              "children": { 
+              "children": {
                 "type": "array",
                 "items": { "type": "object" }
               }
             },
             "additionalProperties": false,
-            "required": [ "id", "label" ] 
+            "required": [ "id", "label" ]
           }
         }
       },
@@ -49,10 +49,10 @@
       "type": "object",
       "properties": {
         "label": { "type": "string" },
-        "controls": { 
-          "type": "array", 
-          "items": { "oneOf": 
-            [ 
+        "controls": {
+          "type": "array",
+          "items": { "oneOf":
+            [
               { "$ref": "#/definitions/selectControl" },
               { "$ref": "#/definitions/numberControl" }
             ]
@@ -67,10 +67,10 @@
       "properties": {
         "label": { "type": "string" },
         "description": { "type": "string" },
-	"collapsible": { "type": "boolean" },
-	"collapsed" : { "type": "boolean" },
-        "controlGroups": { 
-          "type": "array", 
+	      "collapsible": { "type": "boolean" },
+	      "collapsed" : { "type": "boolean" },
+        "controlGroups": {
+          "type": "array",
           "items": { "$ref": "#/definitions/controlGroup" }
         }
       },
@@ -80,8 +80,8 @@
   },
   "type": "object",
   "properties": {
-    "controlSections": { 
-      "type": "array", 
+    "controlSections": {
+      "type": "array",
       "items": { "$ref": "#/definitions/controlSection" }
     }
   },
