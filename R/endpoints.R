@@ -181,9 +181,9 @@ model_calibrate <- function(queue) {
     if (!is_current_version(calibration_options$version)) {
       hintr_error(t_("MODEL_SUBMIT_OLD"), "VERSION_OUT_OF_DATE")
     }
-    calibrated_result <- naomi::hintr_calibrate(queue$result(id),
-                                                calibration_options$options)
-    process_result(calibrated_result)
+    ## TODO: run calibration asynchronously, takes too long to do sync
+    ## see mrc-2040
+    process_result(queue$result(id))
   }
 }
 
