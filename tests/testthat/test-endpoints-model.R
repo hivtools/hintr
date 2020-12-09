@@ -504,6 +504,7 @@ test_that("model calibration fails is version out of date", {
 })
 
 test_that("trying to calibrate old model result returns error", {
+  skip("Re-enable when calibration is run again, see mrc-2040")
   test_mock_model_available()
 
   ## Mock model run
