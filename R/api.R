@@ -13,6 +13,9 @@ api_build <- function(queue) {
   api$handle(endpoint_model_debug(queue))
   api$handle(endpoint_model_calibration_options())
   api$handle(endpoint_model_calibrate(queue))
+  api$handle(endpoint_model_calibrate_submit(queue))
+  api$handle(endpoint_model_calibrate_status(queue))
+  api$handle(endpoint_model_calibrate_result(queue))
   api$handle(endpoint_plotting_metadata())
   api$handle(endpoint_download_spectrum(queue))
   api$handle(endpoint_download_spectrum_head(queue))
@@ -279,6 +282,77 @@ endpoint_model_calibrate <- function(queue) {
                                     "/model/calibrate/<id>",
                                     model_calibrate(queue),
                                     input,
+                                    returning = response,
+                                    validate = TRUE)
+}
+
+endpoint_model_calibrate_submit <- function(queue) {
+  input <- porcelain::porcelain_input_body_json("input",
+                                                "CalibrateSubmitRequest.schema",
+                                                schema_root())
+  response <- porcelain::porcelain_returning_json(
+    "CalibrateSubmitResponse.schema", schema_root())
+  dummy_endpoint <- function(queue) {
+    function(id, input) {
+      list(id = scalar(ids::adjective_animal()))
+    }
+  }
+  porcelain::porcelain_endpoint$new("POST",
+                                    "/model/calibrate/<id>",
+                                    dummy_endpoint(queue),
+                                    input,
+                                    returning = response,
+                                    validate = TRUE)
+}
+
+endpoint_model_calibrate_status <- function(queue) {
+  response <- porcelain::porcelain_returning_json(
+    "CalibrateStatusResponse.schema", schema_root())
+  dummy_endpoint <- function(queue) {
+    function(id) {
+      list(id = scalar(id),
+           done = scalar(FALSE),
+           status = scalar("Running"),
+           queue = scalar(0),
+           progress = list(
+             list(
+               started = scalar(TRUE),
+               complete = scalar(FALSE),
+               name = scalar("Calibrating"),
+               helpText = scalar("5s elapsed")
+             )
+          )
+      )
+    }
+  }
+  porcelain::porcelain_endpoint$new("GET",
+                                    "/calibrate/status/<id>",
+                                    dummy_endpoint(queue),
+                                    returning = response,
+                                    validate = TRUE)
+}
+
+endpoint_model_calibrate_result <- function(queue) {
+  response <- porcelain::porcelain_returning_json(
+    "CalibrateResultResponse.schema", schema_root())
+  dummy_endpoint <- function(queue) {
+    function(id) {
+      output <- list(output_path = system_file("output", "malawi_output.rds"),
+                     spectrum_path = system_file("output", "malawi_spectrum_download.zip"),
+                     coarse_output_path =
+                       system_file("output", "malawi_coarse_output_download.zip"),
+                     summary_report_path =
+                       system_file("output", "malawi_summary_report.html"),
+                     calibration_path = system_file("output",
+                                                    "malawi_calibration.rds"),
+                     metadata = list(areas = "MWI"))
+      class(output) <- "hintr_output"
+      process_result(output)
+    }
+  }
+  porcelain::porcelain_endpoint$new("GET",
+                                    "/calibrate/result/<id>",
+                                    dummy_endpoint(queue),
                                     returning = response,
                                     validate = TRUE)
 }
