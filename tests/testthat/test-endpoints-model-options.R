@@ -24,7 +24,7 @@ test_that("endpoint_model_options returns model options", {
   )
   expect_equal(
     general_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
-    "Malawi"
+    "Malawi - Demo"
   )
   expect_equal(
     general_section$controlGroups[[1]]$controls[[1]]$value,
@@ -58,10 +58,10 @@ test_that("endpoint_model_options returns model options", {
     c("id", "label"))
   expect_equal(
     survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
-    "MWI2016PHIA")
+    "DEMO2016PHIA")
   expect_equal(
     survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
-    "MWI2016PHIA")
+    "DEMO2016PHIA")
 
   anc_section <- json$controlSections[[3]]
   expect_length(
@@ -126,7 +126,7 @@ test_that("endpoint_model_options can be run without programme data", {
   )
   expect_equal(
     general_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
-    "Malawi"
+    "Malawi - Demo"
   )
   expect_equal(
     general_section$controlGroups[[1]]$controls[[1]]$value,
@@ -160,10 +160,10 @@ test_that("endpoint_model_options can be run without programme data", {
     c("id", "label"))
   expect_equal(
     survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
-    "MWI2016PHIA")
+    "DEMO2016PHIA")
   expect_equal(
     survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
-    "MWI2016PHIA")
+    "DEMO2016PHIA")
 })
 
 test_that("endpoint_model_options fails without shape & survey data", {

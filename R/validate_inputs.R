@@ -112,6 +112,7 @@ do_validate_population <- function(population) {
 do_validate_programme <- function(programme, shape) {
   assert_file_extension(programme, "csv")
   data <- read_csv(programme$path, header = TRUE)
+  data$art_current <- as.numeric(data$art_current)
   assert_single_country(data, "programme")
   assert_column_names(
     colnames(data),
@@ -125,6 +126,7 @@ do_validate_programme <- function(programme, shape) {
   art_ages <- naomi::get_age_groups()$age_group
   art_ages <- art_ages[!art_ages %in% c("Y000_000", "Y001_004")]
   assert_expected_values(data, "age_group", art_ages)
+  data$art_current <- as.numeric(data$art_current)
   assert_column_positive_numeric(data, "art_current")
   assert_calendar_quarter_column(data)
   list(data = data,

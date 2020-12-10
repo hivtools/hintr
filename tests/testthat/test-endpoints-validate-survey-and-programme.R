@@ -147,20 +147,20 @@ test_that("possible filters are returned for data", {
   expect_length(response$filters$surveys, 4)
   expect_equal(response$filters$surveys, list(
     list(
-      id = scalar("MWI2016PHIA"),
-      label = scalar("MWI2016PHIA")
+      id = scalar("DEMO2016PHIA"),
+      label = scalar("DEMO2016PHIA")
     ),
     list(
-      id = scalar("MWI2015DHS"),
-      label = scalar("MWI2015DHS")
+      id = scalar("DEMO2015DHS"),
+      label = scalar("DEMO2015DHS")
     ),
     list(
-      id = scalar("MWI2010DHS"),
-      label = scalar("MWI2010DHS")
+      id = scalar("DEMO2010DHS"),
+      label = scalar("DEMO2010DHS")
     ),
     list(
-      id = scalar("MWI2004DHS"),
-      label = scalar("MWI2004DHS")
+      id = scalar("DEMO2004DHS"),
+      label = scalar("DEMO2004DHS")
     )
   ))
 

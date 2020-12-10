@@ -41,7 +41,7 @@ test_that("get_age_filters gets available filter options in correct order", {
 
 test_that("get_survey_filters gets available filter options and sorts them", {
   data <- data_frame(test = c(1, 2, 3, 4, 5, 6, 7),
-                     survey_id = c("MWI2004DHS", "MWI2004DHS", "MWI2004DHS",
+                     survey_id = c("DEMO2004DHS", "DEMO2004DHS", "DEMO2004DHS",
                                    "surv2", "surv2", "test", "test"))
   filters <- get_survey_filters(data)
   expect_equal(filters, list(
@@ -54,8 +54,8 @@ test_that("get_survey_filters gets available filter options and sorts them", {
       label = scalar("surv2")
     ),
     list(
-      id = scalar("MWI2004DHS"),
-      label = scalar("MWI2004DHS")
+      id = scalar("DEMO2004DHS"),
+      label = scalar("DEMO2004DHS")
     )
   ))
 
@@ -242,7 +242,7 @@ test_that("can get area filter option", {
   expect_equal(get_area_level_filter_option(output), list(
     list(
       id = scalar("MWI"),
-      label = scalar("Malawi")
+      label = scalar("Malawi - Demo")
     )
   ))
 
@@ -257,7 +257,7 @@ test_that("can get area filter option", {
   output <- output[output$area_level != 0, ]
   expect_equal(get_area_level_filter_option(output), list(
     list(
-      id = scalar("MWI_1_1"),
+      id = scalar("MWI_1_1_demo"),
       label = scalar("Northern")
     )
   ))
@@ -277,7 +277,7 @@ test_that("can get defaults for bar chart", {
   expect_equal(defaults$selected_filter_options$area, list(
     list(
       id = scalar("MWI"),
-      label = scalar("Malawi")
+      label = scalar("Malawi - Demo")
     )
   ))
   expect_equal(defaults$selected_filter_options$quarter, list(
