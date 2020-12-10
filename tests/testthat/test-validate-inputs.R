@@ -33,7 +33,7 @@ test_that("do_validate_shape validates shape and returns geojson as list", {
   expect_length(json$filters$level_labels, 5)
   expect_equal(names(json$filters$level_labels[[1]]),
                c("id", "area_level_label", "display"))
-  expect_equal(json$filters$level_labels[[1]]$id, scalar(0))
+  expect_equal(json$filters$level_labels[[1]]$id, scalar(0L))
   expect_equal(json$filters$level_labels[[1]]$area_level_label,
                scalar("Country"))
   expect_equal(json$filters$level_labels[[1]]$display, scalar(TRUE))
@@ -240,10 +240,11 @@ test_that("can read iso3", {
 test_that("can read regions", {
   shape <- file_object(file.path("testdata", "malawi.geojson"))
   expect_true(all(grepl(
-    "^MWI[_\\d]*$", read_regions(shape, "shape"), perl = TRUE)))
+    "^MWI[_\\d]*(demo)*$", read_regions(shape, "shape"), perl = TRUE)))
   population <- file_object(file.path("testdata", "population.csv"))
   expect_true(all(grepl(
-    "^MWI[_\\d]*$", read_regions(population, "population"), perl = TRUE)))
+    "^MWI[_\\d]*(demo)*$", read_regions(population, "population"),
+    perl = TRUE)))
 })
 
 test_that("baseline data can be validated as a collection", {
