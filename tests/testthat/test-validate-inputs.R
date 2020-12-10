@@ -40,7 +40,7 @@ test_that("do_validate_shape validates shape and returns geojson as list", {
 
   expect_equal(names(json$filters$regions), c("id", "label", "children"))
   expect_equal(json$filters$regions$id, scalar("MWI"))
-  expect_equal(json$filters$regions$label, scalar("Malawi"))
+  expect_equal(json$filters$regions$label, scalar("Malawi - Demo"))
   expect_length(json$filters$regions$children, 3)
   expect_equal(json$filters$regions$children[[1]]$label, scalar("Northern"))
   expect_equal(json$filters$regions$children[[2]]$label, scalar("Central"))
@@ -132,10 +132,14 @@ test_that("do_validate_anc validates ANC file and gets data for plotting", {
   expect_equal(data$filters$indicators[[2]]$label, scalar("ANC prior ART coverage"))
 })
 
-test_that("do_validate_anc doesn't require anc_hiv_status column", {
-  anc <- file_object(file.path("testdata", "anc_without_hiv_status.csv"))
+test_that("do_validate_anc can include anc_hiv_status column", {
+  anc <- read_csv(file.path("testdata", "anc.csv"))
+  anc$anc_hiv_status <- runif(nrow(anc))
+  t <- tempfile(fileext = ".csv")
+  write.csv(anc, t)
+  anc_file <- file_object(t)
   shape <- file_object(file.path("testdata", "malawi.geojson"))
-  data <- do_validate_anc(anc, shape)
+  data <- do_validate_anc(anc_file, shape)
 
   expect_true(nrow(data$data) > 200)
   expect_equal(typeof(data$data$area_id), "character")
@@ -164,14 +168,14 @@ test_that("do_validate_survey validates survey file", {
   expected_ages <- list(id = scalar("Y015_049"),
                         label = scalar("15-49"))
   expected_survey <- list(
-    list(id = scalar("MWI2016PHIA"),
-         label = scalar("MWI2016PHIA")),
-    list(id = scalar("MWI2015DHS"),
-         label = scalar("MWI2015DHS")),
-    list(id = scalar("MWI2010DHS"),
-         label = scalar("MWI2010DHS")),
-    list(id = scalar("MWI2004DHS"),
-         label = scalar("MWI2004DHS"))
+    list(id = scalar("DEMO2016PHIA"),
+         label = scalar("DEMO2016PHIA")),
+    list(id = scalar("DEMO2015DHS"),
+         label = scalar("DEMO2015DHS")),
+    list(id = scalar("DEMO2010DHS"),
+         label = scalar("DEMO2010DHS")),
+    list(id = scalar("DEMO2004DHS"),
+         label = scalar("DEMO2004DHS"))
   )
   expect_equal(data$filters$age[[1]], expected_ages)
   expect_length(data$filters$age, 23)

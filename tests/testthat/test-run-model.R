@@ -77,7 +77,7 @@ test_that("model without national level results can be processed", {
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
   expect_true(nrow(model_run$data) > 84042)
-  expect_equivalent(as.data.frame(model_run$data)[1, "area_id"], "MWI_1_1")
+  expect_equivalent(as.data.frame(model_run$data)[1, "area_id"], "MWI_1_1_demo")
   expect_equal(names(model_run$plottingMetadata), c("barchart", "choropleth"))
   barchart <- model_run$plottingMetadata$barchart
   expect_equal(names(barchart), c("indicators", "filters", "defaults"))
@@ -149,9 +149,9 @@ test_that("real model can be run", {
     calendar_quarter_t1 = "CY2016Q1",
     calendar_quarter_t2 = "CY2018Q3",
     calendar_quarter_t3 = "CY2019Q2",
-    survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
-    survey_art_coverage = "MWI2016PHIA",
-    survey_recently_infected = "MWI2016PHIA",
+    survey_prevalence = c("DEMO2016PHIA", "DEMO2015DHS"),
+    survey_art_coverage = "DEMO2016PHIA",
+    survey_recently_infected = "DEMO2016PHIA",
     include_art_t1 = "true",
     include_art_t2 = "true",
     anc_clients_year2 = 2018,
@@ -225,9 +225,9 @@ test_that("real model can be run with csv2 data", {
     calendar_quarter_t1 = "CY2016Q1",
     calendar_quarter_t2 = "CY2018Q3",
     calendar_quarter_t3 = "CY2019Q2",
-    survey_prevalence = c("MWI2016PHIA", "MWI2015DHS"),
-    survey_art_coverage = "MWI2016PHIA",
-    survey_recently_infected = "MWI2016PHIA",
+    survey_prevalence = c("DEMO2016PHIA", "DEMO2015DHS"),
+    survey_art_coverage = "DEMO2016PHIA",
+    survey_recently_infected = "DEMO2016PHIA",
     include_art_t1 = "true",
     include_art_t2 = "true",
     anc_clients_year2 = 2018,

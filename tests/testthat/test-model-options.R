@@ -82,7 +82,7 @@ test_that("do_endpoint_model_options correctly builds params list", {
   expect_equal(names(params$area_scope_options[[1]]),
                c("id", "label", "children"))
   expect_equal(params$area_scope_options[[1]]$id, scalar("MWI"))
-  expect_equal(params$area_scope_options[[1]]$label, scalar("Malawi"))
+  expect_equal(params$area_scope_options[[1]]$label, scalar("Malawi - Demo"))
   expect_length(params$area_scope_options[[1]]$children, 3)
   expect_equal(params$area_scope_default, scalar("MWI"))
   expect_equal(params$area_level_options, list(
@@ -119,12 +119,12 @@ test_that("do_endpoint_model_options correctly builds params list", {
   expect_true(length(t2) >= 32)
   expect_length(params$survey_prevalence_options, 4)
   expect_equal(params$survey_prevalence_options[[1]]$id,
-               scalar("MWI2016PHIA"))
+               scalar("DEMO2016PHIA"))
   expect_equal(params$survey_prevalence_options[[1]]$label,
-               scalar("MWI2016PHIA"))
-  expect_equal(params$survey_prevalence_default, scalar("MWI2016PHIA"))
+               scalar("DEMO2016PHIA"))
+  expect_equal(params$survey_prevalence_default, scalar("DEMO2016PHIA"))
   expect_length(params$survey_art_coverage_options, 1)
-  expect_equal(params$survey_art_coverage_default, scalar("MWI2016PHIA"))
+  expect_equal(params$survey_art_coverage_default, scalar("DEMO2016PHIA"))
   expect_length(params$survey_recently_infected_options, 1)
   expect_length(params$anc_prevalence_year1_options, 8)
   expect_equal(params$anc_prevalence_year1_options[[1]]$id, scalar("2018"))
@@ -179,7 +179,7 @@ test_that("do_endpoint_model_options without programme data", {
   expect_equal(names(params$area_scope_options[[1]]),
                c("id", "label", "children"))
   expect_equal(params$area_scope_options[[1]]$id, scalar("MWI"))
-  expect_equal(params$area_scope_options[[1]]$label, scalar("Malawi"))
+  expect_equal(params$area_scope_options[[1]]$label, scalar("Malawi - Demo"))
   expect_length(params$area_scope_options[[1]]$children, 3)
   expect_equal(params$area_scope_default, scalar("MWI"))
   expect_equal(params$area_level_options, list(
@@ -213,9 +213,9 @@ test_that("do_endpoint_model_options without programme data", {
   expect_true(length(t2) >= 32)
   expect_length(params$survey_prevalence_options, 4)
   expect_equal(params$survey_prevalence_options[[1]]$id,
-               scalar("MWI2016PHIA"))
+               scalar("DEMO2016PHIA"))
   expect_equal(params$survey_prevalence_options[[1]]$label,
-               scalar("MWI2016PHIA"))
+               scalar("DEMO2016PHIA"))
   expect_length(params$survey_art_coverage_options, 1)
   expect_length(params$survey_recently_infected_options, 1)
 })
@@ -265,7 +265,7 @@ test_that("can retrieve validated model options", {
   )
   expect_equal(
     general_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
-    "Malawi"
+    "Malawi - Demo"
   )
   expect_equal(
     general_section$controlGroups[[1]]$controls[[1]]$value,
@@ -300,10 +300,10 @@ test_that("can retrieve validated model options", {
     c("id", "label"))
   expect_equal(
     survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
-    "MWI2016PHIA")
+    "DEMO2016PHIA")
   expect_equal(
     survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
-    "MWI2016PHIA")
+    "DEMO2016PHIA")
 
   anc_section <- json$controlSections[[3]]
   expect_length(
@@ -475,39 +475,39 @@ test_that("model options work when survey_mid_calendar_quarter missing", {
 test_that("can get survey options & default for different indicators", {
   survey <- file_object(file.path("testdata", "survey.csv"))
   prev_options <- get_survey_options(survey, "prevalence")
-  expect_equal(prev_options$default, scalar("MWI2016PHIA"))
+  expect_equal(prev_options$default, scalar("DEMO2016PHIA"))
   expect_equal(prev_options$options, list(
     list(
-      id = scalar("MWI2016PHIA"),
-      label = scalar("MWI2016PHIA")
+      id = scalar("DEMO2016PHIA"),
+      label = scalar("DEMO2016PHIA")
     ),
     list(
-      id = scalar("MWI2015DHS"),
-      label = scalar("MWI2015DHS")
+      id = scalar("DEMO2015DHS"),
+      label = scalar("DEMO2015DHS")
     ),
     list(
-      id = scalar("MWI2010DHS"),
-      label = scalar("MWI2010DHS")
+      id = scalar("DEMO2010DHS"),
+      label = scalar("DEMO2010DHS")
     ),
     list(
-      id = scalar("MWI2004DHS"),
-      label = scalar("MWI2004DHS")
+      id = scalar("DEMO2004DHS"),
+      label = scalar("DEMO2004DHS")
     )
   ))
 
   art_options <- get_survey_options(survey, "art_coverage")
-  expect_equal(art_options$default, scalar("MWI2016PHIA"))
+  expect_equal(art_options$default, scalar("DEMO2016PHIA"))
   expect_equal(art_options$options, list(
-    list(id = scalar("MWI2016PHIA"),
-         label = scalar("MWI2016PHIA"))
+    list(id = scalar("DEMO2016PHIA"),
+         label = scalar("DEMO2016PHIA"))
   ))
 
   mock_get_indicator_data <- mockery::mock(NULL)
   recent_infected_options <- get_survey_options(survey, "recent_infected")
-  expect_equal(art_options$default, scalar("MWI2016PHIA"))
+  expect_equal(art_options$default, scalar("DEMO2016PHIA"))
   expect_equal(art_options$options, list(
-    list(id = scalar("MWI2016PHIA"),
-         label = scalar("MWI2016PHIA"))
+    list(id = scalar("DEMO2016PHIA"),
+         label = scalar("DEMO2016PHIA"))
   ))
 })
 

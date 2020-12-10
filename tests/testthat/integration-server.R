@@ -442,7 +442,7 @@ test_that("model run options are exposed", {
   )
   expect_equal(
     general_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
-    "Malawi"
+    "Malawi - Demo"
   )
   expect_equal(
     general_section$controlGroups[[1]]$controls[[1]]$value,
@@ -476,10 +476,10 @@ test_that("model run options are exposed", {
     c("id", "label"))
   expect_equal(
     survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
-    "MWI2016PHIA")
+    "DEMO2016PHIA")
   expect_equal(
     survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
-    "MWI2016PHIA")
+    "DEMO2016PHIA")
 
   anc_section <- response$data$controlSections[[3]]
   expect_length(
