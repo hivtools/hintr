@@ -1,5 +1,9 @@
 # hintr 0.1.20
 
+* Update to naomi v2.1.10 (branch pin naomi@infections-metadata).
+
+# hintr 0.1.20
+
 * Pin to naomi@eppasm-0.5.9
 
 # hintr 0.1.18
