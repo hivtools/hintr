@@ -1,4 +1,4 @@
-# hintr 0.1.20
+# hintr 0.1.21
 
 * Update to naomi v2.1.10 (branch pin naomi@infections-metadata).
 
