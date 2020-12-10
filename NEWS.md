@@ -1,3 +1,7 @@
+# hintr 0.1.20
+
+* Pin to naomi@eppasm-0.5.9
+
 # hintr 0.1.18
 
 * Update summary report
