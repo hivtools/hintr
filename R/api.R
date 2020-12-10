@@ -298,7 +298,7 @@ endpoint_model_calibrate_submit <- function(queue) {
     }
   }
   porcelain::porcelain_endpoint$new("POST",
-                                    "/model/calibrate/<id>",
+                                    "/calibrate/submit/<id>",
                                     dummy_endpoint(queue),
                                     input,
                                     returning = response,
