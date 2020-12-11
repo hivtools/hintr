@@ -20,3 +20,4 @@ steps:
 
 notify:
   - webhook: https://prod-170.westeurope.logic.azure.com:443/workflows/aad2c6e66cbc4751ba0536260120fffd/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=ihOR8ne16E3ijG290QSj1ktD_HDZ3oh1F2rwwbElvvg
+    if: build.branch == master && build.state == "failed"
