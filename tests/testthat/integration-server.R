@@ -86,10 +86,11 @@ test_that("validate programme", {
   expect_equal(response$data$type, "programme")
   expect_equal(response$data$fromADR, FALSE)
   expect_true(length(response$data$data) >= 500)
-  expect_equal(typeof(response$data$data[[1]]$current_art), "double")
-  expect_equal(names(response$data$filters), c("age", "year", "indicators"))
+  expect_equal(typeof(response$data$data[[1]]$art_current), "integer")
+  expect_equal(names(response$data$filters),
+               c("age", "calendar_quarter", "indicators"))
   expect_length(response$data$filters$age, 2)
-  expect_length(response$data$filters$year, 8)
+  expect_length(response$data$filters$calendar_quarter, 8)
   expect_length(response$data$filters$indicators, 1)
 })
 
@@ -110,7 +111,7 @@ test_that("validate ANC", {
   expect_equal(response$data$type, "anc")
   expect_equal(response$data$fromADR, FALSE)
   expect_true(length(response$data$data) >= 200)
-  expect_equal(typeof(response$data$data[[1]]$ancrt_hiv_status), "integer")
+  expect_equal(typeof(response$data$data[[1]]$anc_clients), "integer")
   expect_equal(names(response$data$filters), c("year", "indicators"))
   expect_length(response$data$filters$year, 8)
   expect_length(response$data$filters$indicators, 2)
@@ -135,7 +136,7 @@ test_that("validate survey", {
   expect_true(length(response$data$data) >= 20000)
   expect_equal(typeof(response$data$data[[1]]$est), "double")
   expect_equal(names(response$data$filters), c("age", "surveys", "indicators"))
-  expect_length(response$data$filters$age, 21)
+  expect_length(response$data$filters$age, 23)
   expect_length(response$data$filters$surveys, 4)
   expect_length(response$data$filters$indicators, 4)
 })
@@ -251,12 +252,11 @@ test_that("real model can be run & calibrated by API", {
     expect_equal(response$data$success, TRUE)
     expect_equal(response$data$queue, 0)
     expect_true("id" %in% names(response$data))
-    expect_length(response$data$progress, 5)
+    expect_length(response$data$progress, 4)
     expect_true(response$data$progress[[1]]$complete)
     expect_true(response$data$progress[[2]]$complete)
     expect_true(response$data$progress[[3]]$complete)
     expect_true(response$data$progress[[4]]$complete)
-    expect_true(response$data$progress[[5]]$complete)
   })
 
   ## Get the result
@@ -330,13 +330,13 @@ test_that("plotting metadata is exposed", {
   expect_equal(names(response$data$programme), "choropleth")
   expect_length(response$data$anc$choropleth$indicators, 2)
   expect_equal(response$data$anc$choropleth$indicators[[1]]$indicator,
-               "prevalence")
+               "anc_prevalence")
   expect_equal(response$data$anc$choropleth$indicators[[2]]$indicator,
-               "art_coverage")
+               "anc_art_coverage")
   expect_equal(response$data$anc$choropleth$indicators[[1]]$name,
-               "HIV prevalence")
+               "ANC HIV prevalence")
   expect_equal(response$data$anc$choropleth$indicators[[2]]$name,
-               "ART coverage")
+               "ANC prior ART coverage")
 })
 
 test_that("model run options are exposed", {
@@ -350,7 +350,7 @@ test_that("model run options are exposed", {
   expect_equal(response$status, "success")
   expect_equal(response$errors, NULL)
   expect_equal(names(response$data), "controlSections")
-  expect_length(response$data$controlSections, 7)
+  expect_length(response$data$controlSections, 6)
 
   general_section <- response$data$controlSections[[1]]
   expect_length(
