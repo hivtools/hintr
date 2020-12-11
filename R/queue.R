@@ -41,11 +41,15 @@ Queue <- R6::R6Class(
       }
     },
 
-    submit = function(data, options) {
+    submit = function(job, environment = parent.frame()) {
+      self$queue$enqueue_(job, environment)
+    },
+
+    submit_model_run = function(data, options) {
       results_dir <- self$results_dir
       prerun_dir <- self$prerun_dir
       language <- traduire::translator()$language()
-      self$queue$enqueue_(quote(
+      self$submit(quote(
         hintr:::run_model(data, options, results_dir, prerun_dir, language)))
     },
 
