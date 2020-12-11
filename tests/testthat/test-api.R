@@ -633,8 +633,8 @@ test_that("erroring model run returns useful messages", {
   expect_match(msg[[3]], "error-trace: rrq:::rrq_worker_main")
 })
 
-test_that("endpoint_model_calibration_options", {
-  endpoint <- endpoint_model_calibration_options()
+test_that("endpoint_model_calibrate_options", {
+  endpoint <- endpoint_model_calibrate_options()
   response <- endpoint$run()
 
   expect_equal(response$status_code, 200)
@@ -648,11 +648,11 @@ test_that("endpoint_model_calibration_options", {
   expect_true(all(grepl("^(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$", body$version)))
 })
 
-test_that("endpoint_model_options works", {
+test_that("endpoint_calibrate_options works", {
   test_redis_available()
   queue <- test_queue(workers = 0)
   api <- api_build(queue)
-  res <- api$request("POST", "/model/calibration-options")
+  res <- api$request("POST", "/calibrate/options")
   expect_equal(res$status, 200)
   body <- jsonlite::parse_json(res$body)
   expect_equal(names(body$data), "controlSections")

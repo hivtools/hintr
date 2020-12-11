@@ -11,7 +11,7 @@ api_build <- function(queue) {
   api$handle(endpoint_model_result(queue))
   api$handle(endpoint_model_cancel(queue))
   api$handle(endpoint_model_debug(queue))
-  api$handle(endpoint_model_calibration_options())
+  api$handle(endpoint_model_calibrate_options())
   api$handle(endpoint_model_calibrate_submit(queue))
   api$handle(endpoint_model_calibrate_status(queue))
   api$handle(endpoint_model_calibrate_result(queue))
@@ -262,10 +262,10 @@ endpoint_model_debug <- function(queue) {
     returning = porcelain::porcelain_returning_binary())
 }
 
-endpoint_model_calibration_options <- function() {
+endpoint_model_calibrate_options <- function() {
   response <- returning_json_version("ModelRunOptions.schema", schema_root())
   porcelain::porcelain_endpoint$new("POST",
-                                    "/model/calibration-options",
+                                    "/calibrate/options",
                                     calibration_options,
                                     returning = response,
                                     validate = TRUE)
