@@ -446,9 +446,8 @@ test_that("model run options are exposed", {
 })
 
 test_that("model options can be validated", {
-  skip("Skipping model option validation endpoint not implemented mrc-592")
   server <- hintr_server()
-  payload <- setup_submit_payload()
+  payload <- "payload/validate_options_payload.json"
 
   r <- httr::POST(paste0(server$url, "/validate/options"),
                   body = httr::upload_file(payload, type = "application/json"),
