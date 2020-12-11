@@ -520,13 +520,10 @@ test_that("endpoint_model_result can be run", {
   response <- endpoint$run(run_response$data$id)
 
   expect_equal(response$status_code, 200)
-  expect_equal(names(response$data), c("data", "plottingMetadata"))
-  expect_equal(colnames(response$data$data),
-               c("area_id", "sex", "age_group", "calendar_quarter",
-                 "indicator", "mode", "mean", "lower", "upper"))
-  expect_true(nrow(response$data$data) > 84042)
-  expect_equal(names(response$data$plottingMetadata),
-               c("barchart", "choropleth"))
+  expect_equal(response$data, list(
+    id = scalar(run_response$data$id),
+    complete = scalar(TRUE)
+  ))
 })
 
 test_that("api can call endpoint_model_result", {
@@ -538,24 +535,21 @@ test_that("api can call endpoint_model_result", {
   res <- api$request("POST", "/model/submit",
                      body = readLines(path))
   expect_equal(res$status, 200)
-  body <- jsonlite::fromJSON(res$body)
-  expect_equal(body$status, "success")
-  expect_true(!is.null(body$data$id))
+  submit_body <- jsonlite::fromJSON(res$body)
+  expect_equal(submit_body$status, "success")
+  expect_true(!is.null(submit_body$data$id))
 
-  out <- queue$queue$task_wait(body$data$id)
-  res <- api$request("GET", sprintf("/model/result/%s", body$data$id))
+  out <- queue$queue$task_wait(submit_body$data$id)
+  res <- api$request("GET", sprintf("/model/result/%s", submit_body$data$id))
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body)
 
   expect_equal(body$status, "success")
   expect_null(body$errors)
-  expect_equal(names(body$data), c("data", "plottingMetadata"))
-  expect_equal(colnames(body$data$data),
-               c("area_id", "sex", "age_group", "calendar_quarter",
-                 "indicator", "mode", "mean", "lower", "upper"))
-  expect_true(nrow(body$data$data) > 84042)
-  expect_equal(names(body$data$plottingMetadata),
-               c("barchart", "choropleth"))
+  expect_equal(body$data, list(
+    id = submit_body$data$id,
+    complete = TRUE
+  ))
 })
 
 test_that("endpoint_model_cancel can be run", {

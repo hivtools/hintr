@@ -33,98 +33,10 @@ test_that("endpoint model run queues a model run", {
   ## Get the result
   get_model_result <- model_result(queue)
   result <- get_model_result(response$id)
-  expect_equal(names(result), c("data", "plottingMetadata"))
-  expect_equal(colnames(result$data),
-               c("area_id", "sex", "age_group", "calendar_quarter",
-                 "indicator", "mode", "mean", "lower", "upper"))
-  expect_true(nrow(result$data) > 84042)
-  expect_equal(names(result$plottingMetadata), c("barchart", "choropleth"))
-
-
-  ## Barchart
-  barchart <- result$plottingMetadata$barchart
-  expect_equal(names(barchart), c("indicators", "filters", "defaults"))
-  expect_length(barchart$filters, 4)
-  expect_equal(names(barchart$filters[[1]]),
-               c("id", "column_id", "label", "options", "use_shape_regions"))
-  expect_equal(names(barchart$filters[[2]]),
-               c("id", "column_id", "label", "options"))
-  ## Choropleth has the correct filters in correct order
-  filters <- lapply(barchart$filters, function(filter) {
-    filter$column_id
-  })
-  expect_equal(filters[[1]], scalar("area_id"))
-  expect_equal(filters[[2]], scalar("calendar_quarter"))
-  expect_equal(filters[[3]], scalar("sex"))
-  expect_equal(filters[[4]], scalar("age_group"))
-  expect_length(barchart$filters[[2]]$options, 3)
-  expect_equal(barchart$filters[[2]]$options[[2]]$id, scalar("CY2018Q3"))
-  expect_equal(barchart$filters[[2]]$options[[2]]$label,
-               scalar("September 2018"))
-  expect_true(length(barchart$filters[[4]]$options) >= 29)
-  expect_equal(nrow(barchart$indicators), 20)
-
-  ## Quarters are in descending order
-  calendar_quarters <-
-    lapply(barchart$filters[[2]]$options, function(option) {
-      option$id
-    })
-  expect_equal(unlist(calendar_quarters),
-               sort(unlist(calendar_quarters), decreasing = TRUE))
-
-
-  ## Barchart indicators are in numeric id order
-  expect_equal(barchart$indicators$indicator,
-               c("population", "prevalence", "plhiv", "art_coverage",
-                 "art_current_residents", "art_current",
-                 "untreated_plhiv_num", "aware_plhiv_prop",
-                 "unaware_plhiv_num", "incidence",
-                 "infections", "anc_prevalence", "anc_art_coverage",
-                 "anc_clients", "anc_plhiv", "anc_already_art",
-                 "anc_art_new", "anc_known_pos",
-                 "anc_tested_pos", "anc_tested_neg"))
-
-  ## Choropleth
-  choropleth <- result$plottingMetadata$choropleth
-  expect_equal(names(choropleth), c("indicators", "filters"))
-  expect_length(choropleth$filters, 4)
-  expect_equal(names(choropleth$filters[[1]]),
-               c("id", "column_id", "label", "options", "use_shape_regions"))
-  expect_equal(names(choropleth$filters[[2]]),
-               c("id", "column_id", "label", "options"))
-  ## Choropleth has the correct filters in correct order
-  filters <- lapply(choropleth$filters, function(filter) {
-    filter$column_id
-  })
-  expect_equal(filters[[1]], scalar("area_id"))
-  expect_equal(filters[[2]], scalar("calendar_quarter"))
-  expect_equal(filters[[3]], scalar("sex"))
-  expect_equal(filters[[4]], scalar("age_group"))
-  expect_length(choropleth$filters[[2]]$options, 3)
-  expect_equal(choropleth$filters[[2]]$options[[2]]$id, scalar("CY2018Q3"))
-  expect_equal(choropleth$filters[[2]]$options[[2]]$label,
-               scalar("September 2018"))
-  expect_true(length(choropleth$filters[[4]]$options) >= 29)
-  expect_equal(nrow(choropleth$indicators), 20)
-
-  ## Quarters are in descending order
-  calendar_quarters <-
-    lapply(choropleth$filters[[2]]$options, function(option) {
-      option$id
-    })
-  expect_equal(unlist(calendar_quarters),
-               sort(unlist(calendar_quarters), decreasing = TRUE))
-
-  ## Choropleth indicators are in numeric id order
-  expect_equal(choropleth$indicators$indicator,
-               c("population", "prevalence", "plhiv", "art_coverage",
-                 "art_current_residents", "art_current",
-                 "untreated_plhiv_num", "aware_plhiv_prop",
-                 "unaware_plhiv_num", "incidence",
-                 "infections", "anc_prevalence", "anc_art_coverage",
-                 "anc_clients", "anc_plhiv", "anc_already_art",
-                 "anc_art_new", "anc_known_pos",
-                 "anc_tested_pos", "anc_tested_neg"))
+  expect_equal(result, list(
+    id = scalar(response$id),
+    complete = scalar(TRUE)
+  ))
 })
 
 test_that("endpoint_run_model returns error if queueing fails", {
@@ -465,14 +377,97 @@ test_that("can calibrate a model result", {
   calibrate <- model_calibrate(queue)
   calibrated_result <- calibrate("id", readLines(path))
 
-  ## Verify data has been returned
-  expect_equal(names(calibrated_result), c("data", "plottingMetadata"))
-  expect_equal(colnames(calibrated_result$data),
+  expect_equal(names(result), c("data", "plottingMetadata"))
+  expect_equal(colnames(result$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
-  expect_true(nrow(calibrated_result$data) > 84042)
-  expect_equal(names(calibrated_result$plottingMetadata),
-               c("barchart", "choropleth"))
+  expect_true(nrow(result$data) > 84042)
+  expect_equal(names(result$plottingMetadata), c("barchart", "choropleth"))
+
+  ## Barchart
+  barchart <- result$plottingMetadata$barchart
+  expect_equal(names(barchart), c("indicators", "filters", "defaults"))
+  expect_length(barchart$filters, 4)
+  expect_equal(names(barchart$filters[[1]]),
+               c("id", "column_id", "label", "options", "use_shape_regions"))
+  expect_equal(names(barchart$filters[[2]]),
+               c("id", "column_id", "label", "options"))
+  ## Choropleth has the correct filters in correct order
+  filters <- lapply(barchart$filters, function(filter) {
+    filter$column_id
+  })
+  expect_equal(filters[[1]], scalar("area_id"))
+  expect_equal(filters[[2]], scalar("calendar_quarter"))
+  expect_equal(filters[[3]], scalar("sex"))
+  expect_equal(filters[[4]], scalar("age_group"))
+  expect_length(barchart$filters[[2]]$options, 3)
+  expect_equal(barchart$filters[[2]]$options[[2]]$id, scalar("CY2018Q3"))
+  expect_equal(barchart$filters[[2]]$options[[2]]$label,
+               scalar("September 2018"))
+  expect_true(length(barchart$filters[[4]]$options) >= 29)
+  expect_equal(nrow(barchart$indicators), 20)
+
+  ## Quarters are in descending order
+  calendar_quarters <-
+    lapply(barchart$filters[[2]]$options, function(option) {
+      option$id
+    })
+  expect_equal(unlist(calendar_quarters),
+               sort(unlist(calendar_quarters), decreasing = TRUE))
+
+
+  ## Barchart indicators are in numeric id order
+  expect_equal(barchart$indicators$indicator,
+               c("population", "prevalence", "plhiv", "art_coverage",
+                 "art_current_residents", "art_current",
+                 "untreated_plhiv_num", "aware_plhiv_prop",
+                 "unaware_plhiv_num", "incidence",
+                 "infections", "anc_prevalence", "anc_art_coverage",
+                 "anc_clients", "anc_plhiv", "anc_already_art",
+                 "anc_art_new", "anc_known_pos",
+                 "anc_tested_pos", "anc_tested_neg"))
+
+  ## Choropleth
+  choropleth <- result$plottingMetadata$choropleth
+  expect_equal(names(choropleth), c("indicators", "filters"))
+  expect_length(choropleth$filters, 4)
+  expect_equal(names(choropleth$filters[[1]]),
+               c("id", "column_id", "label", "options", "use_shape_regions"))
+  expect_equal(names(choropleth$filters[[2]]),
+               c("id", "column_id", "label", "options"))
+  ## Choropleth has the correct filters in correct order
+  filters <- lapply(choropleth$filters, function(filter) {
+    filter$column_id
+  })
+  expect_equal(filters[[1]], scalar("area_id"))
+  expect_equal(filters[[2]], scalar("calendar_quarter"))
+  expect_equal(filters[[3]], scalar("sex"))
+  expect_equal(filters[[4]], scalar("age_group"))
+  expect_length(choropleth$filters[[2]]$options, 3)
+  expect_equal(choropleth$filters[[2]]$options[[2]]$id, scalar("CY2018Q3"))
+  expect_equal(choropleth$filters[[2]]$options[[2]]$label,
+               scalar("September 2018"))
+  expect_true(length(choropleth$filters[[4]]$options) >= 29)
+  expect_equal(nrow(choropleth$indicators), 20)
+
+  ## Quarters are in descending order
+  calendar_quarters <-
+    lapply(choropleth$filters[[2]]$options, function(option) {
+      option$id
+    })
+  expect_equal(unlist(calendar_quarters),
+               sort(unlist(calendar_quarters), decreasing = TRUE))
+
+  ## Choropleth indicators are in numeric id order
+  expect_equal(choropleth$indicators$indicator,
+               c("population", "prevalence", "plhiv", "art_coverage",
+                 "art_current_residents", "art_current",
+                 "untreated_plhiv_num", "aware_plhiv_prop",
+                 "unaware_plhiv_num", "incidence",
+                 "infections", "anc_prevalence", "anc_art_coverage",
+                 "anc_clients", "anc_plhiv", "anc_already_art",
+                 "anc_art_new", "anc_known_pos",
+                 "anc_tested_pos", "anc_tested_neg"))
 })
 
 test_that("model calibration fails is version out of date", {
