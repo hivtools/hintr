@@ -1,3 +1,4 @@
 #!/usr/bin/env Rscript
 testthat::test_file("tests/testthat/integration-server.R",
-                    env = pkgload::load_all(".")$env)
+                    env = pkgload::load_all(".")$env,
+                    stop_on_failure = TRUE)
