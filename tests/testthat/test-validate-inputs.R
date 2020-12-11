@@ -208,16 +208,6 @@ test_that("do_validate_anc returns useful error from shapefile comparison", {
     "Regions aren't consistent ANC file contains 32 regions missing from shape file including:\n\\w+")
 })
 
-test_that("do_validate_anc passes for zambia", {
-  skip_if_sensitive_data_missing()
-  anc <- file_object(file.path("testdata", "sensitive", "ZMB", "data", "zmb_anc_testing.csv"))
-  shape <- file_object(file.path("testdata", "sensitive", "ZMB", "data",
-                     "zmb_areas.geojson"))
-  expect_error(do_validate_anc(anc, shape),
-               "The number of people already on ART is greater than the number positive (those known to be positive + those who tested positive)",
-               fixed = TRUE)
-})
-
 test_that("do_validate_survey returns useful error from shapefile comparison", {
   survey <- file_object(file.path("testdata", "survey.csv"))
   shape <- file_object(file.path("testdata", "malawi_missing_regions.geojson"))
