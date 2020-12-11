@@ -1158,7 +1158,7 @@ test_that("404 errors have sensible schema", {
   expect_equal(response$data, setNames(list(), list()))
 })
 
-test_that("endpoint_model_calibrate can be run", {
+test_that("model calibrate can be queued and result returned", {
   test_mock_model_available()
 
   ## Mock model run
@@ -1171,9 +1171,36 @@ test_that("endpoint_model_calibrate can be run", {
   unlockBinding("task_status", queue$queue)
   queue$queue$task_status <- mockery::mock("COMPLETE")
 
-  endpoint <- endpoint_model_calibrate(queue)
+  ## Submit calibrate request
+  submit <- endpoint_model_calibrate_submit(queue)
   path <- setup_calibrate_payload()
-  response <- endpoint$run("id", readLines(path))
+  submit_response <- submit$run("id", readLines(path))
+
+  expect_equal(submit_response$status_code, 200)
+  expect_true(!is.null(submit_response$data$id))
+
+  ## Status
+  status <- endpoint_model_calibrate_status(queue)
+  status_response <- status$run(submit_response$data$id)
+
+  expect_equal(status_response$status_code, 200)
+  expect_equal(status_response$data$id, submit_response$data$id)
+  expect_false(status_response$data$done)
+  expect_equal(status_response$data$status, scalar("Running"))
+  expect_true(status_response$data$success)
+  expect_equal(status_response$data$queue, scalar(0))
+  expect_equal(status_response$data$progress, list(
+    list(
+      started = scalar(TRUE),
+      complete = scalar(FALSE),
+      name = scalar("Calibrating"),
+      helpText = scalar("5s elapsed")
+    )
+  ))
+
+  ## Get result
+  result <- endpoint_model_calibrate_result(queue)
+  response <- result$run(status_response$data$id)
 
   expect_equal(response$status_code, 200)
   expect_equal(names(response$data), c("data", "plottingMetadata"))
@@ -1198,20 +1225,44 @@ test_that("api can call endpoint_model_calibrate", {
   unlockBinding("task_status", queue$queue)
   queue$queue$task_status <- mockery::mock("COMPLETE")
 
+  ## Submit calibrate
   api <- api_build(queue)
   calibrate_path <- setup_calibrate_payload()
-  res <- api$request("POST", "/model/calibrate/id",
+  submit_res <- api$request("POST", "/calibrate/submit/id",
                      body = readLines(calibrate_path))
-  expect_equal(res$status, 200)
-  body <- jsonlite::fromJSON(res$body)
 
-  expect_equal(body$status, "success")
-  expect_null(body$errors)
-  expect_equal(names(body$data), c("data", "plottingMetadata"))
-  expect_equal(colnames(body$data$data),
+  expect_equal(submit_res$status, 200)
+  submit_body <- jsonlite::fromJSON(submit_res$body)
+  expect_true(!is.null(submit_body$data$id))
+
+  ## Status
+  status_res <- api$request("GET",
+                            paste0("/calibrate/status/", submit_body$data$id))
+
+  expect_equal(status_res$status, 200)
+  status_body <- jsonlite::fromJSON(status_res$body)
+  expect_equal(status_body$data$id, submit_body$data$id)
+  expect_false(status_body$data$done)
+  expect_equal(status_body$data$status, "Running")
+  expect_true(status_body$data$success)
+  expect_equal(status_body$data$queue, 0)
+  expect_true(status_body$data$progress$started)
+  expect_false(status_body$data$progress$complete)
+  expect_equal(status_body$data$progress$name, "Calibrating")
+  expect_equal(status_body$data$progress$helpText, "5s elapsed")
+
+  ## Get result
+  result_res <- api$request("GET",
+                            paste0("/calibrate/result/", status_body$data$id))
+
+  expect_equal(result_res$status, 200)
+  result_body <- jsonlite::fromJSON(result_res$body)
+  expect_null(result_body$errors)
+  expect_equal(names(result_body$data), c("data", "plottingMetadata"))
+  expect_equal(colnames(result_body$data$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
-  expect_true(nrow(body$data$data) > 84042)
-  expect_equal(names(body$data$plottingMetadata),
+  expect_true(nrow(result_body$data$data) > 84042)
+  expect_equal(names(result_body$data$plottingMetadata),
                c("barchart", "choropleth"))
 })

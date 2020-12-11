@@ -447,6 +447,7 @@ test_that("Debug endpoint errors on nonexistant id", {
 })
 
 test_that("can calibrate a model result", {
+  skip("Re-enable when calibration is run again, see mrc-2040")
   test_mock_model_available()
 
   ## Mock model run
@@ -475,6 +476,7 @@ test_that("can calibrate a model result", {
 })
 
 test_that("model calibration fails is version out of date", {
+  skip("Re-enable when calibration is run again, see mrc-2040")
   test_mock_model_available()
 
   ## Mock model run
@@ -524,28 +526,4 @@ test_that("trying to calibrate old model result returns error", {
 
   expect_equal(error$message, paste0("Can't calibrate this model output please",
                                      " re-run model and try calibration again"))
-})
-
-test_that("Calibration returns processed result and doesn't use naomi", {
-  test_mock_model_available()
-
-  ## Mock model run
-  queue <- test_queue(workers = 0)
-  unlockBinding("result", queue)
-  ## Clone model output as it modifies in place
-  out <- clone_model_output(mock_model)
-  queue$result <- mockery::mock(out)
-  unlockBinding("queue", queue)
-  unlockBinding("task_status", queue$queue)
-  queue$queue$task_status <- mockery::mock("COMPLETE")
-
-  ## Calibrate the result
-  path <- setup_calibrate_payload()
-  mock_naomi_calibrate <- mockery::mock()
-  with_mock("naomi::hintr_calibrate" = mock_naomi_calibrate, {
-    calibrate <- model_calibrate(queue)
-    calibrated_result <- calibrate("id", readLines(path))
-  })
-  expect_equal(calibrated_result, process_result(mock_model))
-  mockery::expect_called(mock_naomi_calibrate, 0)
 })

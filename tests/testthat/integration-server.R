@@ -372,13 +372,38 @@ test_that("real model can be run & calibrated by API", {
                     "anc_prevalence", "anc_art_coverage"))
   })
 
-  ## Calibrate
+  ## Calibrate submit
   payload <- setup_calibrate_payload()
-  r <- httr::POST(paste0(server$url, "/model/calibrate/", id),
+  r <- httr::POST(paste0(server$url, "/calibrate/submit/", id),
                   body = httr::upload_file(payload, type = "application/json"),
                   encode = "json")
-  expect_equal(httr::status_code(r), 200)
 
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  calibrate_id <- response$data$id
+  expect_true(!is.null(calibrate_id))
+
+  ## Calibrate status
+  r <- httr::GET(paste0(server$url, "/calibrate/status/", calibrate_id))
+
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  expect_equal(response$data$id, calibrate_id)
+  expect_false(response$data$done)
+  expect_equal(response$data$status, "Running")
+  expect_true(response$data$success)
+  expect_equal(response$data$queue, 0)
+  expect_equal(response$data$progress, list(
+    list(
+      started = TRUE,
+      complete = FALSE,
+      name = "Calibrating",
+      helpText = "5s elapsed"
+    )
+  ))
+
+  ## Calibrate result
+  r <- httr::GET(paste0(server$url, "/calibrate/result/", calibrate_id))
   ## Response has same structure content as model result endpoint
   response <- response_from_json(r)
   expect_equal(response$status, "success")
@@ -386,7 +411,7 @@ test_that("real model can be run & calibrated by API", {
   expect_equal(names(response$data), c("data", "plottingMetadata"))
   expect_equal(names(response$data$data[[1]]),
                c("area_id", "sex", "age_group", "calendar_quarter",
-                 "indicator_id", "mode", "mean", "lower", "upper"))
+                 "indicator", "mode", "mean", "lower", "upper"))
   expect_true(length(response$data$data) > 84042)
   expect_equal(names(response$data$plottingMetadata),
                c("barchart", "choropleth"))
