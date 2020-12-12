@@ -1,4 +1,8 @@
-# hintr 0.1.21
+# hintr 0.1.23
+
+* Update to naomi v2.1.11 (branch pin naomi@naomisup-ticket-11).
+
+# hintr 0.1.22
 
 * Update to naomi v2.1.10 (branch pin naomi@infections-metadata).
 
