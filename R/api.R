@@ -277,14 +277,9 @@ endpoint_model_calibrate_submit <- function(queue) {
                                                 schema_root())
   response <- porcelain::porcelain_returning_json(
     "CalibrateSubmitResponse.schema", schema_root())
-  dummy_endpoint <- function(queue) {
-    function(id, input) {
-      list(id = scalar(ids::adjective_animal()))
-    }
-  }
   porcelain::porcelain_endpoint$new("POST",
                                     "/calibrate/submit/<id>",
-                                    dummy_endpoint(queue),
+                                    submit_calibrate(queue),
                                     input,
                                     returning = response,
                                     validate = TRUE)
