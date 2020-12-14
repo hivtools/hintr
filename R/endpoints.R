@@ -163,7 +163,7 @@ verify_result_available <- function(queue, id) {
   if (task_status == "COMPLETE") {
     result <- queue$result(id)
     if (!naomi:::is_hintr_output(result)) {
-      hintr_error(t_("UNKNOWN_OUTPUT_TYPE"), "UNKNOWN_OUPTU_TYPE")
+      hintr_error(t_("UNKNOWN_OUTPUT_TYPE"), "UNKNOWN_OUTPUT_TYPE")
     }
   } else if (task_status == "ERROR") {
     result <- queue$result(id)
