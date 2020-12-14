@@ -128,7 +128,7 @@ submit_model <- function(queue) {
       hintr_error(t_("MODEL_SUBMIT_OLD"), "VERSION_OUT_OF_DATE")
     }
     tryCatch(
-      list(id = scalar(queue$submit(input$data, input$options))),
+      list(id = scalar(queue$submit_model_run(input$data, input$options))),
       error = function(e) {
         hintr_error(e$message, "FAILED_TO_QUEUE")
       }

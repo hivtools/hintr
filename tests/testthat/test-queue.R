@@ -20,11 +20,10 @@ test_that("queue works as intended", {
   expect_equal(queue$queue$worker_log_tail(worker_2, 3)[3, "message"],
                "TIMEOUT_SET")
 
-
   expect_length(queue$queue$task_list(), 0)
 
-  ## jobs can be pushed to queue
-  job_id <- queue$submit(NULL, list())
+  ## model run can be pushed to queue
+  job_id <- queue$submit_model_run(NULL, list())
   expect_length(queue$queue$task_list(), 1)
 
   ## status can be retireved
@@ -64,6 +63,41 @@ test_that("queue works as intended", {
   gc()
 
   expect_equal(con$SCARD(key), 0)
+})
+
+test_that("queue can run arbitrary jobs", {
+  test_redis_available()
+
+  queue <- Queue$new(timeout = 300)
+
+  ## model run can be pushed to queue
+  job_id <- queue$submit(quote({
+    Sys.sleep(1)
+    1 + 1
+  }))
+  expect_length(queue$queue$task_list(), 1)
+
+  ## status can be retireved
+  Sys.sleep(0.1)
+  status <- queue$status(job_id)
+  expect_equal(status$status, "RUNNING")
+  expect_false(status$done)
+  expect_equal(status$success, json_verbatim("null"))
+  expect_equal(status$queue, 0)
+  expect_null(status$progress)
+
+  ## After task has completed
+  result <- queue$queue$task_wait(job_id)
+  status <- queue$status(job_id)
+  expect_equal(status$status, "COMPLETE")
+  expect_true(status$done)
+  expect_true(status$success)
+  expect_equal(status$queue, 0)
+  expect_null(status$progress)
+
+  ## Result can be retrieved after task has completed
+  res <- queue$result(job_id)
+  expect_equal(res, 2)
 })
 
 test_that("queue_id is generated if not supplied", {

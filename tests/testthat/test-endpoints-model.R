@@ -46,11 +46,11 @@ test_that("endpoint_run_model returns error if queueing fails", {
 
   ## Create mocks
   queue <- test_queue()
-  mock_submit <- function(data, options) { stop("Failed to queue") }
+  mock_submit_model_run <- function(data, options) { stop("Failed to queue") }
 
   ## Call the endpoint
   model_submit <- submit_model(queue)
-  mockery::stub(model_submit, "queue$submit", mock_submit)
+  mockery::stub(model_submit, "queue$submit_model_run", mock_submit_model_run)
   error <- expect_error(model_submit(readLines(path)))
 
   expect_equal(error$data[[1]]$error, scalar("FAILED_TO_QUEUE"))
