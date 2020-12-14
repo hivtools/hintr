@@ -1156,7 +1156,7 @@ test_that("model calibrate can be queued and result returned", {
   test_mock_model_available()
 
   ## Mock model run
-  queue <- test_queue(workers = 0)
+  queue <- test_queue(workers = 1)
   unlockBinding("result", queue)
   ## Clone model output as it modifies in place
   out <- clone_model_output(mock_model)
@@ -1174,23 +1174,17 @@ test_that("model calibrate can be queued and result returned", {
   expect_true(!is.null(submit_response$data$id))
 
   ## Status
+  out <- queue$queue$task_wait(submit_response$data$id)
   status <- endpoint_model_calibrate_status(queue)
   status_response <- status$run(submit_response$data$id)
 
   expect_equal(status_response$status_code, 200)
   expect_equal(status_response$data$id, submit_response$data$id)
-  expect_false(status_response$data$done)
-  expect_equal(status_response$data$status, scalar("Running"))
+  expect_true(status_response$data$done)
+  expect_equal(status_response$data$status, scalar("COMPLETE"))
   expect_true(status_response$data$success)
   expect_equal(status_response$data$queue, scalar(0))
-  expect_equal(status_response$data$progress, list(
-    list(
-      started = scalar(TRUE),
-      complete = scalar(FALSE),
-      name = scalar("Calibrating"),
-      helpText = scalar("5s elapsed")
-    )
-  ))
+  expect_equal(status_response$data$progress, list())
 
   ## Get result
   result <- endpoint_model_calibrate_result(queue)
@@ -1210,7 +1204,7 @@ test_that("api can call endpoint_model_calibrate", {
   test_mock_model_available()
 
   ## Mock model run
-  queue <- test_queue(workers = 0)
+  queue <- test_queue(workers = 1)
   unlockBinding("result", queue)
   ## Clone model output as it modifies in place
   out <- clone_model_output(mock_model)
@@ -1230,20 +1224,18 @@ test_that("api can call endpoint_model_calibrate", {
   expect_true(!is.null(submit_body$data$id))
 
   ## Status
+  out <- queue$queue$task_wait(submit_response$data$id)
   status_res <- api$request("GET",
                             paste0("/calibrate/status/", submit_body$data$id))
 
   expect_equal(status_res$status, 200)
   status_body <- jsonlite::fromJSON(status_res$body)
   expect_equal(status_body$data$id, submit_body$data$id)
-  expect_false(status_body$data$done)
-  expect_equal(status_body$data$status, "Running")
+  expect_true(status_body$data$done)
+  expect_equal(status_body$data$status, scalar("COMPLETE"))
   expect_true(status_body$data$success)
   expect_equal(status_body$data$queue, 0)
-  expect_true(status_body$data$progress$started)
-  expect_false(status_body$data$progress$complete)
-  expect_equal(status_body$data$progress$name, "Calibrating")
-  expect_equal(status_body$data$progress$helpText, "5s elapsed")
+  expect_equal(status_body$data$progress, list())
 
   ## Get result
   result_res <- api$request("GET",

@@ -16,7 +16,7 @@ test_that("endpoint model run queues a model run", {
   ## Wait for complete and query for status
   ## Query for status
   result <- queue$queue$task_wait(response$id)
-  status_endpoint <- model_status(queue)
+  status_endpoint <- queue_status(queue)
   status <- status_endpoint(response$id)
   expect_equal(status$id, response$id)
   expect_equal(status$done, scalar(TRUE))
@@ -84,7 +84,7 @@ test_that("querying for status of missing job returns useful message", {
   test_redis_available()
 
   queue <- test_queue()
-  status_endpoint <- model_status(queue)
+  status_endpoint <- queue_status(queue)
   status <- status_endpoint("ID")
   expect_equal(status$done, json_null())
   expect_equal(status$status, scalar("MISSING"))
@@ -126,7 +126,7 @@ test_that("endpoint_run_status returns error if query for status fails", {
   mock_status <- function(data, parameters) { stop("Failed to get status") }
 
   ## Call the endpoint
-  status_endpoint <- model_status(queue)
+  status_endpoint <- queue_status(queue)
   mockery::stub(status_endpoint, "queue$status", mock_status)
   error <- expect_error(status_endpoint("ID"))
   expect_equal(error$data[[1]]$error, scalar("FAILED_TO_RETRIEVE_STATUS"))
@@ -166,7 +166,7 @@ test_that("erroring model run returns useful messages", {
   out <- queue$queue$task_wait(response$id)
 
   ## Get the status
-  endpoint_status <- model_status(queue)
+  endpoint_status <- queue_status(queue)
   status <- endpoint_status(response$id)
   expect_equal(status$done, scalar(TRUE))
   expect_equal(status$status, scalar("ERROR"))
@@ -222,7 +222,7 @@ test_that("model run can be cancelled", {
     expect_equal(queue$queue$task_status(id), setNames("INTERRUPTED", id))
   })
 
-  get_status <- model_status(queue)
+  get_status <- queue_status(queue)
   response <- get_status(id)
   expect_true(response$done)
   expect_false(response$success)
@@ -243,7 +243,7 @@ test_that("translation of progress", {
   path <- setup_submit_payload()
   queue <- test_queue(workers = 1)
   model_submit <- submit_model(queue)
-  get_status <- model_status(queue)
+  get_status <- queue_status(queue)
 
   response <- with_hintr_language(
     "fr",

@@ -136,7 +136,7 @@ submit_model <- function(queue) {
   }
 }
 
-model_status <- function(queue) {
+queue_status <- function(queue) {
   check_orphan <- throttle(queue$queue$worker_detect_exited, 10)
   function(id) {
     no_error(check_orphan())

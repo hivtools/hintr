@@ -231,7 +231,7 @@ endpoint_model_status <- function(queue) {
                                                   schema_root())
   porcelain::porcelain_endpoint$new("GET",
                                     "/model/status/<id>",
-                                    model_status(queue),
+                                    queue_status(queue),
                                     returning = response,
                                     validate = TRUE)
 }
@@ -288,27 +288,9 @@ endpoint_model_calibrate_submit <- function(queue) {
 endpoint_model_calibrate_status <- function(queue) {
   response <- porcelain::porcelain_returning_json(
     "CalibrateStatusResponse.schema", schema_root())
-  dummy_endpoint <- function(queue) {
-    function(id) {
-      list(id = scalar(id),
-           done = scalar(FALSE),
-           status = scalar("Running"),
-           success = scalar(TRUE),
-           queue = scalar(0),
-           progress = list(
-             list(
-               started = scalar(TRUE),
-               complete = scalar(FALSE),
-               name = scalar("Calibrating"),
-               helpText = scalar("5s elapsed")
-             )
-          )
-      )
-    }
-  }
   porcelain::porcelain_endpoint$new("GET",
                                     "/calibrate/status/<id>",
-                                    dummy_endpoint(queue),
+                                    queue_status(queue),
                                     returning = response,
                                     validate = TRUE)
 }
