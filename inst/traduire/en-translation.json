@@ -64,5 +64,6 @@
     "OUTPUT_FILTER_PERIOD": "Period",
     "OUTPUT_FILTER_SEX": "Sex",
     "OUTPUT_FILTER_AGE": "Age",
-    "MODEL_RESULT_OLD": "Can't download {{type}}, please re-run model and try download again."
+    "MODEL_RESULT_OLD": "Can't download {{type}}, please re-run model and try download again.",
+    "UNKNOWN_OUTPUT_TYPE": "Model run returned unknown output type, please contact support."
 }

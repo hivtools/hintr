@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "id" : { "$ref": "URI.schema.json" },
+    "done": { "type": [ "boolean", "null" ] },
+    "status": { "type": "string" },
+    "success": { "type": [ "boolean", "null" ] },
+    "queue": { "type": "integer" },
+    "progress": { 
+      "type": "array",
+      "items": { "$ref": "ProgressPhase.schema.json" }
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "done",
+    "status",
+    "success",
+    "queue",
+    "progress"
+  ]
+}

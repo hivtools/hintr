@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "data": { "$ref": "ModelResultData.schema.json" },
+    "plottingMetadata": {
+      "type": "object",
+      "properties": {
+        "barchart": { "$ref": "BarchartMetadata.schema.json" },
+        "choropleth": { "$ref": "ChoroplethMetadata.schema.json" }
+      },
+      "additionalProperties": false,
+      "required" : [ "barchart", "choropleth" ]
+    }
+  },
+  "required": [ "data", "plottingMetadata" ]
+}

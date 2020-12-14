@@ -153,14 +153,18 @@ model_status <- function(queue) {
 model_result <- function(queue) {
   function(id) {
     verify_result_available(queue, id)
-    process_result(queue$result(id))
+    list(id = scalar(id),
+         complete = scalar(TRUE))
   }
 }
 
 verify_result_available <- function(queue, id) {
   task_status <- queue$queue$task_status(id)
   if (task_status == "COMPLETE") {
-    invisible(TRUE)
+    result <- queue$result(id)
+    if (!naomi:::is_hintr_output(result)) {
+      hintr_error(t_("UNKNOWN_OUTPUT_TYPE"), "UNKNOWN_OUTPUT_TYPE")
+    }
   } else if (task_status == "ERROR") {
     result <- queue$result(id)
     trace <- c(sprintf("# %s", id), result$trace)
