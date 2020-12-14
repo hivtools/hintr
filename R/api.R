@@ -12,6 +12,7 @@ api_build <- function(queue) {
   api$handle(endpoint_model_cancel(queue))
   api$handle(endpoint_model_debug(queue))
   api$handle(endpoint_model_calibrate_options())
+  api$handle(endpoint_model_calibrate(queue))
   api$handle(endpoint_model_calibrate_submit(queue))
   api$handle(endpoint_model_calibrate_status(queue))
   api$handle(endpoint_model_calibrate_result(queue))
@@ -267,6 +268,21 @@ endpoint_model_calibrate_options <- function() {
   porcelain::porcelain_endpoint$new("POST",
                                     "/calibrate/options",
                                     calibration_options,
+                                    returning = response,
+                                    validate = TRUE)
+}
+
+endpoint_model_calibrate <- function(queue) {
+  ## TODO: Remove this once async calibration implemented in front end
+  input <- porcelain::porcelain_input_body_json("input",
+                                                "ModelCalibrateRequest.schema",
+                                                schema_root())
+  response <- porcelain::porcelain_returning_json(
+    "CalibrateResultResponse.schema", schema_root())
+  porcelain::porcelain_endpoint$new("POST",
+                                    "/model/calibrate/<id>",
+                                    model_calibrate(queue),
+                                    input,
                                     returning = response,
                                     validate = TRUE)
 }
