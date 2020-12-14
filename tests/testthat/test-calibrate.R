@@ -186,6 +186,7 @@ test_that("model calibration fails is version out of date", {
 
 test_that("trying to calibrate old model result returns error", {
   test_mock_model_available()
+  testthat::skip("Re-enable after status & result endpoint enabled")
 
   ## Mock model run
   queue <- test_queue(workers = 1)
@@ -214,7 +215,6 @@ test_that("trying to calibrate old model result returns error", {
   expect_equal(res_status$queue, scalar(0))
   expect_equal(res_status$progress, list())
 
-  testthat::skip("Re-enable after status & result endpoint enabled")
   expect_equal(error$message, paste0("Can't calibrate this model output please",
                                      " re-run model and try calibration again"))
 })
