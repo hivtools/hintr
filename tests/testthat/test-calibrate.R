@@ -196,3 +196,29 @@ test_that("trying to calibrate old model result returns error", {
   expect_equal(error$message, paste0("Can't calibrate this model output please",
                                      " re-run model and try calibration again"))
 })
+
+test_that("model calibration returns error if queueing fails", {
+  test_redis_available()
+  ## Create request data
+  path <- setup_calibrate_payload()
+
+  ## Create mocks
+  queue <- test_queue(workers = 0)
+  unlockBinding("result", queue)
+  ## Clone model output as it modifies in place
+  out <- clone_model_output(mock_model_v0.1.2)
+  queue$result <- mockery::mock(out, cycle = TRUE)
+  unlockBinding("queue", queue)
+  unlockBinding("task_status", queue$queue)
+  queue$queue$task_status <- mockery::mock("COMPLETE", cycle = TRUE)
+  mock_submit_calibrate <- function(data, options) { stop("Failed to queue") }
+
+  ## Call the endpoint
+  calibrate <- submit_calibrate(queue)
+  mockery::stub(calibrate, "queue$submit_calibrate", mock_submit_calibrate)
+  error <- expect_error(calibrate("id", readLines(path)))
+
+  expect_equal(error$data[[1]]$error, scalar("FAILED_TO_QUEUE"))
+  expect_equal(error$data[[1]]$detail, scalar("Failed to queue"))
+  expect_equal(error$status, 400)
+})
