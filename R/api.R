@@ -314,24 +314,9 @@ endpoint_model_calibrate_status <- function(queue) {
 endpoint_model_calibrate_result <- function(queue) {
   response <- porcelain::porcelain_returning_json(
     "CalibrateResultResponse.schema", schema_root())
-  dummy_endpoint <- function(queue) {
-    function(id) {
-      output <- list(output_path = system_file("output", "malawi_output.rds"),
-                     spectrum_path = system_file("output", "malawi_spectrum_download.zip"),
-                     coarse_output_path =
-                       system_file("output", "malawi_coarse_output_download.zip"),
-                     summary_report_path =
-                       system_file("output", "malawi_summary_report.html"),
-                     calibration_path = system_file("output",
-                                                    "malawi_calibration.rds"),
-                     metadata = list(areas = "MWI"))
-      class(output) <- "hintr_output"
-      process_result(output)
-    }
-  }
   porcelain::porcelain_endpoint$new("GET",
                                     "/calibrate/result/<id>",
-                                    dummy_endpoint(queue),
+                                    calibrate_result(queue),
                                     returning = response,
                                     validate = TRUE)
 }

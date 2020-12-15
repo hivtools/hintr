@@ -61,7 +61,8 @@ test_that("can calibrate a model result", {
   expect_equal(res_status$queue, scalar(0))
   expect_equal(res_status$progress, list())
 
-  skip("Re-enable when calibrate result endpoint implemented")
+  get_result <- calibrate_result(queue)
+  result <- get_result(res$id)
   expect_equal(names(result), c("data", "plottingMetadata"))
   expect_equal(colnames(result$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
@@ -186,7 +187,6 @@ test_that("model calibration fails is version out of date", {
 
 test_that("trying to calibrate old model result returns error", {
   test_mock_model_available()
-  testthat::skip("Re-enable after status & result endpoint enabled")
 
   ## Mock model run
   queue <- test_queue(workers = 1)
@@ -199,7 +199,7 @@ test_that("trying to calibrate old model result returns error", {
   ## Calibrate the result
   with_mock("hintr:::verify_result_available" = mock_verify_result_available, {
     calibrate <- submit_calibrate(queue)
-    res <- calibrate("id", readLines(path))
+    res <- calibrate("id", readLines(setup_calibrate_payload()))
   })
   expect_equal(names(res), "id")
   expect_true(!is.null(res$id))
@@ -215,8 +215,13 @@ test_that("trying to calibrate old model result returns error", {
   expect_equal(res_status$queue, scalar(0))
   expect_equal(res_status$progress, list())
 
-  expect_equal(error$message, paste0("Can't calibrate this model output please",
-                                     " re-run model and try calibration again"))
+  get_result <- calibrate_result(queue)
+  error <- expect_error(get_result(res$id))
+  expect_equal(error$data[[1]]$error, scalar("MODEL_RUN_FAILED"))
+  expect_equal(error$data[[1]]$detail, scalar(
+    paste0("Can't calibrate this model output please",
+           " re-run model and try calibration again")))
+  expect_equal(error$status, 400)
 })
 
 test_that("model calibration returns error if queueing fails", {
