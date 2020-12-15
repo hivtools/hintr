@@ -282,23 +282,19 @@ test_that("real model can be run & calibrated by API", {
   expect_true(!is.null(calibrate_id))
 
   ## Calibrate status
-  r <- httr::GET(paste0(server$url, "/calibrate/status/", calibrate_id))
 
-  expect_equal(httr::status_code(r), 200)
-  response <- response_from_json(r)
-  expect_equal(response$data$id, calibrate_id)
-  expect_false(response$data$done)
-  expect_equal(response$data$status, "Running")
-  expect_true(response$data$success)
-  expect_equal(response$data$queue, 0)
-  expect_equal(response$data$progress, list(
-    list(
-      started = TRUE,
-      complete = FALSE,
-      name = "Calibrating",
-      helpText = "5s elapsed"
-    )
-  ))
+  testthat::try_again(5, {
+    Sys.sleep(5)
+    r <- httr::GET(paste0(server$url, "/calibrate/status/", calibrate_id))
+    expect_equal(httr::status_code(r), 200)
+    response <- response_from_json(r)
+    expect_equal(response$data$id, calibrate_id)
+    expect_true(response$data$done)
+    expect_equal(response$data$status, "COMPLETE")
+    expect_true(response$data$success)
+    expect_equal(response$data$queue, 0)
+    expect_equal(response$data$progress, list())
+  })
 
   ## Calibrate result
   r <- httr::GET(paste0(server$url, "/calibrate/result/", calibrate_id))
