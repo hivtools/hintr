@@ -31,4 +31,4 @@ docker run --rm --network=$NAME_NETWORK \
        --entrypoint Rscript \
        --name $NAME_HINTR_TESTS \
        $TAG_HINTR_TESTS \
-       -e "covr::codecov(commit = '$GIT_SHA', branch = '$GIT_BRANCH')"
+       -e "covr::codecov(commit = '$GIT_COMMIT', branch = '$GIT_BRANCH')"
