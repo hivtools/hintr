@@ -1208,23 +1208,23 @@ test_that("api can call endpoint_model_calibrate", {
   unlockBinding("result", queue)
   ## Clone model output as it modifies in place
   out <- clone_model_output(mock_model)
-  queue$result <- mockery::mock(out, cycle = TRUE)
-  unlockBinding("queue", queue)
-  unlockBinding("task_status", queue$queue)
-  queue$queue$task_status <- mockery::mock("COMPLETE", cycle = TRUE)
+  queue$result <- mockery::mock(out,  cycle = TRUE)
+  mock_verify_result_available <- mockery::mock(TRUE)
 
   ## Submit calibrate
   api <- api_build(queue)
   calibrate_path <- setup_calibrate_payload()
-  submit_res <- api$request("POST", "/calibrate/submit/id",
-                     body = readLines(calibrate_path))
+  with_mock("hintr:::verify_result_available" = mock_verify_result_available, {
+    submit_res <- api$request("POST", "/calibrate/submit/id",
+                              body = readLines(calibrate_path))
+  })
 
   expect_equal(submit_res$status, 200)
   submit_body <- jsonlite::fromJSON(submit_res$body)
   expect_true(!is.null(submit_body$data$id))
 
   ## Status
-  out <- queue$queue$task_wait(submit_response$data$id)
+  out <- queue$queue$task_wait(submit_body$data$id)
   status_res <- api$request("GET",
                             paste0("/calibrate/status/", submit_body$data$id))
 
@@ -1232,7 +1232,7 @@ test_that("api can call endpoint_model_calibrate", {
   status_body <- jsonlite::fromJSON(status_res$body)
   expect_equal(status_body$data$id, submit_body$data$id)
   expect_true(status_body$data$done)
-  expect_equal(status_body$data$status, scalar("COMPLETE"))
+  expect_equal(status_body$data$status, "COMPLETE")
   expect_true(status_body$data$success)
   expect_equal(status_body$data$queue, 0)
   expect_equal(status_body$data$progress, list())
