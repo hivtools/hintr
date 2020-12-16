@@ -7,9 +7,14 @@
     "status": { "type": "string" },
     "success": { "type": [ "boolean", "null" ] },
     "queue": { "type": "integer" },
-    "progress": { 
+    "progress": {
       "type": "array",
-      "items": { "$ref": "ProgressPhase.schema.json" }
+      "items": {
+        "oneOf": [
+          { "$ref": "ProgressPhase.schema.json" },
+          { "type": "string" }
+        ]
+      }
     }
   },
   "additionalProperties": false,
