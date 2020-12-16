@@ -1184,7 +1184,8 @@ test_that("model calibrate can be queued and result returned", {
   expect_equal(status_response$data$status, scalar("COMPLETE"))
   expect_true(status_response$data$success)
   expect_equal(status_response$data$queue, scalar(0))
-  expect_equal(status_response$data$progress, list())
+  expect_match(status_response$data$progress[[1]],
+               "Generating report - [\\d.m\\s]+s elapsed", perl = TRUE)
 
   ## Get result
   result <- endpoint_model_calibrate_result(queue)
@@ -1235,7 +1236,8 @@ test_that("api can call endpoint_model_calibrate", {
   expect_equal(status_body$data$status, "COMPLETE")
   expect_true(status_body$data$success)
   expect_equal(status_body$data$queue, 0)
-  expect_equal(status_body$data$progress, list())
+  expect_match(status_body$data$progress[[1]],
+               "Generating report - [\\d.m\\s]+s elapsed", perl = TRUE)
 
   ## Get result
   result_res <- api$request("GET",
