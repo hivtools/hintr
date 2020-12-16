@@ -214,8 +214,7 @@ test_that("trying to calibrate old model result returns error", {
   expect_equal(res_status$status, scalar("ERROR"))
   expect_false(res_status$success)
   expect_equal(res_status$queue, scalar(0))
-  expect_match(res_status$progress[[1]],
-               "Generating report - [\\d.m\\s]+s elapsed", perl = TRUE)
+  expect_equal(res_status$progress, list())
 
   get_result <- calibrate_result(queue)
   error <- expect_error(get_result(res$id))
