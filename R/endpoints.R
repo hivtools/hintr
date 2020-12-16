@@ -175,6 +175,13 @@ submit_calibrate <- function(queue) {
   }
 }
 
+calibrate_result <- function(queue) {
+  function(id) {
+    verify_result_available(queue, id)
+    process_result(queue$result(id))
+  }
+}
+
 verify_result_available <- function(queue, id) {
   task_status <- queue$queue$task_status(id)
   if (task_status == "COMPLETE") {
