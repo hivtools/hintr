@@ -34,24 +34,34 @@ test_that("can calibrate a model result", {
   test_mock_model_available()
 
   ## Mock model run
-  queue <- test_queue(workers = 0)
+  queue <- test_queue(workers = 1)
   unlockBinding("result", queue)
   ## Clone model output as it modifies in place
   out <- clone_model_output(mock_model)
   queue$result <- mockery::mock(out,  cycle = TRUE)
-  unlockBinding("queue", queue)
-  unlockBinding("task_status", queue$queue)
-  queue$queue$task_status <- mockery::mock("COMPLETE", cycle = TRUE)
+  mock_verify_result_available <- mockery::mock(TRUE)
 
   ## Calibrate the result
   path <- setup_calibrate_payload()
-  calibrate <- submit_calibrate(queue)
-  res <- calibrate("id", readLines(path))
+  with_mock("hintr:::verify_result_available" = mock_verify_result_available, {
+    calibrate <- submit_calibrate(queue)
+    res <- calibrate("id", readLines(path))
+  })
   expect_equal(names(res), "id")
   expect_true(!is.null(res$id))
 
-  skip("Re-enable when calibrate result endpoint implemented")
+  ## Get status
+  out <- queue$queue$task_wait(res$id)
+  status <- queue_status(queue)
+  res_status <- status(res$id)
+  expect_equal(res_status$id, res$id)
+  expect_true(res_status$done)
+  expect_equal(res_status$status, scalar("COMPLETE"))
+  expect_true(res_status$success)
+  expect_equal(res_status$queue, scalar(0))
+  expect_equal(res_status$progress, list())
 
+  skip("Re-enable when calibrate result endpoint implemented")
   expect_equal(names(result), c("data", "plottingMetadata"))
   expect_equal(colnames(result$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
@@ -154,9 +164,7 @@ test_that("model calibration fails is version out of date", {
   ## Clone model output as it modifies in place
   out <- clone_model_output(mock_model)
   queue$result <- mockery::mock(out)
-  unlockBinding("queue", queue)
-  unlockBinding("task_status", queue$queue)
-  queue$queue$task_status <- mockery::mock("COMPLETE")
+  mock_verify_result_available <- mockery::mock(TRUE)
 
   ## Calibrate the result
   path <- setup_calibrate_payload('{
@@ -164,8 +172,10 @@ test_that("model calibration fails is version out of date", {
                                "naomi": "0.0.15",
                                "rrq": "0.2.1"
                                }')
-  calibrate <- submit_calibrate(queue)
-  error <- expect_error(calibrate("id", readLines(path)))
+  with_mock("hintr:::verify_result_available" = mock_verify_result_available, {
+    calibrate <- submit_calibrate(queue)
+    error <- expect_error(calibrate("id", readLines(path)))
+  })
 
   expect_equal(error$data[[1]]$error, scalar("VERSION_OUT_OF_DATE"))
   expect_equal(error$data[[1]]$detail, scalar(
@@ -175,23 +185,35 @@ test_that("model calibration fails is version out of date", {
 })
 
 test_that("trying to calibrate old model result returns error", {
-  testthat::skip("Re-enable after status & result endpoint enabled")
   test_mock_model_available()
+  testthat::skip("Re-enable after status & result endpoint enabled")
 
   ## Mock model run
-  queue <- test_queue(workers = 0)
+  queue <- test_queue(workers = 1)
   unlockBinding("result", queue)
   ## Clone model output as it modifies in place
   out <- clone_model_output(mock_model_v0.1.2)
   queue$result <- mockery::mock(out, cycle = TRUE)
-  unlockBinding("queue", queue)
-  unlockBinding("task_status", queue$queue)
-  queue$queue$task_status <- mockery::mock("COMPLETE", cycle = TRUE)
+  mock_verify_result_available <- mockery::mock(TRUE)
 
   ## Calibrate the result
-  path <- setup_calibrate_payload()
-  calibrate <- submit_calibrate(queue)
-  error <- expect_error(calibrate("id", readLines(path)))
+  with_mock("hintr:::verify_result_available" = mock_verify_result_available, {
+    calibrate <- submit_calibrate(queue)
+    res <- calibrate("id", readLines(path))
+  })
+  expect_equal(names(res), "id")
+  expect_true(!is.null(res$id))
+
+  ## Get status
+  out <- queue$queue$task_wait(res$id)
+  status <- queue_status(queue)
+  res_status <- status(res$id)
+  expect_equal(res_status$id, res$id)
+  expect_true(res_status$done)
+  expect_equal(res_status$status, scalar("ERROR"))
+  expect_false(res_status$success)
+  expect_equal(res_status$queue, scalar(0))
+  expect_equal(res_status$progress, list())
 
   expect_equal(error$message, paste0("Can't calibrate this model output please",
                                      " re-run model and try calibration again"))
