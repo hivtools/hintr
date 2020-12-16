@@ -1160,10 +1160,10 @@ test_that("model calibrate can be queued and result returned", {
   unlockBinding("result", queue)
   ## Clone model output as it modifies in place
   out <- clone_model_output(mock_model)
-  queue$result <- mockery::mock(out)
+  queue$result <- mockery::mock(out, cycle = TRUE)
   unlockBinding("queue", queue)
   unlockBinding("task_status", queue$queue)
-  queue$queue$task_status <- mockery::mock("COMPLETE")
+  queue$queue$task_status <- mockery::mock("COMPLETE", cycle = TRUE)
 
   ## Submit calibrate request
   submit <- endpoint_model_calibrate_submit(queue)
@@ -1214,10 +1214,10 @@ test_that("api can call endpoint_model_calibrate", {
   unlockBinding("result", queue)
   ## Clone model output as it modifies in place
   out <- clone_model_output(mock_model)
-  queue$result <- mockery::mock(out)
+  queue$result <- mockery::mock(out, cycle = TRUE)
   unlockBinding("queue", queue)
   unlockBinding("task_status", queue$queue)
-  queue$queue$task_status <- mockery::mock("COMPLETE")
+  queue$queue$task_status <- mockery::mock("COMPLETE", cycle = TRUE)
 
   ## Submit calibrate
   api <- api_build(queue)

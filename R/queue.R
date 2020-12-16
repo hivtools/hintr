@@ -53,6 +53,12 @@ Queue <- R6::R6Class(
         hintr:::run_model(data, options, results_dir, prerun_dir, language)))
     },
 
+    submit_calibrate = function(model_output, calibration_options) {
+      language <- traduire::translator()$language()
+      self$submit(quote(
+        hintr:::run_calibrate(model_output, calibration_options, language)))
+    },
+
     status = function(id) {
       status <- unname(self$queue$task_status(id))
       done <- c("ERROR", "ORPHAN", "INTERRUPTED", "COMPLETE")

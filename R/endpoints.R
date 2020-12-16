@@ -158,6 +158,23 @@ model_result <- function(queue) {
   }
 }
 
+submit_calibrate <- function(queue) {
+  function(id, input) {
+    verify_result_available(queue, id)
+    calibration_options <- jsonlite::fromJSON(input)
+    if (!is_current_version(calibration_options$version)) {
+      hintr_error(t_("CALIBRATE_SUBMIT_OLD"), "VERSION_OUT_OF_DATE")
+    }
+    tryCatch(
+      list(id = scalar(queue$submit_calibrate(queue$result(id),
+                                              calibration_options$options))),
+      error = function(e) {
+        hintr_error(e$message, "FAILED_TO_QUEUE")
+      }
+    )
+  }
+}
+
 verify_result_available <- function(queue, id) {
   task_status <- queue$queue$task_status(id)
   if (task_status == "COMPLETE") {
