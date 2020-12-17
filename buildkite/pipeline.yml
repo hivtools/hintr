@@ -18,6 +18,3 @@ steps:
   - label: ":shipit: Push images"
     command: docker/push
 
-notify:
-  - webhook: $$HINT_MS_FLOW_WEBHOOK
-    if: build.branch == "master" && build.state == "failed"
