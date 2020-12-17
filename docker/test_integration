@@ -39,7 +39,6 @@ docker run -it --rm --user="$(id -u):$(id -g)" \
 ## Run the integration tests:
 docker run -it --rm --network=$NAME_NETWORK \
        -e REDIS_URL=redis://redis:6379 \
-       -e VALIDATE_JSON_SCHEMAS=true \
        -e USE_MOCK_MODEL=true \
        --mount type=volume,src=$NAME_VOLUME,dst=/uploads \
        --mount type=volume,src=$NAME_VOLUME,dst=/results \

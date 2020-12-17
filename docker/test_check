@@ -25,7 +25,6 @@ docker run --rm -d --network=$NAME_NETWORK --network-alias=redis \
 
 docker run --rm --network=$NAME_NETWORK \
        -e REDIS_URL=redis://redis:6379 \
-       -e VALIDATE_JSON_SCHEMAS=true \
        -e USE_MOCK_MODEL=true \
        -e _R_CHECK_CRAN_INCOMING_=FALSE \
        --entrypoint R \
