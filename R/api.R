@@ -133,8 +133,7 @@ endpoint_baseline_individual <- function() {
                                     "/validate/baseline-individual",
                                     validate_baseline,
                                     input,
-                                    returning = response,
-                                    validate = TRUE)
+                                    returning = response)
 }
 
 endpoint_baseline_combined <- function() {
@@ -146,8 +145,7 @@ endpoint_baseline_combined <- function() {
                                     "/validate/baseline-combined",
                                     validate_baseline_combined,
                                     input,
-                                    returning = response,
-                                    validate = TRUE)
+                                    returning = response)
 }
 
 endpoint_validate_survey_programme <- function() {
@@ -159,8 +157,7 @@ endpoint_validate_survey_programme <- function() {
                                     "/validate/survey-and-programme",
                                     validate_survey_programme,
                                     input,
-                                    returning = response,
-                                    validate = TRUE)
+                                    returning = response)
 }
 
 returning_json_version <- function(schema = NULL, root = NULL,
@@ -192,8 +189,7 @@ endpoint_model_options <- function() {
                                     "/model/options",
                                     model_options,
                                     input,
-                                    returning = response,
-                                    validate = TRUE)
+                                    returning = response)
 }
 
 endpoint_model_options_validate <- function() {
@@ -205,8 +201,7 @@ endpoint_model_options_validate <- function() {
                                     "/validate/options",
                                     model_options_validate,
                                     input,
-                                    returning = response,
-                                    validate = TRUE)
+                                    returning = response)
 }
 
 
@@ -220,8 +215,7 @@ endpoint_model_submit <- function(queue) {
                                     "/model/submit",
                                     submit_model(queue),
                                     input,
-                                    returning = response,
-                                    validate = TRUE)
+                                    returning = response)
 }
 
 endpoint_model_status <- function(queue) {
@@ -230,8 +224,7 @@ endpoint_model_status <- function(queue) {
   porcelain::porcelain_endpoint$new("GET",
                                     "/model/status/<id>",
                                     model_status(queue),
-                                    returning = response,
-                                    validate = TRUE)
+                                    returning = response)
 }
 
 endpoint_model_result <- function(queue) {
@@ -240,8 +233,7 @@ endpoint_model_result <- function(queue) {
   porcelain::porcelain_endpoint$new("GET",
                                     "/model/result/<id>",
                                     model_result(queue),
-                                    returning = response,
-                                    validate = TRUE)
+                                    returning = response)
 }
 
 endpoint_model_cancel <- function(queue) {
@@ -250,8 +242,7 @@ endpoint_model_cancel <- function(queue) {
   porcelain::porcelain_endpoint$new("POST",
                                     "/model/cancel/<id>",
                                     model_cancel(queue),
-                                    returning = response,
-                                    validate = TRUE)
+                                    returning = response)
 }
 
 endpoint_model_debug <- function(queue) {
@@ -265,8 +256,7 @@ endpoint_model_calibration_options <- function() {
   porcelain::porcelain_endpoint$new("POST",
                                     "/model/calibration-options",
                                     calibration_options,
-                                    returning = response,
-                                    validate = TRUE)
+                                    returning = response)
 }
 
 endpoint_model_calibrate <- function(queue) {
@@ -279,8 +269,7 @@ endpoint_model_calibrate <- function(queue) {
                                     "/model/calibrate/<id>",
                                     model_calibrate(queue),
                                     input,
-                                    returning = response,
-                                    validate = TRUE)
+                                    returning = response)
 }
 
 endpoint_plotting_metadata <- function() {
@@ -289,8 +278,7 @@ endpoint_plotting_metadata <- function() {
   porcelain::porcelain_endpoint$new("GET",
                                     "/meta/plotting/<iso3>",
                                     plotting_metadata,
-                                    returning = response,
-                                    validate = TRUE)
+                                    returning = response)
 }
 
 ## Return same headers as binary returning but ensure no body is returned.
@@ -354,8 +342,7 @@ endpoint_hintr_version <- function() {
   porcelain::porcelain_endpoint$new("GET",
                                     "/hintr/version",
                                     function() cfg$version_info,
-                                    returning = response,
-                                    validate = TRUE)
+                                    returning = response)
 }
 
 endpoint_hintr_worker_status <- function(queue) {
@@ -364,8 +351,7 @@ endpoint_hintr_worker_status <- function(queue) {
   porcelain::porcelain_endpoint$new("GET",
                                     "/hintr/worker/status",
                                     worker_status(queue),
-                                    returning = response,
-                                    validate = TRUE)
+                                    returning = response)
 }
 
 endpoint_hintr_stop <- function(queue) {

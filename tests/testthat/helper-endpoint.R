@@ -1,6 +1,6 @@
 ## Always validate schemas in tests
 Sys.setenv("VALIDATE_JSON_SCHEMAS" = "true") # nolint
-Sys.setenv(PKGAPI_VALIDATE = "true") # nolint
+Sys.setenv("PORCELAIN_VALIDATE" = "true") # nolint
 
 validate_baseline_input <- function(file_path, type) {
   sprintf(
