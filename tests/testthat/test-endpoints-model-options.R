@@ -233,7 +233,7 @@ test_that("invalid model options returns error", {
 test_that("can get calibration options", {
   options <- calibration_options()
   expect_length(options, 1)
-  expect_true(any(grepl("Post model fit calibration", options)))
+  expect_true(any(grepl("Calibration options", options)))
   expect_true(any(grepl("controlSections", options)))
 })
 
