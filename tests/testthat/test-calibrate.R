@@ -59,7 +59,8 @@ test_that("can calibrate a model result", {
   expect_equal(res_status$status, scalar("COMPLETE"))
   expect_true(res_status$success)
   expect_equal(res_status$queue, scalar(0))
-  expect_equal(res_status$progress, list())
+  expect_match(res_status$progress[[1]],
+               "Generating report - [\\d.m\\s]+s elapsed", perl = TRUE)
 
   get_result <- calibrate_result(queue)
   result <- get_result(res$id)
