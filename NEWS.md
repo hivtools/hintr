@@ -1,3 +1,11 @@
+# hintr 0.1.22
+
+* Add endpoints to enable async calibration
+   * /calibrate/submit - queue a model calibration
+   * /calibrate/status - get status of a calibration run
+   * /calibrate/result - get result of a calibration
+* Add calibration options back in and remove from run options
+
 # hintr 0.1.21
 
 * Update to naomi v2.1.10 (branch pin naomi@infections-metadata).
