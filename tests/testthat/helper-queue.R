@@ -27,3 +27,16 @@ test_queue <- function(workers = 2) {
   })
   queue
 }
+
+create_blocking_worker <- function(queue_id, worker_name = NULL) {
+  ## Set config for a blocking worker
+  con <- redux::hiredis()
+  rrq:::rrq_worker_$new(con, queue_id,
+                  key_alive = NULL,
+                  worker_name = worker_name,
+                  queue = c("calibrate", "run"),
+                  time_poll = 1,
+                  timeout = 300,
+                  heartbeat_period = 3,
+                  verbose = TRUE)
+}
