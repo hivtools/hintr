@@ -1,3 +1,7 @@
+# hintr 0.1.24
+
+* Update test data options to new demo survey ids "DEMO2015DHS" and "DEMO2016PHIA".
+
 # hintr 0.1.23
 
 * Update to naomi v2.1.11 (branch pin naomi@naomisup-ticket-11).
