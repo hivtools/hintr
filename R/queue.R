@@ -42,7 +42,7 @@ Queue <- R6::R6Class(
       }
     },
 
-    submit = function(job, queue, environment = parent.frame()) {
+    submit = function(job, queue = NULL, environment = parent.frame()) {
       self$queue$enqueue_(job, environment, queue = queue)
     },
 

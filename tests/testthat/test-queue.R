@@ -143,7 +143,8 @@ test_that("queue starts up normally without a timeout", {
 
 test_that("queue object starts up 2 queues", {
   queue <- test_queue(workers = 2)
-  expect_equal(queue$queue$worker_config_read("localhost")$queue)
+  expect_equal(queue$queue$worker_config_read("localhost")$queue,
+               c("calibrate", "run"))
   queue$submit(quote(sin(1)), queue = "calibrate")
   run_id <- queue$submit(quote(sin(1)), queue = "run")
   other_id <- queue$submit(quote(sin(1)), queue = "other")
