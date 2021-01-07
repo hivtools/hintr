@@ -27,5 +27,5 @@ test_that("main worker creates worker with multiple queues", {
   args <- mockery::mock_args(mock_rrq_worker)[[1]]
   expect_equal(args[[1]], "queue_id")
   expect_equal(args$heartbeat_period, 10)
-  expect_equal(args$queue, c("calibrate", "run"))
+  expect_equal(args$queue, c(QUEUE_CALIBRATE, QUEUE_RUN))
 })

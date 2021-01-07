@@ -42,7 +42,7 @@ create_blocking_worker <- function(queue_id, worker_name = NULL) {
   rrq:::rrq_worker_$new(con, queue_id,
                   key_alive = NULL,
                   worker_name = worker_name,
-                  queue = c("calibrate", "run"),
+                  queue = c(QUEUE_CALIBRATE, QUEUE_RUN),
                   time_poll = 1,
                   timeout = 300,
                   heartbeat_period = 3,

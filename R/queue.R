@@ -23,7 +23,7 @@ Queue <- R6::R6Class(
       queue_id <- hintr_queue_id(queue_id)
       self$queue <- rrq::rrq_controller(queue_id, con)
       self$queue$worker_config_save("localhost", heartbeat_period = 3,
-                                    queue = c("calibrate", "run"))
+                                    queue = c(QUEUE_CALIBRATE, QUEUE_RUN))
 
       self$start(workers, timeout)
 
@@ -52,14 +52,14 @@ Queue <- R6::R6Class(
       language <- traduire::translator()$language()
       self$submit(quote(
         hintr:::run_model(data, options, results_dir, prerun_dir, language)),
-        queue = "run")
+        queue = QUEUE_RUN)
     },
 
     submit_calibrate = function(model_output, calibration_options) {
       language <- traduire::translator()$language()
       self$submit(quote(
         hintr:::run_calibrate(model_output, calibration_options, language)),
-        queue = "calibrate")
+        queue = QUEUE_CALIBRATE)
     },
 
     status = function(id) {

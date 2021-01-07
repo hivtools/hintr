@@ -144,13 +144,13 @@ test_that("queue starts up normally without a timeout", {
 test_that("queue object starts up 2 queues", {
   queue <- test_queue(workers = 2)
   expect_equal(queue$queue$worker_config_read("localhost")$queue,
-               c("calibrate", "run"))
-  queue$submit(quote(sin(1)), queue = "calibrate")
-  run_id <- queue$submit(quote(sin(1)), queue = "run")
+               c(QUEUE_CALIBRATE, QUEUE_RUN))
+  queue$submit(quote(sin(1)), queue = QUEUE_CALIBRATE)
+  run_id <- queue$submit(quote(sin(1)), queue = QUEUE_RUN)
   other_id <- queue$submit(quote(sin(1)), queue = "other")
   queue$queue$task_wait(run_id)
-  expect_equal(queue$queue$queue_list("run"), character(0))
-  expect_equal(queue$queue$queue_list("calibrate"), character(0))
+  expect_equal(queue$queue$queue_list(QUEUE_RUN), character(0))
+  expect_equal(queue$queue$queue_list(QUEUE_CALIBRATE), character(0))
   ## Task submitted to "other" never gets run because this queue isn't run
   ## by workers.
   expect_equal(queue$queue$queue_list("other"), other_id)
@@ -166,8 +166,8 @@ test_that("calibrate gets run before model running", {
 
   expect_equal(unname(queue$queue$task_status(c(run_id, calibrate_id))),
                rep("PENDING", 2))
-  expect_equal(queue$queue$queue_list("run"), run_id)
-  expect_equal(queue$queue$queue_list("calibrate"), calibrate_id)
+  expect_equal(queue$queue$queue_list(QUEUE_RUN), run_id)
+  expect_equal(queue$queue$queue_list(QUEUE_CALIBRATE), calibrate_id)
   worker$step(TRUE)
   expect_equal(unname(queue$queue$task_status(c(run_id, calibrate_id))),
                c("PENDING", "ERROR"))
