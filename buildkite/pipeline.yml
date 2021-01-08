@@ -17,3 +17,6 @@ steps:
 
   - label: ":shipit: Push images"
     command: docker/push
+
+  - label: ":codecov: Codecov"
+    command: docker/coverage

@@ -7,6 +7,7 @@
     "MODEL_RESULT_CRASH": "Panne pour ce travailleur - les détails de l'erreur ne sont pas disponibles",
     "MODEL_RUN_CANCELLED": "L'exécution du modèle a été annulée par l'utilisateur",
     "MODEL_RESULT_MISSING": "Impossible de récupérer le résultat",
+    "CALIBRATE_SUBMIT_OLD": "Tentative de calibrage du modèle avec l'ancienne version des options. Mise à jour des options de calibrage du modèle",
     "ERROR_404": "{{verb}} {{- path}} n'est pas un chemin hintr valide",
     "ERROR_500": "Erreur inattendue du serveur dans « {{- call}} » : « {{message}} » alors qu’il « {{verb}} {{- path}} »",
     "ERROR_CALL_MISSING": "<call missing>",
@@ -64,5 +65,6 @@
     "OUTPUT_FILTER_PERIOD": "Période",
     "OUTPUT_FILTER_SEX": "Sexe",
     "OUTPUT_FILTER_AGE": "Âge",
-    "MODEL_RESULT_OLD": "Impossible de télécharger {{type}}, veuillez réexécuter le modèle et réessayer de télécharger."
+    "MODEL_RESULT_OLD": "Impossible de télécharger {{type}}, veuillez réexécuter le modèle et réessayer de télécharger.",
+    "UNKNOWN_OUTPUT_TYPE": "L'exécution du modèle a renvoyé un type de sortie inconnu, veuillez contacter le support."
 }

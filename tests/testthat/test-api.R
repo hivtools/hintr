@@ -520,13 +520,10 @@ test_that("endpoint_model_result can be run", {
   response <- endpoint$run(run_response$data$id)
 
   expect_equal(response$status_code, 200)
-  expect_equal(names(response$data), c("data", "plottingMetadata"))
-  expect_equal(colnames(response$data$data),
-               c("area_id", "sex", "age_group", "calendar_quarter",
-                 "indicator", "mode", "mean", "lower", "upper"))
-  expect_true(nrow(response$data$data) > 84042)
-  expect_equal(names(response$data$plottingMetadata),
-               c("barchart", "choropleth"))
+  expect_equal(response$data, list(
+    id = scalar(run_response$data$id),
+    complete = scalar(TRUE)
+  ))
 })
 
 test_that("api can call endpoint_model_result", {
@@ -538,24 +535,21 @@ test_that("api can call endpoint_model_result", {
   res <- api$request("POST", "/model/submit",
                      body = readLines(path))
   expect_equal(res$status, 200)
-  body <- jsonlite::fromJSON(res$body)
-  expect_equal(body$status, "success")
-  expect_true(!is.null(body$data$id))
+  submit_body <- jsonlite::fromJSON(res$body)
+  expect_equal(submit_body$status, "success")
+  expect_true(!is.null(submit_body$data$id))
 
-  out <- queue$queue$task_wait(body$data$id)
-  res <- api$request("GET", sprintf("/model/result/%s", body$data$id))
+  out <- queue$queue$task_wait(submit_body$data$id)
+  res <- api$request("GET", sprintf("/model/result/%s", submit_body$data$id))
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body)
 
   expect_equal(body$status, "success")
   expect_null(body$errors)
-  expect_equal(names(body$data), c("data", "plottingMetadata"))
-  expect_equal(colnames(body$data$data),
-               c("area_id", "sex", "age_group", "calendar_quarter",
-                 "indicator", "mode", "mean", "lower", "upper"))
-  expect_true(nrow(body$data$data) > 84042)
-  expect_equal(names(body$data$plottingMetadata),
-               c("barchart", "choropleth"))
+  expect_equal(body$data, list(
+    id = submit_body$data$id,
+    complete = TRUE
+  ))
 })
 
 test_that("endpoint_model_cancel can be run", {
@@ -633,8 +627,8 @@ test_that("erroring model run returns useful messages", {
   expect_match(msg[[3]], "error-trace: rrq:::rrq_worker_main")
 })
 
-test_that("endpoint_model_calibration_options", {
-  endpoint <- endpoint_model_calibration_options()
+test_that("endpoint_model_calibrate_options", {
+  endpoint <- endpoint_model_calibrate_options()
   response <- endpoint$run()
 
   expect_equal(response$status_code, 200)
@@ -648,11 +642,11 @@ test_that("endpoint_model_calibration_options", {
   expect_true(all(grepl("^(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$", body$version)))
 })
 
-test_that("endpoint_model_options works", {
+test_that("endpoint_calibrate_options works", {
   test_redis_available()
   queue <- test_queue(workers = 0)
   api <- api_build(queue)
-  res <- api$request("POST", "/model/calibration-options")
+  res <- api$request("POST", "/calibrate/options")
   expect_equal(res$status, 200)
   body <- jsonlite::parse_json(res$body)
   expect_equal(names(body$data), "controlSections")
@@ -1158,22 +1152,44 @@ test_that("404 errors have sensible schema", {
   expect_equal(response$data, setNames(list(), list()))
 })
 
-test_that("endpoint_model_calibrate can be run", {
+test_that("model calibrate can be queued and result returned", {
   test_mock_model_available()
 
   ## Mock model run
-  queue <- test_queue(workers = 0)
+  queue <- test_queue(workers = 1)
   unlockBinding("result", queue)
   ## Clone model output as it modifies in place
   out <- clone_model_output(mock_model)
-  queue$result <- mockery::mock(out)
+  queue$result <- mockery::mock(out, cycle = TRUE)
   unlockBinding("queue", queue)
   unlockBinding("task_status", queue$queue)
-  queue$queue$task_status <- mockery::mock("COMPLETE")
+  queue$queue$task_status <- mockery::mock("COMPLETE", cycle = TRUE)
 
-  endpoint <- endpoint_model_calibrate(queue)
+  ## Submit calibrate request
+  submit <- endpoint_model_calibrate_submit(queue)
   path <- setup_calibrate_payload()
-  response <- endpoint$run("id", readLines(path))
+  submit_response <- submit$run("id", readLines(path))
+
+  expect_equal(submit_response$status_code, 200)
+  expect_true(!is.null(submit_response$data$id))
+
+  ## Status
+  out <- queue$queue$task_wait(submit_response$data$id)
+  status <- endpoint_model_calibrate_status(queue)
+  status_response <- status$run(submit_response$data$id)
+
+  expect_equal(status_response$status_code, 200)
+  expect_equal(status_response$data$id, submit_response$data$id)
+  expect_true(status_response$data$done)
+  expect_equal(status_response$data$status, scalar("COMPLETE"))
+  expect_true(status_response$data$success)
+  expect_equal(status_response$data$queue, scalar(0))
+  expect_match(status_response$data$progress[[1]],
+               "Generating report - [\\d.m\\s]+s elapsed", perl = TRUE)
+
+  ## Get result
+  result <- endpoint_model_calibrate_result(queue)
+  response <- result$run(status_response$data$id)
 
   expect_equal(response$status_code, 200)
   expect_equal(names(response$data), c("data", "plottingMetadata"))
@@ -1189,29 +1205,80 @@ test_that("api can call endpoint_model_calibrate", {
   test_mock_model_available()
 
   ## Mock model run
+  queue <- test_queue(workers = 1)
+  unlockBinding("result", queue)
+  ## Clone model output as it modifies in place
+  out <- clone_model_output(mock_model)
+  queue$result <- mockery::mock(out,  cycle = TRUE)
+  mock_verify_result_available <- mockery::mock(TRUE)
+
+  ## Submit calibrate
+  api <- api_build(queue)
+  calibrate_path <- setup_calibrate_payload()
+  with_mock("hintr:::verify_result_available" = mock_verify_result_available, {
+    submit_res <- api$request("POST", "/calibrate/submit/id",
+                              body = readLines(calibrate_path))
+  })
+
+  expect_equal(submit_res$status, 200)
+  submit_body <- jsonlite::fromJSON(submit_res$body)
+  expect_true(!is.null(submit_body$data$id))
+
+  ## Status
+  out <- queue$queue$task_wait(submit_body$data$id)
+  status_res <- api$request("GET",
+                            paste0("/calibrate/status/", submit_body$data$id))
+
+  expect_equal(status_res$status, 200)
+  status_body <- jsonlite::fromJSON(status_res$body)
+  expect_equal(status_body$data$id, submit_body$data$id)
+  expect_true(status_body$data$done)
+  expect_equal(status_body$data$status, "COMPLETE")
+  expect_true(status_body$data$success)
+  expect_equal(status_body$data$queue, 0)
+  expect_match(status_body$data$progress[[1]],
+               "Generating report - [\\d.m\\s]+s elapsed", perl = TRUE)
+
+  ## Get result
+  result_res <- api$request("GET",
+                            paste0("/calibrate/result/", status_body$data$id))
+
+  expect_equal(result_res$status, 200)
+  result_body <- jsonlite::fromJSON(result_res$body)
+  expect_null(result_body$errors)
+  expect_equal(names(result_body$data), c("data", "plottingMetadata"))
+  expect_equal(colnames(result_body$data$data),
+               c("area_id", "sex", "age_group", "calendar_quarter",
+                 "indicator", "mode", "mean", "lower", "upper"))
+  expect_true(nrow(result_body$data$data) > 84042)
+  expect_equal(names(result_body$data$plottingMetadata),
+               c("barchart", "choropleth"))
+})
+
+test_that("endpoint_model_calibrate can be run synchronously", {
+  ## TODO: Remove this once async calibration has been added in front end
+  test_mock_model_available()
+
+  ## Mock model run
   queue <- test_queue(workers = 0)
   unlockBinding("result", queue)
   ## Clone model output as it modifies in place
   out <- clone_model_output(mock_model)
-  queue$result <- mockery::mock(out)
+  queue$result <- mockery::mock(out, cycle = TRUE)
   unlockBinding("queue", queue)
   unlockBinding("task_status", queue$queue)
-  queue$queue$task_status <- mockery::mock("COMPLETE")
+  queue$queue$task_status <- mockery::mock("COMPLETE", cycle = TRUE)
 
-  api <- api_build(queue)
-  calibrate_path <- setup_calibrate_payload()
-  res <- api$request("POST", "/model/calibrate/id",
-                     body = readLines(calibrate_path))
-  expect_equal(res$status, 200)
-  body <- jsonlite::fromJSON(res$body)
+  endpoint <- endpoint_model_calibrate(queue)
+  path <- setup_calibrate_payload()
+  response <- endpoint$run("id", readLines(path))
 
-  expect_equal(body$status, "success")
-  expect_null(body$errors)
-  expect_equal(names(body$data), c("data", "plottingMetadata"))
-  expect_equal(colnames(body$data$data),
+  expect_equal(response$status_code, 200)
+  expect_equal(names(response$data), c("data", "plottingMetadata"))
+  expect_equal(colnames(response$data$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
-  expect_true(nrow(body$data$data) > 84042)
-  expect_equal(names(body$data$plottingMetadata),
+  expect_true(nrow(response$data$data) > 84042)
+  expect_equal(names(response$data$plottingMetadata),
                c("barchart", "choropleth"))
 })

@@ -16,7 +16,7 @@ test_that("endpoint model run queues a model run", {
   ## Wait for complete and query for status
   ## Query for status
   result <- queue$queue$task_wait(response$id)
-  status_endpoint <- model_status(queue)
+  status_endpoint <- queue_status(queue)
   status <- status_endpoint(response$id)
   expect_equal(status$id, response$id)
   expect_equal(status$done, scalar(TRUE))
@@ -33,98 +33,10 @@ test_that("endpoint model run queues a model run", {
   ## Get the result
   get_model_result <- model_result(queue)
   result <- get_model_result(response$id)
-  expect_equal(names(result), c("data", "plottingMetadata"))
-  expect_equal(colnames(result$data),
-               c("area_id", "sex", "age_group", "calendar_quarter",
-                 "indicator", "mode", "mean", "lower", "upper"))
-  expect_true(nrow(result$data) > 84042)
-  expect_equal(names(result$plottingMetadata), c("barchart", "choropleth"))
-
-
-  ## Barchart
-  barchart <- result$plottingMetadata$barchart
-  expect_equal(names(barchart), c("indicators", "filters", "defaults"))
-  expect_length(barchart$filters, 4)
-  expect_equal(names(barchart$filters[[1]]),
-               c("id", "column_id", "label", "options", "use_shape_regions"))
-  expect_equal(names(barchart$filters[[2]]),
-               c("id", "column_id", "label", "options"))
-  ## Choropleth has the correct filters in correct order
-  filters <- lapply(barchart$filters, function(filter) {
-    filter$column_id
-  })
-  expect_equal(filters[[1]], scalar("area_id"))
-  expect_equal(filters[[2]], scalar("calendar_quarter"))
-  expect_equal(filters[[3]], scalar("sex"))
-  expect_equal(filters[[4]], scalar("age_group"))
-  expect_length(barchart$filters[[2]]$options, 3)
-  expect_equal(barchart$filters[[2]]$options[[2]]$id, scalar("CY2018Q3"))
-  expect_equal(barchart$filters[[2]]$options[[2]]$label,
-               scalar("September 2018"))
-  expect_true(length(barchart$filters[[4]]$options) >= 29)
-  expect_equal(nrow(barchart$indicators), 20)
-
-  ## Quarters are in descending order
-  calendar_quarters <-
-    lapply(barchart$filters[[2]]$options, function(option) {
-      option$id
-    })
-  expect_equal(unlist(calendar_quarters),
-               sort(unlist(calendar_quarters), decreasing = TRUE))
-
-
-  ## Barchart indicators are in numeric id order
-  expect_equal(barchart$indicators$indicator,
-               c("population", "prevalence", "plhiv", "art_coverage",
-                 "art_current_residents", "art_current",
-                 "untreated_plhiv_num", "aware_plhiv_prop",
-                 "unaware_plhiv_num", "incidence",
-                 "infections", "anc_prevalence", "anc_art_coverage",
-                 "anc_clients", "anc_plhiv", "anc_already_art",
-                 "anc_art_new", "anc_known_pos",
-                 "anc_tested_pos", "anc_tested_neg"))
-
-  ## Choropleth
-  choropleth <- result$plottingMetadata$choropleth
-  expect_equal(names(choropleth), c("indicators", "filters"))
-  expect_length(choropleth$filters, 4)
-  expect_equal(names(choropleth$filters[[1]]),
-               c("id", "column_id", "label", "options", "use_shape_regions"))
-  expect_equal(names(choropleth$filters[[2]]),
-               c("id", "column_id", "label", "options"))
-  ## Choropleth has the correct filters in correct order
-  filters <- lapply(choropleth$filters, function(filter) {
-    filter$column_id
-  })
-  expect_equal(filters[[1]], scalar("area_id"))
-  expect_equal(filters[[2]], scalar("calendar_quarter"))
-  expect_equal(filters[[3]], scalar("sex"))
-  expect_equal(filters[[4]], scalar("age_group"))
-  expect_length(choropleth$filters[[2]]$options, 3)
-  expect_equal(choropleth$filters[[2]]$options[[2]]$id, scalar("CY2018Q3"))
-  expect_equal(choropleth$filters[[2]]$options[[2]]$label,
-               scalar("September 2018"))
-  expect_true(length(choropleth$filters[[4]]$options) >= 29)
-  expect_equal(nrow(choropleth$indicators), 20)
-
-  ## Quarters are in descending order
-  calendar_quarters <-
-    lapply(choropleth$filters[[2]]$options, function(option) {
-      option$id
-    })
-  expect_equal(unlist(calendar_quarters),
-               sort(unlist(calendar_quarters), decreasing = TRUE))
-
-  ## Choropleth indicators are in numeric id order
-  expect_equal(choropleth$indicators$indicator,
-               c("population", "prevalence", "plhiv", "art_coverage",
-                 "art_current_residents", "art_current",
-                 "untreated_plhiv_num", "aware_plhiv_prop",
-                 "unaware_plhiv_num", "incidence",
-                 "infections", "anc_prevalence", "anc_art_coverage",
-                 "anc_clients", "anc_plhiv", "anc_already_art",
-                 "anc_art_new", "anc_known_pos",
-                 "anc_tested_pos", "anc_tested_neg"))
+  expect_equal(result, list(
+    id = scalar(response$id),
+    complete = scalar(TRUE)
+  ))
 })
 
 test_that("endpoint_run_model returns error if queueing fails", {
@@ -134,11 +46,11 @@ test_that("endpoint_run_model returns error if queueing fails", {
 
   ## Create mocks
   queue <- test_queue()
-  mock_submit <- function(data, options) { stop("Failed to queue") }
+  mock_submit_model_run <- function(data, options) { stop("Failed to queue") }
 
   ## Call the endpoint
   model_submit <- submit_model(queue)
-  mockery::stub(model_submit, "queue$submit", mock_submit)
+  mockery::stub(model_submit, "queue$submit_model_run", mock_submit_model_run)
   error <- expect_error(model_submit(readLines(path)))
 
   expect_equal(error$data[[1]]$error, scalar("FAILED_TO_QUEUE"))
@@ -172,7 +84,7 @@ test_that("querying for status of missing job returns useful message", {
   test_redis_available()
 
   queue <- test_queue()
-  status_endpoint <- model_status(queue)
+  status_endpoint <- queue_status(queue)
   status <- status_endpoint("ID")
   expect_equal(status$done, json_null())
   expect_equal(status$status, scalar("MISSING"))
@@ -214,7 +126,7 @@ test_that("endpoint_run_status returns error if query for status fails", {
   mock_status <- function(data, parameters) { stop("Failed to get status") }
 
   ## Call the endpoint
-  status_endpoint <- model_status(queue)
+  status_endpoint <- queue_status(queue)
   mockery::stub(status_endpoint, "queue$status", mock_status)
   error <- expect_error(status_endpoint("ID"))
   expect_equal(error$data[[1]]$error, scalar("FAILED_TO_RETRIEVE_STATUS"))
@@ -254,7 +166,7 @@ test_that("erroring model run returns useful messages", {
   out <- queue$queue$task_wait(response$id)
 
   ## Get the status
-  endpoint_status <- model_status(queue)
+  endpoint_status <- queue_status(queue)
   status <- endpoint_status(response$id)
   expect_equal(status$done, scalar(TRUE))
   expect_equal(status$status, scalar("ERROR"))
@@ -310,7 +222,7 @@ test_that("model run can be cancelled", {
     expect_equal(queue$queue$task_status(id), setNames("INTERRUPTED", id))
   })
 
-  get_status <- model_status(queue)
+  get_status <- queue_status(queue)
   response <- get_status(id)
   expect_true(response$done)
   expect_false(response$success)
@@ -331,7 +243,7 @@ test_that("translation of progress", {
   path <- setup_submit_payload()
   queue <- test_queue(workers = 1)
   model_submit <- submit_model(queue)
-  get_status <- model_status(queue)
+  get_status <- queue_status(queue)
 
   response <- with_hintr_language(
     "fr",
@@ -444,108 +356,4 @@ test_that("Debug endpoint errors on nonexistant id", {
   expect_equal(error$data[[1]]$detail,
                scalar("Task '1234' not found"))
   expect_equal(error$status_code, 400)
-})
-
-test_that("can calibrate a model result", {
-  test_mock_model_available()
-
-  ## Mock model run
-  queue <- test_queue(workers = 0)
-  unlockBinding("result", queue)
-  ## Clone model output as it modifies in place
-  out <- clone_model_output(mock_model)
-  queue$result <- mockery::mock(out)
-  unlockBinding("queue", queue)
-  unlockBinding("task_status", queue$queue)
-  queue$queue$task_status <- mockery::mock("COMPLETE")
-
-  ## Calibrate the result
-  path <- setup_calibrate_payload()
-  calibrate <- model_calibrate(queue)
-  calibrated_result <- calibrate("id", readLines(path))
-
-  ## Verify data has been returned
-  expect_equal(names(calibrated_result), c("data", "plottingMetadata"))
-  expect_equal(colnames(calibrated_result$data),
-               c("area_id", "sex", "age_group", "calendar_quarter",
-                 "indicator", "mode", "mean", "lower", "upper"))
-  expect_true(nrow(calibrated_result$data) > 84042)
-  expect_equal(names(calibrated_result$plottingMetadata),
-               c("barchart", "choropleth"))
-})
-
-test_that("model calibration fails is version out of date", {
-  test_mock_model_available()
-
-  ## Mock model run
-  queue <- test_queue(workers = 0)
-  unlockBinding("result", queue)
-  ## Clone model output as it modifies in place
-  out <- clone_model_output(mock_model)
-  queue$result <- mockery::mock(out)
-  unlockBinding("queue", queue)
-  unlockBinding("task_status", queue$queue)
-  queue$queue$task_status <- mockery::mock("COMPLETE")
-
-  ## Calibrate the result
-  path <- setup_calibrate_payload('{
-                               "hintr": "0.0.12",
-                               "naomi": "0.0.15",
-                               "rrq": "0.2.1"
-                               }')
-  calibrate <- model_calibrate(queue)
-  error <- expect_error(calibrate("id", readLines(path)))
-
-  expect_equal(error$data[[1]]$error, scalar("VERSION_OUT_OF_DATE"))
-  expect_equal(error$data[[1]]$detail, scalar(
-    paste0("Trying to run model with",
-           " old version of options. Update model run options")))
-  expect_equal(error$status, 400)
-})
-
-test_that("trying to calibrate old model result returns error", {
-  skip("Re-enable when calibration is run again, see mrc-2040")
-  test_mock_model_available()
-
-  ## Mock model run
-  queue <- test_queue(workers = 0)
-  unlockBinding("result", queue)
-  ## Clone model output as it modifies in place
-  out <- clone_model_output(mock_model_v0.1.2)
-  queue$result <- mockery::mock(out)
-  unlockBinding("queue", queue)
-  unlockBinding("task_status", queue$queue)
-  queue$queue$task_status <- mockery::mock("COMPLETE")
-
-  ## Calibrate the result
-  path <- setup_calibrate_payload()
-  calibrate <- model_calibrate(queue)
-  error <- expect_error(calibrate("id", readLines(path)))
-
-  expect_equal(error$message, paste0("Can't calibrate this model output please",
-                                     " re-run model and try calibration again"))
-})
-
-test_that("Calibration returns processed result and doesn't use naomi", {
-  test_mock_model_available()
-
-  ## Mock model run
-  queue <- test_queue(workers = 0)
-  unlockBinding("result", queue)
-  ## Clone model output as it modifies in place
-  out <- clone_model_output(mock_model)
-  queue$result <- mockery::mock(out)
-  unlockBinding("queue", queue)
-  unlockBinding("task_status", queue$queue)
-  queue$queue$task_status <- mockery::mock("COMPLETE")
-
-  ## Calibrate the result
-  path <- setup_calibrate_payload()
-  mock_naomi_calibrate <- mockery::mock()
-  with_mock("naomi::hintr_calibrate" = mock_naomi_calibrate, {
-    calibrate <- model_calibrate(queue)
-    calibrated_result <- calibrate("id", readLines(path))
-  })
-  expect_equal(calibrated_result, process_result(mock_model))
-  mockery::expect_called(mock_naomi_calibrate, 0)
 })

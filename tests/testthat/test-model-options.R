@@ -374,25 +374,6 @@ test_that("can read geojson level labels", {
     )))
 })
 
-test_that("model options can be validated", {
-  skip("Skipping model option validation endpoint not implemented mrc-592")
-
-  data <- list(
-    pjnz = "path/to/pjnz",
-    shape = "path",
-    population = "path",
-    survey = "path",
-    programme = "path",
-    anc = "path"
-  )
-  options <- list(
-    option1 = "one",
-    option2 = "two"
-  )
-  valid <- do_validate_model_options(data, options)
-  expect_equal(names(valid), "valid")
-  expect_equal(valid$valid, scalar(TRUE))
-})
 
 test_that("area level is prepopualted to lowest region", {
   shape <- file_object(file.path("testdata", "malawi.geojson"))
