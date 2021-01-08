@@ -21,7 +21,7 @@ COPY docker/bin /usr/local/bin/
 
 RUN install_remote \
         mrc-ide/heartbeatr \
-        mrc-ide/rrq \
+        mrc-ide/rrq@mrc-2068 \
         reside-ic/traduire \
         ropensci/jsonvalidate
 

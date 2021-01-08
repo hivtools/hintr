@@ -1,3 +1,7 @@
+# hintr 0.1.25
+
+* Queue calibration with higher priority than model run
+
 # hintr 0.1.24
 
 * Add endpoints to enable async calibration

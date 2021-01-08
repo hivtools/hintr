@@ -22,7 +22,8 @@ Queue <- R6::R6Class(
       message(t_("QUEUE_STARTING"))
       queue_id <- hintr_queue_id(queue_id)
       self$queue <- rrq::rrq_controller(queue_id, con)
-      self$queue$worker_config_save("localhost", heartbeat_period = 3)
+      self$queue$worker_config_save("localhost", heartbeat_period = 3,
+                                    queue = c(QUEUE_CALIBRATE, QUEUE_RUN))
 
       self$start(workers, timeout)
 
@@ -41,8 +42,8 @@ Queue <- R6::R6Class(
       }
     },
 
-    submit = function(job, environment = parent.frame()) {
-      self$queue$enqueue_(job, environment)
+    submit = function(job, queue = NULL, environment = parent.frame()) {
+      self$queue$enqueue_(job, environment, queue = queue)
     },
 
     submit_model_run = function(data, options) {
@@ -50,13 +51,15 @@ Queue <- R6::R6Class(
       prerun_dir <- self$prerun_dir
       language <- traduire::translator()$language()
       self$submit(quote(
-        hintr:::run_model(data, options, results_dir, prerun_dir, language)))
+        hintr:::run_model(data, options, results_dir, prerun_dir, language)),
+        queue = QUEUE_RUN)
     },
 
     submit_calibrate = function(model_output, calibration_options) {
       language <- traduire::translator()$language()
       self$submit(quote(
-        hintr:::run_calibrate(model_output, calibration_options, language)))
+        hintr:::run_calibrate(model_output, calibration_options, language)),
+        queue = QUEUE_CALIBRATE)
     },
 
     status = function(id) {
