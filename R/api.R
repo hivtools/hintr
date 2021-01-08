@@ -11,8 +11,11 @@ api_build <- function(queue) {
   api$handle(endpoint_model_result(queue))
   api$handle(endpoint_model_cancel(queue))
   api$handle(endpoint_model_debug(queue))
-  api$handle(endpoint_model_calibration_options())
+  api$handle(endpoint_model_calibrate_options())
   api$handle(endpoint_model_calibrate(queue))
+  api$handle(endpoint_model_calibrate_submit(queue))
+  api$handle(endpoint_model_calibrate_status(queue))
+  api$handle(endpoint_model_calibrate_result(queue))
   api$handle(endpoint_plotting_metadata())
   api$handle(endpoint_download_spectrum(queue))
   api$handle(endpoint_download_spectrum_head(queue))
@@ -223,7 +226,7 @@ endpoint_model_status <- function(queue) {
                                                   schema_root())
   porcelain::porcelain_endpoint$new("GET",
                                     "/model/status/<id>",
-                                    model_status(queue),
+                                    queue_status(queue),
                                     returning = response)
 }
 
@@ -251,24 +254,56 @@ endpoint_model_debug <- function(queue) {
     returning = porcelain::porcelain_returning_binary())
 }
 
-endpoint_model_calibration_options <- function() {
+endpoint_model_calibrate_options <- function() {
   response <- returning_json_version("ModelRunOptions.schema", schema_root())
   porcelain::porcelain_endpoint$new("POST",
-                                    "/model/calibration-options",
+                                    "/calibrate/options",
                                     calibration_options,
                                     returning = response)
 }
 
 endpoint_model_calibrate <- function(queue) {
+  ## TODO: Remove this once async calibration implemented in front end
   input <- porcelain::porcelain_input_body_json("input",
                                                 "ModelCalibrateRequest.schema",
                                                 schema_root())
-  response <- porcelain::porcelain_returning_json("ModelResultResponse.schema",
-                                                  schema_root())
+  response <- porcelain::porcelain_returning_json(
+    "CalibrateResultResponse.schema", schema_root())
   porcelain::porcelain_endpoint$new("POST",
                                     "/model/calibrate/<id>",
                                     model_calibrate(queue),
                                     input,
+                                    returning = response)
+}
+
+endpoint_model_calibrate_submit <- function(queue) {
+  input <- porcelain::porcelain_input_body_json("input",
+                                                "CalibrateSubmitRequest.schema",
+                                                schema_root())
+  response <- porcelain::porcelain_returning_json(
+    "CalibrateSubmitResponse.schema", schema_root())
+  porcelain::porcelain_endpoint$new("POST",
+                                    "/calibrate/submit/<id>",
+                                    submit_calibrate(queue),
+                                    input,
+                                    returning = response)
+}
+
+endpoint_model_calibrate_status <- function(queue) {
+  response <- porcelain::porcelain_returning_json(
+    "CalibrateStatusResponse.schema", schema_root())
+  porcelain::porcelain_endpoint$new("GET",
+                                    "/calibrate/status/<id>",
+                                    queue_status(queue),
+                                    returning = response)
+}
+
+endpoint_model_calibrate_result <- function(queue) {
+  response <- porcelain::porcelain_returning_json(
+    "CalibrateResultResponse.schema", schema_root())
+  porcelain::porcelain_endpoint$new("GET",
+                                    "/calibrate/result/<id>",
+                                    calibrate_result(queue),
                                     returning = response)
 }
 

@@ -7,6 +7,7 @@
     "MODEL_RESULT_CRASH": "Worker has crashed - error details are unavailable",
     "MODEL_RUN_CANCELLED": "Model run was cancelled by user",
     "MODEL_RESULT_MISSING": "Failed to fetch result",
+    "CALIBRATE_SUBMIT_OLD": "Trying to calibrate model with old version of options. Update calibration options",
     "ERROR_404": "{{verb}} {{- path}} is not a valid hintr path",
     "ERROR_500": "Unexpected server error in '{{- call}}' : '{{message}}' while doing '{{verb}} {{- path}}'",
     "ERROR_CALL_MISSING": "<call missing>",
@@ -64,5 +65,6 @@
     "OUTPUT_FILTER_PERIOD": "Period",
     "OUTPUT_FILTER_SEX": "Sex",
     "OUTPUT_FILTER_AGE": "Age",
-    "MODEL_RESULT_OLD": "Can't download {{type}}, please re-run model and try download again."
+    "MODEL_RESULT_OLD": "Can't download {{type}}, please re-run model and try download again.",
+    "UNKNOWN_OUTPUT_TYPE": "Model run returned unknown output type, please contact support."
 }

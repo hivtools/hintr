@@ -128,7 +128,7 @@ submit_model <- function(queue) {
       hintr_error(t_("MODEL_SUBMIT_OLD"), "VERSION_OUT_OF_DATE")
     }
     tryCatch(
-      list(id = scalar(queue$submit(input$data, input$options))),
+      list(id = scalar(queue$submit_model_run(input$data, input$options))),
       error = function(e) {
         hintr_error(e$message, "FAILED_TO_QUEUE")
       }
@@ -136,7 +136,7 @@ submit_model <- function(queue) {
   }
 }
 
-model_status <- function(queue) {
+queue_status <- function(queue) {
   check_orphan <- throttle(queue$queue$worker_detect_exited, 10)
   function(id) {
     no_error(check_orphan())
@@ -153,6 +153,31 @@ model_status <- function(queue) {
 model_result <- function(queue) {
   function(id) {
     verify_result_available(queue, id)
+    list(id = scalar(id),
+         complete = scalar(TRUE))
+  }
+}
+
+submit_calibrate <- function(queue) {
+  function(id, input) {
+    verify_result_available(queue, id)
+    calibration_options <- jsonlite::fromJSON(input)
+    if (!is_current_version(calibration_options$version)) {
+      hintr_error(t_("CALIBRATE_SUBMIT_OLD"), "VERSION_OUT_OF_DATE")
+    }
+    tryCatch(
+      list(id = scalar(queue$submit_calibrate(queue$result(id),
+                                              calibration_options$options))),
+      error = function(e) {
+        hintr_error(e$message, "FAILED_TO_QUEUE")
+      }
+    )
+  }
+}
+
+calibrate_result <- function(queue) {
+  function(id) {
+    verify_result_available(queue, id)
     process_result(queue$result(id))
   }
 }
@@ -160,7 +185,10 @@ model_result <- function(queue) {
 verify_result_available <- function(queue, id) {
   task_status <- queue$queue$task_status(id)
   if (task_status == "COMPLETE") {
-    invisible(TRUE)
+    result <- queue$result(id)
+    if (!naomi:::is_hintr_output(result)) {
+      hintr_error(t_("UNKNOWN_OUTPUT_TYPE"), "UNKNOWN_OUTPUT_TYPE")
+    }
   } else if (task_status == "ERROR") {
     result <- queue$result(id)
     trace <- c(sprintf("# %s", id), result$trace)

@@ -211,71 +211,12 @@ test_that("model interactions", {
   ## Get the result
   r <- httr::GET(paste0(server$url, "/model/result/", response$data$id))
   expect_equal(httr::status_code(r), 200)
-  response <- response_from_json(r)
-  expect_equal(response$status, "success")
-  expect_equal(response$errors, NULL)
+  result_response <- response_from_json(r)
+  expect_equal(result_response$status, "success")
+  expect_equal(result_response$errors, NULL)
   expect_equal(httr::status_code(r), 200)
-  expect_equal(names(response$data), c("data", "plottingMetadata"))
-  expect_equal(names(response$data$data[[1]]),
-               c("area_id", "sex", "age_group", "calendar_quarter",
-                 "indicator", "mode", "mean", "lower", "upper"))
-  expect_true(length(response$data$data) > 84042)
-  expect_equal(names(response$data$plottingMetadata),
-               c("barchart", "choropleth"))
-
-  barchart <- response$data$plottingMetadata$barchart
-  expect_equal(names(barchart), c("indicators", "filters", "defaults"))
-  expect_length(barchart$filters, 4)
-  expect_equal(names(barchart$filters[[1]]),
-               c("id", "column_id", "label", "options", "use_shape_regions"))
-  expect_equal(names(barchart$filters[[2]]),
-               c("id", "column_id", "label", "options"))
-  expect_equal(barchart$filters[[1]]$id, "area")
-  expect_equal(barchart$filters[[2]]$id, "quarter")
-  expect_equal(barchart$filters[[3]]$id, "sex")
-  expect_equal(barchart$filters[[4]]$id, "age")
-  expect_true(length(barchart$filters[[4]]$options) >= 29)
-  expect_length(barchart$filters[[2]]$options, 3)
-  expect_equal(barchart$filters[[2]]$options[[2]]$id, "CY2018Q3")
-  expect_equal(barchart$filters[[2]]$options[[2]]$label, "September 2018")
-  expect_length(barchart$indicators, 20)
-  out <- lapply(barchart$indicators, function(indicator) {
-    expect_true(indicator$indicator %in%
-                  c("prevalence", "art_coverage", "art_current", "population",
-                    "plhiv", "incidence", "infections", "anc_prevalence",
-                    "anc_art_coverage", "anc_clients", "anc_plhiv",
-                    "anc_already_art", "anc_art_new", "anc_known_pos",
-                    "anc_tested_pos", "anc_tested_neg", "art_current_residents",
-                    "untreated_plhiv_num", "aware_plhiv_prop",
-                    "unaware_plhiv_num"))
-  })
-
-  choropleth <- response$data$plottingMetadata$choropleth
-  expect_equal(names(choropleth), c("indicators", "filters"))
-  expect_length(choropleth$filters, 4)
-  expect_equal(names(choropleth$filters[[1]]),
-               c("id", "column_id", "label", "options", "use_shape_regions"))
-  expect_equal(names(choropleth$filters[[2]]),
-               c("id", "column_id", "label", "options"))
-  expect_equal(choropleth$filters[[1]]$id, "area")
-  expect_equal(choropleth$filters[[2]]$id, "quarter")
-  expect_equal(choropleth$filters[[3]]$id, "sex")
-  expect_equal(choropleth$filters[[4]]$id, "age")
-  expect_true(length(choropleth$filters[[4]]$options) >= 29)
-  expect_length(choropleth$filters[[2]]$options, 3)
-  expect_equal(choropleth$filters[[2]]$options[[2]]$id, "CY2018Q3")
-  expect_equal(choropleth$filters[[2]]$options[[2]]$label, "September 2018")
-  expect_length(choropleth$indicators, 20)
-  out <- lapply(choropleth$indicators, function(indicator) {
-    expect_true(indicator$indicator %in%
-                  c("prevalence", "art_coverage", "art_current", "population",
-                    "plhiv", "incidence", "infections", "anc_prevalence",
-                    "anc_art_coverage", "anc_clients", "anc_plhiv",
-                    "anc_already_art", "anc_art_new", "anc_known_pos",
-                    "anc_tested_pos", "anc_tested_neg", "art_current_residents",
-                    "untreated_plhiv_num", "aware_plhiv_prop",
-                    "unaware_plhiv_num"))
-  })
+  expect_equal(result_response$data$id, response$data$id)
+  expect_true(result_response$data$complete)
 })
 
 test_that("real model can be run & calibrated by API", {
@@ -326,75 +267,38 @@ test_that("real model can be run & calibrated by API", {
   expect_equal(response$status, "success")
   expect_equal(response$errors, NULL)
   expect_equal(httr::status_code(r), 200)
-  expect_equal(names(response$data), c("data", "plottingMetadata"))
-  expect_equal(names(response$data$data[[1]]),
-               c("area_id", "sex", "age_group", "calendar_quarter",
-                 "indicator", "mode", "mean", "lower", "upper"))
-  expect_true(length(response$data$data) > 84042)
-  expect_equal(names(response$data$plottingMetadata),
-               c("barchart", "choropleth"))
+  expect_equal(response$data$id, id)
+  expect_true(response$data$complete)
 
-  barchart <- response$data$plottingMetadata$barchart
-  expect_equal(names(barchart), c("indicators", "filters", "defaults"))
-  expect_length(barchart$filters, 4)
-  expect_equal(names(barchart$filters[[1]]),
-               c("id", "column_id", "label", "options", "use_shape_regions"))
-  expect_equal(names(barchart$filters[[2]]),
-               c("id", "column_id", "label", "options"))
-  expect_equal(barchart$filters[[1]]$id, "area")
-  expect_equal(barchart$filters[[2]]$id, "quarter")
-  expect_equal(barchart$filters[[3]]$id, "sex")
-  expect_equal(barchart$filters[[4]]$id, "age")
-  expect_true(length(barchart$filters[[4]]$options) >= 29)
-  expect_length(barchart$filters[[2]]$options, 3)
-  expect_equal(barchart$filters[[2]]$options[[2]]$id, "CY2018Q3")
-  expect_equal(barchart$filters[[2]]$options[[2]]$label, "September 2018")
-  expect_length(barchart$indicators, 20)
-  out <- lapply(barchart$indicators, function(indicator) {
-    expect_true(indicator$indicator %in%
-                  c("prevalence", "art_coverage", "art_current", "population",
-                    "plhiv", "incidence", "infections", "anc_prevalence",
-                    "anc_art_coverage", "anc_clients", "anc_plhiv",
-                    "anc_already_art", "anc_art_new", "anc_known_pos",
-                    "anc_tested_pos", "anc_tested_neg", "art_current_residents",
-                    "untreated_plhiv_num", "aware_plhiv_prop",
-                    "unaware_plhiv_num"))
-  })
-
-  choropleth <- response$data$plottingMetadata$choropleth
-  expect_equal(names(choropleth), c("indicators", "filters"))
-  expect_length(choropleth$filters, 4)
-  expect_equal(names(choropleth$filters[[1]]),
-               c("id", "column_id", "label", "options", "use_shape_regions"))
-  expect_equal(names(choropleth$filters[[2]]),
-               c("id", "column_id", "label", "options"))
-  expect_equal(choropleth$filters[[1]]$id, "area")
-  expect_equal(choropleth$filters[[2]]$id, "quarter")
-  expect_equal(choropleth$filters[[3]]$id, "sex")
-  expect_equal(choropleth$filters[[4]]$id, "age")
-  expect_true(length(choropleth$filters[[4]]$options) >= 29)
-  expect_length(choropleth$filters[[2]]$options, 3)
-  expect_equal(choropleth$filters[[2]]$options[[2]]$id, "CY2018Q3")
-  expect_equal(choropleth$filters[[2]]$options[[2]]$label, "September 2018")
-  expect_length(choropleth$indicators, 20)
-  out <- lapply(choropleth$indicators, function(indicator) {
-    expect_true(indicator$indicator %in%
-                  c("prevalence", "art_coverage", "art_current", "population",
-                    "plhiv", "incidence", "infections", "anc_prevalence",
-                    "anc_art_coverage", "anc_clients", "anc_plhiv",
-                    "anc_already_art", "anc_art_new", "anc_known_pos",
-                    "anc_tested_pos", "anc_tested_neg", "art_current_residents",
-                    "untreated_plhiv_num", "aware_plhiv_prop",
-                    "unaware_plhiv_num"))
-  })
-
-  ## Calibrate
+  ## Calibrate submit
   payload <- setup_calibrate_payload()
-  r <- httr::POST(paste0(server$url, "/model/calibrate/", id),
+  r <- httr::POST(paste0(server$url, "/calibrate/submit/", id),
                   body = httr::upload_file(payload, type = "application/json"),
                   encode = "json")
-  expect_equal(httr::status_code(r), 200)
 
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  calibrate_id <- response$data$id
+  expect_true(!is.null(calibrate_id))
+
+  ## Calibrate status
+
+  testthat::try_again(5, {
+    Sys.sleep(5)
+    r <- httr::GET(paste0(server$url, "/calibrate/status/", calibrate_id))
+    expect_equal(httr::status_code(r), 200)
+    response <- response_from_json(r)
+    expect_equal(response$data$id, calibrate_id)
+    expect_true(response$data$done)
+    expect_equal(response$data$status, "COMPLETE")
+    expect_true(response$data$success)
+    expect_equal(response$data$queue, 0)
+    expect_match(response$data$progress[[1]],
+                 "Generating report - [\\d.m\\s]+s elapsed", perl = TRUE)
+  })
+
+  ## Calibrate result
+  r <- httr::GET(paste0(server$url, "/calibrate/result/", calibrate_id))
   ## Response has same structure content as model result endpoint
   response <- response_from_json(r)
   expect_equal(response$status, "success")
@@ -539,9 +443,8 @@ test_that("model run options are exposed", {
 })
 
 test_that("model options can be validated", {
-  skip("Skipping model option validation endpoint not implemented mrc-592")
   server <- hintr_server()
-  payload <- setup_submit_payload()
+  payload <- "payload/validate_options_payload.json"
 
   r <- httr::POST(paste0(server$url, "/validate/options"),
                   body = httr::upload_file(payload, type = "application/json"),

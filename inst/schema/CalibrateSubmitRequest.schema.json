@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "options" : { "type": "object" },
+    "version": { "$ref": "VersionInfo.schema.json" }
+  },
+  "additionalProperties": false,
+  "required": [
+    "options",
+    "version"
+  ]
+}
