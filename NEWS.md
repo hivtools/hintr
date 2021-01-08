@@ -1,10 +1,12 @@
+# hintr 0.1.26
+
+* Update test data options to new demo survey ids "DEMO2015DHS" and "DEMO2016PHIA".
+
 # hintr 0.1.25
 
 * Queue calibration with higher priority than model run
 
 # hintr 0.1.24
-
-* Update test data options to new demo survey ids "DEMO2015DHS" and "DEMO2016PHIA".
 
 * Add endpoints to enable async calibration
    * /calibrate/submit - queue a model calibration
