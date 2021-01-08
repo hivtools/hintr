@@ -1,3 +1,7 @@
+# hintr 0.1.26
+
+* Add arg to worker entrypoint to enable starting calibration only worker
+
 # hintr 0.1.25
 
 * Queue calibration with higher priority than model run
