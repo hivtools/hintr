@@ -1,3 +1,7 @@
+# hintr 0.1.27
+
+* Add arg to worker entrypoint to enable starting calibration only worker
+
 # hintr 0.1.26
 
 * Update test data options to new demo survey ids "DEMO2015DHS" and "DEMO2016PHIA".

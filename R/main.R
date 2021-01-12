@@ -32,16 +32,25 @@ main_api <- function(args = commandArgs(TRUE)) {
 
 main_worker_args <- function(args = commandArgs(TRUE)) {
   usage <- "Usage:
-hintr_worker [<queue_id>]"
+hintr_worker [options] [<queue_id>]
+
+Options:
+--calibrate-only  Start a worker which will only run calibration tasks"
   dat <- docopt_parse(usage, args)
-  list(queue_id = dat$queue_id)
+  list(queue_id = dat$queue_id,
+       calibrate_only = dat$calibrate_only)
 }
 
 main_worker <- function(args = commandArgs(TRUE)) {
   # nocov start
-  rrq::rrq_worker(hintr_queue_id(main_worker_args(args)$queue_id, TRUE),
+  args <- main_worker_args(args)
+  queue <- c(QUEUE_CALIBRATE, QUEUE_RUN)
+  if (args$calibrate_only) {
+    queue <- QUEUE_CALIBRATE
+  }
+  rrq::rrq_worker(hintr_queue_id(args$queue_id, TRUE),
                   heartbeat_period = 10,
-                  queue = c(QUEUE_CALIBRATE, QUEUE_RUN))
+                  queue = queue)
   # nocov end
 }
 
