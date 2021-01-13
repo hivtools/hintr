@@ -190,11 +190,13 @@ do_validate_survey <- function(survey, shape) {
                             read_regions(survey, "survey"),
                             "survey")
   assert_calendar_quarter_column(data, "survey_mid_calendar_quarter")
-  assert_unique_combinations(data, c("area_id", "survey_id", "sex", "age_group", "indicator"))
+  assert_unique_combinations(data, c("area_id", "survey_id", "sex", "age_group",
+                                     "indicator"))
   assert_expected_values(data, "sex", c("male", "female", "both"))
   assert_expected_values(data, "age_group", naomi::get_age_groups()$age_group)
-  assert_column_positive_numeric(data, c("n_clusters", "n_observations", "n_eff_kish",
-                                         "estimate", "std_error", "ci_lower", "ci_upper"))
+  assert_column_positive_numeric(data,
+                                 c("n_observations", "n_eff_kish", "estimate",
+                                   "std_error", "ci_lower", "ci_upper"))
   list(data = data,
        filters = list("age" = get_age_filters(data),
                       "surveys" = get_survey_filters(data),
