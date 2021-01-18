@@ -1,3 +1,7 @@
+# hintr 0.1.28
+
+* Turn off validation for survey data n_cluster column, this is no longer required
+
 # hintr 0.1.27
 
 * Add arg to worker entrypoint to enable starting calibration only worker
