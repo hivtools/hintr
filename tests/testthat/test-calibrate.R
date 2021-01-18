@@ -27,7 +27,7 @@ test_that("calibrate can set language", {
   expect_error(run_calibrate(model_output, list(opt = "options"),
                              language = "fr"),
                paste0("Impossible de calibrer la sortie de ce modèle, veuillez",
-               " réexécuter le modèle pour obtenir une sortie mise à jour"))
+               " réexécuter le modèle et réessayer le calibrage."))
 })
 
 test_that("can calibrate a model result", {
