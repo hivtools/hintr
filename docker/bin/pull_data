@@ -1,0 +1,3 @@
+#!/usr/bin/env Rscript
+job_id <- ".."
+path <- hintr::download_debug(job_id)

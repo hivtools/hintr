@@ -1,0 +1,5 @@
+FROM mrcide/hintr:debug
+
+RUN pull_data
+
+ENTRYPOINT bash
