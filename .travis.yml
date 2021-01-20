@@ -1,0 +1,36 @@
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+
+language: R
+sudo: false
+addons:
+  apt:
+    packages:
+      - libgdal-dev
+      - libhiredis-dev
+      - libjq-dev
+      - libprotobuf-dev
+      - libudunits2-dev
+      - libv8-dev
+      - protobuf-compiler
+      - redis-server
+services:
+  - redis-server
+before_script:
+  - ./scripts/build_test_data
+  - R CMD INSTALL .
+  - Rscript ./scripts/debug.R
+  - openssl aes-256-cbc -K $encrypted_70b522aa6ec8_key -iv $encrypted_70b522aa6ec8_iv -in id_rsa.enc -out id_rsa -d
+  - chmod 400 id_rsa
+  - GIT_SSH_COMMAND="ssh -i id_rsa" git clone git@github.com:mrc-ide/naomi-data tests/testthat/testdata/sensitive
+cache: packages
+env:
+  - VALIDATE_JSON_SCHEMAS=true USE_MOCK_MODEL=true NAOMI_SENSITIVE_DATA_PATH= $TRAVIS_BUILD_DIR/tests/testthat/testdata/sensitive
+r_packages:
+  - covr
+r_github_packages:
+  - ropensci/jsonvalidate
+  - mrc-ide/eppasm
+  - mrc-ide/naomi
+  - mrc-ide/rrq
+after_success:
+  - Rscript -e 'covr::codecov(quiet = FALSE)'
