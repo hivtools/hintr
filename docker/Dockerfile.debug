@@ -1,4 +1,6 @@
-FROM mrcide/hintr:debug
+FROM mrcide/hintr:latest
+
+COPY docker/bin/pull_data /usr/local/bin/pull_data
 
 RUN pull_data
 
