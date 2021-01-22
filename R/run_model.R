@@ -78,9 +78,27 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
   data$anc_testing <- data$anc
   data$anc <- NULL
 
-  naomi::hintr_run_model(data, options, output_path, spectrum_path,
-                         coarse_output_path, summary_report_path,
-                         calibration_path, validate = FALSE)
+  tryCatch(
+    callr::r(
+      function(data, options, output_path, spectrum_path, coarse_output_path,
+               summary_report_path, calibration_path, validate, language) {
+        if (!is.null(language)) {
+          traduire::translator_set_language(language, package = "naomi")
+        }
+        naomi::hintr_run_model(data, options, output_path, spectrum_path,
+                               coarse_output_path, summary_report_path,
+                               calibration_path, validate)
+      },
+      args = list(data, options, output_path, spectrum_path, coarse_output_path,
+                  summary_report_path, calibration_path, FALSE, language),
+      package = "naomi"
+    ),
+    error = function(e) {
+      ## Return the error from the callr process without it being
+      ## wrapped as a callr error
+      stop(e$parent$error)
+    }
+  )
 }
 
 select_data <- function(data) {
