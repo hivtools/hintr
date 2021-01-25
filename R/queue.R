@@ -43,7 +43,8 @@ Queue <- R6::R6Class(
     },
 
     submit = function(job, queue = NULL, environment = parent.frame()) {
-      self$queue$enqueue_(job, environment, queue = queue)
+      self$queue$enqueue_(job, environment, queue = queue,
+                          separate_process = TRUE)
     },
 
     submit_model_run = function(data, options) {

@@ -78,60 +78,9 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
   data$anc_testing <- data$anc
   data$anc <- NULL
 
-  worker <- rrq:::cache$active_worker
-  if (!inherits(worker, "rrq_worker")) {
-    stop("worker not rrq_worker")
-  }
-  run_model <- function(data, options, output_path, spectrum_path,
-                        coarse_output_path, summary_report_path,
-                        calibration_path, language, worker) {
-    worker$con
-    withCallingHandlers({
-      if (!is.null(language)) {
-        traduire::translator_set_language(language, package = "naomi")
-      }
-      naomi::hintr_run_model(data, options, output_path, spectrum_path,
-                             coarse_output_path, summary_report_path,
-                             calibration_path, FALSE)
-    }, progress = function(e) {
-      rrq:::task_progress_update(unclass(e), worker, TRUE)
-    })
-  }
-  callr::r(
-    function(data, options, output_path, spectrum_path, coarse_output_path,
-             summary_report_path, calibration_path, language, worker) {
-      run_model(data, options, output_path, spectrum_path, coarse_output_path,
-                summary_report_path, calibration_path, language, worker)
-  },
-  args = list(data, options, output_path, spectrum_path, coarse_output_path,
-              summary_report_path, calibration_path, language, worker),
-  package = TRUE)
-  # tryCatch(
-    # callr::r(
-    #   function(data, options, output_path, spectrum_path, coarse_output_path,
-    #            summary_report_path, calibration_path, validate, language,
-    #            worker) {
-    #     withCallingHandlers({
-    #       if (!is.null(language)) {
-    #         traduire::translator_set_language(language, package = "naomi")
-    #       }
-    #       naomi::hintr_run_model(data, options, output_path, spectrum_path,
-    #                              coarse_output_path, summary_report_path,
-    #                              calibration_path, validate)
-    #     }, progress = function(e) stop(e)
-    #     )
-    #   },
-    #   args = list(data, options, output_path, spectrum_path, coarse_output_path,
-    #               summary_report_path, calibration_path, FALSE, language,
-    #               worker),
-    #   package = TRUE
-    # )
-  #   ,error = function(e) {
-  #     ## Return the error from the callr process without it being
-  #     ## wrapped as a callr error
-  #     stop(e$parent$error)
-  #   }
-  # )
+  naomi::hintr_run_model(data, options, output_path, spectrum_path,
+                         coarse_output_path, summary_report_path,
+                         calibration_path, validate)
 }
 
 select_data <- function(data) {
