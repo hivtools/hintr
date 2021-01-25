@@ -57,9 +57,11 @@ Queue <- R6::R6Class(
     },
 
     submit_calibrate = function(model_output, calibration_options) {
+      results_dir <- self$results_dir
       language <- traduire::translator()$language()
       self$submit(quote(
-        hintr:::run_calibrate(model_output, calibration_options, language)),
+        hintr:::run_calibrate(model_output, calibration_options, results_dir,
+                              language)),
         queue = QUEUE_CALIBRATE)
     },
 
