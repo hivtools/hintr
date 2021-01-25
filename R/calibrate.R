@@ -11,11 +11,15 @@ run_calibrate <- function(model_output, calibration_options, path_results,
   }
 
   path_results <- normalizePath(path_results, mustWork = TRUE)
-  output_path <- tempfile(tmpdir = path_results, fileext = ".rds")
-  spectrum_path <- tempfile(tmpdir = path_results, fileext = ".zip")
-  coarse_output_path <- tempfile(tmpdir = path_results, fileext = ".zip")
-  summary_report_path <- tempfile(tmpdir = path_results, fileext = ".html")
-  calibration_path <- tempfile(tmpdir = path_results, fileext = ".rds")
+  output_path <- tempfile("output", tmpdir = path_results, fileext = ".rds")
+  spectrum_path <- tempfile("spectrum", tmpdir = path_results,
+                            fileext = ".zip")
+  coarse_output_path <- tempfile("coarse_output", tmpdir = path_results,
+                                 fileext = ".zip")
+  summary_report_path <- tempfile("summary_report", tmpdir = path_results,
+                                  fileext = ".html")
+  calibration_path <- tempfile("calibration", tmpdir = path_results,
+                               fileext = ".rds")
 
   naomi::hintr_calibrate(model_output, calibration_options, output_path,
                          spectrum_path, coarse_output_path,
