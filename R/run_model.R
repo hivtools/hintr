@@ -80,7 +80,7 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
 
   naomi::hintr_run_model(data, options, output_path, spectrum_path,
                          coarse_output_path, summary_report_path,
-                         calibration_path, validate)
+                         calibration_path, validate = FALSE)
 }
 
 select_data <- function(data) {
