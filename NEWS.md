@@ -1,3 +1,7 @@
+# hintr 0.1.29
+
+* Update to naomi 2.2.4, save calibrate outputs to new file
+
 # hintr 0.1.28
 
 * Turn off validation for survey data n_cluster column, this is no longer required

@@ -9,7 +9,8 @@ test_that("calibration can be run", {
   path <- setup_calibrate_payload()
   calibration_options <- jsonlite::fromJSON(path)$options
 
-  calibrated_result <- run_calibrate(model_output, calibration_options)
+  calibrated_result <- run_calibrate(model_output, calibration_options,
+                                     tempdir())
 
   ## Expected files are returned
   expect_equal(names(calibrated_result),
@@ -19,12 +20,12 @@ test_that("calibration can be run", {
 
 test_that("calibrate can set language", {
   model_output <- list(calibration_path = "test")
-  expect_error(run_calibrate(model_output, list(opt = "options")),
+  expect_error(run_calibrate(model_output, list(opt = "options"), tempdir()),
                paste0("Can't calibrate this model output please re-run ",
                       "model and try calibration again"))
 
   ## With french translation
-  expect_error(run_calibrate(model_output, list(opt = "options"),
+  expect_error(run_calibrate(model_output, list(opt = "options"), tempdir(),
                              language = "fr"),
                paste0("Impossible de calibrer la sortie de ce modèle, veuillez",
                " réexécuter le modèle et réessayer le calibrage."))
