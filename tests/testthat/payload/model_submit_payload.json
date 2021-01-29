@@ -63,6 +63,7 @@
     "spectrum_infections_calibration_strat": "age_coarse",
     "spectrum_aware_calibration_level": "national",
     "spectrum_aware_calibration_strat": "age_coarse",
+    "calibrate_method": "logistic",
     "artattend_log_gamma_offset": -4,
     "artattend": false,
     "output_aware_plhiv": "true",
