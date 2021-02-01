@@ -42,10 +42,9 @@ Queue <- R6::R6Class(
       }
     },
 
-    submit = function(job, queue = NULL, environment = parent.frame(),
-                      separate_process = FALSE) {
+    submit = function(job, queue = NULL, environment = parent.frame()) {
       self$queue$enqueue_(job, environment, queue = queue,
-                          separate_process = separate_process)
+                          separate_process = TRUE)
     },
 
     submit_model_run = function(data, options) {
@@ -54,8 +53,7 @@ Queue <- R6::R6Class(
       language <- traduire::translator()$language()
       self$submit(quote(
         hintr:::run_model(data, options, results_dir, prerun_dir, language)),
-        queue = QUEUE_RUN,
-        separate_process = TRUE)
+        queue = QUEUE_RUN)
     },
 
     submit_calibrate = function(model_output, calibration_options) {
@@ -64,8 +62,7 @@ Queue <- R6::R6Class(
       self$submit(quote(
         hintr:::run_calibrate(model_output, calibration_options, results_dir,
                               language)),
-        queue = QUEUE_CALIBRATE,
-        separate_process = FALSE)
+        queue = QUEUE_CALIBRATE)
     },
 
     status = function(id) {

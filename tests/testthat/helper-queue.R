@@ -13,8 +13,7 @@ MockQueue <- R6::R6Class(
   inherit = Queue,
   cloneable = FALSE,
   public = list(
-    submit = function(job, queue, environment = parent.frame(),
-                      separate_process = FALSE) {
+    submit = function(job, queue, environment = parent.frame()) {
       self$queue$enqueue_(quote(stop("test error")))
     },
 
