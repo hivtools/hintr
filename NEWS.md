@@ -1,6 +1,6 @@
 # hintr 0.1.30
 
-* Update tests fro naomi 2.3.0: add new model option `calibrate_method`. 
+* Update tests fro naomi 2.3.0: add new model option `calibrate_method`.
 
 # hintr 0.1.29
 
