@@ -115,6 +115,7 @@ test_that("run with prerun", {
     spectrum_artnum_calibration_strat = "age_coarse",
     spectrum_infections_calibration_level = "none",
     spectrum_infections_calibration_strat = "age_coarse",
+    calibrate_method = "logistic",
     artattend_log_gamma_offset = -4L,
     artattend = "false",
     rng_seed = 17,
