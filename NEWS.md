@@ -1,6 +1,10 @@
+# hintr 0.1.31
+
+* Run model and calibration in a separate process to avoid memory leak
+
 # hintr 0.1.30
 
-* Update tests fro naomi 2.3.0: add new model option `calibrate_method`.
+* Update tests for naomi 2.3.0: add new model option `calibrate_method`.
 
 # hintr 0.1.29
 

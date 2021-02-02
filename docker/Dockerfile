@@ -7,6 +7,7 @@ RUN apt-get update && apt-get -y install --no-install-recommends \
         && rm -rf /var/lib/apt/lists/*
 
 RUN install_packages --repo=https://mrc-ide.github.io/drat \
+        callr \
         docopt \
         geojsonio \
         glue \
