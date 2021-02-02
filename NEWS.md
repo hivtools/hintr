@@ -1,6 +1,6 @@
 # hintr 0.1.31
 
-* Save calibrate outputs to new file
+* Run model and calibration in a separate process to avoid memory leak
 
 # hintr 0.1.30
 
@@ -8,7 +8,7 @@
 
 # hintr 0.1.29
 
-* Update to naomi 2.2.4
+* Update to naomi 2.2.4, save calibrate outputs to new file
 
 # hintr 0.1.28
 
