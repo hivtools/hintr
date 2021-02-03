@@ -1,3 +1,7 @@
+# hintr 0.1.32
+
+* Update summary report
+
 # hintr 0.1.31
 
 * Run model and calibration in a separate process to avoid memory leak
