@@ -1,6 +1,6 @@
 # hintr 0.1.32
 
-* Update summary report 
+* Update summary report
 
 # hintr 0.1.31
 
