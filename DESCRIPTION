@@ -40,3 +40,5 @@ Suggests:
     ssh,
     testthat (>= 2.1.0),
     withr
+Remotes:
+    mrc-ide/rrq
