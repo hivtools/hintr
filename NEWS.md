@@ -1,3 +1,7 @@
+# hintr 0.1.33
+
+* Return upload metadata from calibrate result response
+
 # hintr 0.1.32
 
 * Update summary report

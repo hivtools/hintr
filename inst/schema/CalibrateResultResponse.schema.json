@@ -11,6 +11,27 @@
       },
       "additionalProperties": false,
       "required" : [ "barchart", "choropleth" ]
+    },
+    "uploadMetadata": {
+      "type": "object",
+      "properties": {
+        "outputZip": {
+          "type": "object",
+          "properties": {
+            "description": {"type": "string"}
+          },
+          "additionalProperties": false
+        },
+        "outputSummary": {
+          "type": "object",
+          "properties": {
+            "description": {"type": "string"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false,
+      "required" : [ "outputZip", "outputSummary" ]
     }
   },
   "required": [ "data", "plottingMetadata" ]

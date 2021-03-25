@@ -107,8 +107,23 @@ process_result <- function(model_output) {
       filters = output_filters
     )
   )
+  upload_metadata <- list(
+    outputZip = scalar(build_output_zip_description(output)),
+    outputSummary = scalar(build_output_summary_description(output))
+  )
   list(data = select_data(output),
-       plottingMetadata = metadata)
+       plottingMetadata = metadata,
+       uploadMetadata = upload_metadata)
+}
+
+build_output_zip_description <- function(output) {
+  ##TODO: Return content
+  "placeholder text"
+}
+
+build_output_summary_description <- function(output) {
+  ##TODO: Return content
+  "placeholder text"
 }
 
 use_mock_model <- function() {
