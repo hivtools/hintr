@@ -109,9 +109,9 @@ process_result <- function(model_output) {
   )
   upload_metadata <- list(
     outputZip = list(
-      description = scalar(metadata$output_description)),
+      description = scalar(model_output$metadata$output_description)),
     outputSummary = list(
-      description = scalar(metadata$summary_report_description))
+      description = scalar(model_output$metadata$summary_report_description))
   )
   list(data = select_data(output),
        plottingMetadata = metadata,
