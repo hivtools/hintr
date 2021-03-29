@@ -66,10 +66,12 @@ test_that("model can be run and filters extracted", {
                   choropleth$indicators$indicator))
 
   upload_metadata <- model_run$uploadMetadata
-  expect_equal(upload_metadata$outputZip$description,
-               scalar("placeholder text"))
-  expect_equal(upload_metadata$outputSummary$description,
-               scalar("placeholder text"))
+  expect_s3_class(upload_metadata$outputSummary$description,
+                  c("scalar", "character"))
+  expect_length(upload_metadata$outputSummary$description, 1)
+  expect_s3_class(upload_metadata$outputZip$description,
+                  c("scalar", "character"))
+  expect_length(upload_metadata$outputZip$description, 1)
 })
 
 test_that("model without national level results can be processed", {
