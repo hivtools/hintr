@@ -108,8 +108,10 @@ process_result <- function(model_output) {
     )
   )
   upload_metadata <- list(
-    outputZip = scalar(build_output_zip_description(output)),
-    outputSummary = scalar(build_output_summary_description(output))
+    outputZip = list(
+      description = scalar(build_output_zip_description(output))),
+    outputSummary = list(
+      description = scalar(build_output_summary_description(output)))
   )
   list(data = select_data(output),
        plottingMetadata = metadata,
