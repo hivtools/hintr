@@ -65,7 +65,7 @@ test_that("can calibrate a model result", {
 
   get_result <- calibrate_result(queue)
   result <- get_result(res$id)
-  expect_equal(names(result), c("data", "plottingMetadata"))
+  expect_equal(names(result), c("data", "plottingMetadata", "uploadMetadata"))
   expect_equal(colnames(result$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))

@@ -12,12 +12,17 @@ mock_model <- list(
   summary_report_path =
     system.file("output", "malawi_summary_report.html", package = "hintr"),
   calibration_path =
-    system.file("output", "malawi_calibration.rds", package = "hintr"))
+    system.file("output", "malawi_calibration.rds", package = "hintr"),
+  metadata = list(
+    areas = "MWI",
+    output_description = "output desc",
+    summary_report_description = "summary desc"
+  ))
 class(mock_model) <- "hintr_output"
 
 test_mock_model_available <- function() {
   invisible(lapply(mock_model, function(x) {
-    if(!file.exists(x)) {
+    if(!is.list(x) && !file.exists(x)) {
       testthat::skip(sprintf(
         "Test data %s is missing - run ./scripts/build_test_data to create test data.", x))
     }

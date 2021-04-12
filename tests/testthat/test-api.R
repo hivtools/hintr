@@ -1192,7 +1192,8 @@ test_that("model calibrate can be queued and result returned", {
   response <- result$run(status_response$data$id)
 
   expect_equal(response$status_code, 200)
-  expect_equal(names(response$data), c("data", "plottingMetadata"))
+  expect_equal(names(response$data),
+               c("data", "plottingMetadata", "uploadMetadata"))
   expect_equal(colnames(response$data$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
@@ -1246,7 +1247,8 @@ test_that("api can call endpoint_model_calibrate", {
   expect_equal(result_res$status, 200)
   result_body <- jsonlite::fromJSON(result_res$body)
   expect_null(result_body$errors)
-  expect_equal(names(result_body$data), c("data", "plottingMetadata"))
+  expect_equal(names(result_body$data),
+               c("data", "plottingMetadata", "uploadMetadata"))
   expect_equal(colnames(result_body$data$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
@@ -1274,7 +1276,8 @@ test_that("endpoint_model_calibrate can be run synchronously", {
   response <- endpoint$run("id", readLines(path))
 
   expect_equal(response$status_code, 200)
-  expect_equal(names(response$data), c("data", "plottingMetadata"))
+  expect_equal(names(response$data),
+               c("data", "plottingMetadata", "uploadMetadata"))
   expect_equal(colnames(response$data$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
