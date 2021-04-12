@@ -21,7 +21,7 @@ RUN install_packages --repo=https://mrc-ide.github.io/drat \
 COPY docker/bin /usr/local/bin/
 
 RUN install_remote \
-        mrc-ide/heartbeatr \
+        mrc-ide/heartbeatr@3139908 \
         mrc-ide/rrq \
         reside-ic/traduire \
         ropensci/jsonvalidate
