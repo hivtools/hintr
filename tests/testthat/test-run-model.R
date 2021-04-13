@@ -3,7 +3,8 @@ context("run-model")
 test_that("model can be run and filters extracted", {
   test_mock_model_available()
   model_run <- process_result(mock_model)
-  expect_equal(names(model_run), c("data", "plottingMetadata"))
+  expect_equal(names(model_run),
+               c("data", "plottingMetadata", "uploadMetadata"))
   expect_equal(names(model_run$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
@@ -63,6 +64,14 @@ test_that("model can be run and filters extracted", {
                   "anc_art_new", "anc_known_pos",
                   "anc_tested_pos", "anc_tested_neg") %in%
                   choropleth$indicators$indicator))
+
+  upload_metadata <- model_run$uploadMetadata
+  expect_s3_class(upload_metadata$outputSummary$description,
+                  c("scalar", "character"))
+  expect_length(upload_metadata$outputSummary$description, 1)
+  expect_s3_class(upload_metadata$outputZip$description,
+                  c("scalar", "character"))
+  expect_length(upload_metadata$outputZip$description, 1)
 })
 
 test_that("model without national level results can be processed", {
@@ -72,7 +81,8 @@ test_that("model without national level results can be processed", {
   output_temp <- tempfile()
   saveRDS(output, output_temp)
   model_run <- process_result(list(output_path = output_temp))
-  expect_equal(names(model_run), c("data", "plottingMetadata"))
+  expect_equal(names(model_run),
+               c("data", "plottingMetadata", "uploadMetadata"))
   expect_equal(names(model_run$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
@@ -244,7 +254,7 @@ test_that("real model can be run with csv2 data", {
     spectrum_artnum_calibration_strat = "age_coarse",
     spectrum_infections_calibration_level = "none",
     spectrum_infections_calibration_strat = "age_coarse",
-    calibrate_method = "logistic",    
+    calibrate_method = "logistic",
     artattend_log_gamma_offset = -4L,
     artattend = "false",
     output_aware_plhiv = "true",

@@ -107,8 +107,15 @@ process_result <- function(model_output) {
       filters = output_filters
     )
   )
+  upload_metadata <- list(
+    outputZip = list(
+      description = scalar(model_output$metadata$output_description)),
+    outputSummary = list(
+      description = scalar(model_output$metadata$summary_report_description))
+  )
   list(data = select_data(output),
-       plottingMetadata = metadata)
+       plottingMetadata = metadata,
+       uploadMetadata = upload_metadata)
 }
 
 use_mock_model <- function() {
