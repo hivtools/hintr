@@ -507,7 +507,7 @@ test_that("spectrum file download streams bytes", {
 
   ## Get the download
   testthat::try_again(4, {
-    Sys.sleep(2)
+    Sys.sleep(5)
     r <- httr::GET(paste0(server$url, "/download/spectrum/", response$data$id))
     expect_equal(httr::status_code(r), 200)
     expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
@@ -553,7 +553,7 @@ test_that("coarse_output file download streams bytes", {
 
   ## Get the download
   testthat::try_again(4, {
-    Sys.sleep(2)
+    Sys.sleep(5)
     r <- httr::GET(paste0(server$url, "/download/coarse-output/",
                           response$data$id))
     expect_equal(httr::status_code(r), 200)
