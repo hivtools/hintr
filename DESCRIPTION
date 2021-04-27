@@ -19,14 +19,13 @@ Imports:
     docopt,
     geojsonio (>= 0.8.0),
     glue,
-    heartbeatr,
     ids,
     jsonlite (>= 1.2.2),
     naomi (>= 2.3.13),
     porcelain (>= 0.1.0),
     R6,
     redux,
-    rrq (>= 0.2.13),
+    rrq (>= 0.3.0),
     specio (>= 0.1.4),
     storr,
     traduire (>= 0.0.5),
@@ -41,4 +40,4 @@ Suggests:
     testthat (>= 2.1.0),
     withr
 Remotes:
-    mrc-ide/rrq
+    mrc-ide/rrq@mrc-2361

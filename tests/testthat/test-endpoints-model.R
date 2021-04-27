@@ -108,7 +108,7 @@ test_that("querying for an orphan task returns sensible error", {
 
   queue <- test_queue()
   id <- ids::random_id()
-  queue$queue$con$HSET(queue$queue$keys$task_status, id, "ORPHAN")
+  queue$queue$con$HSET(queue$queue$keys$task_status, id, "DIED")
   get_model_result <- model_result(queue)
   error <- expect_error(get_model_result(id))
 
@@ -218,15 +218,15 @@ test_that("model run can be cancelled", {
   testthat::try_again(5, {
     Sys.sleep(1)
     log <- queue$queue$worker_log_tail(worker, n = Inf)
-    expect_true("INTERRUPT" %in% log$command)
-    expect_equal(queue$queue$task_status(id), setNames("INTERRUPTED", id))
+    expect_true("CANCEL" %in% log$command)
+    expect_equal(queue$queue$task_status(id), setNames("CANCELLED", id))
   })
 
   get_status <- queue_status(queue)
   response <- get_status(id)
   expect_true(response$done)
   expect_false(response$success)
-  expect_equal(response$status, scalar("INTERRUPTED"))
+  expect_equal(response$status, scalar("CANCELLED")) # TODO: update schema?
 
   get_result <- model_result(queue)
   error <- expect_error(get_result(id))

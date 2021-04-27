@@ -193,9 +193,9 @@ verify_result_available <- function(queue, id) {
     result <- queue$result(id)
     trace <- c(sprintf("# %s", id), result$trace)
     hintr_error(result$message, "MODEL_RUN_FAILED", trace = trace)
-  } else if (task_status == "ORPHAN") {
+  } else if (task_status == "DIED") {
     hintr_error(t_("MODEL_RESULT_CRASH"), "MODEL_RUN_FAILED")
-  } else if (task_status == "INTERRUPTED") {
+  } else if (task_status == "CANCELLED") {
     hintr_error(t_("MODEL_RUN_CANCELLED"), "MODEL_RUN_FAILED")
   } else { # ~= MISSING, PENDING, RUNNING
     hintr_error(t_("MODEL_RESULT_MISSING"), "FAILED_TO_RETRIEVE_RESULT")

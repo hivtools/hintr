@@ -661,7 +661,7 @@ test_that("crashed worker can be detected", {
   dat <- response_from_json(r)
   expect_true(dat$data$done)
   expect_false(dat$data$success)
-  expect_equal(dat$data$status, "ORPHAN")
+  expect_equal(dat$data$status, "DIED")
 
   r <- httr::GET(paste0(server$url, "/model/result/", id))
   expect_equal(httr::status_code(r), 400)
@@ -698,7 +698,7 @@ test_that("model run can be cancelled", {
     dat <- response_from_json(r)
     expect_equal(dat$status, "success")
     expect_true(dat$data$done)
-    expect_equal(dat$data$status, "INTERRUPTED")
+    expect_equal(dat$data$status, "CANCELLED")
     expect_false(dat$data$success)
   })
 
