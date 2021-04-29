@@ -55,7 +55,7 @@ test_that("endpoint_run_model returns error if queueing fails", {
 
   expect_equal(error$data[[1]]$error, scalar("FAILED_TO_QUEUE"))
   expect_equal(error$data[[1]]$detail, scalar("Failed to queue"))
-  expect_equal(error$status, 400)
+  expect_equal(error$status_code, 400)
 })
 
 test_that("running model with old version throws an error", {
@@ -77,7 +77,7 @@ test_that("running model with old version throws an error", {
   expect_equal(error$data[[1]]$detail, scalar(
     paste0("Trying to run model with",
            " old version of options. Update model run options")))
-  expect_equal(error$status, 400)
+  expect_equal(error$status_code, 400)
 })
 
 test_that("querying for status of missing job returns useful message", {
