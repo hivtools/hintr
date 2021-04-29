@@ -305,7 +305,7 @@ test_that("failed cancel sends reasonable message", {
   ## though.
   expect_equal(error$data[[1]]$error, scalar("FAILED_TO_CANCEL"))
   expect_match(error$data[[1]]$detail,
-               scalar("Task [[:xdigit:]]+ is not running \\(MISSING\\)"))
+               scalar("Task [[:xdigit:]]+ is not cancelable \\(MISSING\\)"))
   expect_is(error$data[[1]]$key, "character")
   expect_equal(error$status_code, 400)
 })
