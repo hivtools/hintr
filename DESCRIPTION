@@ -36,6 +36,7 @@ Suggests:
     httr,
     jsonvalidate,
     mockery,
+    ps,
     ssh,
     testthat (>= 2.1.0),
     withr

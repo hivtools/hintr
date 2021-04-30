@@ -649,14 +649,26 @@ test_that("crashed worker can be detected", {
   obj <- rrq::rrq_controller(server$queue_id)
   expect_equal(obj$task_status(id), setNames("RUNNING", id))
 
+  ## There's quite a chore here to try and identify the actual running
+  ## job. The worker process will (eventually) have 3 running
+  ## subprocesses:
+  ## - heartbeat process
+  ## - processx supervisor
+  ## - actual job
+  ##
+  ## We can use the ps package to get the tree of processes, and find
+  ## the most recent one and kill that
   w <- obj$worker_task_id()
   expect_equal(unname(w), id)
   info <- obj$worker_info()[[names(w)]]
-  tools::pskill(info$pid)
+  children <- ps::ps_children(ps::ps_handle(info$pid))
+  ps_task <- children[[which.max(vapply(children, ps::ps_pid, numeric(1)))]]
+  ps::ps_send_signal(ps_task, ps::signals()$SIGTERM)
 
-  Sys.sleep(10) # 3 * the testing heartbeat + 1
+  Sys.sleep(2) # This really won't take long to come through
 
   r <- httr::GET(paste0(server$url, "/model/status/", id))
+
   expect_equal(httr::status_code(r), 200)
   dat <- response_from_json(r)
   expect_true(dat$data$done)
