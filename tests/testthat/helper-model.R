@@ -117,3 +117,17 @@ clone_model_output <- function(output) {
   class(out) <- "hintr_output"
   out
 }
+
+
+wait_status <- function(t, obj, timeout = 2, time_poll = 0.05,
+                        status = "PENDING") {
+  t_stop <- Sys.time() + timeout
+  while (Sys.time() < t_stop) {
+    if (all(obj$task_status(t) != status)) {
+      return()
+    }
+    message(".")
+    Sys.sleep(time_poll)
+  }
+  stop(sprintf("Did not change status from %s in time", status))
+}
