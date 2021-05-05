@@ -226,7 +226,7 @@ test_that("model run can be cancelled", {
   response <- get_status(id)
   expect_true(response$done)
   expect_false(response$success)
-  expect_equal(response$status, scalar("CANCELLED")) # TODO: update schema?
+  expect_equal(response$status, scalar("CANCELLED"))
 
   get_result <- model_result(queue)
   error <- expect_error(get_result(id))
