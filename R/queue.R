@@ -67,7 +67,7 @@ Queue <- R6::R6Class(
 
     status = function(id) {
       status <- unname(self$queue$task_status(id))
-      done <- c("ERROR", "ORPHAN", "INTERRUPTED", "COMPLETE")
+      done <- c("ERROR", "DIED", "CANCELLED", "TIMEOUT", "COMPLETE")
       incomplete <- c("MISSING")
       progress <- self$queue$task_progress(id)
       if (status %in% done) {
@@ -96,7 +96,7 @@ Queue <- R6::R6Class(
     },
 
     cancel = function(id) {
-      self$queue$task_cancel(id)
+      self$queue$task_cancel(id, delete = FALSE)
     },
 
     ## Not part of the api exposed functions, used in tests

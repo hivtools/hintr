@@ -604,6 +604,8 @@ test_that("erroring model run returns useful messages", {
   expect_equal(body$status, "success")
   expect_true(!is.null(body$data$id))
 
+  wait_status(body$data$id, queue$queue)
+
   mock_id <- mockery::mock(scalar("fake_key"), cycle = TRUE)
   with_mock("ids::proquint" = mock_id, {
     res <- api$request("GET", sprintf("/model/result/%s", body$data$id))

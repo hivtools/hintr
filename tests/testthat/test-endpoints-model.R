@@ -55,7 +55,7 @@ test_that("endpoint_run_model returns error if queueing fails", {
 
   expect_equal(error$data[[1]]$error, scalar("FAILED_TO_QUEUE"))
   expect_equal(error$data[[1]]$detail, scalar("Failed to queue"))
-  expect_equal(error$status, 400)
+  expect_equal(error$status_code, 400)
 })
 
 test_that("running model with old version throws an error", {
@@ -77,7 +77,7 @@ test_that("running model with old version throws an error", {
   expect_equal(error$data[[1]]$detail, scalar(
     paste0("Trying to run model with",
            " old version of options. Update model run options")))
-  expect_equal(error$status, 400)
+  expect_equal(error$status_code, 400)
 })
 
 test_that("querying for status of missing job returns useful message", {
@@ -108,7 +108,7 @@ test_that("querying for an orphan task returns sensible error", {
 
   queue <- test_queue()
   id <- ids::random_id()
-  queue$queue$con$HSET(queue$queue$keys$task_status, id, "ORPHAN")
+  queue$queue$con$HSET(queue$queue$keys$task_status, id, "DIED")
   get_model_result <- model_result(queue)
   error <- expect_error(get_model_result(id))
 
@@ -218,15 +218,15 @@ test_that("model run can be cancelled", {
   testthat::try_again(5, {
     Sys.sleep(1)
     log <- queue$queue$worker_log_tail(worker, n = Inf)
-    expect_true("INTERRUPT" %in% log$command)
-    expect_equal(queue$queue$task_status(id), setNames("INTERRUPTED", id))
+    expect_true("CANCEL" %in% log$command)
+    expect_equal(queue$queue$task_status(id), setNames("CANCELLED", id))
   })
 
   get_status <- queue_status(queue)
   response <- get_status(id)
   expect_true(response$done)
   expect_false(response$success)
-  expect_equal(response$status, scalar("INTERRUPTED"))
+  expect_equal(response$status, scalar("CANCELLED"))
 
   get_result <- model_result(queue)
   error <- expect_error(get_result(id))
@@ -305,7 +305,7 @@ test_that("failed cancel sends reasonable message", {
   ## though.
   expect_equal(error$data[[1]]$error, scalar("FAILED_TO_CANCEL"))
   expect_match(error$data[[1]]$detail,
-               scalar("Task [[:xdigit:]]+ is not running \\(MISSING\\)"))
+               scalar("Task [[:xdigit:]]+ is not cancelable \\(MISSING\\)"))
   expect_is(error$data[[1]]$key, "character")
   expect_equal(error$status_code, 400)
 })

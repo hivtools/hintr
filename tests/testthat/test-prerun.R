@@ -25,6 +25,7 @@ test_that("import failures", {
 })
 
 test_that("import base data", {
+  test_mock_model_available()
   path_prerun <- tempfile()
   obj <- PrerunModelResults$new(path_prerun)
   expect_equal(obj$list(), character(0))
@@ -62,6 +63,7 @@ test_that("import base data", {
 })
 
 test_that("run with prerun", {
+  test_mock_model_available()
   path_prerun <- tempfile()
   obj <- PrerunModelResults$new(path_prerun)
   expect_equal(obj$list(), character(0))
@@ -136,6 +138,7 @@ test_that("run with prerun", {
 })
 
 test_that("run with prerun", {
+  test_mock_model_available()
   path_prerun <- tempfile()
   obj <- PrerunModelResults$new(path_prerun)
   expect_equal(obj$list(), character(0))
