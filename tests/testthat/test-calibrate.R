@@ -251,3 +251,34 @@ test_that("model calibration returns error if queueing fails", {
   expect_equal(error$data[[1]]$detail, scalar("Failed to queue"))
   expect_equal(error$status, 400)
 })
+
+test_that("can get data for calibration plot", {
+  endpoint <- calibrate_plot(NULL)
+  res <- endpoint("123")
+  expect_setequal(names(res), c("data", "plottingMetadata"))
+  expect_setequal(names(res$data),
+                  c("data_type", "area_id", "sex", "age_group",
+                    "calendar_quarter", "indicator", "mean", "lower", "upper"))
+  expect_true(nrow(res$data) > 0)
+  expect_equal(names(res$plottingMetadata), "barchart")
+  expect_setequal(names(res$plottingMetadata$barchart),
+                  c("indicators", "filters", "defaults"))
+
+  expect_setequal(names(res$plottingMetadata$barchart$indicators),
+                  c("indicator", "value_column", "error_low_column",
+                    "error_high_column", "indicator_column", "indicator_value",
+                    "name", "scale", "accuracy", "format"))
+  expect_true(nrow(res$plottingMetadata$barchart$indicators) > 0)
+
+  filters <- lapply(res$plottingMetadata$barchart$filters, function(filter) {
+    filter$column_id
+  })
+  expect_equal(filters[[1]], scalar("area_id"))
+  expect_equal(filters[[2]], scalar("calendar_quarter"))
+  expect_equal(filters[[3]], scalar("sex"))
+  expect_equal(filters[[4]], scalar("age_group"))
+
+  expect_setequal(names(res$plottingMetadata$barchart$defaults),
+                 c("indicator_id", "x_axis_id", "disaggregate_by_id",
+                   "selected_filter_options"))
+})

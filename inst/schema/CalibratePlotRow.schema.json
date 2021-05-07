@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "data_type": {
+      "type": "string",
+      "enum": [ "spectrum", "calibrated", "unadjusted" ]
+    },
+    "area_id": {
+      "type": "string"
+    },
+    "sex": {
+      "type": "string"
+    },
+    "age_group": {
+      "type": "string"
+    },
+    "calendar_quarter": {
+      "type": "string"
+    },
+    "indicator": {
+      "type": "string"
+    },
+    "mean": {
+      "type": [ "number", "null" ]
+    },
+    "lower": {
+      "type": [ "number", "null" ]
+    },
+    "upper": {
+      "type": [ "number", "null" ]
+    }
+  },
+  "additionalProperties": true,
+  "required": [ "data_type", "area_id", "sex", "age_group", "calendar_quarter",
+    "indicator", "mean", "lower", "upper" ]
+}

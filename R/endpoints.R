@@ -182,6 +182,48 @@ calibrate_result <- function(queue) {
   }
 }
 
+calibrate_plot <- function(queue) {
+  data <- read_csv(system_file("extdata/dummy_calibrate_data.csv"))
+  filters <- get_model_output_filters(data)
+  function(id) {
+    list(
+      data = data,
+      plottingMetadata = list(
+        barchart = list(
+          indicators = data_frame(
+            indicator = "plhiv",
+            value_column = "mean",
+            error_low_column = "lower",
+            error_high_column = "upper",
+            indicator_column = "indicator",
+            indicator_value = "plhiv",
+            name = "PLHIV",
+            scale = 1,
+            accuracy = NA,
+            format = "0.0%"
+          ),
+          filters = filters,
+          defaults = list(
+            indicator_id = scalar("plhiv"),
+            ## TODO: For this plot we don't want x axis to be changeable
+            ## it should always be area_id. But we use filters to return
+            ## mapping of ID to name - how do we manage this not being shown?
+            x_axis_id = scalar("area_id"),
+            disaggregate_by_id = scalar("data_type"),
+            selected_filter_options = list(
+              quarter = get_selected_filter_options(filters, "quarter")[2],
+              sex = get_selected_filter_options(filters, "sex",
+                                                c("female", "male")),
+              age = get_selected_filter_options(
+                filters, "age", naomi::get_five_year_age_groups())[1]
+            )
+          )
+        )
+      )
+    )
+  }
+}
+
 verify_result_available <- function(queue, id) {
   task_status <- queue$queue$task_status(id)
   if (task_status == "COMPLETE") {
