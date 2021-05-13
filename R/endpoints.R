@@ -202,19 +202,6 @@ verify_result_available <- function(queue, id) {
   }
 }
 
-model_calibrate <- function(queue) {
-  function(id, input) {
-    verify_result_available(queue, id)
-    calibration_options <- jsonlite::fromJSON(input)
-    if (!is_current_version(calibration_options$version)) {
-      hintr_error(t_("MODEL_SUBMIT_OLD"), "VERSION_OUT_OF_DATE")
-    }
-    ## TODO: run calibration asynchronously, takes too long to do sync
-    ## see mrc-2040
-    process_result(queue$result(id))
-  }
-}
-
 model_cancel <- function(queue) {
   function(id) {
     tryCatch({
