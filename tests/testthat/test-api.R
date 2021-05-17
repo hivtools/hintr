@@ -1258,32 +1258,3 @@ test_that("api can call endpoint_model_calibrate", {
   expect_equal(names(result_body$data$plottingMetadata),
                c("barchart", "choropleth"))
 })
-
-test_that("endpoint_model_calibrate can be run synchronously", {
-  ## TODO: Remove this once async calibration has been added in front end
-  test_mock_model_available()
-
-  ## Mock model run
-  queue <- test_queue(workers = 0)
-  unlockBinding("result", queue)
-  ## Clone model output as it modifies in place
-  out <- clone_model_output(mock_model)
-  queue$result <- mockery::mock(out, cycle = TRUE)
-  unlockBinding("queue", queue)
-  unlockBinding("task_status", queue$queue)
-  queue$queue$task_status <- mockery::mock("COMPLETE", cycle = TRUE)
-
-  endpoint <- endpoint_model_calibrate(queue)
-  path <- setup_calibrate_payload()
-  response <- endpoint$run("id", readLines(path))
-
-  expect_equal(response$status_code, 200)
-  expect_equal(names(response$data),
-               c("data", "plottingMetadata", "uploadMetadata"))
-  expect_equal(colnames(response$data$data),
-               c("area_id", "sex", "age_group", "calendar_quarter",
-                 "indicator", "mode", "mean", "lower", "upper"))
-  expect_true(nrow(response$data$data) > 84042)
-  expect_equal(names(response$data$plottingMetadata),
-               c("barchart", "choropleth"))
-})

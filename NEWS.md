@@ -1,3 +1,7 @@
+# hintr 0.1.34
+
+* Remove deprecated `/model/calibrate/<id>` endpoint
+
 # hintr 0.1.33
 
 * Return upload metadata from calibrate result response
