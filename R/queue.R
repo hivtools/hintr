@@ -65,6 +65,14 @@ Queue <- R6::R6Class(
         queue = QUEUE_CALIBRATE)
     },
 
+    submit_download = function(model_output, type) {
+      results_dir <- self$results_dir
+      language <- traduire::translator()$language()
+      self$submit(quote(
+        hintr:::download(model_output, type, results_dir, language)),
+        queue = QUEUE_CALIBRATE)
+    },
+
     status = function(id) {
       status <- unname(self$queue$task_status(id))
       done <- c("ERROR", "DIED", "CANCELLED", "TIMEOUT", "COMPLETE")

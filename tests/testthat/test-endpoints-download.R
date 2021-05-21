@@ -1,4 +1,5 @@
 context("endpoints-download")
+testthat::skip("TODO: remove tests")
 
 test_that("indicator download returns bytes", {
   test_redis_available()

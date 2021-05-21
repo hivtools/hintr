@@ -223,47 +223,30 @@ plotting_metadata <- function(iso3) {
   )
 }
 
-download_spectrum <- function(queue) {
-  download(queue, "spectrum", "naomi_spectrum_digest.zip")
+download_submit <- function(queue) {
+  function(id, type) {
+    verify_result_available(queue, id)
+    tryCatch(
+      list(id = scalar(queue$submit_download(queue$result(id), type))),
+      error = function(e) {
+        hintr_error(e$message, "FAILED_TO_QUEUE")
+      }
+    )
+  }
 }
 
-download_coarse_output <- function(queue) {
-  download(queue, "coarse_output", "naomi_coarse_age_groups.zip")
-}
-
-download_summary <- function(queue) {
-  download(queue, "summary", "summary_report.html")
-}
-
-download <- function(queue, type, filename) {
+download_result <- function(queue) {
   function(id) {
     tryCatch({
       res <- queue$result(id)
-      if (is_error(res)) {
-        hintr_error(res$message, "MODEL_RUN_FAILED")
+      if (is_error(res) || is.null(res$path)) {
+        hintr_error(res$message, "OUTPUT_GENERATION_FAILED")
       }
-      ## We renamed download from "summary" to "coarse_output" to be more
-      ## representative of the actual content of the download and in
-      ## preparation for adding a summary report.
-      ## To be backwards compatible with old model results from the app
-      ## we need to fallback to old name if the new name isn't available in
-      ## the model result.
-      if ("coarse_output_path" %in% names(res)) {
-        coarse_output <- res$coarse_output_path
-      } else {
-        coarse_output <- res$summary_path
-      }
-      path <- switch(type,
-                     "spectrum" = res$spectrum_path,
-                     "coarse_output" = coarse_output,
-                     "summary" = res$summary_report_path)
-      if (is.null(path)) {
-        hintr_error(t_("MODEL_RESULT_OLD",
-                       list(type = gsub("_", " ",
-                                        tools::file_path_sans_ext(filename)))),
-                    "MODEL_RESULT_OUT_OF_DATE")
-      }
-      bytes <- readBin(path, "raw", n = file.size(path))
+      filename <- switch(res$type,
+                         spectrum = "naomi_spectrum_digest.zip",
+                         coarse_output = "naomi_coarse_age_groups.zip",
+                         summary = "summary_report.html")
+      bytes <- readBin(path, "raw", n = file.size(res$path))
       bytes <- porcelain::porcelain_add_headers(bytes, list(
         "Content-Disposition" = build_content_disp_header(res$metadata$areas,
                                                           filename),

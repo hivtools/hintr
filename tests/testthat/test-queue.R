@@ -46,9 +46,7 @@ test_that("queue works as intended", {
 
   ## Result can be retrieved after task has completed
   res <- queue$result(job_id)
-  expect_equal(names(res), c("output_path", "spectrum_path",
-                             "coarse_output_path", "summary_report_path",
-                             "calibration_path", "metadata"))
+  expect_equal(names(res), c("plot_data_path", "model_output_path", "version"))
   expect_length(queue$queue$task_list(), 1)
 
   ## task can be cleaned up
@@ -175,3 +173,4 @@ test_that("calibrate gets run before model running", {
   expect_equal(unname(queue$queue$task_status(c(run_id, calibrate_id))),
                c("COMPLETE", "ERROR"))
 })
+

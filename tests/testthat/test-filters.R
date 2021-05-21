@@ -238,7 +238,7 @@ test_that("error thrown for unknown type", {
 
 test_that("can get area filter option", {
   test_mock_model_available()
-  output <- readRDS(mock_model$output_path)
+  output <- readRDS(mock_calibrate$plot_data_path)
   expect_equal(get_area_level_filter_option(output), list(
     list(
       id = scalar("MWI"),
@@ -265,7 +265,7 @@ test_that("can get area filter option", {
 
 test_that("can get defaults for bar chart", {
   test_mock_model_available()
-  output <- readRDS(mock_model$output_path)
+  output <- readRDS(mock_calibrate$plot_data_path)
   filters <- get_model_output_filters(output)
   defaults <- get_barchart_defaults(output, filters)
 
@@ -310,7 +310,7 @@ test_that("can get defaults for bar chart", {
 
 test_that("can get selected filter options", {
   test_mock_model_available()
-  output <- readRDS(mock_model$output_path)
+  output <- readRDS(mock_calibrate$plot_data_path)
   filters <- get_model_output_filters(output)
   selected_options <- get_selected_filter_options(filters, "age", "Y000_004")
   expect_equal(selected_options, list(

@@ -1,9 +1,10 @@
 #!/usr/bin/env Rscript
 
-paths <- list(output_path = "inst/output/malawi_output.rds",
+paths <- list(model_output_path = "inst/output/malawi_model_output.rds",
+              calibrate_plot_path = "inst/output/malawi_calibrate_plot_data.rds",
+              calibrate_output_path = "inst/output/malawi_calibrate_output.rds",
               spectrum_path = "inst/output/malawi_spectrum_download.zip",
               coarse_output_path = "inst/output/malawi_coarse_output_download.zip",
-              calibration_path = "inst/output/malawi_calibration.rds",
               summary_report_path = "inst/output/malawi_summary_report.html")
 
 dir.create("inst/output", showWarnings = FALSE)
@@ -15,12 +16,14 @@ invisible(lapply(paths, function(path) {
 
 out <- system2("./scripts/run_model",
   args = c(
-    "--payload", "./scripts/payload.json",
-    "--output-path", paths$output_path,
+    "--model-payload", "./scripts/model_payload.json",
+    "--calibrate-payload", "./scripts/calibrate_payload.json",
+    "--model-output-path", paths$model_output_path,
+    "--calibrate-output-path", paths$calibrate_output_path,
+    "--calibrate-plot-path", paths$calibrate_plot_path,
     "--spectrum-path", paths$spectrum_path,
     "--coarse-output-path", paths$coarse_output_path,
-    "--summary-report-path", paths$summary_report_path,
-    "--calibration-path", paths$calibration_path))
+    "--summary-report-path", paths$summary_report_path))
 
 if (out != 0) {
   quit(save = "no", status = 1)

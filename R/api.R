@@ -16,12 +16,10 @@ api_build <- function(queue) {
   api$handle(endpoint_model_calibrate_status(queue))
   api$handle(endpoint_model_calibrate_result(queue))
   api$handle(endpoint_plotting_metadata())
-  api$handle(endpoint_download_spectrum(queue))
-  api$handle(endpoint_download_spectrum_head(queue))
-  api$handle(endpoint_download_coarse_output(queue))
-  api$handle(endpoint_download_coarse_output_head(queue))
-  api$handle(endpoint_download_summary(queue))
-  api$handle(endpoint_download_summary_head(queue))
+  api$handle(endpoint_download_submit(queue))
+  api$handle(endpoint_download_status(queue))
+  api$handle(endpoint_download_result(queue))
+  api$handle(endpoint_download_result_head(queue))
   api$handle(endpoint_hintr_version())
   api$handle(endpoint_hintr_worker_status(queue))
   api$handle(endpoint_hintr_stop(queue))
@@ -308,50 +306,35 @@ returning_binary_head <- function(status_code = 200L) {
                                  validate = function(body) TRUE)
 }
 
-endpoint_download_spectrum <- function(queue) {
-  porcelain::porcelain_endpoint$new(
-    "GET",
-    "/download/spectrum/<id>",
-    download_spectrum(queue),
-    returning = porcelain::porcelain_returning_binary())
+endpoint_download_submit <- function(queue) {
+  response <- porcelain::porcelain_returning_json(
+    "DownloadSubmitResponse.schema", schema_root())
+  porcelain::porcelain_endpoint$new("GET",
+                                    "/download/submit/<type>/<id>",
+                                    download_submit(queue),
+                                    returning = response)
 }
 
-endpoint_download_spectrum_head <- function(queue) {
+endpoint_download_status <- function(queue) {
+  response <- porcelain::porcelain_returning_json(
+    "DownloadStatusResponse.schema", schema_root())
+  porcelain::porcelain_endpoint$new("GET",
+                                    "/download/status/<id>",
+                                    queue_status(queue),
+                                    returning = response)
+}
+
+endpoint_download_result <- function(queue) {
+  porcelain::porcelain_endpoint$new("GET",
+                                    "/download/result/<id>",
+                                    download_result(queue),
+                                    returning = porcelain::porcelain_returning_binary())
+}
+
+endpoint_download_result_head <- function(queue) {
   porcelain::porcelain_endpoint$new("HEAD",
-                                    "/download/spectrum/<id>",
-                                    download_spectrum(queue),
-                                    returning = returning_binary_head(),
-                                    validate = FALSE)
-}
-
-endpoint_download_coarse_output <- function(queue) {
-  porcelain::porcelain_endpoint$new(
-    "GET",
-    "/download/coarse-output/<id>",
-    download_coarse_output(queue),
-    returning = porcelain::porcelain_returning_binary())
-}
-
-endpoint_download_coarse_output_head <- function(queue) {
-  porcelain::porcelain_endpoint$new("HEAD",
-                                    "/download/coarse-output/<id>",
-                                    download_coarse_output(queue),
-                                    returning = returning_binary_head(),
-                                    validate = FALSE)
-}
-
-endpoint_download_summary <- function(queue) {
-  porcelain::porcelain_endpoint$new(
-    "GET",
-    "/download/summary/<id>",
-    download_summary(queue),
-    returning = porcelain::porcelain_returning_binary())
-}
-
-endpoint_download_summary_head <- function(queue) {
-  porcelain::porcelain_endpoint$new("HEAD",
-                                    "/download/summary/<id>",
-                                    download_summary(queue),
+                                    "/download/result/<id>",
+                                    download_result(queue),
                                     returning = returning_binary_head(),
                                     validate = FALSE)
 }

@@ -302,16 +302,13 @@ test_that("real model can be run & calibrated by API", {
   response <- response_from_json(r)
   expect_equal(response$status, "success")
   expect_equal(response$errors, NULL)
-  expect_equal(names(response$data),
-               c("data", "plottingMetadata", "uploadMetadata"))
+  expect_equal(names(response$data), c("data", "plottingMetadata"))
   expect_equal(names(response$data$data[[1]]),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
   expect_true(length(response$data$data) > 84042)
   expect_equal(names(response$data$plottingMetadata),
                c("barchart", "choropleth"))
-  expect_equal(names(response$data$uploadMetadata),
-               c("outputZip", "outputSummary"))
 })
 
 test_that("plotting metadata is exposed", {

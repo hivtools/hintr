@@ -3,25 +3,55 @@ Sys.setenv("USE_MOCK_MODEL" = "true")
 
 ## Create mock model if files exist
 mock_model <- list(
-  output_path = system.file("output", "malawi_output.rds", package = "hintr"),
-  spectrum_path =
-    system.file("output", "malawi_spectrum_download.zip", package = "hintr"),
-  coarse_output_path =
-    system.file("output", "malawi_coarse_output_download.zip",
-                package = "hintr"),
-  summary_report_path =
-    system.file("output", "malawi_summary_report.html", package = "hintr"),
-  calibration_path =
-    system.file("output", "malawi_calibration.rds", package = "hintr"),
-  metadata = list(
-    areas = "MWI",
-    output_description = "output desc",
-    summary_report_description = "summary desc"
-  ))
+  plot_data_path = NULL,
+  model_output_path =
+    system.file("output", "malawi_model_output.rds", package = "hintr"),
+  version = packageVersion("naomi")
+)
 class(mock_model) <- "hintr_output"
 
+mock_calibrate <- list(
+  plot_data_path =
+    system.file("output", "malawi_calibrate_plot_data.rds", package = "hintr"),
+  model_output_path =
+    system.file("output", "malawi_calibrate_output.rds", package = "hintr"),
+  version = packageVersion("naomi")
+)
+class(mock_calibrate) <- "hintr_output"
+
+mock_spectrum <- list(
+  path = system.file("output", "malawi_spectrum_download.zip",
+                     package = "hintr"),
+  metadata = list(
+    areas = "MWI",
+    description = "spectrum desc",
+    type = "spectrum"
+  )
+)
+
+mock_coarse_output <- list(
+  path = system.file("output", "malawi_coarse_output_download.zip",
+                     package = "hintr"),
+  metadata = list(
+    areas = "MWI",
+    type = "coarse_output"
+  )
+)
+
+mock_summary <- list(
+  path = system.file("output", "malawi_summary_report.html", package = "hintr"),
+  metadata = list(
+    areas = "MWI",
+    description = "summary desc",
+    type = "summary"
+  )
+)
+
 test_mock_model_available <- function() {
-  invisible(lapply(mock_model, function(x) {
+  mock_data <- c(mock_model$model_output_path, mock_calibrate$plot_data_path,
+                 mock_calibrate$model_output_path, mock_spectrum$path,
+                 mock_coarse_output$path, mock_summary$path)
+  invisible(lapply(mock_data, function(x) {
     if(!is.list(x) && !file.exists(x)) {
       testthat::skip(sprintf(
         "Test data %s is missing - run ./scripts/build_test_data to create test data.", x))
@@ -88,8 +118,22 @@ setup_calibrate_payload <- function(version = NULL) {
   path
 }
 
-
 clone_model_output <- function(output) {
+  model_output_path <- tempfile(fileext = ".rds")
+  file.copy(output$model_output_path, model_output_path)
+  plot_data_path <- NULL
+  if (!is.null(output$plot_data_path)) {
+    plot_data_path <- tempfile(fileext = ".rds")
+    file.copy(output$plot_data_path, plot_data_path)
+  }
+  out <- list(model_output_path = model_output_path,
+              plot_data_path = plot_data_path,
+              version = output$version)
+  class(out) <- "hintr_output"
+  out
+}
+
+clone_old_model_output <- function(output) {
   output_path <- tempfile()
   file.copy(output$output_path, output_path)
   spectrum_path <- tempfile(fileext = ".zip")

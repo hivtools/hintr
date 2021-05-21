@@ -14,21 +14,18 @@ test_that("calibration can be run", {
 
   ## Expected files are returned
   expect_equal(names(calibrated_result),
-               c("output_path", "spectrum_path", "coarse_output_path",
-                 "summary_report_path", "calibration_path", "metadata"))
+               c("plot_data_path", "model_output_path", "version"))
 })
 
 test_that("calibrate can set language", {
   model_output <- list(calibration_path = "test")
   expect_error(run_calibrate(model_output, list(opt = "options"), tempdir()),
-               paste0("Can't calibrate this model output please re-run ",
-                      "model and try calibration again"))
+               "Model output out of date please re-run model and try again")
 
   ## With french translation
   expect_error(run_calibrate(model_output, list(opt = "options"), tempdir(),
                              language = "fr"),
-               paste0("Impossible de calibrer la sortie de ce modèle, veuillez",
-               " réexécuter le modèle et réessayer le calibrage."))
+               "Model output out of date please re-run model and try again")
 })
 
 test_that("can calibrate a model result", {
@@ -61,11 +58,11 @@ test_that("can calibrate a model result", {
   expect_true(res_status$success)
   expect_equal(res_status$queue, scalar(0))
   expect_match(res_status$progress[[1]],
-               "Generating report - [\\d.m\\s]+s elapsed", perl = TRUE)
+               "Saving outputs - [\\d.m\\s]+s elapsed", perl = TRUE)
 
   get_result <- calibrate_result(queue)
   result <- get_result(res$id)
-  expect_equal(names(result), c("data", "plottingMetadata", "uploadMetadata"))
+  expect_equal(names(result), c("data", "plottingMetadata"))
   expect_equal(colnames(result$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
@@ -194,7 +191,7 @@ test_that("trying to calibrate old model result returns error", {
   queue <- test_queue(workers = 1)
   unlockBinding("result", queue)
   ## Clone model output as it modifies in place
-  out <- clone_model_output(mock_model_v0.1.2)
+  out <- clone_old_model_output(mock_model_v0.1.2)
   queue$result <- mockery::mock(out, cycle = TRUE)
   mock_verify_result_available <- mockery::mock(TRUE)
 
@@ -221,8 +218,7 @@ test_that("trying to calibrate old model result returns error", {
   error <- expect_error(get_result(res$id))
   expect_equal(error$data[[1]]$error, scalar("MODEL_RUN_FAILED"))
   expect_equal(error$data[[1]]$detail, scalar(
-    paste0("Can't calibrate this model output please",
-           " re-run model and try calibration again")))
+    "Model output out of date please re-run model and try again"))
   expect_equal(error$status, 400)
 })
 
