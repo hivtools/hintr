@@ -1,3 +1,7 @@
+# hintr 1.0.0
+
+* Update downloads to be generated on demand instead of as part of model calibration
+
 # hintr 0.1.34
 
 * Remove deprecated `/model/calibrate/<id>` endpoint
