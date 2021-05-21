@@ -866,28 +866,19 @@ test_that("404 errors have sensible schema", {
 
 test_that("model calibrate can be queued and result returned", {
   test_mock_model_available()
-
-  ## Mock model run
-  queue <- test_queue(workers = 1)
-  unlockBinding("result", queue)
-  ## Clone model output as it modifies in place
-  out <- clone_model_output(mock_model)
-  queue$result <- mockery::mock(out, cycle = TRUE)
-  unlockBinding("queue", queue)
-  unlockBinding("task_status", queue$queue)
-  queue$queue$task_status <- mockery::mock("COMPLETE", cycle = TRUE)
+  q <- test_queue_result()
 
   ## Submit calibrate request
-  submit <- endpoint_model_calibrate_submit(queue)
+  submit <- endpoint_model_calibrate_submit(q$queue)
   path <- setup_calibrate_payload()
-  submit_response <- submit$run("id", readLines(path))
+  submit_response <- submit$run(q$model_run_id, readLines(path))
 
   expect_equal(submit_response$status_code, 200)
   expect_true(!is.null(submit_response$data$id))
 
   ## Status
-  out <- queue$queue$task_wait(submit_response$data$id)
-  status <- endpoint_model_calibrate_status(queue)
+  out <- q$queue$queue$task_wait(submit_response$data$id)
+  status <- endpoint_model_calibrate_status(q$queue)
   status_response <- status$run(submit_response$data$id)
 
   expect_equal(status_response$status_code, 200)
@@ -900,7 +891,7 @@ test_that("model calibrate can be queued and result returned", {
                "Saving outputs - [\\d.m\\s]+s elapsed", perl = TRUE)
 
   ## Get result
-  result <- endpoint_model_calibrate_result(queue)
+  result <- endpoint_model_calibrate_result(q$queue)
   response <- result$run(status_response$data$id)
 
   expect_equal(response$status_code, 200)
@@ -915,29 +906,21 @@ test_that("model calibrate can be queued and result returned", {
 
 test_that("api can call endpoint_model_calibrate", {
   test_mock_model_available()
-
-  ## Mock model run
-  queue <- test_queue(workers = 1)
-  unlockBinding("result", queue)
-  ## Clone model output as it modifies in place
-  out <- clone_model_output(mock_model)
-  queue$result <- mockery::mock(out,  cycle = TRUE)
-  mock_verify_result_available <- mockery::mock(TRUE)
+  q <- test_queue_result()
 
   ## Submit calibrate
-  api <- api_build(queue)
+  api <- api_build(q$queue)
   calibrate_path <- setup_calibrate_payload()
-  with_mock("hintr:::verify_result_available" = mock_verify_result_available, {
-    submit_res <- api$request("POST", "/calibrate/submit/id",
-                              body = readLines(calibrate_path))
-  })
+  submit_res <- api$request("POST",
+                            paste0("/calibrate/submit/", q$model_run_id),
+                            body = readLines(calibrate_path))
 
   expect_equal(submit_res$status, 200)
   submit_body <- jsonlite::fromJSON(submit_res$body)
   expect_true(!is.null(submit_body$data$id))
 
   ## Status
-  out <- queue$queue$task_wait(submit_body$data$id)
+  out <- q$queue$queue$task_wait(submit_body$data$id)
   status_res <- api$request("GET",
                             paste0("/calibrate/status/", submit_body$data$id))
 

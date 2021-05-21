@@ -30,27 +30,18 @@ test_that("calibrate can set language", {
 
 test_that("can calibrate a model result", {
   test_mock_model_available()
-
-  ## Mock model run
-  queue <- test_queue(workers = 1)
-  unlockBinding("result", queue)
-  ## Clone model output as it modifies in place
-  out <- clone_model_output(mock_model)
-  queue$result <- mockery::mock(out,  cycle = TRUE)
-  mock_verify_result_available <- mockery::mock(TRUE)
+  q <- test_queue_result()
 
   ## Calibrate the result
   path <- setup_calibrate_payload()
-  with_mock("hintr:::verify_result_available" = mock_verify_result_available, {
-    calibrate <- submit_calibrate(queue)
-    res <- calibrate("id", readLines(path))
-  })
+  calibrate <- submit_calibrate(q$queue)
+  res <- calibrate(q$model_run_id, readLines(path))
   expect_equal(names(res), "id")
   expect_true(!is.null(res$id))
 
   ## Get status
-  out <- queue$queue$task_wait(res$id)
-  status <- queue_status(queue)
+  out <- q$queue$queue$task_wait(res$id)
+  status <- queue_status(q$queue)
   res_status <- status(res$id)
   expect_equal(res_status$id, res$id)
   expect_true(res_status$done)
@@ -60,7 +51,7 @@ test_that("can calibrate a model result", {
   expect_match(res_status$progress[[1]],
                "Saving outputs - [\\d.m\\s]+s elapsed", perl = TRUE)
 
-  get_result <- calibrate_result(queue)
+  get_result <- calibrate_result(q$queue)
   result <- get_result(res$id)
   expect_equal(names(result), c("data", "plottingMetadata"))
   expect_equal(colnames(result$data),

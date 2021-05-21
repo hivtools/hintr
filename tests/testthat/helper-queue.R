@@ -48,3 +48,22 @@ create_blocking_worker <- function(queue_id, worker_name = NULL) {
                   heartbeat_period = 3,
                   verbose = TRUE)
 }
+
+test_queue_result <- function() {
+  queue <- Queue$new(workers = 1, timeout = 300)
+  withr::defer_parent({
+    message("cleaning up workers")
+    queue$cleanup()
+  })
+  model <- clone_model_output(mock_model)
+  model_run_id <- queue$submit(quote(identity(model)))
+  calibrate <- clone_model_output(mock_calibrate)
+  calibrate_id <- queue$submit(quote(identity(calibrate)))
+  queue$queue$task_wait(model_run_id)
+  queue$queue$task_wait(calibrate_id)
+  list(
+    queue = queue,
+    model_run_id = model_run_id,
+    calibrate_id = calibrate_id
+  )
+}
