@@ -1,66 +1,246 @@
 context("endpoints-download")
-testthat::skip("TODO: remove tests")
 
-test_that("indicator download returns bytes", {
-  test_redis_available()
-  test_mock_model_available()
-
-  ## Setup payload
-  path <- setup_submit_payload()
-
-  ## Run the model
-  queue <- test_queue(workers = 1)
-  model_submit <- submit_model(queue)
-  response <- model_submit(readLines(path))
-  expect_true("id" %in% names(response))
-
-  out <- queue$queue$task_wait(response$id)
-  coarse_output <- download_coarse_output(queue)
-  download <- coarse_output(response$id)
-  expect_type(download, "raw")
-  expect_length(download, file.size(
-    system_file("output", "malawi_coarse_output_download.zip")))
-})
 
 test_that("spectrum download returns bytes", {
-  test_redis_available()
   test_mock_model_available()
+  q <- test_queue_result()
 
-  ## Setup payload
-  path <- setup_submit_payload()
+  ## Submit download request
+  submit <- endpoint_download_submit(q$queue)
+  submit_response <- submit$run(q$calibrate_id, "spectrum")
 
-  ## Run the model
-  queue <- test_queue(workers = 1)
-  model_submit <- submit_model(queue)
-  response <- model_submit(readLines(path))
-  expect_true("id" %in% names(response))
+  expect_equal(submit_response$status_code, 200)
+  expect_true(!is.null(submit_response$data$id))
 
-  out <- queue$queue$task_wait(response$id)
-  spectrum <- download_spectrum(queue)
-  download <- spectrum(response$id)
-  expect_type(download, "raw")
-  expect_length(download, file.size(
+  ## Status
+  out <- q$queue$queue$task_wait(submit_response$data$id)
+  status <- endpoint_download_status(q$queue)
+  status_response <- status$run(submit_response$data$id)
+
+  expect_equal(status_response$status_code, 200)
+  expect_equal(status_response$data$id, submit_response$data$id)
+  expect_true(status_response$data$done)
+  expect_equal(status_response$data$status, scalar("COMPLETE"))
+  expect_true(status_response$data$success)
+  expect_equal(status_response$data$queue, scalar(0))
+  expect_equal(status_response$data$progress, list())
+
+  ## Get result
+  result <- endpoint_download_result(q$queue)
+  response <- result$run(status_response$data$id)
+  expect_equal(response$status_code, 200)
+  expect_match(response$headers$`Content-Disposition`,
+               'attachment; filename="MWI_\\d+-\\d+_naomi_spectrum_digest.zip"')
+  size <- length(response$data)
+  expect_equal(response$headers$`Content-Length`, size)
+  expect_equal(size, file.size(
     system_file("output", "malawi_spectrum_download.zip")))
 })
 
-test_that("summary download returns bytes", {
+test_that("api can call spectrum download", {
   test_redis_available()
   test_mock_model_available()
+  q <- test_queue_result()
+  api <- api_build(q$queue)
 
-  ## Setup payload
-  path <- setup_submit_payload()
+  ## Submit download request
+  submit <- api$request("GET",
+                        paste0("/download/submit/spectrum/", q$calibrate_id))
+  submit_body <- jsonlite::fromJSON(submit$body)
+  expect_equal(submit$status, 200)
+  expect_true(!is.null(submit_body$data$id))
 
-  ## Run the model
-  queue <- test_queue(workers = 1)
-  model_submit <- submit_model(queue)
-  response <- model_submit(readLines(path))
-  expect_true("id" %in% names(response))
+  ## Status
+  out <- q$queue$queue$task_wait(submit_body$data$id)
+  status <- api$request("GET",
+                        paste0("/download/status/", submit_body$data$id))
 
-  out <- queue$queue$task_wait(response$id)
-  summary <- download_summary(queue)
-  download <- summary(response$id)
-  expect_type(download, "raw")
-  expect_length(download, file.size(
+  expect_equal(status$status, 200)
+  status_body <- jsonlite::fromJSON(status$body)
+  expect_equal(status_body$data$id, submit_body$data$id)
+  expect_true(status_body$data$done)
+  expect_equal(status_body$data$status, "COMPLETE")
+  expect_true(status_body$data$success)
+  expect_equal(status_body$data$queue, 0)
+  expect_equal(status_body$data$progress, list())
+
+  ## Get result
+  res <- api$request("GET", paste0("/download/result/", submit_body$data$id))
+
+  expect_equal(res$status, 200)
+  expect_equal(res$headers$`Content-Type`, "application/octet-stream")
+  expect_match(res$headers$`Content-Disposition`,
+               'attachment; filename="MWI_\\d+-\\d+_naomi_spectrum_digest.zip"')
+  ## Size of bytes is close to expected
+  size <- length(res$body)
+  expect_equal(res$headers$`Content-Length`, size)
+  expect_equal(size, file.size(
+    system_file("output", "malawi_spectrum_download.zip")))
+})
+
+test_that("coarse output download returns bytes", {
+  test_mock_model_available()
+  q <- test_queue_result()
+
+  ## Submit download request
+  submit <- endpoint_download_submit(q$queue)
+  submit_response <- submit$run(q$calibrate_id, "coarse_output")
+
+  expect_equal(submit_response$status_code, 200)
+  expect_true(!is.null(submit_response$data$id))
+
+  ## Status
+  out <- q$queue$queue$task_wait(submit_response$data$id)
+  status <- endpoint_download_status(q$queue)
+  status_response <- status$run(submit_response$data$id)
+
+  expect_equal(status_response$status_code, 200)
+  expect_equal(status_response$data$id, submit_response$data$id)
+  expect_true(status_response$data$done)
+  expect_equal(status_response$data$status, scalar("COMPLETE"))
+  expect_true(status_response$data$success)
+  expect_equal(status_response$data$queue, scalar(0))
+  expect_equal(status_response$data$progress, list())
+
+  ## Get result
+  result <- endpoint_download_result(q$queue)
+  response <- result$run(status_response$data$id)
+  expect_equal(response$status_code, 200)
+  expect_match(
+    response$headers$`Content-Disposition`,
+    'attachment; filename="MWI_\\d+-\\d+_naomi_coarse_age_groups.zip"')
+  size <- length(response$data)
+  expect_equal(response$headers$`Content-Length`, size)
+  expect_equal(size, file.size(
+    system_file("output", "malawi_coarse_output_download.zip")))
+})
+
+test_that("api can call coarse_output download", {
+  test_redis_available()
+  test_mock_model_available()
+  q <- test_queue_result()
+  api <- api_build(q$queue)
+
+  ## Submit download request
+  submit <- api$request("GET", paste0("/download/submit/coarse-output/",
+                                      q$calibrate_id))
+  submit_body <- jsonlite::fromJSON(submit$body)
+  expect_equal(submit$status, 200)
+  expect_true(!is.null(submit_body$data$id))
+
+  ## Status
+  out <- q$queue$queue$task_wait(submit_body$data$id)
+  status <- api$request("GET",
+                        paste0("/download/status/", submit_body$data$id))
+
+  expect_equal(status$status, 200)
+  status_body <- jsonlite::fromJSON(status$body)
+  expect_equal(status_body$data$id, submit_body$data$id)
+  expect_true(status_body$data$done)
+  expect_equal(status_body$data$status, "COMPLETE")
+  expect_true(status_body$data$success)
+  expect_equal(status_body$data$queue, 0)
+  expect_equal(status_body$data$progress, list())
+
+  ## Get result
+  res <- api$request("GET", paste0("/download/result/", submit_body$data$id))
+
+  expect_equal(res$status, 200)
+  expect_equal(res$headers$`Content-Type`, "application/octet-stream")
+  expect_match(
+    res$headers$`Content-Disposition`,
+    'attachment; filename="MWI_\\d+-\\d+_naomi_coarse_age_groups.zip"')
+  ## Size of bytes is close to expected
+  size <- length(res$body)
+  expect_equal(res$headers$`Content-Length`, size)
+  expect_equal(size, file.size(
+    system_file("output", "malawi_coarse_output_download.zip")))
+})
+
+test_that("summary report download returns bytes", {
+  test_mock_model_available()
+  q <- test_queue_result()
+
+  ## Submit download request
+  submit <- endpoint_download_submit(q$queue)
+  submit_response <- submit$run(q$calibrate_id, "summary")
+
+  expect_equal(submit_response$status_code, 200)
+  expect_true(!is.null(submit_response$data$id))
+
+  ## Status
+  out <- q$queue$queue$task_wait(submit_response$data$id)
+  status <- endpoint_download_status(q$queue)
+  status_response <- status$run(submit_response$data$id)
+
+  expect_equal(status_response$status_code, 200)
+  expect_equal(status_response$data$id, submit_response$data$id)
+  expect_true(status_response$data$done)
+  expect_equal(status_response$data$status, scalar("COMPLETE"))
+  expect_true(status_response$data$success)
+  expect_equal(status_response$data$queue, scalar(0))
+  expect_equal(status_response$data$progress, list())
+
+  ## Get result
+  result <- endpoint_download_result(q$queue)
+  response <- result$run(status_response$data$id)
+  expect_equal(response$status_code, 200)
+  expect_match(
+    response$headers$`Content-Disposition`,
+    'attachment; filename="MWI_\\d+-\\d+_summary_report.html"')
+  size <- length(response$data)
+  expect_equal(response$headers$`Content-Length`, size)
+  ## Pandoc adds some extra script lines depending on context the report
+  ## was generated. Add some leeway to the tests
+  expect_true(size - 1000 < file.size(
+    system_file("output", "malawi_summary_report.html")))
+  expect_true(size + 1000 > file.size(
+    system_file("output", "malawi_summary_report.html")))
+})
+
+test_that("api can call summary report download", {
+  test_redis_available()
+  test_mock_model_available()
+  q <- test_queue_result()
+  api <- api_build(q$queue)
+
+  ## Submit download request
+  submit <- api$request("GET", paste0("/download/submit/summary/",
+                                      q$calibrate_id))
+  submit_body <- jsonlite::fromJSON(submit$body)
+  expect_equal(submit$status, 200)
+  expect_true(!is.null(submit_body$data$id))
+
+  ## Status
+  out <- q$queue$queue$task_wait(submit_body$data$id)
+  status <- api$request("GET",
+                        paste0("/download/status/", submit_body$data$id))
+
+  expect_equal(status$status, 200)
+  status_body <- jsonlite::fromJSON(status$body)
+  expect_equal(status_body$data$id, submit_body$data$id)
+  expect_true(status_body$data$done)
+  expect_equal(status_body$data$status, "COMPLETE")
+  expect_true(status_body$data$success)
+  expect_equal(status_body$data$queue, 0)
+  expect_equal(status_body$data$progress, list())
+
+  ## Get result
+  res <- api$request("GET", paste0("/download/result/", submit_body$data$id))
+
+  expect_equal(res$status, 200)
+  expect_equal(res$headers$`Content-Type`, "application/octet-stream")
+  expect_match(
+    res$headers$`Content-Disposition`,
+    'attachment; filename="MWI_\\d+-\\d+_summary_report.html"')
+  ## Size of bytes is close to expected
+  size <- length(res$body)
+  expect_equal(res$headers$`Content-Length`, size)
+  ## Pandoc adds some extra script lines depending on context the report
+  ## was generated. Add some leeway to the tests
+  expect_true(size - 1000 < file.size(
+    system_file("output", "malawi_summary_report.html")))
+  expect_true(size + 1000 > file.size(
     system_file("output", "malawi_summary_report.html")))
 })
 
@@ -88,8 +268,8 @@ test_that("download returns useful error if model run fails", {
   })
 
   out <- queue$queue$task_wait(response$id)
-  spectrum <- download_spectrum(queue)
-  error <- expect_error(spectrum(response$id))
+  download <- download_submit(queue)
+  error <- expect_error(download(response$id, "spectrum"))
   expect_equal(error$data[[1]]$error, scalar("MODEL_RUN_FAILED"))
   expect_match(error$data[[1]]$detail,
                scalar("Required columns not found: sex"))
@@ -101,53 +281,104 @@ test_that("download returns useful error if model result can't be retrieved", {
   test_mock_model_available()
 
   ## Try to download with task ID doesn't exist
-  queue <- test_queue()
-  spectrum <- download_spectrum(queue)
-  error <- expect_error(spectrum("id1"))
+  queue <- test_queue(workers = 0)
+  download <- download_submit(queue)
+  error <- expect_error(download("id1", "spectrum"))
   expect_equal(error$data[[1]]$error, scalar("FAILED_TO_RETRIEVE_RESULT"))
-  expect_equal(error$data[[1]]$detail, scalar("Missing some results"))
+  expect_equal(error$data[[1]]$detail, scalar("Failed to fetch result"))
   expect_equal(error$status_code, 400)
 })
 
-test_that("download works with v0.1.1 model run result", {
+test_that("download fails with old model run result", {
   test_redis_available()
   test_mock_model_available()
 
-  ## Setup payload
-  path <- setup_submit_payload()
+  ## Return v0.1.34 model results
+  q <- test_queue_result(model = mock_model_v0.1.34,
+                         calibrate = mock_model_v0.1.34)
 
-  ## Return v0.1.1 model results
-  queue <- MockQueue$new()
-  unlockBinding("result", queue)
-  queue$result <- mockery::mock(mock_model_v0.1.1)
-  coarse_output <- download_coarse_output(queue)
-  download <- coarse_output("id")
-  expect_type(download, "raw")
-  expect_length(download, file.size(
-    system_file("output", "malawi_coarse_output_download.zip")))
+  endpoint <- endpoint_download_submit(q$queue)
+  res <- endpoint$run(q$calibrate_id, "spectrum")
+  expect_equal(res$value$status, scalar("failure"))
+  expect_equal(res$value$errors[[1]]$error, scalar("SERVER_ERROR"))
+  expect_equal(
+    res$value$errors[[1]]$detail,
+    scalar("Model output out of date please re-run model and try again"))
+  expect_equal(res$status_code, 500)
 })
 
-test_that("trying to download report for old model run returns error", {
+test_that("download HEAD returns headers only", {
   test_mock_model_available()
+  q <- test_queue_result()
 
-  ## Mock model run
-  queue <- test_queue(workers = 0)
-  unlockBinding("result", queue)
-  ## Clone model output as it modifies in place
-  out <- clone_model_output(mock_model_v0.1.4)
-  queue$result <- mockery::mock(out)
-  unlockBinding("queue", queue)
-  unlockBinding("task_status", queue$queue)
-  queue$queue$task_status <- mockery::mock("COMPLETE")
+  ## Submit download request
+  submit <- endpoint_download_submit(q$queue)
+  submit_response <- submit$run(q$calibrate_id, "spectrum")
 
-  ## Try to download missing summary report
-  path <- setup_calibrate_payload()
-  download <- download_summary(queue)
-  error <- expect_error(download("id"))
+  expect_equal(submit_response$status_code, 200)
+  expect_true(!is.null(submit_response$data$id))
 
-  expect_equal(error$data[[1]]$error, scalar("MODEL_RESULT_OUT_OF_DATE"))
-  expect_match(error$data[[1]]$detail, scalar(paste0(
-    "Can't download summary report, please re-run model",
-    " and try download again.")))
-  expect_equal(error$status_code, 400)
+  ## Status
+  out <- q$queue$queue$task_wait(submit_response$data$id)
+  status <- endpoint_download_status(q$queue)
+  status_response <- status$run(submit_response$data$id)
+
+  expect_equal(status_response$status_code, 200)
+  expect_equal(status_response$data$id, submit_response$data$id)
+  expect_true(status_response$data$done)
+  expect_equal(status_response$data$status, scalar("COMPLETE"))
+  expect_true(status_response$data$success)
+  expect_equal(status_response$data$queue, scalar(0))
+  expect_equal(status_response$data$progress, list())
+
+  ## Get HEAD
+  result <- endpoint_download_result_head(q$queue)
+  response <- result$run(status_response$data$id)
+  expect_equal(response$status_code, 200)
+  expect_equal(response$content_type, "application/octet-stream")
+  expect_match(response$headers$`Content-Disposition`,
+               'attachment; filename="MWI_\\d+-\\d+_naomi_spectrum_digest.zip"')
+  expect_equal(response$headers$`Content-Length`, file.size(
+    system_file("output", "malawi_spectrum_download.zip")))
+  expect_null(response$body, NULL)
+})
+
+test_that("api can call spectrum download", {
+  test_redis_available()
+  test_mock_model_available()
+  q <- test_queue_result()
+  api <- api_build(q$queue)
+
+  ## Submit download request
+  submit <- api$request("GET",
+                        paste0("/download/submit/spectrum/", q$calibrate_id))
+  submit_body <- jsonlite::fromJSON(submit$body)
+  expect_equal(submit$status, 200)
+  expect_true(!is.null(submit_body$data$id))
+
+  ## Status
+  out <- q$queue$queue$task_wait(submit_body$data$id)
+  status <- api$request("GET",
+                        paste0("/download/status/", submit_body$data$id))
+
+  expect_equal(status$status, 200)
+  status_body <- jsonlite::fromJSON(status$body)
+  expect_equal(status_body$data$id, submit_body$data$id)
+  expect_true(status_body$data$done)
+  expect_equal(status_body$data$status, "COMPLETE")
+  expect_true(status_body$data$success)
+  expect_equal(status_body$data$queue, 0)
+  expect_equal(status_body$data$progress, list())
+
+  ## Get result
+  res <- api$request("HEAD", paste0("/download/result/", submit_body$data$id))
+
+  expect_equal(res$status, 200)
+  expect_equal(res$headers$`Content-Type`, "application/octet-stream")
+  expect_match(res$headers$`Content-Disposition`,
+               'attachment; filename="MWI_\\d+-\\d+_naomi_spectrum_digest.zip"')
+  expect_equal(res$headers$`Content-Length`, file.size(
+    system_file("output", "malawi_spectrum_download.zip")))
+  ## Plumber uses an empty string to represent an empty body
+  expect_equal(res$body, "")
 })

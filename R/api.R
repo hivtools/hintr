@@ -325,10 +325,11 @@ endpoint_download_status <- function(queue) {
 }
 
 endpoint_download_result <- function(queue) {
-  porcelain::porcelain_endpoint$new("GET",
-                                    "/download/result/<id>",
-                                    download_result(queue),
-                                    returning = porcelain::porcelain_returning_binary())
+  porcelain::porcelain_endpoint$new(
+    "GET",
+    "/download/result/<id>",
+    download_result(queue),
+    returning = porcelain::porcelain_returning_binary())
 }
 
 endpoint_download_result_head <- function(queue) {

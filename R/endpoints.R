@@ -186,7 +186,7 @@ verify_result_available <- function(queue, id) {
   task_status <- queue$queue$task_status(id)
   if (task_status == "COMPLETE") {
     result <- queue$result(id)
-    if (!naomi:::is_hintr_output(result)) {
+    if (!naomi:::assert_model_output_version(result)) {
       hintr_error(t_("UNKNOWN_OUTPUT_TYPE"), "UNKNOWN_OUTPUT_TYPE")
     }
   } else if (task_status == "ERROR") {
@@ -226,6 +226,9 @@ plotting_metadata <- function(iso3) {
 download_submit <- function(queue) {
   function(id, type) {
     verify_result_available(queue, id)
+    ## API path should be - separated but we
+    ## use _ for names in naomi
+    type <- gsub("-", "_", type, fixed = TRUE)
     tryCatch(
       list(id = scalar(queue$submit_download(queue$result(id), type))),
       error = function(e) {
@@ -242,11 +245,11 @@ download_result <- function(queue) {
       if (is_error(res) || is.null(res$path)) {
         hintr_error(res$message, "OUTPUT_GENERATION_FAILED")
       }
-      filename <- switch(res$type,
+      filename <- switch(res$metadata$type,
                          spectrum = "naomi_spectrum_digest.zip",
                          coarse_output = "naomi_coarse_age_groups.zip",
                          summary = "summary_report.html")
-      bytes <- readBin(path, "raw", n = file.size(res$path))
+      bytes <- readBin(res$path, "raw", n = file.size(res$path))
       bytes <- porcelain::porcelain_add_headers(bytes, list(
         "Content-Disposition" = build_content_disp_header(res$metadata$areas,
                                                           filename),

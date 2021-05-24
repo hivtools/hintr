@@ -175,66 +175,20 @@ test_that("model calibration fails is version out of date", {
   expect_equal(error$status, 400)
 })
 
-test_that("trying to calibrate old model result returns error", {
+test_that("calibrate fails with old model run result", {
+  test_redis_available()
   test_mock_model_available()
 
-  ## Mock model run
-  queue <- test_queue(workers = 1)
-  unlockBinding("result", queue)
-  ## Clone model output as it modifies in place
-  out <- clone_old_model_output(mock_model_v0.1.2)
-  queue$result <- mockery::mock(out, cycle = TRUE)
-  mock_verify_result_available <- mockery::mock(TRUE)
+  ## Return v0.1.34 model results
+  q <- test_queue_result(model = mock_model_v0.1.34,
+                         calibrate = mock_model_v0.1.34)
 
-  ## Calibrate the result
-  with_mock("hintr:::verify_result_available" = mock_verify_result_available, {
-    calibrate <- submit_calibrate(queue)
-    res <- calibrate("id", readLines(setup_calibrate_payload()))
-  })
-  expect_equal(names(res), "id")
-  expect_true(!is.null(res$id))
-
-  ## Get status
-  out <- queue$queue$task_wait(res$id)
-  status <- queue_status(queue)
-  res_status <- status(res$id)
-  expect_equal(res_status$id, res$id)
-  expect_true(res_status$done)
-  expect_equal(res_status$status, scalar("ERROR"))
-  expect_false(res_status$success)
-  expect_equal(res_status$queue, scalar(0))
-  expect_equal(res_status$progress, list())
-
-  get_result <- calibrate_result(queue)
-  error <- expect_error(get_result(res$id))
-  expect_equal(error$data[[1]]$error, scalar("MODEL_RUN_FAILED"))
-  expect_equal(error$data[[1]]$detail, scalar(
-    "Model output out of date please re-run model and try again"))
-  expect_equal(error$status, 400)
-})
-
-test_that("model calibration returns error if queueing fails", {
-  test_redis_available()
-  ## Create request data
-  path <- setup_calibrate_payload()
-
-  ## Create mocks
-  queue <- test_queue(workers = 0)
-  unlockBinding("result", queue)
-  ## Clone model output as it modifies in place
-  out <- clone_model_output(mock_model_v0.1.2)
-  queue$result <- mockery::mock(out, cycle = TRUE)
-  unlockBinding("queue", queue)
-  unlockBinding("task_status", queue$queue)
-  queue$queue$task_status <- mockery::mock("COMPLETE", cycle = TRUE)
-  mock_submit_calibrate <- function(data, options) { stop("Failed to queue") }
-
-  ## Call the endpoint
-  calibrate <- submit_calibrate(queue)
-  mockery::stub(calibrate, "queue$submit_calibrate", mock_submit_calibrate)
-  error <- expect_error(calibrate("id", readLines(path)))
-
-  expect_equal(error$data[[1]]$error, scalar("FAILED_TO_QUEUE"))
-  expect_equal(error$data[[1]]$detail, scalar("Failed to queue"))
-  expect_equal(error$status, 400)
+  endpoint <- endpoint_model_calibrate_submit(q$queue)
+  res <- endpoint$run(q$model_run_id)
+  expect_equal(res$value$status, scalar("failure"))
+  expect_equal(res$value$errors[[1]]$error, scalar("SERVER_ERROR"))
+  expect_equal(
+    res$value$errors[[1]]$detail,
+    scalar("Model output out of date please re-run model and try again"))
+  expect_equal(res$status_code, 500)
 })
