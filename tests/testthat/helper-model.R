@@ -74,6 +74,15 @@ mock_model_v0.1.34 <- list(
                                  package = "hintr"))
 class(mock_model) <- "hintr_output"
 
+mock_model_v0.1.2 <- list(
+  output_path = system.file("output", "malawi_output.rds", package = "hintr"),
+  spectrum_path = system.file("output", "malawi_spectrum_download.zip",
+                              package = "hintr"),
+  coarse_output_path =
+    system.file("output", "malawi_coarse_output_download.zip",
+                package = "hintr"))
+class(mock_model_v0.1.2) <- "hintr_output"
+
 setup_submit_payload <- function(version = NULL, include_anc_art = TRUE) {
   path <- tempfile()
   if (is.null(version)) {

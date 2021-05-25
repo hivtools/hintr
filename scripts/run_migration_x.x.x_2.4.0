@@ -1,0 +1,7 @@
+#!/usr/bin/env Rscript
+queue <- hintr:::Queue$new(workers = 0) ## Connect to running queue
+path <- file.path("migrations")
+if (!file.exists("migration")) {
+  dir.create("migrations")
+}
+hintr:::run_migration(queue, path)

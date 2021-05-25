@@ -49,18 +49,21 @@ create_blocking_worker <- function(queue_id, worker_name = NULL) {
                   verbose = TRUE)
 }
 
-test_queue_result <- function(model = mock_model, calibrate = mock_calibrate) {
+test_queue_result <- function(model = mock_model, calibrate = mock_calibrate,
+                              clone_output = TRUE) {
   queue <- Queue$new(workers = 1, timeout = 300)
   withr::defer_parent({
     message("cleaning up workers")
     queue$cleanup()
   })
-  if (is.null(model$version)) {
-    model <- clone_old_model_output(model)
-    calibrate <- clone_old_model_output(calibrate)
-  } else {
-    model <- clone_model_output(model)
-    calibrate <- clone_model_output(calibrate)
+  if (clone_output) {
+    if (is.null(model$version)) {
+      model <- clone_old_model_output(model)
+      calibrate <- clone_old_model_output(calibrate)
+    } else {
+      model <- clone_model_output(model)
+      calibrate <- clone_model_output(calibrate)
+    }
   }
   model_run_id <- queue$submit(quote(identity(model)))
   calibrate_id <- queue$submit(quote(identity(calibrate)))
