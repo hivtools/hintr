@@ -411,12 +411,6 @@ test_that("download result returns formatted error if unexpected issue", {
   expect_equal(error$data[[1]]$detail, scalar("Missing some results"))
 })
 
-test_that("download submit returns formatted error if unexpected issue", {
-  q <- test_queue_result()
-  download <- download_submit(q$queue)
-  error <- expect_error(download(q$calibrate_id, "unknown"))
-})
-
 test_that("download submit returns error if queueing fails", {
   test_redis_available()
   ## Create mocks
