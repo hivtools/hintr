@@ -66,6 +66,5 @@
     "OUTPUT_FILTER_SEX": "Sexe",
     "OUTPUT_FILTER_AGE": "Âge",
     "MODEL_RESULT_OLD": "Impossible de télécharger {{type}}, veuillez réexécuter le modèle et réessayer de télécharger.",
-    "UNKNOWN_OUTPUT_TYPE": "L'exécution du modèle a renvoyé un type de sortie inconnu, veuillez contacter le support.",
     "OUTPUT_GENERATION_FAILED": "Failed to generate output"
 }

@@ -382,3 +382,54 @@ test_that("api can call spectrum download", {
   ## Plumber uses an empty string to represent an empty body
   expect_equal(res$body, "")
 })
+
+test_that("trying to download result for errored model run returns error", {
+  queue <- MockQueue$new(workers = 1)
+  path <- setup_submit_payload()
+  model_submit <- submit_model(queue)
+  response <- model_submit(readLines(path))
+  expect_true("id" %in% names(response))
+  out <- queue$queue$task_wait(response$id)
+
+  download <- download_result(queue)
+  error <- expect_error(download(response$id))
+
+  expect_equal(error$status_code, 400)
+  expect_equal(names(error$data[[1]]), c("error", "detail", "key"))
+  expect_equal(error$data[[1]]$error, scalar("OUTPUT_GENERATION_FAILED"))
+  expect_equal(error$data[[1]]$detail, scalar("test error"))
+})
+
+test_that("download result returns formatted error if unexpected issue", {
+  queue <- MockQueue$new(workers = 0)
+  download <- download_result(queue)
+  error <- expect_error(download("1"))
+
+  expect_equal(error$status_code, 400)
+  expect_equal(names(error$data[[1]]), c("error", "detail", "key"))
+  expect_equal(error$data[[1]]$error, scalar("FAILED_TO_RETRIEVE_RESULT"))
+  expect_equal(error$data[[1]]$detail, scalar("Missing some results"))
+})
+
+test_that("download submit returns formatted error if unexpected issue", {
+  q <- test_queue_result()
+  download <- download_submit(q$queue)
+  error <- expect_error(download(q$calibrate_id, "unknown"))
+})
+
+test_that("download submit returns error if queueing fails", {
+  test_redis_available()
+  ## Create mocks
+  queue <- test_queue(workers = 0)
+  mock_submit_download <- function(res, type) { stop("Failed to queue") }
+
+  ## Call the endpoint
+  download <- download_submit(queue)
+  mockery::stub(download, "queue$submit_download", mock_submit_download)
+  mockery::stub(download, "verify_result_available", TRUE)
+  error <- expect_error(download("1", "spectrum"))
+
+  expect_equal(error$data[[1]]$error, scalar("FAILED_TO_QUEUE"))
+  expect_equal(error$data[[1]]$detail, scalar("Failed to queue"))
+  expect_equal(error$status_code, 400)
+})

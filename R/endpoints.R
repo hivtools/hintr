@@ -186,9 +186,7 @@ verify_result_available <- function(queue, id) {
   task_status <- queue$queue$task_status(id)
   if (task_status == "COMPLETE") {
     result <- queue$result(id)
-    if (!naomi:::assert_model_output_version(result)) {
-      hintr_error(t_("UNKNOWN_OUTPUT_TYPE"), "UNKNOWN_OUTPUT_TYPE")
-    }
+    naomi:::assert_model_output_version(result)
   } else if (task_status == "ERROR") {
     result <- queue$result(id)
     trace <- c(sprintf("# %s", id), result$trace)
