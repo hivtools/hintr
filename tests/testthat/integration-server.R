@@ -293,7 +293,7 @@ test_that("real model can be run & calibrated by API", {
     expect_true(response$data$success)
     expect_equal(response$data$queue, 0)
     expect_match(response$data$progress[[1]],
-                 "Generating report - [\\d.m\\s]+s elapsed", perl = TRUE)
+                 "Saving outputs - [\\d.m\\s]+s elapsed", perl = TRUE)
   })
 
   ## Calibrate result
@@ -487,7 +487,7 @@ test_that("worker information is returned", {
   expect_equivalent(response$data, list("IDLE", "IDLE"))
 })
 
-test_that("spectrum file download streams bytes", {
+test_that("download streams bytes", {
   test_mock_model_available()
   server <- hintr_server()
   payload <- setup_submit_payload()
@@ -502,84 +502,67 @@ test_that("spectrum file download streams bytes", {
   expect_equal(response$errors, NULL)
   expect_equal(names(response$data), c("id"))
 
-  ## Get the download
-  testthat::try_again(4, {
+  ## Get the status
+  testthat::try_again(5, {
     Sys.sleep(5)
-    r <- httr::GET(paste0(server$url, "/download/spectrum/", response$data$id))
+    r <- httr::GET(paste0(server$url, "/model/status/", response$data$id))
     expect_equal(httr::status_code(r), 200)
-    expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
-    expect_match(httr::headers(r)$`content-disposition`,
-                 'attachment; filename="MWI_\\d+-\\d+_naomi_spectrum_digest.zip"')
-
-    size <- length(httr::content(r))
-    content_length <- as.numeric(httr::headers(r)$`content-length`)
-    expect_equal(size, content_length)
-    expect_equal(size, file.size(
-      system_file("output", "malawi_spectrum_download.zip")))
+    response <- response_from_json(r)
+    expect_equal(response$status, "success")
+    expect_equal(response$data$status, "COMPLETE")
   })
 
-  ## Headers can be retrieved
-  r <- httr::HEAD(paste0(server$url, "/download/spectrum/", response$data$id))
+  ## Start the download
+  r <- httr::GET(paste0(server$url, "/download/submit/spectrum/",
+                        response$data$id))
+  response <- response_from_json(r)
   expect_equal(httr::status_code(r), 200)
-  expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
-  expect_match(httr::headers(r)$`content-disposition`,
+  expect_true(!is.null(response$data$id))
+  expect_equal(response$status, "success")
+
+  ## Get download status
+  testthat::try_again(5, {
+    Sys.sleep(5)
+    status_res <- httr::GET(paste0(server$url, "/download/status/",
+                               response$data$id))
+    expect_equal(httr::status_code(status_res), 200)
+    status <- response_from_json(status_res)
+    expect_equal(status$status, "success")
+    expect_equal(status$data$done, TRUE)
+    expect_equal(status$data$status, "COMPLETE")
+    expect_equal(status$data$queue, 0)
+    expect_equal(status$data$progres, list())
+    expect_true(!is.null(status$data$id))
+  })
+
+  ## Get headers
+  headers <- httr::HEAD(paste0(server$url, "/download/result/",
+                               response$data$id))
+  expect_equal(httr::status_code(headers), 200)
+  expect_equal(httr::headers(headers)$`content-type`,
+               "application/octet-stream")
+  expect_match(httr::headers(headers)$`content-disposition`,
                'attachment; filename="MWI_\\d+-\\d+_naomi_spectrum_digest.zip"')
 
-  size <- length(httr::content(r))
-  content_length <- as.numeric(httr::headers(r)$`content-length`)
+  size <- length(httr::content(headers))
+  content_length <- as.numeric(httr::headers(headers)$`content-length`)
   expect_equal(size, 0)
-  expect_equal(content_length, file.size(
-    system_file("output", "malawi_spectrum_download.zip")))
-})
+  ## It contains some content, won't be same length as precomputed
+  ## model output as this is generated before calibration
+  expect_true(content_length > 100000)
 
+  ## Can stream bytes
+  res <- httr::GET(paste0(server$url, "/download/result/", response$data$id))
+  expect_equal(httr::headers(res)$`content-type`, "application/octet-stream")
+  expect_match(httr::headers(res)$`content-disposition`,
+               'attachment; filename="MWI_\\d+-\\d+_naomi_spectrum_digest.zip"')
 
-test_that("coarse_output file download streams bytes", {
-  test_mock_model_available()
-  server <- hintr_server()
-  payload <- setup_submit_payload()
-
-  ## Run a model
-  r <- httr::POST(paste0(server$url, "/model/submit"),
-                  body = httr::upload_file(payload, type = "application/json"),
-                  encode = "json")
-  expect_equal(httr::status_code(r), 200)
-  response <- response_from_json(r)
-  expect_equal(response$status, "success")
-  expect_equal(response$errors, NULL)
-  expect_equal(names(response$data), c("id"))
-
-  ## Get the download
-  testthat::try_again(4, {
-    Sys.sleep(5)
-    r <- httr::GET(paste0(server$url, "/download/coarse-output/",
-                          response$data$id))
-    expect_equal(httr::status_code(r), 200)
-    expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
-    expect_match(
-      httr::headers(r)$`content-disposition`,
-      'attachment; filename="MWI_\\d+-\\d+_naomi_coarse_age_groups.zip"')
-
-    size <- length(httr::content(r))
-    content_length <- as.numeric(httr::headers(r)$`content-length`)
-    expect_equal(size, content_length)
-    expect_equal(size, file.size(
-      system_file("output", "malawi_coarse_output_download.zip")))
-  })
-
-  ## Headers can be retrieved
-  r <- httr::HEAD(paste0(server$url, "/download/coarse-output/",
-                         response$data$id))
-  expect_equal(httr::status_code(r), 200)
-  expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
-  expect_match(
-    httr::headers(r)$`content-disposition`,
-    'attachment; filename="MWI_\\d+-\\d+_naomi_coarse_age_groups.zip"')
-
-  size <- length(httr::content(r))
-  content_length <- as.numeric(httr::headers(r)$`content-length`)
-  expect_equal(size, 0)
-  expect_equal(content_length, file.size(
-    system_file("output", "malawi_coarse_output_download.zip")))
+  size <- length(httr::content(res))
+  content_length <- as.numeric(httr::headers(res)$`content-length`)
+  expect_equal(size, content_length)
+  ## It contains some content, won't be same length as precomputed
+  ## model output as this is generated before calibration
+  expect_true(size > 100000)
 })
 
 test_that("can quit", {
