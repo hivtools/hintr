@@ -55,7 +55,6 @@
     "anc_art_coverage_year1": 2016,
     "anc_art_coverage_year2": 2018,
     "spectrum_population_calibration": "none",
-    "calibrate_method": "logistic",
     "artattend_log_gamma_offset": -4,
     "artattend": false,
     "output_aware_plhiv": "true",
