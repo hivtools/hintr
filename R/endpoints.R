@@ -259,7 +259,7 @@ download <- function(queue, type, filename, ext) {
                      "summary" = res$summary_report_path)
       if (is.null(path)) {
         hintr_error(t_("MODEL_RESULT_OLD",
-                       list(type = gsub("_", " ",
+                       list(type = gsub("-", " ",
                                         tools::file_path_sans_ext(filename)))),
                     "MODEL_RESULT_OUT_OF_DATE")
       }
