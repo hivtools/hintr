@@ -1,3 +1,7 @@
+# hintr 0.1.35
+
+* Shorted output file names
+
 # hintr 0.1.34
 
 * Remove deprecated `/model/calibrate/<id>` endpoint

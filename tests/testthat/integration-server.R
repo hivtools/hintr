@@ -512,7 +512,7 @@ test_that("spectrum file download streams bytes", {
     expect_equal(httr::status_code(r), 200)
     expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
     expect_match(httr::headers(r)$`content-disposition`,
-                 'attachment; filename="MWI_\\d+-\\d+_naomi_spectrum_digest.zip"')
+                 'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
 
     size <- length(httr::content(r))
     content_length <- as.numeric(httr::headers(r)$`content-length`)
@@ -526,7 +526,7 @@ test_that("spectrum file download streams bytes", {
   expect_equal(httr::status_code(r), 200)
   expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
   expect_match(httr::headers(r)$`content-disposition`,
-               'attachment; filename="MWI_\\d+-\\d+_naomi_spectrum_digest.zip"')
+               'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
 
   size <- length(httr::content(r))
   content_length <- as.numeric(httr::headers(r)$`content-length`)
@@ -560,7 +560,7 @@ test_that("coarse_output file download streams bytes", {
     expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
     expect_match(
       httr::headers(r)$`content-disposition`,
-      'attachment; filename="MWI_\\d+-\\d+_naomi_coarse_age_groups.zip"')
+      'attachment; filename="MWI_coarse-output_\\d+-\\d+.zip"')
 
     size <- length(httr::content(r))
     content_length <- as.numeric(httr::headers(r)$`content-length`)
@@ -576,7 +576,7 @@ test_that("coarse_output file download streams bytes", {
   expect_equal(httr::headers(r)$`content-type`, "application/octet-stream")
   expect_match(
     httr::headers(r)$`content-disposition`,
-    'attachment; filename="MWI_\\d+-\\d+_naomi_coarse_age_groups.zip"')
+    'attachment; filename="MWI_coarse-output_\\d+-\\d+.zip"')
 
   size <- length(httr::content(r))
   content_length <- as.numeric(httr::headers(r)$`content-length`)
