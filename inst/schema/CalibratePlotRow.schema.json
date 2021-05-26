@@ -6,7 +6,10 @@
       "type": "string",
       "enum": [ "spectrum", "calibrated", "unadjusted" ]
     },
-    "area_id": {
+    "spectrum_region_code": {
+      "type": "string"
+    },
+    "spectrum_region_name": {
       "type": "string"
     },
     "sex": {
@@ -32,6 +35,7 @@
     }
   },
   "additionalProperties": true,
-  "required": [ "data_type", "area_id", "sex", "age_group", "calendar_quarter",
-    "indicator", "mean", "lower", "upper" ]
+  "required": [ "data_type", "spectrum_region_code", "spectrum_region_name",
+    "sex", "age_group", "calendar_quarter", "indicator", "mean", "lower",
+    "upper" ]
 }

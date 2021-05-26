@@ -257,8 +257,9 @@ test_that("can get data for calibration plot", {
   res <- endpoint("123")
   expect_setequal(names(res), c("data", "plottingMetadata"))
   expect_setequal(names(res$data),
-                  c("data_type", "area_id", "sex", "age_group",
-                    "calendar_quarter", "indicator", "mean", "lower", "upper"))
+                  c("data_type", "spectrum_region_code", "spectrum_region_name",
+                    "sex", "age_group", "calendar_quarter", "indicator",
+                    "mean", "lower", "upper"))
   expect_true(nrow(res$data) > 0)
   expect_equal(names(res$plottingMetadata), "barchart")
   expect_setequal(names(res$plottingMetadata$barchart),
@@ -273,7 +274,7 @@ test_that("can get data for calibration plot", {
   filters <- lapply(res$plottingMetadata$barchart$filters, function(filter) {
     filter$column_id
   })
-  expect_equal(filters[[1]], scalar("area_id"))
+  expect_equal(filters[[1]], scalar("spectrum_region_code"))
   expect_equal(filters[[2]], scalar("calendar_quarter"))
   expect_equal(filters[[3]], scalar("sex"))
   expect_equal(filters[[4]], scalar("age_group"))

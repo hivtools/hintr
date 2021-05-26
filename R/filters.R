@@ -132,6 +132,35 @@ get_model_output_filters <- function(data) {
   )
 }
 
+get_calibrate_plot_output_filters <- function(data) {
+  list(
+    list(
+      id = scalar("spectrum_region"),
+      column_id = scalar("spectrum_region_code"),
+      label = scalar(t_("OUTPUT_FILTER_AREA")),
+      options = get_spectrum_region_filters(data)
+    ),
+    list(
+      id = scalar("quarter"),
+      column_id = scalar("calendar_quarter"),
+      label = scalar(t_("OUTPUT_FILTER_PERIOD")),
+      options = get_quarter_filters(data)
+    ),
+    list(
+      id = scalar("sex"),
+      column_id = scalar("sex"),
+      label = scalar(t_("OUTPUT_FILTER_SEX")),
+      options = get_sex_filters(data)
+    ),
+    list(
+      id = scalar("age"),
+      column_id = scalar("age_group"),
+      label = scalar(t_("OUTPUT_FILTER_AGE")),
+      options = get_age_filters(data)
+    )
+  )
+}
+
 get_barchart_defaults <- function(output, output_filters) {
   list(
     indicator_id = scalar("prevalence"),
@@ -246,6 +275,16 @@ get_region_filters <- function(json) {
   colnames(hierarchy_table) <- c("id", "parent_id", "sort_order", "label")
 
   construct_tree(hierarchy_table)
+}
+
+get_spectrum_region_filters <- function(data) {
+  regions <- unique(data[, c("spectrum_region_code", "spectrum_region_name")])
+  regions <- regions[order(regions$spectrum_region_code)]
+  lapply(seq_len(nrow(regions)), function(row_no) {
+    row <- regions[row_no, ]
+    list(id = scalar(as.character(row$spectrum_region_code)),
+         label = scalar(as.character(row$spectrum_region_name)))
+  })
 }
 
 #' Create an ordered tree from a data frame.

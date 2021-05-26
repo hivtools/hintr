@@ -184,7 +184,8 @@ calibrate_result <- function(queue) {
 
 calibrate_plot <- function(queue) {
   data <- read_csv(system_file("extdata/dummy_calibrate_data.csv"))
-  filters <- get_model_output_filters(data)
+  data$spectrum_region_code <- as.character(data$spectrum_region_code)
+  filters <- get_calibrate_plot_output_filters(data)
   function(id) {
     list(
       data = data,
