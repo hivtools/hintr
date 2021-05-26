@@ -1296,8 +1296,9 @@ test_that("can get calibrate plot data", {
   response_data <- response$data
   expect_setequal(names(response_data), c("data", "plottingMetadata"))
   expect_setequal(names(response_data$data),
-                  c("data_type", "area_id", "sex", "age_group",
-                    "calendar_quarter", "indicator", "mean", "lower", "upper"))
+                  c("data_type", "spectrum_region_code", "spectrum_region_name",
+                    "sex", "age_group", "calendar_quarter", "indicator",
+                    "mean", "lower", "upper"))
   expect_true(nrow(response_data$data) > 0)
   expect_equal(names(response_data$plottingMetadata), "barchart")
   expect_setequal(names(response_data$plottingMetadata$barchart),
@@ -1311,7 +1312,7 @@ test_that("can get calibrate plot data", {
 
   filters <- lapply(response_data$plottingMetadata$barchart$filters, "[[",
                     "column_id")
-  expect_equal(filters[[1]], scalar("area_id"))
+  expect_equal(filters[[1]], scalar("spectrum_region_code"))
   expect_equal(filters[[2]], scalar("calendar_quarter"))
   expect_equal(filters[[3]], scalar("sex"))
   expect_equal(filters[[4]], scalar("age_group"))
@@ -1336,8 +1337,9 @@ test_that("API can return calibration plotting data", {
   expect_setequal(names(response_data), c("data", "plottingMetadata"))
   data <- do.call(rbind, response_data$data)
   expect_setequal(colnames(data),
-                  c("data_type", "area_id", "sex", "age_group",
-                    "calendar_quarter", "indicator", "mean", "lower", "upper"))
+                  c("data_type", "spectrum_region_code", "spectrum_region_name",
+                    "sex", "age_group", "calendar_quarter", "indicator",
+                    "mean", "lower", "upper"))
   expect_true(nrow(data) > 0)
   expect_equal(names(response_data$plottingMetadata), "barchart")
   expect_setequal(names(response_data$plottingMetadata$barchart),
@@ -1353,7 +1355,7 @@ test_that("API can return calibration plotting data", {
 
   filters <- lapply(response_data$plottingMetadata$barchart$filters, "[[",
                     "column_id")
-  expect_equal(filters[[1]], "area_id")
+  expect_equal(filters[[1]], "spectrum_region_code")
   expect_equal(filters[[2]], "calendar_quarter")
   expect_equal(filters[[3]], "sex")
   expect_equal(filters[[4]], "age_group")
