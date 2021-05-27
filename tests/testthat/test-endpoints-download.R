@@ -427,3 +427,11 @@ test_that("download submit returns error if queueing fails", {
   expect_equal(error$data[[1]]$detail, scalar("Failed to queue"))
   expect_equal(error$status_code, 400)
 })
+
+test_that("download unknown file type returns error", {
+  error <- expect_error(download(NULL, "unknown", "path"))
+  expect_equal(error$data[[1]]$error, scalar("INVALID_DOWNLOAD_TYPE"))
+  expect_equal(error$data[[1]]$detail, scalar(
+    "Failed to generate download for unknown type, contact system admin."))
+  expect_equal(error$status_code, 400)
+})
