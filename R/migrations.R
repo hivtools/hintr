@@ -1,102 +1,63 @@
-run_migration <- function(queue, output_dir) {
+run_migration <- function(queue, output_dir, dry_run = FALSE) {
   output_dir <- normalizePath(output_dir, mustWork = TRUE)
   tasks <- queue$queue$task_list()
-  migrations <- lapply(tasks, migrate_task, queue, output_dir)
+  status <- queue$queue$task_status(tasks)
+  completed_tasks <- tasks[status == "COMPLETE"]
+  migrations <- lapply(completed_tasks, migrate_task, queue, dry_run)
   summary <- lapply(migrations, function(migration) {
     list(
       id = migration$id,
-      action = migration$action,
-      migration_file = migration$migration_file
+      action = migration$action
     )
   })
   summary <- do.call(rbind, summary)
   summary_path <- file.path(output_dir, "summary.csv")
   message(sprintf("Saving summary csv %s", summary_path))
+  output_path <- file.path(output_dir, "output.rds")
   write.csv(summary, summary_path, row.names = FALSE)
+  message(sprintf("Saving output RDS %s", output_path))
+  saveRDS(migrations, output_path)
   migrations
 }
 
-migrate_task <- function(task_id, queue, output_dir) {
+migrate_task <- function(task_id, queue, dry_run = FALSE) {
   message(sprintf("Migrating %s", task_id))
-  output_file <- file.path(output_dir,
-                           migrate_filename(task_id, "x.x.x", "2.4.0"))
-  if (file.exists(output_file)) {
-    message(sprintf("Not migrating %s, task aleady migrated see details: %s",
-                    task_id, output_file))
-    out <- list(
-      id = task_id,
-      action = "Result already migrated",
-      migration_file = output_file
-    )
-    return(out)
-  }
-  status <- queue$queue$task_status(task_id)
-  if (!identical(unname(status), "COMPLETE")) {
-    message(sprintf(
-      "Not migrating %s task not complete, task status: %s, details: %s",
-      task_id, status, output_file))
-    out <- list(
-      id = task_id,
-      status = status,
-      action = "No change - incomplete model run",
-      migration_file = output_file
-    )
-    saveRDS(out, file = output_file)
-    return(out)
-  }
-
   res <- queue$queue$task_result(task_id)
   if (!is.null(res$version) && identical(as.character(res$version), "2.4.0")) {
-    message(sprintf("Not migrating %s, already up to date, details: %s",
-                    task_id, status, output_file))
-    out <- list(
+    message(sprintf("Not migrating %s, already up to date", task_id))
+    return(list(
       id = task_id,
-      status = status,
       prev_res = res,
-      action = "No change - up to date",
-      migration_file = output_file
-    )
-    saveRDS(out, file = output_file)
-    return(out)
+      action = "No change - up to date"
+    ))
   }
   if (!all(c("output_path", "calibration_path") %in% names(res))) {
-    message(sprintf("Not migrating %s, invalid output format, details:",
-                    task_id, output_file))
-    out <- list(
+    message(sprintf("Not migrating %s, invalid output format", task_id))
+    return(list(
       id = task_id,
-      status = status,
       prev_res = res,
-      action = "No change - not migrateable",
-      migration_file = output_file
-    )
-    saveRDS(out, file = output_file)
-    return(out)
+      action = "No change - not migrateable"
+    ))
   }
 
   new_res <- migrate(res)
-  queue$queue$con$HSET(queue$queue$keys$task_result, task_id,
-                       redux::object_to_bin(new_res))
+  if (!dry_run) {
+    queue$queue$con$HSET(queue$queue$keys$task_result, task_id,
+                         redux::object_to_bin(new_res))
+  }
   out <- list(
     id = task_id,
-    status = status,
     prev_res = res,
     new_res = new_res,
     from = "x.x.x",
     to = "2.4.0",
-    action = "Successfully migrated",
-    migration_file = output_file
+    action = "Successfully migrated"
   )
-  saveRDS(out, file = output_file)
-  message(sprintf("Successfully migrated %s, details: %s",
-                  task_id, output_file))
+  message(sprintf("Successfully migrated %s", task_id))
   out
 }
 
 migrate <- function(res) {
   naomi:::build_hintr_output(res$output_path,
                              res$calibration_path)
-}
-
-migrate_filename <- function(task_id, from_version, to_version) {
-  sprintf("%s-migrate-%s-%s", task_id, from_version, to_version)
 }
