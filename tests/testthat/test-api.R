@@ -715,13 +715,13 @@ test_that("returning_json_version adds version", {
 })
 
 test_that("content disposition header is formatted correctly", {
-  expect_match(build_content_disp_header("MWI", "naomi_spectrum_digest.zip"),
-               'attachment; filename="MWI_\\d+-\\d+_naomi_spectrum_digest.zip"')
-  expect_match(build_content_disp_header(NULL, "naomi_spectrum_digest.zip"),
-               'attachment; filename="\\d+-\\d+_naomi_spectrum_digest.zip"')
+  expect_match(build_content_disp_header("MWI", "naomi-output", ".zip"),
+               'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
+  expect_match(build_content_disp_header(NULL, "naomi-output", ".zip"),
+               'attachment; filename="naomi-output_\\d+-\\d+.zip"')
   expect_match(
-    build_content_disp_header(c("MWI.1", "MWI.2"), "naomi_spectrum_digest.zip"),
-    'attachment; filename="MWI.1_MWI.2_\\d+-\\d+_naomi_spectrum_digest.zip"')
+    build_content_disp_header(c("MWI.1", "MWI.2"), "naomi-output", ".zip"),
+    'attachment; filename="MWI.1_MWI.2_naomi-output_\\d+-\\d+.zip"')
 })
 
 test_that("returning_binary_head ensures no body in response", {

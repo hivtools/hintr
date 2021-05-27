@@ -247,10 +247,14 @@ download_result <- function(queue) {
                          spectrum = "naomi_spectrum_digest.zip",
                          coarse_output = "naomi_coarse_age_groups.zip",
                          summary = "summary_report.html")
+      ext <- switch(res$metadata$type,
+                         spectrum = ".zip",
+                         coarse_output = ".zip",
+                         summary = ".html")
       bytes <- readBin(res$path, "raw", n = file.size(res$path))
       bytes <- porcelain::porcelain_add_headers(bytes, list(
         "Content-Disposition" = build_content_disp_header(res$metadata$areas,
-                                                          filename),
+                                                          filename, ext),
         "Content-Length" = length(bytes)))
       bytes
     },
@@ -264,9 +268,10 @@ download_result <- function(queue) {
   }
 }
 
-build_content_disp_header <- function(areas, filename) {
+build_content_disp_header <- function(areas, filename, ext) {
   sprintf('attachment; filename="%s"',
-          paste(c(areas, iso_time_str(), filename), collapse = "_"))
+          paste0(paste(c(areas, filename, iso_time_str()), collapse = "_"),
+                 ext))
 }
 
 download_model_debug <- function(queue) {

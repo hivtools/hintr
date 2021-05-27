@@ -30,7 +30,7 @@ test_that("spectrum download returns bytes", {
   response <- result$run(status_response$data$id)
   expect_equal(response$status_code, 200)
   expect_match(response$headers$`Content-Disposition`,
-               'attachment; filename="MWI_\\d+-\\d+_naomi_spectrum_digest.zip"')
+               'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
   size <- length(response$data)
   expect_equal(response$headers$`Content-Length`, size)
   expect_equal(size, file.size(
@@ -70,7 +70,7 @@ test_that("api can call spectrum download", {
   expect_equal(res$status, 200)
   expect_equal(res$headers$`Content-Type`, "application/octet-stream")
   expect_match(res$headers$`Content-Disposition`,
-               'attachment; filename="MWI_\\d+-\\d+_naomi_spectrum_digest.zip"')
+               'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
   ## Size of bytes is close to expected
   size <- length(res$body)
   expect_equal(res$headers$`Content-Length`, size)
@@ -108,7 +108,7 @@ test_that("coarse output download returns bytes", {
   expect_equal(response$status_code, 200)
   expect_match(
     response$headers$`Content-Disposition`,
-    'attachment; filename="MWI_\\d+-\\d+_naomi_coarse_age_groups.zip"')
+    'attachment; filename="MWI_coarse-output_\\d+-\\d+.zip"')
   size <- length(response$data)
   expect_equal(response$headers$`Content-Length`, size)
   expect_equal(size, file.size(
@@ -149,7 +149,7 @@ test_that("api can call coarse_output download", {
   expect_equal(res$headers$`Content-Type`, "application/octet-stream")
   expect_match(
     res$headers$`Content-Disposition`,
-    'attachment; filename="MWI_\\d+-\\d+_naomi_coarse_age_groups.zip"')
+    'attachment; filename="MWI_coarse-output_\\d+-\\d+.zip"')
   ## Size of bytes is close to expected
   size <- length(res$body)
   expect_equal(res$headers$`Content-Length`, size)
@@ -187,7 +187,7 @@ test_that("summary report download returns bytes", {
   expect_equal(response$status_code, 200)
   expect_match(
     response$headers$`Content-Disposition`,
-    'attachment; filename="MWI_\\d+-\\d+_summary_report.html"')
+    'attachment; filename="MWI_summary-report_\\d+-\\d+.html"')
   size <- length(response$data)
   expect_equal(response$headers$`Content-Length`, size)
   ## Pandoc adds some extra script lines depending on context the report
@@ -232,7 +232,7 @@ test_that("api can call summary report download", {
   expect_equal(res$headers$`Content-Type`, "application/octet-stream")
   expect_match(
     res$headers$`Content-Disposition`,
-    'attachment; filename="MWI_\\d+-\\d+_summary_report.html"')
+    'attachment; filename="MWI_summary-report_\\d+-\\d+.html"')
   ## Size of bytes is close to expected
   size <- length(res$body)
   expect_equal(res$headers$`Content-Length`, size)
@@ -337,7 +337,7 @@ test_that("download HEAD returns headers only", {
   expect_equal(response$status_code, 200)
   expect_equal(response$content_type, "application/octet-stream")
   expect_match(response$headers$`Content-Disposition`,
-               'attachment; filename="MWI_\\d+-\\d+_naomi_spectrum_digest.zip"')
+               'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
   expect_equal(response$headers$`Content-Length`, file.size(
     system_file("output", "malawi_spectrum_download.zip")))
   expect_null(response$body, NULL)
@@ -376,7 +376,7 @@ test_that("api can call spectrum download", {
   expect_equal(res$status, 200)
   expect_equal(res$headers$`Content-Type`, "application/octet-stream")
   expect_match(res$headers$`Content-Disposition`,
-               'attachment; filename="MWI_\\d+-\\d+_naomi_spectrum_digest.zip"')
+               'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
   expect_equal(res$headers$`Content-Length`, file.size(
     system_file("output", "malawi_spectrum_download.zip")))
   ## Plumber uses an empty string to represent an empty body

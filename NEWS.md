@@ -2,6 +2,10 @@
 
 * Update downloads to be generated on demand instead of as part of model calibration
 
+# hintr 0.1.35
+
+* Shorted output file names
+
 # hintr 0.1.34
 
 * Remove deprecated `/model/calibrate/<id>` endpoint

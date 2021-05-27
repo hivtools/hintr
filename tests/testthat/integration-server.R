@@ -542,7 +542,7 @@ test_that("download streams bytes", {
   expect_equal(httr::headers(headers)$`content-type`,
                "application/octet-stream")
   expect_match(httr::headers(headers)$`content-disposition`,
-               'attachment; filename="MWI_\\d+-\\d+_naomi_spectrum_digest.zip"')
+               'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
 
   size <- length(httr::content(headers))
   content_length <- as.numeric(httr::headers(headers)$`content-length`)
@@ -555,7 +555,7 @@ test_that("download streams bytes", {
   res <- httr::GET(paste0(server$url, "/download/result/", response$data$id))
   expect_equal(httr::headers(res)$`content-type`, "application/octet-stream")
   expect_match(httr::headers(res)$`content-disposition`,
-               'attachment; filename="MWI_\\d+-\\d+_naomi_spectrum_digest.zip"')
+               'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
 
   size <- length(httr::content(res))
   content_length <- as.numeric(httr::headers(res)$`content-length`)
