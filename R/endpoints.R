@@ -244,9 +244,9 @@ download_result <- function(queue) {
         hintr_error(res$message, "OUTPUT_GENERATION_FAILED")
       }
       filename <- switch(res$metadata$type,
-                         spectrum = "naomi_spectrum_digest.zip",
-                         coarse_output = "naomi_coarse_age_groups.zip",
-                         summary = "summary_report.html")
+                         spectrum = "naomi-output",
+                         coarse_output = "coarse-output",
+                         summary = "summary-report")
       ext <- switch(res$metadata$type,
                          spectrum = ".zip",
                          coarse_output = ".zip",
