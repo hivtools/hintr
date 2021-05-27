@@ -224,18 +224,18 @@ plotting_metadata <- function(iso3) {
 }
 
 download_spectrum <- function(queue) {
-  download(queue, "spectrum", "naomi_spectrum_digest.zip")
+  download(queue, "spectrum", "naomi-output", ".zip")
 }
 
 download_coarse_output <- function(queue) {
-  download(queue, "coarse_output", "naomi_coarse_age_groups.zip")
+  download(queue, "coarse_output", "coarse-output", ".zip")
 }
 
 download_summary <- function(queue) {
-  download(queue, "summary", "summary_report.html")
+  download(queue, "summary", "summary-report", ".html")
 }
 
-download <- function(queue, type, filename) {
+download <- function(queue, type, filename, ext) {
   function(id) {
     tryCatch({
       res <- queue$result(id)
@@ -259,14 +259,14 @@ download <- function(queue, type, filename) {
                      "summary" = res$summary_report_path)
       if (is.null(path)) {
         hintr_error(t_("MODEL_RESULT_OLD",
-                       list(type = gsub("_", " ",
+                       list(type = gsub("-", " ",
                                         tools::file_path_sans_ext(filename)))),
                     "MODEL_RESULT_OUT_OF_DATE")
       }
       bytes <- readBin(path, "raw", n = file.size(path))
       bytes <- porcelain::porcelain_add_headers(bytes, list(
         "Content-Disposition" = build_content_disp_header(res$metadata$areas,
-                                                          filename),
+                                                          filename, ext),
         "Content-Length" = length(bytes)))
       bytes
     },
@@ -280,9 +280,10 @@ download <- function(queue, type, filename) {
   }
 }
 
-build_content_disp_header <- function(areas, filename) {
+build_content_disp_header <- function(areas, filename, ext) {
   sprintf('attachment; filename="%s"',
-          paste(c(areas, iso_time_str(), filename), collapse = "_"))
+          paste0(paste(c(areas, filename, iso_time_str()), collapse = "_"),
+                 ext))
 }
 
 download_model_debug <- function(queue) {

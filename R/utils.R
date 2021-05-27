@@ -93,7 +93,7 @@ read_binary <- function(path) {
 }
 
 iso_time_str <- function(time = Sys.time()) {
-  strftime(time, "%Y%m%d-%H%M%S")
+  strftime(time, "%Y%m%d-%H%M")
 }
 
 schema_root <- function() {
