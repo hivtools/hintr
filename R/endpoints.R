@@ -206,11 +206,7 @@ calibrate_plot <- function(queue) {
           filters = filters,
           defaults = list(
             indicator_id = scalar("plhiv"),
-            ## TODO: For this plot we don't want x axis to be changeable
-            ## it should always be spectrum_region_code. But we use filters to
-            ## return mapping of ID to name - how do we manage this not being
-            ## shown?
-            x_axis_id = scalar("spectrum_region_code"),
+            x_axis_id = scalar("spectrum_region_name"),
             disaggregate_by_id = scalar("data_type"),
             selected_filter_options = list(
               quarter = get_selected_filter_options(filters, "quarter")[2],

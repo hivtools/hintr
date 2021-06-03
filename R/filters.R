@@ -135,12 +135,6 @@ get_model_output_filters <- function(data) {
 get_calibrate_plot_output_filters <- function(data) {
   list(
     list(
-      id = scalar("spectrum_region"),
-      column_id = scalar("spectrum_region_code"),
-      label = scalar(t_("OUTPUT_FILTER_AREA")),
-      options = get_spectrum_region_filters(data)
-    ),
-    list(
       id = scalar("quarter"),
       column_id = scalar("calendar_quarter"),
       label = scalar(t_("OUTPUT_FILTER_PERIOD")),
