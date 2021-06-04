@@ -48,10 +48,16 @@ main_worker <- function(args = commandArgs(TRUE)) {
   if (args$calibrate_only) {
     queue <- QUEUE_CALIBRATE
   }
-  rrq::rrq_worker(hintr_queue_id(args$queue_id, TRUE),
-                  heartbeat_period = 10,
-                  queue = queue)
+  worker_new(hintr_queue_id(args$queue_id, TRUE),
+             heartbeat_period = 10,
+             queue = queue)
   # nocov end
+}
+
+worker_new <- function(queue_id, heartbeat_period, queue) {
+  rrq::rrq_worker$new(queue_id,
+                      heartbeat_period = heartbeat_period,
+                      queue = queue)
 }
 
 main_import_prerun <- function(args = commandArgs(TRUE)) {

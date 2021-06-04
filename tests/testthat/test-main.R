@@ -36,7 +36,7 @@ test_that("main worker creates worker with multiple queues", {
 
 test_that("main worker can create a calibrate only worker", {
   mock_rrq_worker <- mockery::mock(TRUE, cycle = TRUE)
-  with_mock("rrq::rrq_worker" = mock_rrq_worker, {
+  with_mock("hintr:::worker_new" = mock_rrq_worker, {
     worker <- main_worker(c("--calibrate-only", "queue_id"))
   })
   args <- mockery::mock_args(mock_rrq_worker)[[1]]
