@@ -25,7 +25,7 @@ test_that("main_worker_args", {
 
 test_that("main worker creates worker with multiple queues", {
   mock_rrq_worker <- mockery::mock(TRUE, cycle = TRUE)
-  with_mock("rrq::rrq_worker" = mock_rrq_worker, {
+  with_mock("hintr:::worker_new" = mock_rrq_worker, {
     worker <- main_worker("queue_id")
   })
   args <- mockery::mock_args(mock_rrq_worker)[[1]]
