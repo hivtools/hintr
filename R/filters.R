@@ -159,7 +159,7 @@ get_calibrate_plot_output_filters <- function(data) {
       options = get_age_filters(data)
     ),
     list(
-      id = scalar("data_type"),
+      id = scalar("type"),
       column_id = scalar("data_type"),
       label = scalar(t_("OUTPUT_FILTER_DATA_TYPE")),
       options = get_data_type_filters(data)

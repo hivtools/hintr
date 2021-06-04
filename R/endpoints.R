@@ -206,12 +206,8 @@ calibrate_plot <- function(queue) {
           filters = filters,
           defaults = list(
             indicator_id = scalar("plhiv"),
-            ## TODO: For this plot we don't want x axis to be changeable
-            ## it should always be spectrum_region_code. But we use filters to
-            ## return mapping of ID to name - how do we manage this not being
-            ## shown?
-            x_axis_id = scalar("spectrum_region_code"),
-            disaggregate_by_id = scalar("data_type"),
+            x_axis_id = scalar("spectrum_region"),
+            disaggregate_by_id = scalar("type"),
             selected_filter_options = list(
               spectrum_region = get_selected_filter_options(filters,
                                                             "spectrum_region"),
@@ -219,7 +215,7 @@ calibrate_plot <- function(queue) {
               sex = get_selected_filter_options(filters, "sex", c("both")),
               age = get_selected_filter_options(
                 filters, "age", naomi::get_five_year_age_groups())[1],
-              data_type = get_selected_filter_options(filters, "data_type")
+              type = get_selected_filter_options(filters, "type")
             )
           )
         )
