@@ -212,7 +212,7 @@ calibrate_plot <- function(queue) {
               spectrum_region = get_selected_filter_options(filters,
                                                             "spectrum_region"),
               quarter = get_selected_filter_options(filters, "quarter")[2],
-              sex = get_selected_filter_options(filters, "sex", c("both")),
+              sex = get_selected_filter_options(filters, "sex", "both"),
               age = get_selected_filter_options(
                 filters, "age", naomi::get_five_year_age_groups())[1],
               type = get_selected_filter_options(filters, "type")
