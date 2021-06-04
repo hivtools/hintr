@@ -274,9 +274,10 @@ test_that("can get data for calibration plot", {
   filters <- lapply(res$plottingMetadata$barchart$filters, function(filter) {
     filter$column_id
   })
-  expect_equal(filters[[1]], scalar("calendar_quarter"))
-  expect_equal(filters[[2]], scalar("sex"))
-  expect_equal(filters[[3]], scalar("age_group"))
+  expect_equal(filters[[1]], scalar("spectrum_region_code"))
+  expect_equal(filters[[2]], scalar("calendar_quarter"))
+  expect_equal(filters[[3]], scalar("sex"))
+  expect_equal(filters[[4]], scalar("age_group"))
 
   expect_setequal(names(res$plottingMetadata$barchart$defaults),
                  c("indicator_id", "x_axis_id", "disaggregate_by_id",
