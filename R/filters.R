@@ -157,6 +157,12 @@ get_calibrate_plot_output_filters <- function(data) {
       column_id = scalar("age_group"),
       label = scalar(t_("OUTPUT_FILTER_AGE")),
       options = get_age_filters(data)
+    ),
+    list(
+      id = scalar("data_type"),
+      column_id = scalar("data_type"),
+      label = scalar(t_("OUTPUT_FILTER_DATA_TYPE")),
+      options = get_data_type_filters(data)
     )
   )
 }
@@ -284,6 +290,16 @@ get_spectrum_region_filters <- function(data) {
     row <- regions[row_no, ]
     list(id = scalar(as.character(row$spectrum_region_code)),
          label = scalar(as.character(row$spectrum_region_name)))
+  })
+}
+
+get_data_type_filters <- function(data) {
+  data_types <- unique(data[, "data_type"])
+  lapply(data_types, function(data_type) {
+    list(
+      id = scalar(data_type),
+      label = scalar(data_type)
+    )
   })
 }
 

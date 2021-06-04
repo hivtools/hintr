@@ -1286,6 +1286,7 @@ test_that("can get calibrate plot data", {
   expect_equal(filters[[2]], scalar("calendar_quarter"))
   expect_equal(filters[[3]], scalar("sex"))
   expect_equal(filters[[4]], scalar("age_group"))
+  expect_equal(filters[[5]], scalar("data_type"))
 
   expect_setequal(names(response_data$plottingMetadata$barchart$defaults),
                   c("indicator_id", "x_axis_id", "disaggregate_by_id",
@@ -1329,6 +1330,7 @@ test_that("API can return calibration plotting data", {
   expect_equal(filters[[2]], "calendar_quarter")
   expect_equal(filters[[3]], "sex")
   expect_equal(filters[[4]], "age_group")
+  expect_equal(filters[[5]], "data_type")
 
   expect_setequal(names(response_data$plottingMetadata$barchart$defaults),
                   c("indicator_id", "x_axis_id", "disaggregate_by_id",
