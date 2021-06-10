@@ -9,7 +9,7 @@
 
 R API for Naomi app
 
-App to show district level estimates of HIV indicators
+App to show district level estimates of HIV indicators.
 
 ## Running in docker
 
