@@ -1,3 +1,7 @@
+# hintr 0.1.36
+
+* Update to latest version of rrq
+
 # hintr 0.1.35
 
 * Shorted output file names

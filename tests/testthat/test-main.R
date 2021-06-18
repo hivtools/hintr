@@ -24,23 +24,21 @@ test_that("main_worker_args", {
 })
 
 test_that("main worker creates worker with multiple queues", {
-  mock_rrq_worker <- mockery::mock(TRUE, cycle = TRUE)
-  with_mock("rrq::rrq_worker" = mock_rrq_worker, {
+  mock_rrq_worker <- mockery::mock(list(loop = function() TRUE, cycle = TRUE))
+  with_mock("rrq::rrq_worker_from_config" = mock_rrq_worker, {
     worker <- main_worker("queue_id")
   })
   args <- mockery::mock_args(mock_rrq_worker)[[1]]
   expect_equal(args[[1]], "queue_id")
-  expect_equal(args$heartbeat_period, 10)
-  expect_equal(args$queue, c(QUEUE_CALIBRATE, QUEUE_RUN))
+  expect_equal(args$worker_config, "localhost")
 })
 
 test_that("main worker can create a calibrate only worker", {
-  mock_rrq_worker <- mockery::mock(TRUE, cycle = TRUE)
-  with_mock("rrq::rrq_worker" = mock_rrq_worker, {
+  mock_rrq_worker <- mockery::mock(list(loop = function() TRUE, cycle = TRUE))
+  with_mock("rrq::rrq_worker_from_config" = mock_rrq_worker, {
     worker <- main_worker(c("--calibrate-only", "queue_id"))
   })
   args <- mockery::mock_args(mock_rrq_worker)[[1]]
   expect_equal(args[[1]], "queue_id")
-  expect_equal(args$heartbeat_period, 10)
-  expect_equal(args$queue, QUEUE_CALIBRATE)
+  expect_equal(args$worker_config, "calibrate_only")
 })

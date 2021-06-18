@@ -22,8 +22,10 @@ Queue <- R6::R6Class(
       message(t_("QUEUE_STARTING"))
       queue_id <- hintr_queue_id(queue_id)
       self$queue <- rrq::rrq_controller(queue_id, con)
-      self$queue$worker_config_save("localhost", heartbeat_period = 3,
+      self$queue$worker_config_save("localhost", heartbeat_period = 10,
                                     queue = c(QUEUE_CALIBRATE, QUEUE_RUN))
+      self$queue$worker_config_save("calibrate_only", heartbeat_period = 10,
+                                    queue = QUEUE_CALIBRATE)
 
       self$start(workers, timeout)
 
