@@ -627,6 +627,10 @@ test_that("translation", {
   r <- httr::GET(server$url, httr::add_headers("Accept-Language" = "fr"))
   expect_equal(httr::status_code(r), 200)
   expect_equal(response_from_json(r)$data, "Bienvenue chez hintr")
+
+  r <- httr::GET(server$url, httr::add_headers("Accept-Language" = "pt"))
+  expect_equal(httr::status_code(r), 200)
+  expect_equal(response_from_json(r)$data, "Bem-vindo ao hintr")
 })
 
 test_that("crashed worker can be detected", {
