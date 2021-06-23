@@ -1,3 +1,7 @@
+# hintr 0.1.37
+
+* Add Portuguese translations
+
 # hintr 0.1.36
 
 * Update to latest version of rrq
