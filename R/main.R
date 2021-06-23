@@ -55,7 +55,6 @@ main_worker <- function(args = commandArgs(TRUE)) {
   # nocov end
 }
 
-
 main_import_prerun <- function(args = commandArgs(TRUE)) {
   usage <- "Usage:
   hintr-import-prerun <prerun> <path> [options]
