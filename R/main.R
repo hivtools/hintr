@@ -44,13 +44,14 @@ Options:
 main_worker <- function(args = commandArgs(TRUE)) {
   # nocov start
   args <- main_worker_args(args)
-  queue <- c(QUEUE_CALIBRATE, QUEUE_RUN)
+  worker_config <- "localhost"
   if (args$calibrate_only) {
-    queue <- QUEUE_CALIBRATE
+    worker_config <- "calibrate_only"
   }
-  rrq::rrq_worker(hintr_queue_id(args$queue_id, TRUE),
-                  heartbeat_period = 10,
-                  queue = queue)
+  worker <- rrq::rrq_worker_from_config(hintr_queue_id(args$queue_id, TRUE),
+                                        worker_config = worker_config)
+  worker$loop()
+  invisible(TRUE)
   # nocov end
 }
 

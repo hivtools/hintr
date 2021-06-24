@@ -2,6 +2,14 @@
 
 * Update downloads to be generated on demand instead of as part of model calibration
 
+# hintr 0.1.37
+
+* Add dummy endpoint `/calibrate/plot/<id>` to return dummy data for upcoming calibrate plot
+
+# hintr 0.1.36
+
+* Update to latest version of rrq
+
 # hintr 0.1.35
 
 * Shorted output file names

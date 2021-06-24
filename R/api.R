@@ -15,6 +15,7 @@ api_build <- function(queue) {
   api$handle(endpoint_model_calibrate_submit(queue))
   api$handle(endpoint_model_calibrate_status(queue))
   api$handle(endpoint_model_calibrate_result(queue))
+  api$handle(endpoint_model_calibrate_plot(queue))
   api$handle(endpoint_plotting_metadata())
   api$handle(endpoint_download_submit(queue))
   api$handle(endpoint_download_status(queue))
@@ -287,6 +288,15 @@ endpoint_model_calibrate_result <- function(queue) {
   porcelain::porcelain_endpoint$new("GET",
                                     "/calibrate/result/<id>",
                                     calibrate_result(queue),
+                                    returning = response)
+}
+
+endpoint_model_calibrate_plot <- function(queue) {
+  response <- porcelain::porcelain_returning_json(
+    "CalibratePlotResponse.schema", schema_root())
+  porcelain::porcelain_endpoint$new("GET",
+                                    "/calibrate/plot/<id>",
+                                    calibrate_plot(queue),
                                     returning = response)
 }
 

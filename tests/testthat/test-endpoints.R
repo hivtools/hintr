@@ -13,7 +13,7 @@ test_that("plumber api can be built", {
   expect_setequal(names(api$routes$model),
                   c("options", "submit", "status", "result", "cancel", "debug"))
   expect_setequal(names(api$routes$calibrate),
-                  c("options", "submit", "status", "result"))
+                  c("options", "submit", "status", "result", "plot"))
   expect_equal(names(api$routes$meta), "plotting")
 })
 

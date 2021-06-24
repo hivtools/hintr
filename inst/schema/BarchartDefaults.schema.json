@@ -14,7 +14,7 @@
         }
       },
       "additionalProperties": true,
-      "required": [ "area", "quarter", "age", "sex" ]
+      "required": [ "quarter", "age", "sex" ]
     }
   },
   "additionalProperties": false,
