@@ -348,3 +348,16 @@ test_that("can get selected filter options", {
     )
   ))
 })
+
+test_that("get_spectrum_region_filters gets regions from data", {
+  data <- data.frame(spectrum_region_code = c(0, 0, 1, 1),
+                     spectrum_region_name = c("Northern", "Northern",
+                                              "Southern", "Southern"),
+                     value = c(1, 2, 3, 4))
+  filters <- get_spectrum_region_filters(data)
+  expect_equal(length(filters), 2)
+  expect_equal(filters[[1]]$id, scalar("0"))
+  expect_equal(filters[[1]]$label, scalar("Northern"))
+  expect_equal(filters[[2]]$id, scalar("1"))
+  expect_equal(filters[[2]]$label, scalar("Southern"))
+})
