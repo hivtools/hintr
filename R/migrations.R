@@ -42,8 +42,10 @@ migrate_task <- function(task_id, queue, dry_run = FALSE) {
 
   new_res <- migrate(res)
   if (!dry_run) {
-    queue$queue$con$HSET(queue$queue$keys$task_result, task_id,
-                         redux::object_to_bin(new_res))
+    store <- rrq:::rrq_object_store(queue$queue$con,
+                                    queue$queue$keys)
+    hash <- store$set(new_res, task_id)
+    queue$queue$con$HSET(queue$queue$keys$task_result, task_id, hash)
   }
   out <- list(
     id = task_id,
