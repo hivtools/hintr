@@ -531,7 +531,7 @@ test_that("download streams bytes", {
     expect_equal(status$data$done, TRUE)
     expect_equal(status$data$status, "COMPLETE")
     expect_equal(status$data$queue, 0)
-    expect_equal(status$data$progres, list())
+    expect_length(status$data$progress, 1)
     expect_true(!is.null(status$data$id))
   })
 
@@ -563,6 +563,14 @@ test_that("download streams bytes", {
   ## It contains some content, won't be same length as precomputed
   ## model output as this is generated before calibration
   expect_true(size > 100000)
+
+  ## Can get ADR metadata
+  adr_res <- httr::GET(paste0(server$url, "/adr/metadata/", response$data$id))
+  expect_equal(httr::status_code(r), 200)
+  adr_r <- response_from_json(adr_res)
+  expect_equal(names(adr_r$data), c("type", "description"))
+  expect_equal(adr_r$data$type, "spectrum")
+  expect_type(adr_r$data$description, "character")
 })
 
 test_that("can quit", {
