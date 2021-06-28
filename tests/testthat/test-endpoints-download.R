@@ -23,7 +23,7 @@ test_that("spectrum download returns bytes", {
   expect_equal(status_response$data$status, scalar("COMPLETE"))
   expect_true(status_response$data$success)
   expect_equal(status_response$data$queue, scalar(0))
-  expect_equal(status_response$data$progress, list())
+  expect_length(status_response$data$progress, 1)
 
   ## Get result
   result <- endpoint_download_result(q$queue)
@@ -62,7 +62,7 @@ test_that("api can call spectrum download", {
   expect_equal(status_body$data$status, "COMPLETE")
   expect_true(status_body$data$success)
   expect_equal(status_body$data$queue, 0)
-  expect_equal(status_body$data$progress, list())
+  expect_length(status_body$data$progress, 1)
 
   ## Get result
   res <- api$request("GET", paste0("/download/result/", submit_body$data$id))
@@ -100,7 +100,7 @@ test_that("coarse output download returns bytes", {
   expect_equal(status_response$data$status, scalar("COMPLETE"))
   expect_true(status_response$data$success)
   expect_equal(status_response$data$queue, scalar(0))
-  expect_equal(status_response$data$progress, list())
+  expect_length(status_response$data$progress, 1)
 
   ## Get result
   result <- endpoint_download_result(q$queue)
@@ -140,7 +140,7 @@ test_that("api can call coarse_output download", {
   expect_equal(status_body$data$status, "COMPLETE")
   expect_true(status_body$data$success)
   expect_equal(status_body$data$queue, 0)
-  expect_equal(status_body$data$progress, list())
+  expect_length(status_body$data$progress, 1)
 
   ## Get result
   res <- api$request("GET", paste0("/download/result/", submit_body$data$id))
@@ -179,7 +179,7 @@ test_that("summary report download returns bytes", {
   expect_equal(status_response$data$status, scalar("COMPLETE"))
   expect_true(status_response$data$success)
   expect_equal(status_response$data$queue, scalar(0))
-  expect_equal(status_response$data$progress, list())
+  expect_length(status_response$data$progress, 1)
 
   ## Get result
   result <- endpoint_download_result(q$queue)
@@ -223,7 +223,7 @@ test_that("api can call summary report download", {
   expect_equal(status_body$data$status, "COMPLETE")
   expect_true(status_body$data$success)
   expect_equal(status_body$data$queue, 0)
-  expect_equal(status_body$data$progress, list())
+  expect_length(status_body$data$progress, 1)
 
   ## Get result
   res <- api$request("GET", paste0("/download/result/", submit_body$data$id))
@@ -329,7 +329,7 @@ test_that("download HEAD returns headers only", {
   expect_equal(status_response$data$status, scalar("COMPLETE"))
   expect_true(status_response$data$success)
   expect_equal(status_response$data$queue, scalar(0))
-  expect_equal(status_response$data$progress, list())
+  expect_length(status_response$data$progress, 1)
 
   ## Get HEAD
   result <- endpoint_download_result_head(q$queue)
@@ -368,7 +368,7 @@ test_that("api can call spectrum download", {
   expect_equal(status_body$data$status, "COMPLETE")
   expect_true(status_body$data$success)
   expect_equal(status_body$data$queue, 0)
-  expect_equal(status_body$data$progress, list())
+  expect_length(status_body$data$progress, 1)
 
   ## Get result
   res <- api$request("HEAD", paste0("/download/result/", submit_body$data$id))
