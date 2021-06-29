@@ -21,6 +21,7 @@ api_build <- function(queue) {
   api$handle(endpoint_download_status(queue))
   api$handle(endpoint_download_result(queue))
   api$handle(endpoint_download_result_head(queue))
+  api$handle(endpoint_adr_metadata(queue))
   api$handle(endpoint_hintr_version())
   api$handle(endpoint_hintr_worker_status(queue))
   api$handle(endpoint_hintr_stop(queue))
@@ -348,6 +349,15 @@ endpoint_download_result_head <- function(queue) {
                                     download_result(queue),
                                     returning = returning_binary_head(),
                                     validate = FALSE)
+}
+
+endpoint_adr_metadata <- function(queue) {
+  response <- porcelain::porcelain_returning_json(
+    "AdrMetadataResponse.schema", schema_root())
+  porcelain::porcelain_endpoint$new("GET",
+                                    "/meta/adr/<id>",
+                                    adr_metadata(queue),
+                                    returning = response)
 }
 
 endpoint_hintr_version <- function() {
