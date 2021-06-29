@@ -355,7 +355,7 @@ endpoint_adr_metadata <- function(queue) {
   response <- porcelain::porcelain_returning_json(
     "AdrMetadataResponse.schema", schema_root())
   porcelain::porcelain_endpoint$new("GET",
-                                    "/adr/metadata/<id>",
+                                    "/meta/adr/<id>",
                                     adr_metadata(queue),
                                     returning = response)
 }

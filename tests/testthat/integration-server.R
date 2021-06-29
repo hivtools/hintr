@@ -565,7 +565,7 @@ test_that("download streams bytes", {
   expect_true(size > 100000)
 
   ## Can get ADR metadata
-  adr_res <- httr::GET(paste0(server$url, "/adr/metadata/", response$data$id))
+  adr_res <- httr::GET(paste0(server$url, "/meta/adr/", response$data$id))
   expect_equal(httr::status_code(r), 200)
   adr_r <- response_from_json(adr_res)
   expect_equal(names(adr_r$data), c("type", "description"))

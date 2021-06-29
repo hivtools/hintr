@@ -68,5 +68,6 @@
     "OUTPUT_FILTER_DATA_TYPE": "Data type",
     "MODEL_RESULT_OLD": "Can't download {{type}}, please re-run model and try download again.",
     "OUTPUT_GENERATION_FAILED": "Failed to generate output",
-    "INVALID_DOWNLOAD_TYPE": "Failed to generate download for {{type}} type, contact system admin."
+    "INVALID_DOWNLOAD_TYPE": "Failed to generate download for {{type}} type, contact system admin.",
+    "FAILED_ADR_METADATA": "Failed to generate metadata, output format is invalid"
 }

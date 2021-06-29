@@ -3,7 +3,11 @@ adr_metadata <- function(queue) {
     tryCatch({
       res <- queue$result(id)
       if (is_error(res) || is.null(res$path)) {
-        hintr_error(res$message, "OUTPUT_GENERATION_FAILED")
+        msg <- res$message
+        if (is.null(msg)) {
+          msg <- t_("FAILED_ADR_METADATA")
+        }
+        hintr_error(msg, "OUTPUT_GENERATION_FAILED")
       }
       list(type = scalar(res$metadata$type),
            description = scalar(res$metadata$description))

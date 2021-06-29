@@ -89,3 +89,21 @@ test_that("can return upload metadata for ADR summary report", {
   expect_equal(res$data$type, scalar("summary"))
   expect_s3_class(res$data$description, c("scalar", "character"))
 })
+
+test_that("trying to get ADR metadata without result available throws error", {
+  test_mock_model_available()
+  q <- test_queue_result()
+
+  metadata <- endpoint_adr_metadata(q$queue)
+  out <- metadata$run("some_id")
+  expect_equal(out$error$data[[1]]$error, scalar("FAILED_TO_RETRIEVE_RESULT"))
+  expect_match(out$error$data[[1]]$detail,
+               scalar("Missing some results"))
+  expect_equal(out$status_code, 400)
+
+  out <- metadata$run(q$calibrate_id)
+  expect_equal(out$error$data[[1]]$error, scalar("OUTPUT_GENERATION_FAILED"))
+  expect_match(out$error$data[[1]]$detail,
+               scalar("Failed to generate metadata, output format is invalid"))
+  expect_equal(out$status_code, 400)
+})
