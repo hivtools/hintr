@@ -435,3 +435,15 @@ test_that("download unknown file type returns error", {
     "Failed to generate download for unknown type, contact system admin."))
   expect_equal(error$status_code, 400)
 })
+
+test_that("trying to get download with invalid result returns error", {
+  test_mock_model_available()
+  q <- test_queue_result()
+
+  endpoint <- endpoint_download_result(q$queue)
+  out <- endpoint$run(q$calibrate_id)
+  expect_equal(out$error$data[[1]]$error, scalar("OUTPUT_GENERATION_FAILED"))
+  expect_match(out$error$data[[1]]$detail,
+               scalar("Failed to generate metadata, output format is invalid"))
+  expect_equal(out$status_code, 400)
+})
