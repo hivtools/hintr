@@ -23,7 +23,7 @@ test_that("queue works as intended", {
   expect_length(queue$queue$task_list(), 0)
 
   ## model run can be pushed to queue
-  job_id <- queue$submit_model_run(NULL, list())
+  job_id <- queue$submit_model_run(NULL, list(), test_kelp)
   expect_length(queue$queue$task_list(), 1)
 
   ## status can be retireved
@@ -159,7 +159,7 @@ test_that("queue object starts up 2 queues", {
 test_that("calibrate gets run before model running", {
   queue <- test_queue(workers = 0)
   worker <- create_blocking_worker(queue$queue$queue_id)
-  run_id <- queue$submit_model_run(NULL, NULL)
+  run_id <- queue$submit_model_run(NULL, NULL, test_kelp)
   ## Calibrate tasks will error but that is fine - we want to test here
   ## that calibrate & model run get queued and run in the correct order
   calibrate_id <- queue$submit_calibrate(NULL, NULL)

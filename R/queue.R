@@ -49,12 +49,13 @@ Queue <- R6::R6Class(
                           separate_process = TRUE)
     },
 
-    submit_model_run = function(data, options) {
+    submit_model_run = function(data, options, kelp) {
       results_dir <- self$results_dir
       prerun_dir <- self$prerun_dir
       language <- traduire::translator()$language()
       self$submit(quote(
-        hintr:::run_model(data, options, results_dir, prerun_dir, language)),
+        hintr:::run_model(data, options, results_dir, kelp,
+                          prerun_dir, language)),
         queue = QUEUE_RUN)
     },
 

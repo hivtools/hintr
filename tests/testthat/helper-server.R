@@ -96,3 +96,5 @@ hintr_server_blocking <- function() {
   message(sprintf("port: %s", port))
   hintr:::api(port = port, queue_id = queue_id, results_dir = results_dir)
 }
+
+test_kelp <- kelp::kelp_harness$new("url")

@@ -1,5 +1,5 @@
-run_model <- function(data, options, path_results, path_prerun = NULL,
-                      language = NULL) {
+run_model <- function(data, options, path_results, kelp,
+                      path_prerun = NULL, language = NULL) {
   if (!is.null(language)) {
     reset_hintr <- traduire::translator_set_language(language)
     reset_naomi <-
@@ -76,15 +76,22 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
   calibration_path <- tempfile("calibration", tmpdir = path_results,
                                fileext = ".rds")
 
+  dir <- tempfile()
+  dir.create(dir, showWarnings = FALSE)
+  kelp_download_files(kelp, data, dir)
+  ## Cleanup downloaded files after they have been used
+  on.exit(unlink(dir))
+
   ## Fix some labels to match what naomi requires
   data$art_number <- data$programme
   data$programme <- NULL
   data$anc_testing <- data$anc
   data$anc <- NULL
 
-  naomi::hintr_run_model(data, options, output_path, spectrum_path,
-                         coarse_output_path, summary_report_path,
-                         calibration_path, validate = FALSE)
+  output <- naomi::hintr_run_model(data, options, output_path, spectrum_path,
+                                   coarse_output_path, summary_report_path,
+                                   calibration_path, validate = FALSE)
+  kelp_save_paths(kelp, output)
 }
 
 select_data <- function(data) {

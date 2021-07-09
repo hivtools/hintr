@@ -9,7 +9,7 @@ test_that("endpoint model run queues a model run", {
 
   ## Call the endpoint
   queue <- test_queue(workers = 1)
-  model_submit <- submit_model(queue)
+  model_submit <- submit_model(queue, test_kelp)
   response <- model_submit(readLines(path))
   expect_true("id" %in% names(response))
 
@@ -46,10 +46,12 @@ test_that("endpoint_run_model returns error if queueing fails", {
 
   ## Create mocks
   queue <- test_queue()
-  mock_submit_model_run <- function(data, options) { stop("Failed to queue") }
+  mock_submit_model_run <- function(data, options, kelp) {
+    stop("Failed to queue")
+  }
 
   ## Call the endpoint
-  model_submit <- submit_model(queue)
+  model_submit <- submit_model(queue, test_kelp)
   mockery::stub(model_submit, "queue$submit_model_run", mock_submit_model_run)
   error <- expect_error(model_submit(readLines(path)))
 
@@ -70,7 +72,7 @@ test_that("running model with old version throws an error", {
 
   ## Call the endpoint
   queue <- test_queue(workers = 1)
-  model_submit <- submit_model(queue)
+  model_submit <- submit_model(queue, test_kelp)
   error <- expect_error(model_submit(readLines(path)))
 
   expect_equal(error$data[[1]]$error, scalar("VERSION_OUT_OF_DATE"))
@@ -140,7 +142,7 @@ test_that("querying for result of incomplete jobs returns useful error", {
 
   path <- setup_submit_payload()
   queue <- test_queue(workers = 1)
-  model_submit <- submit_model(queue)
+  model_submit <- submit_model(queue, test_kelp)
   response <- model_submit(readLines(path))
   expect_true("id" %in% names(response))
 
@@ -160,7 +162,7 @@ test_that("erroring model run returns useful messages", {
   ## Call the endpoint
   queue <- MockQueue$new()
   path <- setup_submit_payload()
-  model_submit <- submit_model(queue)
+  model_submit <- submit_model(queue, test_kelp)
   response <- model_submit(readLines(path))
   expect_true("id" %in% names(response))
   out <- queue$queue$task_wait(response$id)
@@ -199,7 +201,7 @@ test_that("model run can be cancelled", {
   ## Start the model running
   path <- setup_submit_payload()
   queue <- test_queue(workers = 1)
-  model_submit <- submit_model(queue)
+  model_submit <- submit_model(queue, test_kelp)
   response <- model_submit(readLines(path))
   expect_true("id" %in% names(response))
   id <- response$id
@@ -242,7 +244,7 @@ test_that("translation of progress", {
 
   path <- setup_submit_payload()
   queue <- test_queue(workers = 1)
-  model_submit <- submit_model(queue)
+  model_submit <- submit_model(queue, test_kelp)
   get_status <- queue_status(queue)
 
   response <- with_hintr_language(
@@ -266,7 +268,7 @@ test_that("error messages from naomi are translated", {
   queue <- withr::with_envvar(c("USE_MOCK_MODEL" = "false"),
                               test_queue(workers = 1))
 
-  model_submit <- submit_model(queue)
+  model_submit <- submit_model(queue, test_kelp)
   ## Create a population file which deliberately will cause an error
   path <- setup_submit_payload()
   payload <- readLines(path)
@@ -317,7 +319,7 @@ test_that("Debug endpoint returns debug information", {
   ## Start the model running
   path <- setup_submit_payload()
   queue <- test_queue(workers = 1)
-  model_submit <- submit_model(queue)
+  model_submit <- submit_model(queue, test_kelp)
   response <- model_submit(readLines(path))
   expect_true("id" %in% names(response))
   id <- response$id

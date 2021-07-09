@@ -186,14 +186,18 @@ test_that("real model can be run", {
     max_iter = 250,
     permissive = "false"
   )
+  data <- kelp_save_files(test_kelp, naomi:::format_data_input(data))
   withr::with_envvar(c("USE_MOCK_MODEL" = "false"), {
-    model_run <- run_model(data, options, tempdir())
+    model_run <- run_model(data, options, tempdir(), test_kelp)
   })
   expect_equal(names(model_run), c("output_path", "spectrum_path",
                                    "coarse_output_path", "summary_report_path",
                                    "calibration_path", "metadata"))
 
-  output <- readRDS(model_run$output_path)
+  dir <- tempfile()
+  dir.create(dir)
+  model_paths <- kelp_download_paths(test_kelp, model_run, dir)
+  output <- readRDS(model_paths$output_path)
   expect_equal(colnames(output),
                c("area_level", "area_level_label", "area_id", "area_name",
                  "sex", "age_group", "age_group_label",
@@ -202,17 +206,17 @@ test_that("real model can be run", {
                  "se", "median", "mode", "lower", "upper"))
   expect_true(nrow(output) > 84042)
 
-  file_list <- unzip(model_run$spectrum_path, list = TRUE)
+  file_list <- unzip(model_paths$spectrum_path, list = TRUE)
   expect_true(all(c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
                     "meta_area.csv", "meta_indicator.csv", "meta_period.csv")
                   %in% file_list$Name))
 
-  file_list <- unzip(model_run$coarse_output_path, list = TRUE)
+  file_list <- unzip(model_paths$coarse_output_path, list = TRUE)
   expect_true(all(c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
                     "meta_area.csv", "meta_indicator.csv", "meta_period.csv")
                   %in% file_list$Name))
 
-  expect_true(file.size(model_run$summary_report_path) > 2000)
+  expect_true(file.size(model_paths$summary_report_path) > 2000)
 })
 
 test_that("real model can be run with csv2 data", {
@@ -263,15 +267,18 @@ test_that("real model can be run with csv2 data", {
     max_iter = 250,
     permissive = "false"
   )
+  data <- kelp_save_files(test_kelp, naomi:::format_data_input(data))
   withr::with_envvar(c("USE_MOCK_MODEL" = "false"), {
-    model_run <- run_model(data, options, tempdir())
+    model_run <- run_model(data, options, tempdir(), test_kelp)
   })
 
   expect_equal(names(model_run), c("output_path", "spectrum_path",
                                    "coarse_output_path", "summary_report_path",
                                    "calibration_path", "metadata"))
-
-  output <- readRDS(model_run$output_path)
+  dir <- tempfile()
+  dir.create(dir)
+  model_paths <- kelp_download_paths(test_kelp, model_run, dir)
+  output <- readRDS(model_paths$output_path)
   expect_equal(colnames(output),
                c("area_level", "area_level_label", "area_id", "area_name",
                  "sex", "age_group", "age_group_label",
@@ -280,15 +287,15 @@ test_that("real model can be run with csv2 data", {
                  "se", "median", "mode", "lower", "upper"))
   expect_true(nrow(output) > 84042)
 
-  file_list <- unzip(model_run$spectrum_path, list = TRUE)
+  file_list <- unzip(model_paths$spectrum_path, list = TRUE)
   expect_true(all(c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
                     "meta_area.csv", "meta_indicator.csv", "meta_period.csv")
                   %in% file_list$Name))
 
-  file_list <- unzip(model_run$coarse_output_path, list = TRUE)
+  file_list <- unzip(model_paths$coarse_output_path, list = TRUE)
   expect_true(all(c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
                     "meta_area.csv", "meta_indicator.csv", "meta_period.csv")
                   %in% file_list$Name))
 
-  expect_true(file.size(model_run$summary_report_path) > 2000)
+  expect_true(file.size(model_paths$summary_report_path) > 2000)
 })

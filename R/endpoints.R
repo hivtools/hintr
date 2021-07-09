@@ -121,14 +121,17 @@ model_options_validate <- function(input) {
   })
 }
 
-submit_model <- function(queue) {
+submit_model <- function(queue, kelp) {
   function(input) {
     input <- jsonlite::fromJSON(input)
     if (!is_current_version(input$version)) {
       hintr_error(t_("MODEL_SUBMIT_OLD"), "VERSION_OUT_OF_DATE")
     }
+    data <- kelp_save_files(kelp, input$data)
+
     tryCatch(
-      list(id = scalar(queue$submit_model_run(input$data, input$options))),
+      list(id = scalar(
+        queue$submit_model_run(data, input$options, kelp))),
       error = function(e) {
         hintr_error(e$message, "FAILED_TO_QUEUE")
       }

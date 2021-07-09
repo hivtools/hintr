@@ -55,7 +55,7 @@ test_that("endpoint_baseline_individual", {
 test_that("endpoint_baseline_individual works", {
   test_redis_available()
   queue <- test_queue(workers = 0)
-  api <- api_build(queue)
+  api <- api_build(queue, test_kelp)
   res <- api$request("POST", "/validate/baseline-individual",
                      body = readLines("payload/validate_pjnz_payload.json"))
   expect_equal(res$status, 200)
@@ -80,7 +80,7 @@ test_that("endpoint_baseline_combined", {
 test_that("endpoint_baseline_combined works", {
   test_redis_available()
   queue <- test_queue(workers = 0)
-  api <- api_build(queue)
+  api <- api_build(queue, test_kelp)
   res <- api$request("POST", "/validate/baseline-combined",
                      body = readLines("payload/validate_baseline_payload.json"))
   expect_equal(res$status, 200)
@@ -107,7 +107,7 @@ test_that("endpoint_validate_survey_programme programme", {
 test_that("endpoint_validate_survey_programme works with programme data", {
   test_redis_available()
   queue <- test_queue(workers = 0)
-  api <- api_build(queue)
+  api <- api_build(queue, test_kelp)
   res <- api$request("POST", "/validate/survey-and-programme",
                      body =
                        readLines("payload/validate_programme_payload.json"))
@@ -141,7 +141,7 @@ test_that("endpoint_validate_survey_programme anc", {
 test_that("endpoint_validate_survey_programme works with anc data", {
   test_redis_available()
   queue <- test_queue(workers = 0)
-  api <- api_build(queue)
+  api <- api_build(queue, test_kelp)
   res <- api$request("POST", "/validate/survey-and-programme",
                      body = readLines("payload/validate_anc_payload.json"))
   expect_equal(res$status, 200)
@@ -174,7 +174,7 @@ test_that("endpoint_validate_survey_programme survey", {
 test_that("endpoint_validate_survey_programme works with survey data", {
   test_redis_available()
   queue <- test_queue(workers = 0)
-  api <- api_build(queue)
+  api <- api_build(queue, test_kelp)
   res <- api$request("POST", "/validate/survey-and-programme",
                      body = readLines("payload/validate_survey_payload.json"))
   expect_equal(res$status, 200)
@@ -295,7 +295,7 @@ test_that("endpoint_model_options", {
 test_that("endpoint_model_options works", {
   test_redis_available()
   queue <- test_queue(workers = 0)
-  api <- api_build(queue)
+  api <- api_build(queue, test_kelp)
   res <- api$request("POST", "/model/options",
                      body = readLines("payload/model_run_options_payload.json"))
   expect_equal(res$status, 200)
@@ -411,7 +411,7 @@ test_that("endpoint_model_options_validate can be run", {
 test_that("api can call endpoint_model_options_validate", {
   test_redis_available()
   queue <- test_queue()
-  api <- api_build(queue)
+  api <- api_build(queue, test_kelp)
   res <- api$request("POST", "/validate/options",
                      body = readLines("payload/validate_options_payload.json"))
   expect_equal(res$status, 200)
@@ -424,7 +424,7 @@ test_that("api can call endpoint_model_options_validate", {
 test_that("endpoint_model_submit can be run", {
   test_redis_available()
   queue <- test_queue(workers = 0)
-  endpoint <- endpoint_model_submit(queue)
+  endpoint <- endpoint_model_submit(queue, test_kelp)
   path <- setup_submit_payload()
   response <- endpoint$run(readLines(path))
 
@@ -436,7 +436,7 @@ test_that("endpoint_model_submit can be run", {
 test_that("api can call endpoint_model_submit", {
   test_redis_available()
   queue <- test_queue()
-  api <- api_build(queue)
+  api <- api_build(queue, test_kelp)
   path <- setup_submit_payload()
   res <- api$request("POST", "/model/submit",
                      body = readLines(path))
@@ -451,7 +451,7 @@ test_that("endpoint_model_status can be run", {
   test_redis_available()
   test_mock_model_available()
   queue <- test_queue(workers = 1)
-  model_run <- endpoint_model_submit(queue)
+  model_run <- endpoint_model_submit(queue, test_kelp)
   path <- setup_submit_payload()
   run_response <- model_run$run(readLines(path))
   expect_equal(run_response$status_code, 200)
@@ -478,7 +478,7 @@ test_that("api can call endpoint_model_status", {
   test_redis_available()
   test_mock_model_available()
   queue <- test_queue(workers = 1)
-  api <- api_build(queue)
+  api <- api_build(queue, test_kelp)
   path <- setup_submit_payload()
   res <- api$request("POST", "/model/submit",
                      body = readLines(path))
@@ -509,7 +509,7 @@ test_that("endpoint_model_result can be run", {
   test_redis_available()
   test_mock_model_available()
   queue <- test_queue(workers = 1)
-  model_run <- endpoint_model_submit(queue)
+  model_run <- endpoint_model_submit(queue, test_kelp)
   path <- setup_submit_payload()
   run_response <- model_run$run(readLines(path))
   expect_equal(run_response$status_code, 200)
@@ -530,7 +530,7 @@ test_that("api can call endpoint_model_result", {
   test_redis_available()
   test_mock_model_available()
   queue <- test_queue(workers = 1)
-  api <- api_build(queue)
+  api <- api_build(queue, test_kelp)
   path <- setup_submit_payload()
   res <- api$request("POST", "/model/submit",
                      body = readLines(path))
@@ -556,7 +556,7 @@ test_that("endpoint_model_cancel can be run", {
   test_redis_available()
   test_mock_model_available()
   queue <- test_queue(workers = 1)
-  model_run <- endpoint_model_submit(queue)
+  model_run <- endpoint_model_submit(queue, test_kelp)
   path <- setup_submit_payload()
   run_response <- model_run$run(readLines(path))
   expect_equal(run_response$status_code, 200)
@@ -573,7 +573,7 @@ test_that("api can call endpoint_model_cancel", {
   test_redis_available()
   test_mock_model_available()
   queue <- test_queue(workers = 1)
-  api <- api_build(queue)
+  api <- api_build(queue, test_kelp)
   path <- setup_submit_payload()
   res <- api$request("POST", "/model/submit",
                      body = readLines(path))
@@ -595,7 +595,7 @@ test_that("erroring model run returns useful messages", {
   test_redis_available()
 
   queue <- MockQueue$new()
-  api <- api_build(queue)
+  api <- api_build(queue, test_kelp)
   path <- setup_submit_payload()
   res <- api$request("POST", "/model/submit",
                      body = readLines(path))
@@ -646,7 +646,7 @@ test_that("endpoint_model_calibrate_options", {
 test_that("endpoint_calibrate_options works", {
   test_redis_available()
   queue <- test_queue(workers = 0)
-  api <- api_build(queue)
+  api <- api_build(queue, test_kelp)
   res <- api$request("POST", "/calibrate/options")
   expect_equal(res$status, 200)
   body <- jsonlite::parse_json(res$body)
@@ -671,7 +671,7 @@ test_that("endpoint_plotting_metadata can be run", {
 test_that("api can call endpoint_plotting_metadata", {
   test_redis_available()
   queue <- test_queue(workers = 0)
-  api <- api_build(queue)
+  api <- api_build(queue, test_kelp)
   res <- api$request("GET", "/meta/plotting/MWI")
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body)
@@ -741,7 +741,7 @@ test_that("api can call endpoint_download_spectrum", {
   test_mock_model_available()
 
   queue <- test_queue(workers = 1)
-  api <- api_build(queue)
+  api <- api_build(queue, test_kelp)
 
   ## Run the model
   path <- setup_submit_payload()
@@ -794,7 +794,7 @@ test_that("api can call endpoint_download_coarse_output", {
   test_mock_model_available()
 
   queue <- test_queue(workers = 1)
-  api <- api_build(queue)
+  api <- api_build(queue, test_kelp)
 
   ## Run the model
   path <- setup_submit_payload()
@@ -864,7 +864,7 @@ test_that("api endpoint_download_spectrum_head returns headers only", {
   test_mock_model_available()
 
   queue <- test_queue(workers = 1)
-  api <- api_build(queue)
+  api <- api_build(queue, test_kelp)
 
   ## Run the model
   path <- setup_submit_payload()
@@ -916,7 +916,7 @@ test_that("api endpoint_download_coarse_output_head returns headers only", {
   test_mock_model_available()
 
   queue <- test_queue(workers = 1)
-  api <- api_build(queue)
+  api <- api_build(queue, test_kelp)
 
   ## Run the model
   path <- setup_submit_payload()
@@ -983,7 +983,7 @@ test_that("api can call endpoint_download_summary", {
   test_mock_model_available()
 
   queue <- test_queue(workers = 1)
-  api <- api_build(queue)
+  api <- api_build(queue, test_kelp)
 
   ## Run the model
   path <- setup_submit_payload()
@@ -1046,7 +1046,7 @@ test_that("api can call endpoint_model_debug", {
   test_mock_model_available()
 
   queue <- test_queue(workers = 1)
-  api <- api_build(queue)
+  api <- api_build(queue, test_kelp)
 
   ## Run the model
   path <- setup_submit_payload()
@@ -1080,7 +1080,7 @@ test_that("api can call endpoint_hintr_version", {
   test_redis_available()
 
   queue <- test_queue()
-  api <- api_build(queue)
+  api <- api_build(queue, test_kelp)
   res <- api$request("GET", "/hintr/version")
   expect_equal(res$status, 200)
   response <- jsonlite::fromJSON(res$body)
@@ -1104,7 +1104,7 @@ test_that("api can call endpoint_hintr_worker_status", {
   test_redis_available()
 
   queue <- test_queue(workers = 2)
-  api <- api_build(queue)
+  api <- api_build(queue, test_kelp)
   res <- api$request("GET", "/hintr/worker/status")
   expect_equal(res$status, 200)
   response <- jsonlite::fromJSON(res$body)
@@ -1130,7 +1130,7 @@ test_that("api can call endpoint_hintr_stop", {
   queue <- test_queue()
   mock_hintr_stop <- mockery::mock(function() NULL)
   with_mock("hintr:::hintr_stop" = mock_hintr_stop, {
-    api <- api_build(queue)
+    api <- api_build(queue, test_kelp)
     res <- api$request("POST", "/hintr/stop")
   })
   expect_equal(res$status, 200)
@@ -1141,7 +1141,7 @@ test_that("404 errors have sensible schema", {
   test_redis_available()
 
   queue <- test_queue()
-  api <- api_build(queue)
+  api <- api_build(queue, test_kelp)
   res <- api$request("GET", "/meaning-of-life")
 
   expect_equal(res$status, 404)
@@ -1215,7 +1215,7 @@ test_that("api can call endpoint_model_calibrate", {
   mock_verify_result_available <- mockery::mock(TRUE)
 
   ## Submit calibrate
-  api <- api_build(queue)
+  api <- api_build(queue, test_kelp)
   calibrate_path <- setup_calibrate_payload()
   with_mock("hintr:::verify_result_available" = mock_verify_result_available, {
     submit_res <- api$request("POST", "/calibrate/submit/id",
@@ -1297,7 +1297,7 @@ test_that("API can return calibration plotting data", {
   test_redis_available()
 
   queue <- test_queue(workers = 0)
-  api <- api_build(queue)
+  api <- api_build(queue, test_kelp)
   res <- api$request("GET", "/calibrate/plot/12345")
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body, simplifyDataFrame = FALSE)

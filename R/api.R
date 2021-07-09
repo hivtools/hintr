@@ -1,4 +1,4 @@
-api_build <- function(queue) {
+api_build <- function(queue, kelp) {
   api <- porcelain::porcelain$new()
   api$handle(endpoint_root())
   api$handle(endpoint_baseline_individual())
@@ -6,7 +6,7 @@ api_build <- function(queue) {
   api$handle(endpoint_validate_survey_programme())
   api$handle(endpoint_model_options())
   api$handle(endpoint_model_options_validate())
-  api$handle(endpoint_model_submit(queue))
+  api$handle(endpoint_model_submit(queue, kelp))
   api$handle(endpoint_model_status(queue))
   api$handle(endpoint_model_result(queue))
   api$handle(endpoint_model_cancel(queue))
@@ -56,13 +56,19 @@ api_postserialize <- function(data, req, res, value) {
 #' @return Running API
 #' @export
 api <- function(port = 8888, queue_id = NULL, workers = 2,
-                results_dir = tempdir(), prerun_dir = NULL) {
+                results_dir = tempdir(), prerun_dir = NULL,
+                seaweed_url = NULL) {
   # nocov start
   queue <- Queue$new(queue_id, workers, results_dir = results_dir,
                      prerun_dir = prerun_dir)
-  api <- api_build(queue)
+  kelp <- new_kelp(seaweed_url)
+  api <- api_build(queue, kelp)
   api$run(host = "0.0.0.0", port = port)
   # nocov end
+}
+
+new_kelp <- function(seaweed_url) {
+  kelp::kelp$new(seaweed_url)
 }
 
 api_log_start <- function(data, req, res) {
@@ -208,7 +214,7 @@ endpoint_model_options_validate <- function() {
 }
 
 
-endpoint_model_submit <- function(queue) {
+endpoint_model_submit <- function(queue, kelp) {
   input <- porcelain::porcelain_input_body_json("input",
                                                 "ModelSubmitRequest.schema",
                                                 schema_root())
@@ -216,7 +222,7 @@ endpoint_model_submit <- function(queue) {
                                                   schema_root())
   porcelain::porcelain_endpoint$new("POST",
                                     "/model/submit",
-                                    submit_model(queue),
+                                    submit_model(queue, kelp),
                                     input,
                                     returning = response)
 }
