@@ -1,3 +1,7 @@
+# hintr 0.1.38
+
+* Add dummy endpoint `/chart-data/input-time-series/<type>` to return dummy data for upcoming input time-series plots
+
 # hintr 0.1.37
 
 * Add dummy endpoint `/calibrate/plot/<id>` to return dummy data for upcoming calibrate plot

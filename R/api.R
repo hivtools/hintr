@@ -4,6 +4,7 @@ api_build <- function(queue) {
   api$handle(endpoint_baseline_individual())
   api$handle(endpoint_baseline_combined())
   api$handle(endpoint_validate_survey_programme())
+  api$handle(endpoint_input_time_series_plot())
   api$handle(endpoint_model_options())
   api$handle(endpoint_model_options_validate())
   api$handle(endpoint_model_submit(queue))
@@ -159,6 +160,18 @@ endpoint_validate_survey_programme <- function() {
   porcelain::porcelain_endpoint$new("POST",
                                     "/validate/survey-and-programme",
                                     validate_survey_programme,
+                                    input,
+                                    returning = response)
+}
+
+endpoint_input_time_series_plot <- function(queue) {
+  input <- porcelain::porcelain_input_body_json(
+    "input", "InputTimeSeriesRequest.schema", schema_root())
+  response <- porcelain::porcelain_returning_json(
+    "InputTimeSeriesResponse.schema", schema_root())
+  porcelain::porcelain_endpoint$new("POST",
+                                    "/chart-data/input-time-series/<type>",
+                                    input_time_series,
                                     input,
                                     returning = response)
 }

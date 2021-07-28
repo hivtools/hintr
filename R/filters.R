@@ -226,7 +226,6 @@ get_area_level_filter_option <- function(output) {
   )
 }
 
-
 get_quarter_filters <- function(data) {
   calendar_quarters <- unique(data$calendar_quarter)
   calendar_quarters <- sort(calendar_quarters, decreasing = TRUE)
@@ -294,11 +293,15 @@ get_spectrum_region_filters <- function(data) {
 }
 
 get_data_type_filters <- function(data) {
-  data_types <- unique(data[, "data_type"])
-  lapply(data_types, function(data_type) {
+  get_simple_filter(data, "data_type")
+}
+
+get_simple_filter <- function(data, column) {
+  values <- unique(data[, column])
+  lapply(values, function(value) {
     list(
-      id = scalar(data_type),
-      label = scalar(data_type)
+      id = scalar(value),
+      label = scalar(value)
     )
   })
 }
@@ -333,4 +336,52 @@ construct_tree <- function(data, id_column = 1, parent_id_column = 2,
   }
 
   build_immediate_children(data[root_node, id_column])
+}
+
+get_programme_time_series_filters <- function(data) {
+  list(
+    list(
+      id = scalar("plot_type"),
+      column_id = scalar("plot"),
+      label = scalar(t_("INPUT_TIME_SERIES_FILTER_PLOT_TYPE")),
+      options = get_simple_filter(data, "plot")
+    ),
+    list(
+      id = scalar("area_level"),
+      column_id = scalar("area_level_label"),
+      label = scalar(t_("INPUT_TIME_SERIES_FILTER_AREA_LEVEL")),
+      ## TODO: Plot type and time step should use human readable name for label
+      options = get_simple_filter(data, "area_level_label")
+    ),
+    list(
+      id = scalar("time_step"),
+      column_id = scalar("time_step"),
+      label = scalar(t_("INPUT_TIME_SERIES_FILTER_TIME_STEP")),
+      options = get_simple_filter(data, "time_step")
+    )
+  )
+}
+
+get_anc_time_series_filters <- function(data) {
+  list(
+    list(
+      id = scalar("plot_type"),
+      column_id = scalar("plot"),
+      label = scalar(t_("INPUT_TIME_SERIES_FILTER_PLOT_TYPE")),
+      options = get_simple_filter(data, "plot")
+    ),
+    list(
+      id = scalar("area_level"),
+      column_id = scalar("area_level_label"),
+      label = scalar(t_("INPUT_TIME_SERIES_FILTER_AREA_LEVEL")),
+      ## TODO: Plot type and time step should use human readable name for label
+      options = get_simple_filter(data, "area_level_label")
+    ),
+    list(
+      id = scalar("age"),
+      column_id = scalar("age_group"),
+      label = scalar(t_("INPUT_TIME_SERIES_FILTER_AGE")),
+      options = get_age_filters(data)
+    )
+  )
 }

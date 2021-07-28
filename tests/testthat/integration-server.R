@@ -748,3 +748,45 @@ test_that("endpoint_model_submit can be run without anc or programme data", {
   expect_equal(response$errors, NULL)
   expect_equal(names(response$data), c("id"))
 })
+
+test_that("input time series can return plot data for programme", {
+  server <- hintr_server()
+  programme_input <- input_time_series_request(
+    file.path("testdata", "programme.csv"),
+    "programme",
+    file.path("testdata", "malawi.geojson"))
+  r <- httr::POST(paste0(server$url, "/chart-data/input-time-series/programme"),
+                  body = programme_input,
+                  encode = "json",
+                  httr::content_type_json())
+
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+  expect_equal(response$errors, NULL)
+  expect_equal(names(response$data), c("data", "filters", "defaults"))
+  expect_true(length(response$data$data) > 100)
+  expect_equal(names(response$data$defaults$selected_filter_options),
+               c("plot_type", "area_level", "time_step"))
+})
+
+test_that("input time series can return plot data for anc", {
+  server <- hintr_server()
+  programme_input <- input_time_series_request(
+    file.path("testdata", "anc.csv"),
+    "anc",
+    file.path("testdata", "malawi.geojson"))
+  r <- httr::POST(paste0(server$url, "/chart-data/input-time-series/anc"),
+                  body = programme_input,
+                  encode = "json",
+                  httr::content_type_json())
+
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+  expect_equal(response$errors, NULL)
+  expect_equal(names(response$data), c("data", "filters", "defaults"))
+  expect_true(length(response$data$data) > 100)
+  expect_equal(names(response$data$defaults$selected_filter_options),
+               c("plot_type", "area_level", "age"))
+})
