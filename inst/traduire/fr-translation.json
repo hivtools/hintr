@@ -68,7 +68,7 @@
     "OUTPUT_FILTER_DATA_TYPE": "Data type",
     "MODEL_RESULT_OLD": "Impossible de télécharger {{type}}, veuillez réexécuter le modèle et réessayer de télécharger.",
     "UNKNOWN_OUTPUT_TYPE": "L'exécution du modèle a renvoyé un type de sortie inconnu, veuillez contacter le support.",
-    "INVALID_TIME_SERIES_INPUT_TYPE": "Time series data can only be returned for {{types}} received {{type}}",
+    "INVALID_TIME_SERIES_INPUT_TYPE": "Time series data can only be returned for {{types}}, received '{{type}}'.",
     "INPUT_TIME_SERIES_FILTER_PLOT_TYPE": "Plot type",
     "INPUT_TIME_SERIES_FILTER_AREA_LEVEL": "Area level",
     "INPUT_TIME_SERIES_FILTER_TIME_STEP": "Time step",

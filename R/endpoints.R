@@ -96,7 +96,7 @@ input_time_series <- function(type, input) {
     programme = get_programme_time_series,
     anc = get_anc_time_series,
     hintr_error(t_("INVALID_TIME_SERIES_INPUT_TYPE",
-                   list(types = paste(c("programme", "anc"), collapse = ", "),
+                   list(types = paste(c("programme", "anc"), collapse = " or "),
                         type = type)),
                 "INVALID_INPUT_TYPE"))
   tryCatch({

@@ -24,6 +24,46 @@ test_that("input time series works with anc data", {
                c("plot_type", "area_level", "age"))
 })
 
+test_that("input time series works if both anc and programme are provided", {
+  input_json <- input_time_series_request(
+    file.path("testdata", "anc.csv"),
+    "anc",
+    file.path("testdata", "malawi.geojson"))
+  input <- jsonlite::fromJSON(input_json)
+  input$data$programme <- list(
+    path = file.path("testdata", "programme.csv"),
+    hash = "12345",
+    filename = "programme",
+    fromADR = FALSE
+  )
+  input_json <- jsonlite::toJSON(input, auto_unbox = TRUE)
+  out <- input_time_series("anc", input_json)
+
+  expect_equal(names(out), c("data", "filters", "defaults"))
+  expect_true(nrow(out$data) > 100)
+  expect_equal(names(out$defaults$selected_filter_options),
+               c("plot_type", "area_level", "age"))
+})
+
+test_that("input_time_series throws error if unknown file type", {
+  input <- input_time_series_request(
+    file.path("testdata", "survey.csv"),
+    "survey",
+    file.path("testdata", "malawi.geojson"))
+  expect_error(input_time_series("survey", input), paste0(
+    "Time series data can only be returned for programme or anc,",
+    " received 'survey'."))
+})
+
+test_that("input_time_series catches unexpected errors", {
+  input <- input_time_series_request(
+    file.path("testdata", "unknown.csv"),
+    "anc",
+    file.path("testdata", "malawi.geojson"))
+  error <- expect_error(input_time_series("anc", input))
+  expect_equal(error$data$error, "FAILED_TO_GENERATE_TIME_SERIES")
+})
+
 test_that("api can return input time series data for programme/art", {
   test_redis_available()
   queue <- test_queue(workers = 0)
