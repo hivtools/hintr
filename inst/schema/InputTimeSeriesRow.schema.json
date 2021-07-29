@@ -12,13 +12,13 @@
       "type": "string"
     },
     "year": {
-      "type": "string"
+      "type": "number"
     },
     "time_step": {
       "type": "string"
     },
     "plot": {
-      "type": [ "number", "null" ]
+      "type": [ "string", "null" ]
     },
     "value": {
       "type": [ "number", "null" ]
@@ -27,10 +27,10 @@
       "type": "number"
     },
      "age_group": {
-      "type": "number"
+      "type": "string"
     },
      "time_period": {
-      "type": "number"
+      "type": "string"
     }
   },
   "additionalProperties": true,

@@ -1,5 +1,5 @@
-api_build <- function(queue) {
-  api <- porcelain::porcelain$new()
+api_build <- function(queue, validate = FALSE) {
+  api <- porcelain::porcelain$new(validate = validate)
   api$handle(endpoint_root())
   api$handle(endpoint_baseline_individual())
   api$handle(endpoint_baseline_combined())
@@ -164,7 +164,7 @@ endpoint_validate_survey_programme <- function() {
                                     returning = response)
 }
 
-endpoint_input_time_series_plot <- function(queue) {
+endpoint_input_time_series_plot <- function() {
   input <- porcelain::porcelain_input_body_json(
     "input", "InputTimeSeriesRequest.schema", schema_root())
   response <- porcelain::porcelain_returning_json(
