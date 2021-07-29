@@ -61,7 +61,7 @@ test_that("input_time_series catches unexpected errors", {
     "anc",
     file.path("testdata", "malawi.geojson"))
   error <- expect_error(input_time_series("anc", input))
-  expect_equal(error$data$error, "FAILED_TO_GENERATE_TIME_SERIES")
+  expect_equal(error$data[[1]]$error, "FAILED_TO_GENERATE_TIME_SERIES")
 })
 
 test_that("api can return input time series data for programme/art", {
