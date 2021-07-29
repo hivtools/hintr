@@ -6,7 +6,7 @@ test_that("get_programme_time_series returns data and filters", {
   expect_equal(names(out), c("data", "metadata"))
   expect_true(nrow(out$data) > 100) ## Check that we have read out some data
   expect_setequal(colnames(out$data),
-                  c("area_id", "area_name", "area_level_label", "year",
+                  c("area_id", "area_name", "area_level_label",
                     "time_step", "time_period", "plot", "value"))
 
   filters <- out$metadata$filters
@@ -39,7 +39,7 @@ test_that("get_anc_time_series returns data and filters", {
   expect_true(nrow(out$data) > 100) ## Check that we have read out some data
   expect_setequal(colnames(out$data),
                   c("area_id", "area_name", "area_level", "area_level_label",
-                    "age_group", "year", "time_step", "plot", "value"))
+                    "age_group", "time_period", "time_step", "plot", "value"))
 
   filters <- out$metadata$filters
   expect_length(filters, 3)

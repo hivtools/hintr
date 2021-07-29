@@ -98,7 +98,6 @@ test_that("endpoint_input_time_series_plot works with anc data", {
                c("plot_type", "area_level", "age"))
 })
 
-
 test_that("api can return input time series data for programme/art", {
   test_redis_available()
   queue <- test_queue(workers = 0)

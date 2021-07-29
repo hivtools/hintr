@@ -11,9 +11,6 @@
     "area_level_label": {
       "type": "string"
     },
-    "year": {
-      "type": "number"
-    },
     "time_step": {
       "type": "string"
     },
@@ -34,10 +31,6 @@
     }
   },
   "additionalProperties": true,
-  "required": [ "area_id", "area_name", "area_level_label", "year", "time_step",
-    "plot", "value" ],
-  "oneOf": [
-    { "required": [ "area_level", "age_group"] },
-    { "required":  [ "time_period" ] }
-  ]
+  "required": [ "area_id", "area_name", "area_level_label", "time_period",
+    "time_step", "plot", "value" ]
 }
