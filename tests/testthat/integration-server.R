@@ -293,7 +293,7 @@ test_that("real model can be run & calibrated by API", {
     expect_equal(response$data$status, "COMPLETE")
     expect_true(response$data$success)
     expect_equal(response$data$queue, 0)
-    rexpect_match(response$data$progress[[1]],
+    expect_match(response$data$progress[[1]],
                  "Generating report - [\\d.m\\s]+s elapsed", perl = TRUE)
   })
 
