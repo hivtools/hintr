@@ -350,7 +350,8 @@ get_programme_time_series_filters <- function(data) {
       id = scalar("area_level"),
       column_id = scalar("area_level_label"),
       label = scalar(t_("INPUT_TIME_SERIES_FILTER_AREA_LEVEL")),
-      ## TODO: Plot type and time step should use human readable name for label
+      ## TODO: Plot type and time step should use human readable name for
+      ## option labels
       options = get_simple_filter(data, "area_level_label")
     ),
     list(
