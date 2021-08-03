@@ -283,7 +283,8 @@ test_that("real model can be run & calibrated by API", {
 
   ## Calibrate status
   testthat::try_again(7, {
-    Sys.sleep(5)
+    ## TODO: Reduce this time once report generation has been sped up
+    Sys.sleep(30)
     r <- httr::GET(paste0(server$url, "/calibrate/status/", calibrate_id))
     expect_equal(httr::status_code(r), 200)
     response <- response_from_json(r)
@@ -292,7 +293,7 @@ test_that("real model can be run & calibrated by API", {
     expect_equal(response$data$status, "COMPLETE")
     expect_true(response$data$success)
     expect_equal(response$data$queue, 0)
-    expect_match(response$data$progress[[1]],
+    rexpect_match(response$data$progress[[1]],
                  "Generating report - [\\d.m\\s]+s elapsed", perl = TRUE)
   })
 
