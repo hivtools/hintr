@@ -1,5 +1,5 @@
 get_programme_time_series <- function(programme, shape) {
-  data <- read_csv(system_file("extdata/dummy_input_time_series_programme.csv"))
+  data <- naomi::prepare_input_time_series_art(programme, shape)
   filters <- get_programme_time_series_filters(data)
   area_level_options <- get_selected_filter_options(filters, "area_level")
   list(
@@ -18,9 +18,7 @@ get_programme_time_series <- function(programme, shape) {
 }
 
 get_anc_time_series <- function(anc, shape) {
-  data <- read_csv(system_file("extdata/dummy_input_time_series_anc.csv"))
-  ## Force time period to a string - will be rendered as numeric otherwise
-  data$time_period <- as.character(data$time_period)
+  data <- naomi::prepare_input_time_series_anc(anc, shape)
   filters <- get_anc_time_series_filters(data)
   area_level_options <- get_selected_filter_options(filters, "area_level")
   list(
