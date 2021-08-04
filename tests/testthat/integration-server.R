@@ -282,7 +282,7 @@ test_that("real model can be run & calibrated by API", {
   expect_true(!is.null(calibrate_id))
 
   ## Calibrate status
-  testthat::try_again(7, {
+  testthat::try_again(10, {
     Sys.sleep(5)
     r <- httr::GET(paste0(server$url, "/calibrate/status/", calibrate_id))
     expect_equal(httr::status_code(r), 200)
