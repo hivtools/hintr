@@ -2,8 +2,8 @@ context("migrations")
 
 test_that("single task can be migrated", {
   test_mock_model_available()
-  q <- test_queue_result(model = mock_model_v0.1.34,
-                         calibrate = mock_model_v0.1.34)
+  q <- test_queue_result(model = mock_model_v0.1.38,
+                         calibrate = mock_model_v0.1.38)
   t <- tempfile()
   dir.create(t)
   expect_message(migrated <- migrate_task(q$calibrate_id, q$queue),
@@ -15,7 +15,7 @@ test_that("single task can be migrated", {
   expect_setequal(names(migrated$new_res),
                   c("plot_data_path", "model_output_path", "version"))
   expect_equal(migrated$from, "x.x.x")
-  expect_equal(migrated$to, "2.4.0")
+  expect_equal(migrated$to, "2.5.0")
   expect_equal(migrated$action, "Successfully migrated")
 
   ## Result has been migrated
@@ -53,8 +53,8 @@ test_that("invalid output format is not migrated", {
 test_that("all tasks can be migrated", {
   test_mock_model_available()
   ## Get 3 task results, 1 mock run, 1 mock calibrate, 1 run, 1 calibrate
-  q <- test_queue_result(model = mock_model_v0.1.34,
-                         calibrate = mock_model_v0.1.34)
+  q <- test_queue_result(model = mock_model_v0.1.38,
+                         calibrate = mock_model_v0.1.38)
   model_payload <- setup_submit_payload()
   model_submit <- submit_model(q$queue)
   run_response <- model_submit(readLines(model_payload))
@@ -129,8 +129,8 @@ test_that("only completed tasks are migrated", {
 test_that("migration can be run in dry-run mode", {
   test_mock_model_available()
   ## Get 3 task results, 1 mock run, 1 mock calibrate, 1 run, 1 calibrate
-  q <- test_queue_result(model = mock_model_v0.1.34,
-                         calibrate = mock_model_v0.1.34)
+  q <- test_queue_result(model = mock_model_v0.1.38,
+                         calibrate = mock_model_v0.1.38)
   model_payload <- setup_submit_payload()
   model_submit <- submit_model(q$queue)
   run_response <- model_submit(readLines(model_payload))

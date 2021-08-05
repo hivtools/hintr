@@ -4,7 +4,7 @@ migrations_dir <- file.path("migrations")
 if (!file.exists(migrations_dir)) {
   dir.create(migrations_dir)
 }
-path <- file.path(migrations_dir, "x.x.x-2.4.0")
+path <- file.path(migrations_dir, "x.x.x-2.5.0")
 if (!file.exists(path)) {
   dir.create(path)
 }

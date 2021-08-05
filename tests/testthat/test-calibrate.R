@@ -180,8 +180,8 @@ test_that("calibrate fails with old model run result", {
   test_mock_model_available()
 
   ## Return v0.1.34 model results
-  q <- test_queue_result(model = mock_model_v0.1.34,
-                         calibrate = mock_model_v0.1.34)
+  q <- test_queue_result(model = mock_model_v0.1.38,
+                         calibrate = mock_model_v0.1.38)
 
   endpoint <- endpoint_model_calibrate_submit(q$queue)
   res <- endpoint$run(q$model_run_id)

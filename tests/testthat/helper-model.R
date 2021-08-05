@@ -60,8 +60,8 @@ test_mock_model_available <- function() {
 }
 
 ## Model output as returned by
-## hintr version 0.1.34 to 0.1.4 and naomi version 2.3.15 to 1.0.8
-mock_model_v0.1.34 <- list(
+## hintr version 0.1.4 to 0.1.38 and naomi version 1.0.8 to 2.4.2
+mock_model_v0.1.38 <- list(
   output_path = system.file("output", "malawi_output.rds", package = "hintr"),
   spectrum_path = system.file("output", "malawi_spectrum_download.zip",
                               package = "hintr"),
@@ -72,7 +72,7 @@ mock_model_v0.1.34 <- list(
     system.file("output", "malawi_summary_report.html", package = "hintr"),
   calibration_path = system.file("output", "malawi_calibration.rds",
                                  package = "hintr"))
-class(mock_model) <- "hintr_output"
+class(mock_model_v0.1.38) <- "hintr_output"
 
 mock_model_v0.1.2 <- list(
   output_path = system.file("output", "malawi_output.rds", package = "hintr"),

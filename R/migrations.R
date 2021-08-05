@@ -23,7 +23,7 @@ run_migration <- function(queue, output_dir, dry_run = FALSE) {
 migrate_task <- function(task_id, queue, dry_run = FALSE) {
   message(sprintf("Migrating %s", task_id))
   res <- queue$queue$task_result(task_id)
-  if (!is.null(res$version) && identical(as.character(res$version), "2.4.0")) {
+  if (!is.null(res$version) && identical(as.character(res$version), "2.5.0")) {
     message(sprintf("Not migrating %s, already up to date", task_id))
     return(list(
       id = task_id,
@@ -52,7 +52,7 @@ migrate_task <- function(task_id, queue, dry_run = FALSE) {
     prev_res = res,
     new_res = new_res,
     from = "x.x.x",
-    to = "2.4.0",
+    to = "2.5.0",
     action = "Successfully migrated"
   )
   message(sprintf("Successfully migrated %s", task_id))
