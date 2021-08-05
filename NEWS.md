@@ -2,6 +2,10 @@
 
 * Update downloads to be generated on demand instead of as part of model calibration
 
+# hintr 0.1.38
+
+* Add Portuguese translations
+
 # hintr 0.1.37
 
 * Add dummy endpoint `/calibrate/plot/<id>` to return dummy data for upcoming calibrate plot

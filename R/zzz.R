@@ -25,7 +25,7 @@ get_version_info <- function() {
 hintr_init_traduire <- function() {
   root <- system.file("traduire", package = "hintr", mustWork = TRUE)
   pattern <- sprintf("%s/{language}-{namespace}.json", root)
-  languages <- c("en", "fr")
+  languages <- c("en", "fr", "pt")
   namespaces <- "translation"
   traduire::translator_register(resources = NULL,
                                 language = languages[[1]],
