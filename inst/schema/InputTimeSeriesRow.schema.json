@@ -30,7 +30,7 @@
       "type": "string"
     }
   },
-  "additionalProperties": true,
+  "additionalProperties": false,
   "required": [ "area_id", "area_name", "area_level_label", "time_period",
     "time_step", "plot", "value" ]
 }
