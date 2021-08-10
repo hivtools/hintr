@@ -1,6 +1,10 @@
-# hintr 0.1.38
+# hintr 0.1.39
 
 * Add dummy endpoint `/chart-data/input-time-series/<type>` to return dummy data for upcoming input time-series plots
+
+# hintr 0.1.38
+
+* Add Portuguese translations
 
 # hintr 0.1.37
 
