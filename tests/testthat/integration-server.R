@@ -134,7 +134,7 @@ test_that("validate survey", {
   expect_equal(response$data$type, "survey")
   expect_equal(response$data$fromADR, FALSE)
   expect_true(length(response$data$data) >= 20000)
-  expect_equal(typeof(response$data$data[[1]]$est), "double")
+  expect_equal(typeof(response$data$data[[1]]$estimate), "double")
   expect_equal(names(response$data$filters), c("age", "surveys", "indicators"))
   expect_length(response$data$filters$age, 23)
   expect_length(response$data$filters$surveys, 4)
