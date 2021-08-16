@@ -41,4 +41,4 @@ Suggests:
     testthat (>= 2.1.0),
     withr
 Remotes:
-    mrc-ide/rrq@mrc-2338
+    mrc-ide/rrq
