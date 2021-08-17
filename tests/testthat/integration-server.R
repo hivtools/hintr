@@ -650,7 +650,7 @@ test_that("crashed worker can be detected", {
   id <- response_from_json(r)$data$id
 
   Sys.sleep(2)
-  obj <- rrq::rrq_controller(server$queue_id)
+  obj <- rrq::rrq_controller$new(server$queue_id)
   expect_equal(obj$task_status(id), setNames("RUNNING", id))
 
   ## There's quite a chore here to try and identify the actual running
