@@ -189,13 +189,9 @@ test_that("summary report download returns bytes", {
     response$headers$`Content-Disposition`,
     'attachment; filename="MWI_summary-report_\\d+-\\d+.html"')
   size <- length(response$data)
+  ## There is some data in the report
+  expect_true(size > 10000)
   expect_equal(response$headers$`Content-Length`, size)
-  ## Pandoc adds some extra script lines depending on context the report
-  ## was generated. Add some leeway to the tests
-  expect_true(size - 1000 < file.size(
-    system_file("output", "malawi_summary_report.html")))
-  expect_true(size + 1000 > file.size(
-    system_file("output", "malawi_summary_report.html")))
 })
 
 test_that("api can call summary report download", {
@@ -235,13 +231,9 @@ test_that("api can call summary report download", {
     'attachment; filename="MWI_summary-report_\\d+-\\d+.html"')
   ## Size of bytes is close to expected
   size <- length(res$body)
+  ## There is some data in the report
+  expect_true(size > 10000)
   expect_equal(res$headers$`Content-Length`, size)
-  ## Pandoc adds some extra script lines depending on context the report
-  ## was generated. Add some leeway to the tests
-  expect_true(size - 1000 < file.size(
-    system_file("output", "malawi_summary_report.html")))
-  expect_true(size + 1000 > file.size(
-    system_file("output", "malawi_summary_report.html")))
 })
 
 test_that("download returns useful error if model run fails", {
