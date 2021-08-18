@@ -86,7 +86,7 @@ test_that("validate programme", {
   expect_equal(response$data$type, "programme")
   expect_equal(response$data$fromADR, FALSE)
   expect_true(length(response$data$data) >= 500)
-  expect_equal(typeof(response$data$data[[1]]$art_current), "integer")
+  expect_type(response$data$data[[1]]$art_current, "integer")
   expect_equal(names(response$data$filters),
                c("age", "calendar_quarter", "indicators"))
   expect_length(response$data$filters$age, 2)
@@ -111,7 +111,7 @@ test_that("validate ANC", {
   expect_equal(response$data$type, "anc")
   expect_equal(response$data$fromADR, FALSE)
   expect_true(length(response$data$data) >= 200)
-  expect_equal(typeof(response$data$data[[1]]$anc_clients), "integer")
+  expect_type(response$data$data[[1]]$anc_clients, "integer")
   expect_equal(names(response$data$filters), c("year", "indicators"))
   expect_length(response$data$filters$year, 8)
   expect_length(response$data$filters$indicators, 2)
@@ -134,7 +134,7 @@ test_that("validate survey", {
   expect_equal(response$data$type, "survey")
   expect_equal(response$data$fromADR, FALSE)
   expect_true(length(response$data$data) >= 20000)
-  expect_equal(typeof(response$data$data[[1]]$est), "double")
+  expect_type(response$data$data[[1]]$estimate, "double")
   expect_equal(names(response$data$filters), c("age", "surveys", "indicators"))
   expect_length(response$data$filters$age, 23)
   expect_length(response$data$filters$surveys, 4)
@@ -751,4 +751,46 @@ test_that("endpoint_model_submit can be run without anc or programme data", {
   expect_equal(response$status, "success")
   expect_equal(response$errors, NULL)
   expect_equal(names(response$data), c("id"))
+})
+
+test_that("input time series can return plot data for programme", {
+  server <- hintr_server()
+  programme_input <- input_time_series_request(
+    file.path("testdata", "programme.csv"),
+    "programme",
+    file.path("testdata", "malawi.geojson"))
+  r <- httr::POST(paste0(server$url, "/chart-data/input-time-series/programme"),
+                  body = programme_input,
+                  encode = "json",
+                  httr::content_type_json())
+
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+  expect_equal(response$errors, NULL)
+  expect_equal(names(response$data), c("data", "metadata"))
+  expect_true(length(response$data$data) > 100)
+  expect_equal(names(response$data$metadata$defaults$selected_filter_options),
+               c("plot_type", "area_level", "time_step"))
+})
+
+test_that("input time series can return plot data for anc", {
+  server <- hintr_server()
+  programme_input <- input_time_series_request(
+    file.path("testdata", "anc.csv"),
+    "anc",
+    file.path("testdata", "malawi.geojson"))
+  r <- httr::POST(paste0(server$url, "/chart-data/input-time-series/anc"),
+                  body = programme_input,
+                  encode = "json",
+                  httr::content_type_json())
+
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+  expect_equal(response$errors, NULL)
+  expect_equal(names(response$data), c("data", "metadata"))
+  expect_true(length(response$data$data) > 100)
+  expect_equal(names(response$data$metadata$defaults$selected_filter_options),
+               c("plot_type", "area_level", "age"))
 })

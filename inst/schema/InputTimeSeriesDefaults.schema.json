@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties" : {
+    "selected_filter_options": {
+      "type": "object",
+      "patternProperties": {
+        "^.*$": {
+          "type": "array",
+          "items": { "$ref": "FilterOption.schema.json" }
+        }
+      },
+      "additionalProperties": true,
+      "oneOf": [
+        { "required": [ "plot_type", "area_level", "time_step" ] },
+        { "required": [ "plot_type", "area_level", "age" ] }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "required": [ "selected_filter_options" ]
+}
