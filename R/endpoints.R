@@ -89,6 +89,31 @@ validate_survey_programme <- function(input) {
   })
 }
 
+input_time_series <- function(type, input) {
+  input <- jsonlite::fromJSON(input)
+  get_time_series_data <- switch(
+    type,
+    programme = get_programme_time_series,
+    anc = get_anc_time_series,
+    hintr_error(t_("INVALID_TIME_SERIES_INPUT_TYPE",
+                   list(types = paste(c("programme", "anc"), collapse = " or "),
+                        type = type)),
+                "INVALID_INPUT_TYPE"))
+  tryCatch({
+    assert_file_exists(input$data$shape$path)
+    if (type == "anc") {
+      file <- input$data$anc
+    } else {
+      file <- input$data$programme
+    }
+    assert_file_exists(file$path)
+    get_time_series_data(file, input$data$shape)
+  },
+  error = function(e) {
+    hintr_error(e$message, "FAILED_TO_GENERATE_TIME_SERIES")
+  })
+}
+
 model_options <- function(input) {
   input <- jsonlite::fromJSON(input)
   tryCatch({

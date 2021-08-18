@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties" : {
+    "filters" : {
+      "type": "array",
+      "items": { "$ref": "Filter.schema.json" }
+    },
+    "defaults": { "$ref": "InputTimeSeriesDefaults.schema.json" }
+  },
+  "additionalProperties": false,
+  "required": [ "filters", "defaults" ]
+}

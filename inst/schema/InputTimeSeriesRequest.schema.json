@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "data" : {
+      "type": "object",
+      "properties": {
+        "shape": { "$ref": "SessionFile.schema.json" },
+        "programme": { "$ref": "SessionFile.schema.json" },
+        "anc": { "$ref": "SessionFile.schema.json" }
+      },
+      "anyOf": [
+        { "required":
+          [ "shape", "programme" ] },
+        { "required":
+          [ "shape", "anc" ] }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "required": [ "data" ]
+}

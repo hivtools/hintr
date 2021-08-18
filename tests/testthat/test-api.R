@@ -101,7 +101,7 @@ test_that("endpoint_validate_survey_programme programme", {
   expect_equal(response$data$fromADR, scalar(FALSE))
   ## Sanity check that data has been returned
   expect_true(nrow(response$data$data) >= 200)
-  expect_equal(typeof(response$data$data[, "art_current"]), "double")
+  expect_type(response$data$data[, "art_current"], "double")
 })
 
 test_that("endpoint_validate_survey_programme works with programme data", {
@@ -134,8 +134,8 @@ test_that("endpoint_validate_survey_programme anc", {
   expect_equal(response$data$fromADR, scalar(FALSE))
   ## Sanity check that data has been returned
   expect_true(nrow(response$data$data) >= 200)
-  expect_equal(typeof(response$data$data[, "anc_prevalence"]), "double")
-  expect_equal(typeof(response$data$data[, "anc_art_coverage"]), "double")
+  expect_type(response$data$data[, "anc_prevalence"], "double")
+  expect_type(response$data$data[, "anc_art_coverage"], "double")
 })
 
 test_that("endpoint_validate_survey_programme works with anc data", {
@@ -153,8 +153,8 @@ test_that("endpoint_validate_survey_programme works with anc data", {
   expect_equal(body$data$fromADR, FALSE)
   ## Sanity check that data has been returned
   expect_true(nrow(body$data$data) >= 200)
-  expect_equal(typeof(body$data$data[, "anc_prevalence"]), "double")
-  expect_equal(typeof(body$data$data[, "anc_art_coverage"]), "double")
+  expect_type(body$data$data[, "anc_prevalence"], "double")
+  expect_type(body$data$data[, "anc_art_coverage"], "double")
 })
 
 test_that("endpoint_validate_survey_programme survey", {
@@ -168,7 +168,7 @@ test_that("endpoint_validate_survey_programme survey", {
   expect_equal(response$data$fromADR, scalar(FALSE))
   ## Sanity check that data has been returned
   expect_true(nrow(response$data$data) >= 20000)
-  expect_equal(typeof(response$data$data[, "estimate"]), "double")
+  expect_type(response$data$data[, "estimate"], "double")
 })
 
 test_that("endpoint_validate_survey_programme works with survey data", {
@@ -186,7 +186,7 @@ test_that("endpoint_validate_survey_programme works with survey data", {
   expect_equal(body$data$hash, "12345")
   ## Sanity check that data has been returned
   expect_true(nrow(body$data$data) >= 20000)
-  expect_equal(typeof(body$data$data[, "estimate"]), "double")
+  expect_type(body$data$data[, "estimate"], "double")
 })
 
 test_that("endpoint_model_options", {

@@ -69,6 +69,26 @@ validate_programme_survey_input <- function(file_path, type, shape) {
     }', type, file_path, shape)
 }
 
+input_time_series_request <- function(file_path, type, shape_path) {
+  sprintf(
+    '{
+      "data": {
+        "%s": {
+          "path": "%s",
+          "hash": "12345",
+          "filename": "original",
+          "fromADR": false
+        },
+        "shape": {
+          "path": "%s",
+          "hash": "6789",
+          "filename": "shape_file",
+          "fromADR": false
+        }
+      }
+    }', type, file_path, shape_path)
+}
+
 MockPlumberResponse <- R6::R6Class("PlumberResponse", list(
   body = NULL,
   status = 200,

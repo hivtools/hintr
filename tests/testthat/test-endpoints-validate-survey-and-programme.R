@@ -12,7 +12,7 @@ test_that("endpoint_validate_survey_programme supports programme file", {
   expect_equal(response$fromADR, scalar(FALSE))
   ## Sanity check that data has been returned
   expect_true(nrow(response$data) >= 200)
-  expect_equal(typeof(response$data[, "art_current"]), "double")
+  expect_type(response$data[, "art_current"], "double")
 })
 
 test_that("endpoint_validate_survey_programme returns error on invalid programme data", {
@@ -41,8 +41,8 @@ test_that("endpoint_validate_survey_programme supports ANC file", {
   expect_equal(response$fromADR, scalar(FALSE))
   ## Sanity check that data has been returned
   expect_true(nrow(response$data) >= 200)
-  expect_equal(typeof(response$data[, "anc_prevalence"]), "double")
-  expect_equal(typeof(response$data[, "anc_art_coverage"]), "double")
+  expect_type(response$data[, "anc_prevalence"], "double")
+  expect_type(response$data[, "anc_art_coverage"], "double")
 })
 
 test_that("endpoint_validate_survey_programme returns error on invalid ANC data", {
@@ -73,7 +73,7 @@ test_that("endpoint_validate_survey_programme supports survey file", {
   expect_equal(response$fromADR, scalar(FALSE))
   ## Sanity check that data has been returned
   expect_true(nrow(response$data) >= 20000)
-  expect_equal(typeof(response$data[, "estimate"]), "double")
+  expect_type(response$data[, "estimate"], "double")
 })
 
 test_that("endpoint_validate_survey_programme returns error on invalid survey data", {

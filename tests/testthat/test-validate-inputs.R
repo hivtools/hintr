@@ -92,7 +92,7 @@ test_that("do_validate_programme validates programme file", {
   data <- do_validate_programme(programme, shape)
   ## Some arbitrary test that the data has actually been returned
   expect_true(nrow(data$data) > 200)
-  expect_equal(typeof(data$data$art_current), "double")
+  expect_type(data$data$art_current, "double")
 
   expect_equal(names(data$filters), c("age", "calendar_quarter", "indicators"))
   expected_age_filters <- list(
@@ -117,7 +117,7 @@ test_that("do_validate_anc validates ANC file and gets data for plotting", {
   data <- do_validate_anc(anc, shape)
 
   expect_true(nrow(data$data) > 200)
-  expect_equal(typeof(data$data$area_id), "character")
+  expect_type(data$data$area_id, "character")
   expect_true(all(c("anc_prevalence", "anc_art_coverage") %in% colnames(data$data)))
 
   expect_equal(names(data$filters), c("year", "indicators"))
@@ -142,7 +142,7 @@ test_that("do_validate_anc can include anc_hiv_status column", {
   data <- do_validate_anc(anc_file, shape)
 
   expect_true(nrow(data$data) > 200)
-  expect_equal(typeof(data$data$area_id), "character")
+  expect_type(data$data$area_id, "character")
   expect_true(all(c("anc_prevalence", "anc_art_coverage") %in% colnames(data$data)))
 
   expect_equal(names(data$filters), c("year", "indicators"))
@@ -163,7 +163,7 @@ test_that("do_validate_survey validates survey file", {
   data <- do_validate_survey(survey, shape)
   ## Some arbitrary test that the data has actually been returned
   expect_true(nrow(data$data) > 20000)
-  expect_equal(typeof(data$data$est), "double")
+  expect_type(data$data$estimate, "double")
   expect_equal(names(data$filters), c("age", "surveys", "indicators"))
   expected_ages <- list(id = scalar("Y015_049"),
                         label = scalar("15-49"))

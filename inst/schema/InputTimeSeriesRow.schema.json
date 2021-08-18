@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "area_id": {
+      "type": "string"
+    },
+    "area_name": {
+      "type": "string"
+    },
+    "area_level_label": {
+      "type": "string"
+    },
+    "time_step": {
+      "type": "string"
+    },
+    "plot": {
+      "type": [ "string", "null" ]
+    },
+    "value": {
+      "type": [ "number", "null" ]
+    },
+    "area_level": {
+      "type": "number"
+    },
+     "age_group": {
+      "type": "string"
+    },
+     "time_period": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "required": [ "area_id", "area_name", "area_level_label", "time_period",
+    "time_step", "plot", "value" ]
+}
