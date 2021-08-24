@@ -1,16 +1,15 @@
 context("run-model")
 
-test_that("model can be run and filters extracted", {
+test_that("model can be run & calibrated and filters extracted", {
   test_mock_model_available()
-  model_run <- process_result(mock_model)
-  expect_equal(names(model_run),
-               c("data", "plottingMetadata", "uploadMetadata"))
-  expect_equal(names(model_run$data),
+  res <- process_result(mock_calibrate)
+  expect_equal(names(res), c("data", "plottingMetadata"))
+  expect_equal(names(res$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
-  expect_true(nrow(model_run$data) > 84042)
-  expect_equal(names(model_run$plottingMetadata), c("barchart", "choropleth"))
-  barchart <- model_run$plottingMetadata$barchart
+  expect_true(nrow(res$data) > 84042)
+  expect_equal(names(res$plottingMetadata), c("barchart", "choropleth"))
+  barchart <- res$plottingMetadata$barchart
   expect_equal(names(barchart), c("indicators", "filters", "defaults"))
   expect_length(barchart$filters, 4)
   expect_equal(names(barchart$filters[[1]]),
@@ -36,7 +35,7 @@ test_that("model can be run and filters extracted", {
                     "anc_tested_pos", "anc_tested_neg") %in%
                     barchart$indicators$indicator))
 
-  choropleth <- model_run$plottingMetadata$choropleth
+  choropleth <- res$plottingMetadata$choropleth
   expect_equal(names(choropleth), c("indicators", "filters"))
   expect_length(choropleth$filters, 4)
   expect_equal(names(choropleth$filters[[1]]),
@@ -64,32 +63,23 @@ test_that("model can be run and filters extracted", {
                   "anc_art_new", "anc_known_pos",
                   "anc_tested_pos", "anc_tested_neg") %in%
                   choropleth$indicators$indicator))
-
-  upload_metadata <- model_run$uploadMetadata
-  expect_s3_class(upload_metadata$outputSummary$description,
-                  c("scalar", "character"))
-  expect_length(upload_metadata$outputSummary$description, 1)
-  expect_s3_class(upload_metadata$outputZip$description,
-                  c("scalar", "character"))
-  expect_length(upload_metadata$outputZip$description, 1)
 })
 
 test_that("model without national level results can be processed", {
   test_mock_model_available()
-  output <- readRDS(mock_model$output_path)
+  output <- readRDS(mock_calibrate$plot_data_path)
   output <- output[output$area_level != 0, ]
   output_temp <- tempfile()
   saveRDS(output, output_temp)
-  model_run <- process_result(list(output_path = output_temp))
-  expect_equal(names(model_run),
-               c("data", "plottingMetadata", "uploadMetadata"))
-  expect_equal(names(model_run$data),
+  res <- process_result(list(plot_data_path = output_temp))
+  expect_equal(names(res), c("data", "plottingMetadata"))
+  expect_equal(names(res$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
-  expect_true(nrow(model_run$data) > 84042)
-  expect_equivalent(as.data.frame(model_run$data)[1, "area_id"], "MWI_1_1_demo")
-  expect_equal(names(model_run$plottingMetadata), c("barchart", "choropleth"))
-  barchart <- model_run$plottingMetadata$barchart
+  expect_true(nrow(res$data) > 84042)
+  expect_equivalent(as.data.frame(res$data)[1, "area_id"], "MWI_1_1_demo")
+  expect_equal(names(res$plottingMetadata), c("barchart", "choropleth"))
+  barchart <- res$plottingMetadata$barchart
   expect_equal(names(barchart), c("indicators", "filters", "defaults"))
   expect_length(barchart$filters, 4)
   expect_equal(names(barchart$filters[[1]]),
@@ -115,7 +105,7 @@ test_that("model without national level results can be processed", {
                     "anc_tested_pos", "anc_tested_neg") %in%
                     barchart$indicators$indicator))
 
-  choropleth <- model_run$plottingMetadata$choropleth
+  choropleth <- res$plottingMetadata$choropleth
   expect_equal(names(choropleth), c("indicators", "filters"))
   expect_length(choropleth$filters, 4)
   expect_equal(names(choropleth$filters[[1]]),
@@ -189,30 +179,11 @@ test_that("real model can be run", {
   withr::with_envvar(c("USE_MOCK_MODEL" = "false"), {
     model_run <- run_model(data, options, tempdir())
   })
-  expect_equal(names(model_run), c("output_path", "spectrum_path",
-                                   "coarse_output_path", "summary_report_path",
-                                   "calibration_path", "metadata"))
+  expect_equal(names(model_run), c("plot_data_path", "model_output_path",
+                                   "version"))
 
-  output <- readRDS(model_run$output_path)
-  expect_equal(colnames(output),
-               c("area_level", "area_level_label", "area_id", "area_name",
-                 "sex", "age_group", "age_group_label",
-                 "calendar_quarter", "quarter_label", "indicator",
-                 "indicator_label", "mean",
-                 "se", "median", "mode", "lower", "upper"))
-  expect_true(nrow(output) > 84042)
-
-  file_list <- unzip(model_run$spectrum_path, list = TRUE)
-  expect_true(all(c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
-                    "meta_area.csv", "meta_indicator.csv", "meta_period.csv")
-                  %in% file_list$Name))
-
-  file_list <- unzip(model_run$coarse_output_path, list = TRUE)
-  expect_true(all(c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
-                    "meta_area.csv", "meta_indicator.csv", "meta_period.csv")
-                  %in% file_list$Name))
-
-  expect_true(file.size(model_run$summary_report_path) > 2000)
+  output <- readRDS(model_run$model_output_path)
+  expect_setequal(names(output), c("output_package", "naomi_data", "info"))
 })
 
 test_that("real model can be run with csv2 data", {
@@ -266,29 +237,9 @@ test_that("real model can be run with csv2 data", {
   withr::with_envvar(c("USE_MOCK_MODEL" = "false"), {
     model_run <- run_model(data, options, tempdir())
   })
+  expect_equal(names(model_run), c("plot_data_path", "model_output_path",
+                                   "version"))
 
-  expect_equal(names(model_run), c("output_path", "spectrum_path",
-                                   "coarse_output_path", "summary_report_path",
-                                   "calibration_path", "metadata"))
-
-  output <- readRDS(model_run$output_path)
-  expect_equal(colnames(output),
-               c("area_level", "area_level_label", "area_id", "area_name",
-                 "sex", "age_group", "age_group_label",
-                 "calendar_quarter", "quarter_label", "indicator",
-                 "indicator_label", "mean",
-                 "se", "median", "mode", "lower", "upper"))
-  expect_true(nrow(output) > 84042)
-
-  file_list <- unzip(model_run$spectrum_path, list = TRUE)
-  expect_true(all(c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
-                    "meta_area.csv", "meta_indicator.csv", "meta_period.csv")
-                  %in% file_list$Name))
-
-  file_list <- unzip(model_run$coarse_output_path, list = TRUE)
-  expect_true(all(c("boundaries.geojson", "indicators.csv", "meta_age_group.csv",
-                    "meta_area.csv", "meta_indicator.csv", "meta_period.csv")
-                  %in% file_list$Name))
-
-  expect_true(file.size(model_run$summary_report_path) > 2000)
+  output <- readRDS(model_run$model_output_path)
+  expect_setequal(names(output), c("output_package", "naomi_data", "info"))
 })

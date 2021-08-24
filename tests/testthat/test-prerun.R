@@ -6,22 +6,10 @@ test_that("import failures", {
   expect_error(obj$import(p), "Import directory .+ does not exist")
   dir.create(p)
   expect_error(obj$import(p),
-               "Path 'output.rds' for 'output' does not exist")
-  file.create(file.path(p, "output.rds"))
-  expect_error(obj$import(p),
-               "Path 'spectrum.zip' for 'spectrum' does not exist")
-  file.create(file.path(p, "spectrum.zip"))
-  expect_error(obj$import(p),
-               "Path 'coarse-output.zip' for 'coarse_output' does not exist")
-  file.create(file.path(p, "coarse-output.zip"))
-  expect_error(obj$import(p),
-               "Path 'summary-report.html' for 'summary_report' does not exist")
-  file.create(file.path(p, "summary-report.html"))
-  expect_error(obj$import(p),
-               "Path 'calibration.rds' for 'calibration' does not exist")
-  file.create(file.path(p, "calibration.rds"))
+               "Path 'model-output.rds' for 'model_output' does not exist")
+  file.create(file.path(p, "model-output.rds"))
   expect_error(obj$import(p, "path/to/output.zip"),
-               "Path for 'output' must be just the filename, no slashes")
+               "Path for 'model_output' must be just the filename, no slashes")
 })
 
 test_that("import base data", {
@@ -32,33 +20,18 @@ test_that("import base data", {
 
   p <- system_file("output")
 
-  inputs <- read_info_inputs(file.path(p, "malawi_coarse_output_download.zip"))
+  inputs <- read_info_inputs(file.path(p, "malawi_model_output.rds"))
   expect_false(obj$exists(inputs))
 
-  h <- obj$import(p, "malawi_output.rds",
-                  "malawi_spectrum_download.zip",
-                  "malawi_coarse_output_download.zip",
-                  "malawi_summary_report.html",
-                  "malawi_calibration.rds")
+  h <- obj$import(p, "malawi_model_output.rds")
   expect_equal(obj$list(), h)
   expect_true(obj$exists(inputs))
-  expect_equal(obj$get(inputs),
-               list(output_path = file.path(path_prerun, h, "output.rds"),
-                    spectrum_path = file.path(path_prerun, h, "spectrum.zip"),
-                    coarse_output_path = file.path(path_prerun, h,
-                                                   "coarse-output.zip"),
-                    summary_report_path = file.path(path_prerun, h,
-                                                    "summary-report.html"),
-                    calibration_path = file.path(path_prerun, h,
-                                                 "calibration.rds")))
+  expect_equal(obj$get(inputs), list(
+    model_output_path = file.path(path_prerun, h, "model-output.rds")))
   expect_true(all(vapply(obj$get(inputs), file.exists, TRUE)))
 
   expect_error(
-    obj$import(p, "malawi_output.rds",
-               "malawi_spectrum_download.zip",
-               "malawi_coarse_output_download.zip",
-               "malawi_summary_report.html",
-               "malawi_calibration.rds"),
+    obj$import(p, "malawi_model_output.rds"),
     "This set of data has been imported already")
 })
 
@@ -69,11 +42,7 @@ test_that("run with prerun", {
   expect_equal(obj$list(), character(0))
 
   h <- prerun_import(path_prerun, system_file("output"),
-                     "malawi_output.rds",
-                     "malawi_spectrum_download.zip",
-                     "malawi_coarse_output_download.zip",
-                     "malawi_summary_report.html",
-                     "malawi_calibration.rds")
+                     "malawi_model_output.rds")
 
   data <- list(
     pjnz = list(filename = "Malawi2019.PJNZ",
@@ -144,11 +113,7 @@ test_that("run with prerun", {
   expect_equal(obj$list(), character(0))
 
   args <- c(path_prerun, system_file("output"),
-            "--output=malawi_output.rds",
-            "--spectrum=malawi_spectrum_download.zip",
-            "--coarse-output=malawi_coarse_output_download.zip",
-            "--summary-report=malawi_summary_report.html",
-            "--calibration=malawi_calibration.rds")
+            "--model-output=malawi_model_output.rds")
   expect_message(main_import_prerun(args),
                  "Imported data as '[[:xdigit:]]+'")
   expect_equal(length(obj$list()), 1)

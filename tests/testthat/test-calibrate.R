@@ -14,46 +14,35 @@ test_that("calibration can be run", {
 
   ## Expected files are returned
   expect_equal(names(calibrated_result),
-               c("output_path", "spectrum_path", "coarse_output_path",
-                 "summary_report_path", "calibration_path", "metadata"))
+               c("plot_data_path", "model_output_path", "version"))
 })
 
 test_that("calibrate can set language", {
   model_output <- list(calibration_path = "test")
   expect_error(run_calibrate(model_output, list(opt = "options"), tempdir()),
-               paste0("Can't calibrate this model output please re-run ",
-                      "model and try calibration again"))
+               "Model output out of date please re-run model and try again")
 
   ## With french translation
   expect_error(run_calibrate(model_output, list(opt = "options"), tempdir(),
                              language = "fr"),
-               paste0("Impossible de calibrer la sortie de ce modèle, veuillez",
-               " réexécuter le modèle et réessayer le calibrage."))
+               paste0("La sortie du modèle n'est pas à jour. Veuillez ",
+                      "relancer le modèle et réessayer."))
 })
 
 test_that("can calibrate a model result", {
   test_mock_model_available()
-
-  ## Mock model run
-  queue <- test_queue(workers = 1)
-  unlockBinding("result", queue)
-  ## Clone model output as it modifies in place
-  out <- clone_model_output(mock_model)
-  queue$result <- mockery::mock(out,  cycle = TRUE)
-  mock_verify_result_available <- mockery::mock(TRUE)
+  q <- test_queue_result()
 
   ## Calibrate the result
   path <- setup_calibrate_payload()
-  with_mock("hintr:::verify_result_available" = mock_verify_result_available, {
-    calibrate <- submit_calibrate(queue)
-    res <- calibrate("id", readLines(path))
-  })
+  calibrate <- submit_calibrate(q$queue)
+  res <- calibrate(q$model_run_id, readLines(path))
   expect_equal(names(res), "id")
   expect_true(!is.null(res$id))
 
   ## Get status
-  out <- queue$queue$task_wait(res$id)
-  status <- queue_status(queue)
+  out <- q$queue$queue$task_wait(res$id)
+  status <- queue_status(q$queue)
   res_status <- status(res$id)
   expect_equal(res_status$id, res$id)
   expect_true(res_status$done)
@@ -61,11 +50,11 @@ test_that("can calibrate a model result", {
   expect_true(res_status$success)
   expect_equal(res_status$queue, scalar(0))
   expect_match(res_status$progress[[1]],
-               "Generating report - [\\d.m\\s]+s elapsed", perl = TRUE)
+               "Saving outputs - [\\d.m\\s]+s elapsed", perl = TRUE)
 
-  get_result <- calibrate_result(queue)
+  get_result <- calibrate_result(q$queue)
   result <- get_result(res$id)
-  expect_equal(names(result), c("data", "plottingMetadata", "uploadMetadata"))
+  expect_equal(names(result), c("data", "plottingMetadata"))
   expect_equal(colnames(result$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
@@ -187,69 +176,22 @@ test_that("model calibration fails is version out of date", {
   expect_equal(error$status, 400)
 })
 
-test_that("trying to calibrate old model result returns error", {
+test_that("calibrate fails with old model run result", {
+  test_redis_available()
   test_mock_model_available()
 
-  ## Mock model run
-  queue <- test_queue(workers = 1)
-  unlockBinding("result", queue)
-  ## Clone model output as it modifies in place
-  out <- clone_model_output(mock_model_v0.1.2)
-  queue$result <- mockery::mock(out, cycle = TRUE)
-  mock_verify_result_available <- mockery::mock(TRUE)
+  ## Return v0.1.34 model results
+  q <- test_queue_result(model = mock_model_v0.1.38,
+                         calibrate = mock_model_v0.1.38)
 
-  ## Calibrate the result
-  with_mock("hintr:::verify_result_available" = mock_verify_result_available, {
-    calibrate <- submit_calibrate(queue)
-    res <- calibrate("id", readLines(setup_calibrate_payload()))
-  })
-  expect_equal(names(res), "id")
-  expect_true(!is.null(res$id))
-
-  ## Get status
-  out <- queue$queue$task_wait(res$id)
-  status <- queue_status(queue)
-  res_status <- status(res$id)
-  expect_equal(res_status$id, res$id)
-  expect_true(res_status$done)
-  expect_equal(res_status$status, scalar("ERROR"))
-  expect_false(res_status$success)
-  expect_equal(res_status$queue, scalar(0))
-  expect_equal(res_status$progress, list())
-
-  get_result <- calibrate_result(queue)
-  error <- expect_error(get_result(res$id))
-  expect_equal(error$data[[1]]$error, scalar("MODEL_RUN_FAILED"))
-  expect_equal(error$data[[1]]$detail, scalar(
-    paste0("Can't calibrate this model output please",
-           " re-run model and try calibration again")))
-  expect_equal(error$status, 400)
-})
-
-test_that("model calibration returns error if queueing fails", {
-  test_redis_available()
-  ## Create request data
-  path <- setup_calibrate_payload()
-
-  ## Create mocks
-  queue <- test_queue(workers = 0)
-  unlockBinding("result", queue)
-  ## Clone model output as it modifies in place
-  out <- clone_model_output(mock_model_v0.1.2)
-  queue$result <- mockery::mock(out, cycle = TRUE)
-  unlockBinding("queue", queue)
-  unlockBinding("task_status", queue$queue)
-  queue$queue$task_status <- mockery::mock("COMPLETE", cycle = TRUE)
-  mock_submit_calibrate <- function(data, options) { stop("Failed to queue") }
-
-  ## Call the endpoint
-  calibrate <- submit_calibrate(queue)
-  mockery::stub(calibrate, "queue$submit_calibrate", mock_submit_calibrate)
-  error <- expect_error(calibrate("id", readLines(path)))
-
-  expect_equal(error$data[[1]]$error, scalar("FAILED_TO_QUEUE"))
-  expect_equal(error$data[[1]]$detail, scalar("Failed to queue"))
-  expect_equal(error$status, 400)
+  endpoint <- endpoint_model_calibrate_submit(q$queue)
+  res <- endpoint$run(q$model_run_id)
+  expect_equal(res$value$status, scalar("failure"))
+  expect_equal(res$value$errors[[1]]$error, scalar("SERVER_ERROR"))
+  expect_equal(
+    res$value$errors[[1]]$detail,
+    scalar("Model output out of date please re-run model and try again"))
+  expect_equal(res$status_code, 500)
 })
 
 test_that("can get data for calibration plot", {

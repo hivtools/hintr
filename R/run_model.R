@@ -42,15 +42,10 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
     )
     signalCondition(structure(progress_complete,
                               class = c("progress", "condition")))
-    output <- list(output_path = system_file("output", "malawi_output.rds"),
-                   spectrum_path = system_file("output", "malawi_spectrum_download.zip"),
-                   coarse_output_path =
-                     system_file("output", "malawi_coarse_output_download.zip"),
-                   summary_report_path =
-                     system_file("output", "malawi_summary_report.html"),
-                   calibration_path = system_file("output",
-                                                  "malawi_calibration.rds"),
-                   metadata = list(areas = "MWI"))
+    output <- list(
+      plot_data_path = NULL,
+      model_output_path = system_file("output", "malawi_model_output.rds"),
+      version = packageVersion("naomi"))
     class(output) <- "hintr_output"
     return(output)
   }
@@ -66,15 +61,8 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
   }
 
   path_results <- normalizePath(path_results, mustWork = TRUE)
-  output_path <- tempfile("output", tmpdir = path_results, fileext = ".rds")
-  spectrum_path <- tempfile("spectrum", tmpdir = path_results,
-                            fileext = ".zip")
-  coarse_output_path <- tempfile("coarse_output", tmpdir = path_results,
-                                 fileext = ".zip")
-  summary_report_path <- tempfile("summary_report", tmpdir = path_results,
-                                  fileext = ".html")
-  calibration_path <- tempfile("calibration", tmpdir = path_results,
-                               fileext = ".rds")
+  model_output_path <- tempfile("model_output", tmpdir = path_results,
+                                fileext = ".rds")
 
   ## Fix some labels to match what naomi requires
   data$art_number <- data$programme
@@ -82,9 +70,7 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
   data$anc_testing <- data$anc
   data$anc <- NULL
 
-  naomi::hintr_run_model(data, options, output_path, spectrum_path,
-                         coarse_output_path, summary_report_path,
-                         calibration_path, validate = FALSE)
+  naomi::hintr_run_model(data, options, model_output_path, validate = FALSE)
 }
 
 select_data <- function(data) {
@@ -94,7 +80,7 @@ select_data <- function(data) {
 }
 
 process_result <- function(model_output) {
-  output <- readRDS(model_output$output_path)
+  output <- readRDS(model_output$plot_data_path)
   output_filters <- get_model_output_filters(output)
   metadata <- list(
     barchart = list(
@@ -107,15 +93,8 @@ process_result <- function(model_output) {
       filters = output_filters
     )
   )
-  upload_metadata <- list(
-    outputZip = list(
-      description = scalar(model_output$metadata$output_description)),
-    outputSummary = list(
-      description = scalar(model_output$metadata$summary_report_description))
-  )
   list(data = select_data(output),
-       plottingMetadata = metadata,
-       uploadMetadata = upload_metadata)
+       plottingMetadata = metadata)
 }
 
 use_mock_model <- function() {

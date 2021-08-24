@@ -713,112 +713,6 @@ test_that("returning_json_version adds version", {
                unclass(cfg$version_info$traduire))
 })
 
-test_that("endpoint_download_spectrum can be run", {
-  test_redis_available()
-  test_mock_model_available()
-
-  queue <- test_queue(workers = 1)
-  run_endpoint <- endpoint_model_submit(queue)
-  path <- setup_submit_payload()
-  run_response <- run_endpoint$run(readLines(path))
-  expect_equal(run_response$status_code, 200)
-  out <- queue$queue$task_wait(run_response$data$id)
-
-  endpoint <- endpoint_download_spectrum(queue)
-  response <- endpoint$run(run_response$data$id)
-
-  expect_equal(response$status_code, 200)
-  expect_match(response$headers$`Content-Disposition`,
-               'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
-  size <- length(response$data)
-  expect_equal(response$headers$`Content-Length`, size)
-  expect_equal(size, file.size(
-    system_file("output", "malawi_spectrum_download.zip")))
-})
-
-test_that("api can call endpoint_download_spectrum", {
-  test_redis_available()
-  test_mock_model_available()
-
-  queue <- test_queue(workers = 1)
-  api <- api_build(queue)
-
-  ## Run the model
-  path <- setup_submit_payload()
-  res <- api$request("POST", "/model/submit",
-                     body = readLines(path))
-  expect_equal(res$status, 200)
-  response <- jsonlite::fromJSON(res$body)
-  out <- queue$queue$task_wait(response$data$id)
-
-  ## Get result
-  res <- api$request("GET", paste0("/download/spectrum/", response$data$id))
-
-  expect_equal(res$status, 200)
-  expect_equal(res$headers$`Content-Type`, "application/octet-stream")
-  expect_match(res$headers$`Content-Disposition`,
-               'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
-  ## Size of bytes is close to expected
-  size <- length(res$body)
-  expect_equal(res$headers$`Content-Length`, size)
-  expect_equal(size, file.size(
-    system_file("output", "malawi_spectrum_download.zip")))
-})
-
-test_that("endpoint_download_coarse_output can be run", {
-  test_redis_available()
-  test_mock_model_available()
-
-  queue <- test_queue(workers = 1)
-  run_endpoint <- endpoint_model_submit(queue)
-  path <- setup_submit_payload()
-  run_response <- run_endpoint$run(readLines(path))
-  expect_equal(run_response$status_code, 200)
-  out <- queue$queue$task_wait(run_response$data$id)
-
-  endpoint <- endpoint_download_coarse_output(queue)
-  response <- endpoint$run(run_response$data$id)
-
-  expect_equal(response$status_code, 200)
-  expect_match(
-    response$headers$`Content-Disposition`,
-    'attachment; filename="MWI_coarse-output_\\d+-\\d+.zip"')
-  size <- length(response$data)
-  expect_equal(response$headers$`Content-Length`, size)
-  expect_equal(size, file.size(
-    system_file("output", "malawi_coarse_output_download.zip")))
-})
-
-test_that("api can call endpoint_download_coarse_output", {
-  test_redis_available()
-  test_mock_model_available()
-
-  queue <- test_queue(workers = 1)
-  api <- api_build(queue)
-
-  ## Run the model
-  path <- setup_submit_payload()
-  res <- api$request("POST", "/model/submit",
-                     body = readLines(path))
-  expect_equal(res$status, 200)
-  response <- jsonlite::fromJSON(res$body)
-  out <- queue$queue$task_wait(response$data$id)
-
-  ## Get result
-  res <- api$request("GET", paste0("/download/coarse-output/",
-                                   response$data$id))
-
-  expect_equal(res$status, 200)
-  expect_equal(res$headers$`Content-Type`, "application/octet-stream")
-  expect_match(
-    res$headers$`Content-Disposition`,
-    'attachment; filename="MWI_coarse-output_\\d+-\\d+.zip"')
-  size <- length(res$body)
-  expect_equal(res$headers$`Content-Length`, size)
-  expect_equal(size, file.size(
-    system_file("output", "malawi_coarse_output_download.zip")))
-})
-
 test_that("content disposition header is formatted correctly", {
   expect_match(build_content_disp_header("MWI", "naomi-output", ".zip"),
                'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
@@ -834,190 +728,6 @@ test_that("returning_binary_head ensures no body in response", {
   data <- charToRaw("test")
   expect_null(returning$process(data))
   expect_true(returning$validate(NULL))
-})
-
-test_that("endpoint_download_spectrum_head returns headers only", {
-  test_redis_available()
-  test_mock_model_available()
-
-  queue <- test_queue(workers = 1)
-  run_endpoint <- endpoint_model_submit(queue)
-  path <- setup_submit_payload()
-  run_response <- run_endpoint$run(readLines(path))
-  expect_equal(run_response$status_code, 200)
-  out <- queue$queue$task_wait(run_response$data$id)
-
-  endpoint <- endpoint_download_spectrum_head(queue)
-  response <- endpoint$run(run_response$data$id)
-
-  expect_equal(response$status_code, 200)
-  expect_equal(response$content_type, "application/octet-stream")
-  expect_match(response$headers$`Content-Disposition`,
-               'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
-  expect_equal(response$headers$`Content-Length`, file.size(
-    system_file("output", "malawi_spectrum_download.zip")))
-  expect_null(response$body, NULL)
-})
-
-test_that("api endpoint_download_spectrum_head returns headers only", {
-  test_redis_available()
-  test_mock_model_available()
-
-  queue <- test_queue(workers = 1)
-  api <- api_build(queue)
-
-  ## Run the model
-  path <- setup_submit_payload()
-  res <- api$request("POST", "/model/submit",
-                     body = readLines(path))
-  expect_equal(res$status, 200)
-  response <- jsonlite::fromJSON(res$body)
-  out <- queue$queue$task_wait(response$data$id)
-
-  ## Get result
-  res <- api$request("HEAD", paste0("/download/spectrum/", response$data$id))
-
-  expect_equal(res$status, 200)
-  expect_equal(res$headers$`Content-Type`, "application/octet-stream")
-  expect_match(res$headers$`Content-Disposition`,
-               'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
-  expect_equal(res$headers$`Content-Length`, file.size(
-    system_file("output", "malawi_spectrum_download.zip")))
-  ## Plumber uses an empty string to represent an empty body
-  expect_equal(res$body, "")
-})
-
-test_that("endpoint_download_coarse_output_head returns headers only", {
-  test_redis_available()
-  test_mock_model_available()
-
-  queue <- test_queue(workers = 1)
-  run_endpoint <- endpoint_model_submit(queue)
-  path <- setup_submit_payload()
-  run_response <- run_endpoint$run(readLines(path))
-  expect_equal(run_response$status_code, 200)
-  out <- queue$queue$task_wait(run_response$data$id)
-
-  endpoint <- endpoint_download_coarse_output_head(queue)
-  response <- endpoint$run(run_response$data$id)
-
-  expect_equal(response$status_code, 200)
-  expect_equal(response$content_type, "application/octet-stream")
-  expect_match(
-    response$headers$`Content-Disposition`,
-    'attachment; filename="MWI_coarse-output_\\d+-\\d+.zip"')
-  expect_equal(response$headers$`Content-Length`, file.size(
-    system_file("output", "malawi_coarse_output_download.zip")))
-  expect_null(response$body, NULL)
-})
-
-test_that("api endpoint_download_coarse_output_head returns headers only", {
-  test_redis_available()
-  test_mock_model_available()
-
-  queue <- test_queue(workers = 1)
-  api <- api_build(queue)
-
-  ## Run the model
-  path <- setup_submit_payload()
-  res <- api$request("POST", "/model/submit",
-                     body = readLines(path))
-  expect_equal(res$status, 200)
-  response <- jsonlite::fromJSON(res$body)
-  out <- queue$queue$task_wait(response$data$id)
-
-  ## Get result
-  res <- api$request("HEAD", paste0("/download/coarse-output/",
-                                    response$data$id))
-
-  expect_equal(res$status, 200)
-  expect_equal(res$headers$`Content-Type`, "application/octet-stream")
-  expect_match(
-    res$headers$`Content-Disposition`,
-    'attachment; filename="MWI_coarse-output_\\d+-\\d+.zip"')
-  expect_equal(res$headers$`Content-Length`, file.size(
-    system_file("output", "malawi_coarse_output_download.zip")))
-  ## Plumber uses an empty string to represent an empty body
-  expect_equal(res$body, "")
-})
-
-test_that("endpoint_download_summary can be run", {
-  test_redis_available()
-  test_mock_model_available()
-
-  queue <- test_queue(workers = 1)
-  run_endpoint <- endpoint_model_submit(queue)
-  path <- setup_submit_payload()
-  run_response <- run_endpoint$run(readLines(path))
-  expect_equal(run_response$status_code, 200)
-  out <- queue$queue$task_wait(run_response$data$id)
-
-  endpoint <- endpoint_download_summary(queue)
-  response <- endpoint$run(run_response$data$id)
-
-  expect_equal(response$status_code, 200)
-  expect_match(
-    response$headers$`Content-Disposition`,
-    'attachment; filename="MWI_summary-report_\\d+-\\d+.html"')
-  size <- length(response$data)
-  expect_equal(response$headers$`Content-Length`, size)
-  expect_equal(size, file.size(
-    system_file("output", "malawi_summary_report.html")))
-
-  ## HEAD endpoint
-  endpoint <- endpoint_download_summary_head(queue)
-  response <- endpoint$run(run_response$data$id)
-
-  expect_equal(response$status_code, 200)
-  expect_equal(response$content_type, "application/octet-stream")
-  expect_match(
-    response$headers$`Content-Disposition`,
-    'attachment; filename="MWI_summary-report_\\d+-\\d+.html"')
-  expect_equal(response$headers$`Content-Length`, file.size(
-    system_file("output", "malawi_summary_report.html")))
-  expect_null(response$body, NULL)
-})
-
-test_that("api can call endpoint_download_summary", {
-  test_redis_available()
-  test_mock_model_available()
-
-  queue <- test_queue(workers = 1)
-  api <- api_build(queue)
-
-  ## Run the model
-  path <- setup_submit_payload()
-  res <- api$request("POST", "/model/submit",
-                     body = readLines(path))
-  expect_equal(res$status, 200)
-  response <- jsonlite::fromJSON(res$body)
-  out <- queue$queue$task_wait(response$data$id)
-
-  ## Get result
-  res <- api$request("GET", paste0("/download/summary/", response$data$id))
-
-  expect_equal(res$status, 200)
-  expect_equal(res$headers$`Content-Type`, "application/octet-stream")
-  expect_match(
-    res$headers$`Content-Disposition`,
-    'attachment; filename="MWI_summary-report_\\d+-\\d+.html"')
-  size <- length(res$body)
-  expect_equal(res$headers$`Content-Length`, size)
-  expect_equal(size, file.size(
-    system_file("output", "malawi_summary_report.html")))
-
-  ## HEAD endpoint
-  res <- api$request("HEAD", paste0("/download/summary/", response$data$id))
-
-  expect_equal(res$status, 200)
-  expect_equal(res$headers$`Content-Type`, "application/octet-stream")
-  expect_match(
-    res$headers$`Content-Disposition`,
-    'attachment; filename="MWI_summary-report_\\d+-\\d+.html"')
-  expect_equal(res$headers$`Content-Length`,
-               file.size(system_file("output", "malawi_summary_report.html")))
-  ## Plumber uses an empty string to represent an empty body
-  expect_equal(res$body, "")
 })
 
 test_that("endpoint_model_debug can be run", {
@@ -1155,28 +865,19 @@ test_that("404 errors have sensible schema", {
 
 test_that("model calibrate can be queued and result returned", {
   test_mock_model_available()
-
-  ## Mock model run
-  queue <- test_queue(workers = 1)
-  unlockBinding("result", queue)
-  ## Clone model output as it modifies in place
-  out <- clone_model_output(mock_model)
-  queue$result <- mockery::mock(out, cycle = TRUE)
-  unlockBinding("queue", queue)
-  unlockBinding("task_status", queue$queue)
-  queue$queue$task_status <- mockery::mock("COMPLETE", cycle = TRUE)
+  q <- test_queue_result()
 
   ## Submit calibrate request
-  submit <- endpoint_model_calibrate_submit(queue)
+  submit <- endpoint_model_calibrate_submit(q$queue)
   path <- setup_calibrate_payload()
-  submit_response <- submit$run("id", readLines(path))
+  submit_response <- submit$run(q$model_run_id, readLines(path))
 
   expect_equal(submit_response$status_code, 200)
   expect_true(!is.null(submit_response$data$id))
 
   ## Status
-  out <- queue$queue$task_wait(submit_response$data$id)
-  status <- endpoint_model_calibrate_status(queue)
+  out <- q$queue$queue$task_wait(submit_response$data$id)
+  status <- endpoint_model_calibrate_status(q$queue)
   status_response <- status$run(submit_response$data$id)
 
   expect_equal(status_response$status_code, 200)
@@ -1186,15 +887,14 @@ test_that("model calibrate can be queued and result returned", {
   expect_true(status_response$data$success)
   expect_equal(status_response$data$queue, scalar(0))
   expect_match(status_response$data$progress[[1]],
-               "Generating report - [\\d.m\\s]+s elapsed", perl = TRUE)
+               "Saving outputs - [\\d.m\\s]+s elapsed", perl = TRUE)
 
   ## Get result
-  result <- endpoint_model_calibrate_result(queue)
+  result <- endpoint_model_calibrate_result(q$queue)
   response <- result$run(status_response$data$id)
 
   expect_equal(response$status_code, 200)
-  expect_equal(names(response$data),
-               c("data", "plottingMetadata", "uploadMetadata"))
+  expect_equal(names(response$data), c("data", "plottingMetadata"))
   expect_equal(colnames(response$data$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
@@ -1205,29 +905,21 @@ test_that("model calibrate can be queued and result returned", {
 
 test_that("api can call endpoint_model_calibrate", {
   test_mock_model_available()
-
-  ## Mock model run
-  queue <- test_queue(workers = 1)
-  unlockBinding("result", queue)
-  ## Clone model output as it modifies in place
-  out <- clone_model_output(mock_model)
-  queue$result <- mockery::mock(out,  cycle = TRUE)
-  mock_verify_result_available <- mockery::mock(TRUE)
+  q <- test_queue_result()
 
   ## Submit calibrate
-  api <- api_build(queue)
+  api <- api_build(q$queue)
   calibrate_path <- setup_calibrate_payload()
-  with_mock("hintr:::verify_result_available" = mock_verify_result_available, {
-    submit_res <- api$request("POST", "/calibrate/submit/id",
-                              body = readLines(calibrate_path))
-  })
+  submit_res <- api$request("POST",
+                            paste0("/calibrate/submit/", q$model_run_id),
+                            body = readLines(calibrate_path))
 
   expect_equal(submit_res$status, 200)
   submit_body <- jsonlite::fromJSON(submit_res$body)
   expect_true(!is.null(submit_body$data$id))
 
   ## Status
-  out <- queue$queue$task_wait(submit_body$data$id)
+  out <- q$queue$queue$task_wait(submit_body$data$id)
   status_res <- api$request("GET",
                             paste0("/calibrate/status/", submit_body$data$id))
 
@@ -1239,7 +931,7 @@ test_that("api can call endpoint_model_calibrate", {
   expect_true(status_body$data$success)
   expect_equal(status_body$data$queue, 0)
   expect_match(status_body$data$progress[[1]],
-               "Generating report - [\\d.m\\s]+s elapsed", perl = TRUE)
+               "Saving outputs - [\\d.m\\s]+s elapsed", perl = TRUE)
 
   ## Get result
   result_res <- api$request("GET",
@@ -1248,8 +940,7 @@ test_that("api can call endpoint_model_calibrate", {
   expect_equal(result_res$status, 200)
   result_body <- jsonlite::fromJSON(result_res$body)
   expect_null(result_body$errors)
-  expect_equal(names(result_body$data),
-               c("data", "plottingMetadata", "uploadMetadata"))
+  expect_equal(names(result_body$data), c("data", "plottingMetadata"))
   expect_equal(colnames(result_body$data$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
