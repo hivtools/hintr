@@ -359,7 +359,7 @@ endpoint_download_result <- function(queue) {
 endpoint_download_result_head <- function(queue) {
   porcelain::porcelain_endpoint$new("HEAD",
                                     "/download/result/<id>",
-                                    download_result(queue),
+                                    download_result(queue, headers_only = TRUE),
                                     returning = returning_binary_head(),
                                     validate = FALSE)
 }

@@ -523,11 +523,8 @@ test_that("download streams bytes", {
                'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
 
   size <- length(httr::content(headers))
-  content_length <- as.numeric(httr::headers(headers)$`content-length`)
+  expect_null(httr::headers(headers)$`content-length`)
   expect_equal(size, 0)
-  ## It contains some content, won't be same length as precomputed
-  ## model output as this is generated before calibration
-  expect_true(content_length > 100000)
 
   ## Can stream bytes
   res <- httr::GET(paste0(server$url, "/download/result/", response$data$id))

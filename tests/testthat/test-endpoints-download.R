@@ -330,9 +330,8 @@ test_that("download HEAD returns headers only", {
   expect_equal(response$content_type, "application/octet-stream")
   expect_match(response$headers$`Content-Disposition`,
                'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
-  expect_equal(response$headers$`Content-Length`, file.size(
-    system_file("output", "malawi_spectrum_download.zip")))
-  expect_null(response$body, NULL)
+  expect_equal(response$headers$`Content-Length`, 0)
+  expect_null(response$body)
 })
 
 test_that("api can call spectrum download", {
@@ -369,9 +368,7 @@ test_that("api can call spectrum download", {
   expect_equal(res$headers$`Content-Type`, "application/octet-stream")
   expect_match(res$headers$`Content-Disposition`,
                'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
-  expect_equal(res$headers$`Content-Length`, file.size(
-    system_file("output", "malawi_spectrum_download.zip")))
-  ## Plumber uses an empty string to represent an empty body
+  expect_equal(res$headers$`Content-Length`, 0)
   expect_equal(res$body, "")
 })
 
