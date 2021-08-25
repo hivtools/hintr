@@ -25,7 +25,7 @@ RUN install_remote \
         reside-ic/traduire \
         ropensci/jsonvalidate
 
-RUN Rscript -e "remotes::install_github('cran/httpuv@v1.6.1', upgrade = FALSE)"
+RUN Rscript -e "remotes::install_github('rstudio/httpuv@rc-v1.5.5', upgrade = FALSE)"
 
 COPY . /src
 RUN R CMD INSTALL /src/naomi
