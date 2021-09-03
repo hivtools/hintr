@@ -88,10 +88,6 @@ no_error <- function(expr) {
   tryCatch(expr, error = function(e) NULL)
 }
 
-read_binary <- function(path) {
-  readBin(path, "raw", n = file.size(path))
-}
-
 iso_time_str <- function(time = Sys.time()) {
   strftime(time, "%Y%m%d-%H%M")
 }

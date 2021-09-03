@@ -21,7 +21,7 @@ Queue <- R6::R6Class(
 
       message(t_("QUEUE_STARTING"))
       queue_id <- hintr_queue_id(queue_id)
-      self$queue <- rrq::rrq_controller(queue_id, con)
+      self$queue <- rrq::rrq_controller$new(queue_id, con)
       self$queue$worker_config_save("localhost", heartbeat_period = 10,
                                     queue = c(QUEUE_CALIBRATE, QUEUE_RUN))
       self$queue$worker_config_save("calibrate_only", heartbeat_period = 10,
@@ -64,6 +64,14 @@ Queue <- R6::R6Class(
       self$submit(quote(
         hintr:::run_calibrate(model_output, calibration_options, results_dir,
                               language)),
+        queue = QUEUE_CALIBRATE)
+    },
+
+    submit_download = function(model_output, type) {
+      results_dir <- self$results_dir
+      language <- traduire::translator()$language()
+      self$submit(quote(
+        hintr:::download(model_output, type, results_dir, language)),
         queue = QUEUE_CALIBRATE)
     },
 

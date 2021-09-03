@@ -4,27 +4,12 @@
 \alias{prerun_push}
 \title{Push prerun model results to naomi.dide.ic.ac.uk}
 \usage{
-prerun_push(
-  path,
-  output = "output.rds",
-  spectrum = "spectrum.zip",
-  coarse_output = "coarse-output.zip",
-  summary_report = "summary-report.html",
-  calibration = "calibration.rds"
-)
+prerun_push(path, model_output = "model-output.rds")
 }
 \arguments{
 \item{path}{Path to your results}
 
-\item{output}{Path, within \code{path} to your output file}
-
-\item{spectrum}{Path, within \code{path} to your spectrum file}
-
-\item{coarse_output}{Path, within \code{path} to your coarse output file}
-
-\item{summary_report}{Path, within \code{path} to your summary report file}
-
-\item{calibration}{Path, within \code{path} to your calibration file}
+\item{model_output}{Path, within \code{path} to your model output rds}
 }
 \description{
 Push prerun model results to naomi.dide.ic.ac.uk

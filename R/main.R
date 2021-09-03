@@ -60,14 +60,9 @@ main_import_prerun <- function(args = commandArgs(TRUE)) {
   hintr-import-prerun <prerun> <path> [options]
 
 Options:
---output=PATH    Path to output file [default: output.rds]
---spectrum=PATH  Path to spectrum file [default: spectrum.zip]
---coarse-output=PATH   Path to coarse-output file [default: coarse-output.zip]
---summary-report=PATH  Path to summary-report file [default: summary-report.html]
---calibration=PATH     Path to calibration file [default: calibration.rds]"
+--model-output=PATH    Path to model output file [default: model-output.rds]"
   args <- docopt_parse(usage, args)
-  h <- prerun_import(args$prerun, args$path, args$output, args$spectrum,
-                     args$coarse_output, args$summary_report, args$calibration)
+  h <- prerun_import(args$prerun, args$path, args$model_output)
   message(sprintf("Imported data as '%s'", h))
 }
 

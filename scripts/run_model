@@ -1,44 +1,58 @@
 #!/usr/bin/env Rscript
 "Run a model and save outputs at specified paths
 Usage:
-  run_model (--payload=<payload> --output-path=<output-path> --spectrum-path=<spectrum-path> --coarse-output-path=<coarse-output-path> --summary-report-path=<summary-report-path> --calibration-path=<calibration-path>)
+  run_model (--model-payload=<model-payload> --calibrate-payload=<calibrate-payload> --model-output-path=<output-path> --calibrate-output-path=<calibrate-output-path> --calibrate-plot-path=<calibrate-plot-path> --spectrum-path=<spectrum-path> --coarse-output-path=<coarse-output-path> --summary-report-path=<summary-report-path>)
 
 Options:
-  -h --help                                    Show this screen.
-  --payload=<payload>                          Path to model run payload.
-  --output-path=<output-path>                  Path to output data RDS.
-  --spectrum-path=<spectrum-path>              Path to spectrum zip download.
-  --coarse-output-path=<coarse-output-path>    Path to summary zip download.
-  --summary-report-path=<summary-report-path>  Path to summary report download.
-  --calibration-path=<calibration-path>        Path to calibration data.
+  -h --help                                       Show this screen.
+  --model-payload=<model-payload>                 Path to model run payload.
+  --calibrate-payload=<calibrate-payload>         Path to calibrate payload.
+  --model-output-path=<output-path>               Path to model output data RDS.
+  --calibrate-output-path=<calibrate-output-path> Path to calibrate output data RDS.
+  --calibrate-plot-path=<calibrate-plot-path>     Path to calibrate plot data RDS.
+  --spectrum-path=<spectrum-path>                 Path to spectrum zip download.
+  --coarse-output-path=<coarse-output-path>       Path to summary zip download.
+  --summary-report-path=<summary-report-path>     Path to summary report download.
 " -> usage
 
 dat <- docopt::docopt(usage)
 names(dat) <- gsub("-", "_", names(dat), fixed = TRUE)
 
-payload <- jsonlite::fromJSON(dat$payload)
-invisible(lapply(payload$data, function(x) {
+model_payload <- jsonlite::fromJSON(dat$model_payload)
+invisible(lapply(model_payload$data, function(x) {
   if (!file.exists(x$path)) {
     stop(sprintf("Input file %s doesn't exist.", x))
   }
 }))
 
-output <- naomi::hintr_run_model(payload$data,
-                                 payload$options,
-                                 dat$output_path,
-                                 dat$spectrum_path,
-                                 dat$coarse_output_path,
-                                 dat$summary_report_path,
-                                 dat$calibration_path)
+output <- naomi::hintr_run_model(model_payload$data,
+                                 model_payload$options,
+                                 dat$model_output_path)
 
-message(sprintf("Saving output at %s", normalizePath(dat$output_path,
-                                                     mustWork = TRUE)))
+message(sprintf("Saving model output at %s",
+                normalizePath(dat$model_output_path, mustWork = TRUE)))
+
+calibrate_payload <- jsonlite::fromJSON(dat$calibrate_payload)
+calibrated <- naomi::hintr_calibrate(output, calibrate_payload$options,
+                                     dat$calibrate_plot_path,
+                                     dat$calibrate_output_path)
+message(sprintf("Saving calibrate output at %s",
+                normalizePath(dat$calibrate_output_path, mustWork = TRUE)))
+message(sprintf("Saving calibrate plot data at %s",
+                normalizePath(dat$calibrate_plot_path, mustWork = TRUE)))
+
+spectrum <- naomi::hintr_prepare_spectrum_download(calibrated,
+                                                   dat$spectrum_path)
 message(
   sprintf("Saving spectrum download at %s", normalizePath(dat$spectrum_path,
                                                           mustWork = TRUE)))
+
+coarse_age <- naomi::hintr_prepare_coarse_age_group_download(
+  calibrated, dat$coarse_output_path)
 message(sprintf("Saving coarse output at %s",
                 normalizePath(dat$coarse_output_path, mustWork = TRUE)))
+
+summary_report <- naomi::hintr_prepare_summary_report_download(
+  calibrated, dat$summary_report_path)
 message(sprintf("Saving summary report at %s",
                 normalizePath(dat$summary_report_path, mustWork = TRUE)))
-message(sprintf("Saving calibration at %s",
-                normalizePath(dat$calibration_path, mustWork = TRUE)))

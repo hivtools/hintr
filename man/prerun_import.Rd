@@ -4,30 +4,14 @@
 \alias{prerun_import}
 \title{Import prerun model results}
 \usage{
-prerun_import(
-  prerun,
-  path,
-  output = "output.rds",
-  spectrum = "spectrum.zip",
-  coarse_output = "coarse-output.zip",
-  summary_report = "summary-report.html",
-  calibration = "calibration.rds"
-)
+prerun_import(prerun, path, model_output = "model-output.rds")
 }
 \arguments{
 \item{prerun}{Path to the prerun model store}
 
 \item{path}{Path to your results}
 
-\item{output}{Path, within \code{path} to your output file}
-
-\item{spectrum}{Path, within \code{path} to your spectrum file}
-
-\item{coarse_output}{Path, within \code{path} to your coarse output file}
-
-\item{summary_report}{Path, within \code{path} to your summary report file}
-
-\item{calibration}{Path, within \code{path} to your calibration file}
+\item{model_output}{Path, within \code{path} to your model output rds}
 }
 \description{
 Import prerun model results
