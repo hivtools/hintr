@@ -1,5 +1,6 @@
 get_programme_time_series <- function(programme, shape) {
-  data <- naomi::prepare_input_time_series_art(programme, shape)
+  data <- naomi::prepare_input_time_series_art(programme$path, shape$path)
+  data <- as.data.frame(data)
   filters <- get_programme_time_series_filters(data)
   area_level_options <- get_selected_filter_options(filters, "area_level")
   list(
@@ -18,7 +19,8 @@ get_programme_time_series <- function(programme, shape) {
 }
 
 get_anc_time_series <- function(anc, shape) {
-  data <- naomi::prepare_input_time_series_anc(anc, shape)
+  data <- naomi::prepare_input_time_series_anc(anc$path, shape$path)
+  data <- as.data.frame(data)
   filters <- get_anc_time_series_filters(data)
   area_level_options <- get_selected_filter_options(filters, "area_level")
   list(
