@@ -1,3 +1,7 @@
+# hintr 1.0.1
+
+* Wire up `/chart-data/input-time-series/<type>` to return real data for time series plots
+
 # hintr 1.0.0
 
 * Update downloads to be generated on demand instead of as part of model calibration
