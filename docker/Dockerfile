@@ -12,6 +12,7 @@ RUN install_packages --repo=https://mrc-ide.github.io/drat \
         geojsonio \
         glue \
         jsonlite \
+        lgr \
         methods \
         plumber \
         ps \
