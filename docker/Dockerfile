@@ -28,9 +28,9 @@ RUN install_remote \
 RUN Rscript -e "remotes::install_github('cran/httpuv@1.6.1', upgrade = FALSE)"
 
 COPY . /src
-RUN R CMD INSTALL /src/naomi
-RUN cd /src && ./scripts/build_test_data
-RUN R CMD INSTALL /src
+RUN R CMD INSTALL /src/naomi \
+    && cd /src && ./scripts/build_test_data \
+    && R CMD INSTALL /src
 
 EXPOSE 8888
 ENV HINTR_QUEUE_ID=hintr
