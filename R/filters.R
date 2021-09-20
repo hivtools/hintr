@@ -344,7 +344,7 @@ get_programme_time_series_filters <- function(data) {
       id = scalar("plot_type"),
       column_id = scalar("plot"),
       label = scalar(t_("INPUT_TIME_SERIES_FILTER_PLOT_TYPE")),
-      options = get_simple_filter(data, "plot")
+      options = naomi::get_plot_type_label_and_description(unique(data$plot))
     ),
     list(
       id = scalar("area_level"),
