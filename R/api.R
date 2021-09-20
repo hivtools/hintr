@@ -1,5 +1,5 @@
-api_build <- function(queue, validate = FALSE) {
-  api <- porcelain::porcelain$new(validate = validate)
+api_build <- function(queue, validate = FALSE, logger = NULL) {
+  api <- porcelain::porcelain$new(validate = validate, logger = logger)
   api$handle(endpoint_root())
   api$handle(endpoint_baseline_individual())
   api$handle(endpoint_baseline_combined())
@@ -34,12 +34,10 @@ api_build <- function(queue, validate = FALSE) {
 }
 
 api_preroute <- function(data, req, res, value) {
-  api_log_start(data, req, res)
   api_set_language(data, req, res)
 }
 
 api_postserialize <- function(data, req, res, value) {
-  value <- api_log_end(data, req, res, value)
   value <- api_reset_language(data, req, res, value)
   value
 }
@@ -52,50 +50,20 @@ api_postserialize <- function(data, req, res, value) {
 #' @param workers Number of workers to spawn
 #' @param results_dir The dir for results to be saved to
 #' @param prerun_dir The directory to store prerun results
+#' @param log_level The "lgr" log level to use
 #'
 #' @return Running API
 #' @export
 api <- function(port = 8888, queue_id = NULL, workers = 2,
-                results_dir = tempdir(), prerun_dir = NULL) {
+                results_dir = tempdir(), prerun_dir = NULL,
+                log_level = "info") {
   # nocov start
   queue <- Queue$new(queue_id, workers, results_dir = results_dir,
                      prerun_dir = prerun_dir)
-  api <- api_build(queue)
+  logger <- make_logger(log_level)
+  api <- api_build(queue, logger = logger)
   api$run(host = "0.0.0.0", port = port)
   # nocov end
-}
-
-api_log_start <- function(data, req, res) {
-  api_log(sprintf("%s %s", req$REQUEST_METHOD, req$PATH_INFO))
-}
-
-api_log_end <- function(data, req, res, value) {
-  if (is.raw(res$body)) {
-    size <- length(res$body)
-  } else {
-    size <- nchar(res$body)
-  }
-  if (res$status >= 400 &&
-      identical(res$headers[["Content-Type"]], "application/json")) {
-    dat <- jsonlite::parse_json(res$body)
-    for (e in dat$errors) {
-      if (!is.null(e$key)) {
-        api_log(sprintf("error-key: %s", e$key))
-        api_log(sprintf("error-detail: %s", e$detail))
-        if (!is.null(e$trace)) {
-          trace <- sub("\n", " ", vcapply(e$trace, identity))
-          api_log(sprintf("error-trace: %s", trace))
-        }
-      }
-    }
-  }
-  api_log(sprintf("`--> %d (%d bytes)", res$status, size))
-  value
-}
-
-# We can route this via some check for enabling/disabling logging later
-api_log <- function(msg) {
-  message(paste(sprintf("[%s] %s", Sys.time(), msg), collapse = "\n"))
 }
 
 api_set_language <- function(data, req, res) {

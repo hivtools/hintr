@@ -1,0 +1,6 @@
+ignored:
+  # https://github.com/hadolint/hadolint/wiki/DL3008
+  # I can't imagine ever wanting this
+  - DL3008
+  # Consecutive run commands, we do want that between system deps and packages
+  - DL3059
