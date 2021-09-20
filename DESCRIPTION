@@ -21,7 +21,7 @@ Imports:
     glue,
     ids,
     jsonlite (>= 1.2.2),
-    naomi (>= 2.5.1),
+    naomi (>= 2.5.3),
     porcelain (>= 0.1.0),
     R6,
     redux,
