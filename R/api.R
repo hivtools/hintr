@@ -60,7 +60,7 @@ api <- function(port = 8888, queue_id = NULL, workers = 2,
   # nocov start
   queue <- Queue$new(queue_id, workers, results_dir = results_dir,
                      prerun_dir = prerun_dir)
-  logger < make_logger(log_level)
+  logger <- make_logger(log_level)
   api <- api_build(queue, logger = logger)
   api$run(host = "0.0.0.0", port = port)
   # nocov end
