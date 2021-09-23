@@ -3,7 +3,11 @@
   "definitions": {
     "choropleth_metadata": {
       "type": "array",
-      "items": { "$ref": "ChoroplethIndicatorMetadata.schema.json" }
+      "items": { "$ref": "IndicatorMetadata.schema.json" }
+    },
+    "barchart_metadata": {
+      "type": "array",
+      "items": { "$ref": "IndicatorMetadata.schema.json" }
     },
     "metadata": {
       "type": "object",
@@ -12,6 +16,12 @@
           "type": "object",
           "properties": {
             "indicators": { "$ref": "#/definitions/choropleth_metadata" }
+          }
+        },
+        "barchart": {
+          "type": "object",
+          "properties": {
+            "indicators": { "$ref": "#/definitions/barchart_metadata" }
           }
         }
       }
