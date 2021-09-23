@@ -48,7 +48,7 @@ test_that("get_anc_time_series returns data and filters", {
   expect_equal(filters[[1]]$id, scalar("plot_type"))
   expect_equal(filters[[1]]$column_id, scalar("plot"))
   expect_equal(filters[[1]]$label, scalar("Plot type"))
-  expect_length(filters[[1]]$options, 10)
+  expect_length(filters[[1]]$options, 4)
   expect_setequal(names(filters[[1]]$options[[1]]),
                   c("id", "label", "description"))
   expect_equal(filters[[2]]$id, scalar("area_level"))
@@ -66,3 +66,4 @@ test_that("get_anc_time_series returns data and filters", {
   expect_equal(names(selected_filters),
                c("plot_type", "area_level", "age"))
 })
+
