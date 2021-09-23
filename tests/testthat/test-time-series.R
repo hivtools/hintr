@@ -66,4 +66,3 @@ test_that("get_anc_time_series returns data and filters", {
   expect_equal(names(selected_filters),
                c("plot_type", "area_level", "age"))
 })
-
