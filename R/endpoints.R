@@ -303,7 +303,7 @@ download_submit <- function(queue) {
   }
 }
 
-download_result <- function(queue, headers_only = FALSE) {
+download_result <- function(queue) {
   function(id) {
     tryCatch({
       res <- queue$result(id)
@@ -322,11 +322,7 @@ download_result <- function(queue, headers_only = FALSE) {
                          spectrum = ".zip",
                          coarse_output = ".zip",
                          summary = ".html")
-      if (!headers_only) {
-        bytes <- readBin(res$path, "raw", n = file.size(res$path))
-      } else {
-        bytes <- NULL
-      }
+      bytes <- readBin(res$path, "raw", n = file.size(res$path))
       bytes <- porcelain::porcelain_add_headers(bytes, list(
         "Content-Disposition" = build_content_disp_header(res$metadata$areas,
                                                           filename, ext),
