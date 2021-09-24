@@ -3,11 +3,11 @@
   "definitions": {
     "choropleth_metadata": {
       "type": "array",
-      "items": { "$ref": "IndicatorMetadata.schema.json" }
+      "items": { "$ref": "ChoroplethIndicatorMetadata.schema.json" }
     },
     "barchart_metadata": {
       "type": "array",
-      "items": { "$ref": "IndicatorMetadata.schema.json" }
+      "items": { "$ref": "BarchartIndicatorMetadata.schema.json" }
     },
     "metadata": {
       "type": "object",
