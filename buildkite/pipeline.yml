@@ -6,17 +6,22 @@ steps:
 
   - label: ":hammer: Unit tests"
     command: docker/test_check
+    key: "unit tests"
 
   - label: ":hammer_and_pick: Integration tests"
     command: docker/test_integration
+    key: "integration tests"
 
   - label: ":docker: Docker connection test"
     command: docker/test_connection
-
-  - wait
-
-  - label: ":shipit: Push images"
-    command: docker/push
+    key: "connection tests"
 
   - label: ":codecov: Codecov"
     command: docker/coverage
+
+  - label: ":shipit: Push images"
+    command: docker/push
+    depends_on:
+      - "unit tests"
+      - "integration tests"
+      - "connection tests"
