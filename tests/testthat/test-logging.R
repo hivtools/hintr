@@ -1,35 +1,23 @@
 context("logging")
 
-test_that("logging produces a message", {
-  expect_message(
-    api_log(sprintf("%s %s", "a", "b")),
-    "\\[[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}\\] a b")
-  expect_message(
-    api_log("x"),
-    "\\[[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}\\] x")
+test_that("Can log verbosely", {
+  tmp <- tempfile()
+  on.exit(unlink(tmp))
+  logger <- make_logger("trace", tmp)
+  queue <- test_queue(workers = 0)
+  api <- api_build(queue, logger = logger)
+  res <- api$request("GET", "/")
+  lapply(readLines(tmp), jsonlite::fromJSON)
+
+  dat <- jsonlite::stream_in(file(tmp), verbose = FALSE)
+  expect_equal(nrow(dat), 4)
+  expect_equal(dat$logger, rep("hintr", 4))
 })
 
-test_that("log start includes request and path info", {
-  req <- list(REQUEST_METHOD = "GET", PATH_INFO = "/my/path")
-  expect_message(
-    api_log_start(NULL, req, NULL),
-    "\\[.+\\] GET /my/path")
-})
-
-test_that("log end includes code and response size", {
-  res <- list(status = 200, body = "a string")
-  value <- "something"
-  expect_message(
-    res <- api_log_end(NULL, NULL, res, value),
-    "\\[.+\\] `--> 200 \\(8 bytes\\)")
-  expect_identical(res, value)
-})
-
-test_that("log end includes code and response size for binary data", {
-  res <- list(status = 200, body = as.raw(sample(256) - 1))
-  value <- "something"
-  expect_message(
-    res <- api_log_end(NULL, NULL, res, value),
-    "\\[.+\\] `--> 200 \\(256 bytes\\)")
-  expect_identical(res, value)
+test_that("Can log to console", {
+  logger <- make_logger("trace")
+  queue <- test_queue(workers = 0)
+  api <- api_build(queue, logger = logger)
+  output <- capture_output_lines(res <- api$request("GET", "/"))
+  expect_equal(length(output), 4)
 })

@@ -12,6 +12,7 @@ RUN install_packages --repo=https://mrc-ide.github.io/drat \
         geojsonio \
         glue \
         jsonlite \
+        lgr \
         methods \
         plumber \
         ps \
@@ -26,9 +27,9 @@ RUN install_remote \
         ropensci/jsonvalidate
 
 COPY . /src
-RUN R CMD INSTALL /src/naomi
-RUN cd /src && ./scripts/build_test_data
-RUN R CMD INSTALL /src
+RUN R CMD INSTALL /src/naomi \
+    && cd /src && ./scripts/build_test_data \
+    && R CMD INSTALL /src
 
 EXPOSE 8888
 ENV HINTR_QUEUE_ID=hintr

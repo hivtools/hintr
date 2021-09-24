@@ -619,13 +619,6 @@ test_that("erroring model run returns useful messages", {
   expect_equal(body$errors[1, "detail"], "test error")
   expect_equal(body$errors[1, "key"], "fake_key")
   expect_true("rrq:::rrq_worker_main()" %in% body$errors[1, "trace"][[1]])
-
-  ## Check logging:
-  msg <- capture_messages(
-    hintr:::api_log_end(NULL, NULL, res, NULL))
-  expect_match(msg[[1]], "error-key: fake_key")
-  expect_match(msg[[2]], "error-detail: test error")
-  expect_match(msg[[3]], "error-trace: rrq:::rrq_worker_main")
 })
 
 test_that("endpoint_model_calibrate_options", {
