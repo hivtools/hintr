@@ -515,7 +515,8 @@ test_that("download streams bytes", {
 
   ## Get headers
   headers <- httr::HEAD(paste0(server$url, "/download/result/",
-                               response$data$id))
+                               response$data$id),
+                        httr::add_headers("Accept-Encoding" = ""))
   expect_equal(httr::status_code(headers), 200)
   expect_equal(httr::headers(headers)$`content-type`,
                "application/octet-stream")
@@ -524,13 +525,13 @@ test_that("download streams bytes", {
 
   size <- length(httr::content(headers))
   content_length <- as.numeric(httr::headers(headers)$`content-length`)
-  expect_equal(size, 0)
   ## It contains some content, won't be same length as precomputed
   ## model output as this is generated before calibration
   expect_true(content_length > 100000)
 
   ## Can stream bytes
-  res <- httr::GET(paste0(server$url, "/download/result/", response$data$id))
+  res <- httr::GET(paste0(server$url, "/download/result/", response$data$id),
+                   httr::add_headers("Accept-Encoding" = ""))
   expect_equal(httr::headers(res)$`content-type`, "application/octet-stream")
   expect_match(httr::headers(res)$`content-disposition`,
                'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
