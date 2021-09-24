@@ -35,6 +35,20 @@ scalar <- function(val) {
   }
 }
 
+recursive_scalar <- function(x) {
+  if (is.null(x)) {
+    return(NULL)
+  }
+  lapply(x, function(item) {
+    if (length(item) > 1 || is.list(item)) {
+      out <- recursive_scalar(item)
+    } else {
+      out <- scalar(item)
+    }
+    out
+  })
+}
+
 get_input_response_schema <- function(type) {
   paste0(to_upper_first(tolower(type)), "ResponseData")
 }
