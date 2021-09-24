@@ -4,7 +4,7 @@
   "properties" : {
     "indicators" : {
       "type": "array",
-      "items": { "$ref": "IndicatorMetadata.schema.json" }
+      "items": { "$ref": "ChoroplethIndicatorMetadata.schema.json" }
     },
     "filters" : {
       "type": "array",
