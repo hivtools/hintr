@@ -13,7 +13,7 @@
     "ERROR_CALL_MISSING": "<call missing>",
     "FILTERS_MISSING_AGE_GROUP": "Age groups metadata contains 0 rows for age_group {{group}}. Speak to administrator.",
     "FILTERS_CANT_GET_INDICATOR": "Can't get indicator filters for data type {{type}}.",
-    "FILTERS_NO_MATCHING": "Found no matching filters for type {{type}}",
+    "MAPPING_NO_MATCHING": "Found no matching filters for type {{type}}",
     "FILTERS_NO_DISPLAY_NAME": "Failed to get display name for hint ID {{id}}.",
     "FILTERS_INCORRECT_TYPE": "Property {{name}} is incorrect type, should be {{type}}.",
     "FILTERS_INCORRECT_TREE": "Got {{n}} root nodes - tree must have 1 root.",
@@ -72,8 +72,10 @@
     "FAILED_ADR_METADATA": "Failed to generate metadata, output format is invalid",
     "UNKNOWN_OUTPUT_TYPE": "Model run returned unknown output type, please contact support.",
     "INVALID_TIME_SERIES_INPUT_TYPE": "Time series data can only be returned for {{types}}, received '{{type}}'.",
-    "INPUT_TIME_SERIES_FILTER_PLOT_TYPE": "Plot type",
-    "INPUT_TIME_SERIES_FILTER_AREA_LEVEL": "Area level",
-    "INPUT_TIME_SERIES_FILTER_TIME_STEP": "Time step",
-    "INPUT_TIME_SERIES_FILTER_AGE": "Age"
+    "INPUT_TIME_SERIES_COLUMN_PLOT_TYPE": "Plot type",
+    "INPUT_TIME_SERIES_COLUMN_AREA_LEVEL": "Area level",
+    "INPUT_TIME_SERIES_COLUMN_TIME_STEP": "Time step",
+    "INPUT_TIME_SERIES_COLUMN_AGE": "Age",
+    "INPUT_TIME_SERIES_COLUMN_TIME_PERIOD": "Time period",
+    "INPUT_TIME_SERIES_COLUMN_AREA_NAME": "Area name"
 }

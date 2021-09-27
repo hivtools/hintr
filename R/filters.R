@@ -174,44 +174,45 @@ get_barchart_defaults <- function(output, output_filters) {
     disaggregate_by_id = scalar("sex"),
     selected_filter_options = list(
       area = get_area_level_filter_option(output),
-      quarter = get_selected_filter_options(output_filters, "quarter")[2],
-      sex = get_selected_filter_options(output_filters, "sex",
-                                        c("female", "male")),
-      age = get_selected_filter_options(output_filters, "age",
-                                        naomi::get_five_year_age_groups())
+      quarter = get_selected_mappings(output_filters, "quarter")[2],
+      sex = get_selected_mappings(output_filters, "sex", c("female", "male")),
+      age = get_selected_mappings(output_filters, "age",
+                                  naomi::get_five_year_age_groups())
     )
   )
 }
 
-#' Get selected filter options from full list of output filters.
+#' Get selected id-label mapping from list of filter options or column mappings
 #'
-#' Gets the filter options of a particular type matching a set of IDs.
+#' Gets the id to label mapping of a particular type matching a set of IDs.
 #' If ids are NULL then this returns all options.
 #'
-#' @param output_filters The full set of output filters
-#' @param filter_type The type of filter to get options for, area, age, sex, quarter
-#' @param ids Set of option IDs to reutrn, or NULL for all options
+#' @param mappings The full set of output filters or column mappings
+#' @param type The type of column to get mappings for, area, age, sex, quarter
+#' @param ids Set of IDs to return, or NULL for all options
+#' @param key The key to use for individual options. For filter mappings this
+#'   is "options" for column mapping this is "value"
 #'
-#' @return The selected filter options
+#' @return The selected mappings
 #' @keywords internal
-get_selected_filter_options <- function(output_filters, filter_type, ids = NULL) {
-  options <- NULL
-  for (filter in output_filters) {
-    if (filter$id == filter_type) {
-      options <- filter$options
+get_selected_mappings <- function(mappings, type, ids = NULL, key = "options") {
+  selected <- NULL
+  for (mapping in mappings) {
+    if (mapping$id == type) {
+      selected <- mapping[[key]]
       break
     }
   }
-  if (is.null(options)) {
-    stop(t_("FILTERS_NO_MATCHING", list(type = filter_type)))
+  if (is.null(selected)) {
+    stop(t_("MAPPING_NO_MATCHING", list(type = type)))
   }
   if (!is.null(ids)) {
-    keep_option <- vapply(options, function(option) {
-      option$id %in% ids
+    keep_mapping <- vapply(selected, function(mapping) {
+      mapping$id %in% ids
     }, logical(1))
-    options <- options[keep_option]
+    selected <- selected[keep_mapping]
   }
-  options
+  selected
 }
 
 get_area_level_filter_option <- function(output) {
@@ -336,55 +337,4 @@ construct_tree <- function(data, id_column = 1, parent_id_column = 2,
   }
 
   build_immediate_children(data[root_node, id_column])
-}
-
-get_programme_time_series_filters <- function(data) {
-  list(
-    list(
-      id = scalar("plot_type"),
-      column_id = scalar("plot"),
-      label = scalar(t_("INPUT_TIME_SERIES_FILTER_PLOT_TYPE")),
-      options = recursive_scalar(
-        naomi::get_plot_type_label_and_description(unique(data$plot)))
-    ),
-    list(
-      id = scalar("area_level"),
-      column_id = scalar("area_level_label"),
-      label = scalar(t_("INPUT_TIME_SERIES_FILTER_AREA_LEVEL")),
-      ## TODO: Plot type and time step should use human readable name for
-      ## option labels
-      options = get_simple_filter(data, "area_level_label")
-    ),
-    list(
-      id = scalar("time_step"),
-      column_id = scalar("time_step"),
-      label = scalar(t_("INPUT_TIME_SERIES_FILTER_TIME_STEP")),
-      options = get_simple_filter(data, "time_step")
-    )
-  )
-}
-
-get_anc_time_series_filters <- function(data) {
-  list(
-    list(
-      id = scalar("plot_type"),
-      column_id = scalar("plot"),
-      label = scalar(t_("INPUT_TIME_SERIES_FILTER_PLOT_TYPE")),
-      options = recursive_scalar(
-        naomi::get_plot_type_label_and_description(unique(data$plot)))
-    ),
-    list(
-      id = scalar("area_level"),
-      column_id = scalar("area_level_label"),
-      label = scalar(t_("INPUT_TIME_SERIES_FILTER_AREA_LEVEL")),
-      ## TODO: Plot type and time step should use human readable name for label
-      options = get_simple_filter(data, "area_level_label")
-    ),
-    list(
-      id = scalar("age"),
-      column_id = scalar("age_group"),
-      label = scalar(t_("INPUT_TIME_SERIES_FILTER_AGE")),
-      options = get_age_filters(data)
-    )
-  )
 }
