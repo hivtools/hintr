@@ -44,7 +44,6 @@ api_postserialize <- function(data, req, res, value) {
 
 #' Build and start the API
 #'
-#' @param port Port for API
 #' @param queue_id ID of an existing queue to connect to, creates a new one
 #' if NULL
 #' @param workers Number of workers to spawn
@@ -54,15 +53,14 @@ api_postserialize <- function(data, req, res, value) {
 #'
 #' @return Running API
 #' @export
-api <- function(port = 8888, queue_id = NULL, workers = 2,
+api <- function(queue_id = NULL, workers = 2,
                 results_dir = tempdir(), prerun_dir = NULL,
                 log_level = "info") {
   # nocov start
   queue <- Queue$new(queue_id, workers, results_dir = results_dir,
                      prerun_dir = prerun_dir)
   logger <- make_logger(log_level)
-  api <- api_build(queue, logger = logger)
-  api$run(host = "0.0.0.0", port = port)
+  api_build(queue, logger = logger)
   # nocov end
 }
 
