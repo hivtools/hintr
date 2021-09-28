@@ -1,3 +1,7 @@
+# hintr 1.0.6
+
+* Return area and time_period column info in input time series metadata
+
 # hintr 1.0.1
 
 * Wire up `/chart-data/input-time-series/<type>` to return real data for time series plots
