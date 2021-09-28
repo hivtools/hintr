@@ -216,18 +216,26 @@ test_that("real model can be run & calibrated by API", {
   ## Results can be stored in specified results directory
   results_dir <- tempfile("results")
   dir.create(results_dir)
-  withr::with_envvar(c("USE_MOCK_MODEL" = "false"), {
-    test_server <- porcelain::porcelain_background$new(
-      api, args = list(queue_id = paste0("hintr:", ids::random_id()),
-                       results_dir = results_dir))
-    test_server$start()
 
-    ## Submit a model run
-    r <- test_server$request(
-      "POST", "/model/submit",
-      body = httr::upload_file(payload, type = "application/json"),
-      encode = "json")
-  })
+  queue_id <- paste0("hintr:", ids::random_id())
+  test_server <- porcelain::porcelain_background$new(
+    api,
+    args = list(queue_id = queue_id,
+                results_dir = results_dir),
+    env = c("USE_MOCK_MODEL" = "false"))
+  test_server$start()
+
+  ## Workers started mock model off
+  controller <- rrq::rrq_controller$new(queue_id = queue_id)
+  res <- controller$message_send_and_wait("EVAL",
+                                          "Sys.getenv('USE_MOCK_MODEL')")
+  expect_equivalent(res, c("false", "false"))
+
+  ## Submit a model run
+  r <- test_server$request(
+    "POST", "/model/submit",
+    body = httr::upload_file(payload, type = "application/json"),
+    encode = "json")
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
   expect_equal(response$status, "success")
@@ -235,8 +243,8 @@ test_that("real model can be run & calibrated by API", {
   expect_equal(names(response$data), c("id"))
 
   ## Get the status
-  testthat::try_again(10, {
-    Sys.sleep(30)
+  testthat::try_again(60, {
+    Sys.sleep(5)
     r <- test_server$request("GET", paste0("/model/status/", response$data$id))
     expect_equal(httr::status_code(r), 200)
     response <- response_from_json(r)
@@ -615,12 +623,12 @@ test_that("crashed worker can be detected", {
   results_dir <- tempfile("results")
   dir.create(results_dir)
   queue_id <- paste0("hintr:", ids::random_id())
-  withr::with_envvar(c("USE_MOCK_MODEL" = "false"), {
-    test_server <- porcelain::porcelain_background$new(
-      api, args = list(queue_id = queue_id,
-                       results_dir = results_dir))
-    test_server$start()
-  })
+  test_server <- porcelain::porcelain_background$new(
+    api,
+    args = list(queue_id = queue_id,
+                results_dir = results_dir),
+    env = c("USE_MOCK_MODEL" = "false"))
+  test_server$start()
 
   ## Submit a model run
   payload <- setup_submit_payload()
@@ -632,7 +640,7 @@ test_that("crashed worker can be detected", {
   id <- response_from_json(r)$data$id
 
   Sys.sleep(2)
-  obj <- rrq::rrq_controller$new(queue_id)
+  obj <- rrq::rrq_controller$new(queue_id = queue_id)
   expect_equal(obj$task_status(id), setNames("RUNNING", id))
 
   ## There's quite a chore here to try and identify the actual running
