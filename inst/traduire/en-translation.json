@@ -77,5 +77,6 @@
     "INPUT_TIME_SERIES_COLUMN_TIME_STEP": "Time step",
     "INPUT_TIME_SERIES_COLUMN_AGE": "Age",
     "INPUT_TIME_SERIES_COLUMN_TIME_PERIOD": "Time period",
-    "INPUT_TIME_SERIES_COLUMN_AREA_NAME": "Area name"
+    "INPUT_TIME_SERIES_COLUMN_AREA": "Area",
+    "INVALID_ID_LABEL": "Data is invalid, number of unique {{label_col}} values and {{id_col}} values is not equal"
 }

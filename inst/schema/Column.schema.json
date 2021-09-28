@@ -12,8 +12,10 @@
       "type": "string"
     },
     "values": {
-      "type": [ "array", "null" ],
-      "items": { "$ref": "ColumnValue.schema.json" }
+      "oneOf": [
+        { "$ref": "NestedFilterOption.schema.json" },
+        { "$ref": "ColumnValues.schema.json" }
+      ]
     }
   },
   "additionalProperties": false,

@@ -9,9 +9,9 @@ get_programme_time_series_columns <- function(data) {
     ),
     list(
       id = scalar("area_level"),
-      column_id = scalar("area_level_label"),
+      column_id = scalar("area_level"),
       label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA_LEVEL")),
-      values = get_default_id_label_map(data, "area_level_label")
+      values = get_default_id_label_map(data, "area_level", "area_level_label")
     ),
     list(
       id = scalar("time_step"),
@@ -26,10 +26,10 @@ get_programme_time_series_columns <- function(data) {
       values = get_default_id_label_map(data, "time_period")
     ),
     list(
-      id = scalar("area_name"),
-      column_id = scalar("area_name"),
-      label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA_NAME")),
-      values = get_default_id_label_map(data, "area_name")
+      id = scalar("area"),
+      column_id = scalar("area_id"),
+      label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA")),
+      values = get_area_hierarchy(data)
     )
   )
 }
@@ -47,7 +47,7 @@ get_anc_time_series_columns <- function(data) {
       id = scalar("area_level"),
       column_id = scalar("area_level_label"),
       label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA_LEVEL")),
-      values = get_default_id_label_map(data, "area_level_label")
+      values = get_default_id_label_map(data, "area_level", "area_level_label")
     ),
     list(
       id = scalar("age"),
@@ -62,23 +62,40 @@ get_anc_time_series_columns <- function(data) {
       values = get_default_id_label_map(data, "time_period")
     ),
     list(
-      id = scalar("area_name"),
-      column_id = scalar("area_name"),
-      label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA_NAME")),
-      values = get_default_id_label_map(data, "area_name")
+      id = scalar("area"),
+      column_id = scalar("area_id"),
+      label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA")),
+      values = get_area_hierarchy(data)
     )
   )
 }
 
-get_default_id_label_map <- function(data, column, capitalise = FALSE) {
-  values <- unique(data[, column])
-  lapply(values, function(value) {
+get_default_id_label_map <- function(data, id_column, label_column = NULL,
+                                     capitalise = FALSE) {
+  if (is.null(label_column)) {
+    label_column <- id_column
+  }
+  values <- unique(data[, c(id_column, label_column)])
+  if (length(unique(data[, id_column])) != nrow(values)) {
+    stop(t_("INVALID_ID_LABEL",
+            list(id_col = id_column, label_col = label_column)))
+  }
+  map_single_value <- function(id, label) {
     if (capitalise) {
-      value <- to_upper_first(value)
+      label <- to_upper_first(label)
     }
     list(
-      id = scalar(value),
-      label = scalar(value)
+      id = scalar(id),
+      label = scalar(label)
     )
-  })
+  }
+  Map(map_single_value, as.character(values[, id_column]),
+      as.character(values[, label_column]), USE.NAMES = FALSE)
+}
+
+get_area_hierarchy <- function(data) {
+  hierarchy_table <- unique(
+    data[, c("area_id", "parent_area_id", "area_sort_order", "area_name")])
+  colnames(hierarchy_table) <- c("id", "parent_id", "sort_order", "label")
+  construct_tree(hierarchy_table)
 }
