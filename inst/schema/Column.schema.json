@@ -13,7 +13,7 @@
     },
     "values": {
       "oneOf": [
-        { "$ref": "NestedFilterOption.schema.json" },
+        { "$ref": "NestedColumnValue.schema.json" },
         { "$ref": "ColumnValues.schema.json" }
       ]
     }
