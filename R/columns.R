@@ -30,6 +30,12 @@ get_programme_time_series_columns <- function(data) {
       column_id = scalar("area_id"),
       label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA")),
       values = get_area_hierarchy(data)
+    ),
+    list(
+      id = scalar("area_name"),
+      column_id = scalar("area_name"),
+      label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA_NAME")),
+      values = get_default_id_label_map(data, "area_name")
     )
   )
 }
@@ -66,6 +72,12 @@ get_anc_time_series_columns <- function(data) {
       column_id = scalar("area_id"),
       label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA")),
       values = get_area_hierarchy(data)
+    ),
+    list(
+      id = scalar("area_name"),
+      column_id = scalar("area_name"),
+      label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA_NAME")),
+      values = get_default_id_label_map(data, "area_name")
     )
   )
 }

@@ -10,7 +10,7 @@ test_that("get_programme_time_series returns data and columns", {
                     "plot", "value"))
 
   columns <- out$metadata$columns
-  expect_length(columns, 5)
+  expect_length(columns, 6)
   expect_equal(columns[[1]]$id, scalar("plot_type"))
   expect_equal(columns[[1]]$column_id, scalar("plot"))
   expect_equal(columns[[1]]$label, scalar("Plot type"))
@@ -34,6 +34,10 @@ test_that("get_programme_time_series returns data and columns", {
   expect_equal(columns[[5]]$id, scalar("area"))
   expect_equal(columns[[5]]$column_id, scalar("area_id"))
   expect_equal(columns[[5]]$label, scalar("Area"))
+  expect_equal(columns[[6]]$id, scalar("area_name"))
+  expect_equal(columns[[6]]$column_id, scalar("area_name"))
+  expect_equal(columns[[6]]$label, scalar("Area name"))
+  expect_length(columns[[6]]$values, 40)
 
   area_values <- columns[[5]]$values
   expect_equal(names(area_values), c("id", "label", "children"))
@@ -62,7 +66,7 @@ test_that("get_anc_time_series returns data and columns", {
                     "time_step", "plot", "value"))
 
   columns <- out$metadata$columns
-  expect_length(columns, 5)
+  expect_length(columns, 6)
   expect_equal(columns[[1]]$id, scalar("plot_type"))
   expect_equal(columns[[1]]$column_id, scalar("plot"))
   expect_equal(columns[[1]]$label, scalar("Plot type"))
@@ -85,6 +89,10 @@ test_that("get_anc_time_series returns data and columns", {
   expect_equal(columns[[5]]$id, scalar("area"))
   expect_equal(columns[[5]]$column_id, scalar("area_id"))
   expect_equal(columns[[5]]$label, scalar("Area"))
+  expect_equal(columns[[6]]$id, scalar("area_name"))
+  expect_equal(columns[[6]]$column_id, scalar("area_name"))
+  expect_equal(columns[[6]]$label, scalar("Area name"))
+  expect_length(columns[[6]]$values, 40)
 
   area_values <- columns[[5]]$values
   expect_equal(names(area_values), c("id", "label", "children"))
