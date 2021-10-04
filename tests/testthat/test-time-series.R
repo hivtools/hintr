@@ -74,7 +74,7 @@ test_that("get_anc_time_series returns data and columns", {
   expect_setequal(names(columns[[1]]$values[[1]]),
                   c("id", "label", "description"))
   expect_equal(columns[[2]]$id, scalar("area_level"))
-  expect_equal(columns[[2]]$column_id, scalar("area_level_label"))
+  expect_equal(columns[[2]]$column_id, scalar("area_level"))
   expect_equal(columns[[2]]$label, scalar("Area level"))
   expect_length(columns[[2]]$values, 5)
   expect_equal(columns[[2]]$values[[1]]$id, scalar("0"))

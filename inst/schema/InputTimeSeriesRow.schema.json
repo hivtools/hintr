@@ -5,6 +5,9 @@
     "area_id": {
       "type": "string"
     },
+    "area_name": {
+      "type": "string"
+    },
     "time_step": {
       "type": "string"
     },
@@ -25,5 +28,5 @@
     }
   },
   "additionalProperties": false,
-  "required": [ "area_id", "time_period", "time_step", "plot", "value" ]
+  "required": [ "area_id", "area_name", "time_period", "time_step", "plot", "value" ]
 }
