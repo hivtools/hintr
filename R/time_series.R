@@ -5,7 +5,7 @@ get_programme_time_series <- function(programme, shape) {
   area_level_options <- get_selected_mappings(columns, "area_level",
                                               key = "values")
   list(
-    data = data[, c("area_id", "area_level", "time_step",
+    data = data[, c("area_id", "area_name", "area_level", "time_step",
                     "time_period", "plot", "value")],
     metadata = list(
       columns = columns,
@@ -29,8 +29,8 @@ get_anc_time_series <- function(anc, shape) {
   area_level_options <- get_selected_mappings(columns, "area_level",
                                               key = "values")
   list(
-    data = data[, c("area_id", "area_level", "age_group", "time_period",
-                    "time_step", "plot", "value")],
+    data = data[, c("area_id", "area_name", "area_level", "age_group",
+                    "time_period", "time_step", "plot", "value")],
     metadata = list(
       columns = columns,
       defaults = list(
