@@ -51,7 +51,7 @@ get_anc_time_series_columns <- function(data) {
     ),
     list(
       id = scalar("area_level"),
-      column_id = scalar("area_level_label"),
+      column_id = scalar("area_level"),
       label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA_LEVEL")),
       values = get_default_id_label_map(data, "area_level", "area_level_label")
     ),
