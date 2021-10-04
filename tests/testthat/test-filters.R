@@ -312,7 +312,7 @@ test_that("can get selected filter options", {
   test_mock_model_available()
   output <- readRDS(mock_calibrate$plot_data_path)
   filters <- get_model_output_filters(output)
-  selected_options <- get_selected_filter_options(filters, "age", "Y000_004")
+  selected_options <- get_selected_mappings(filters, "age", "Y000_004")
   expect_equal(selected_options, list(
     list(
       id = scalar("Y000_004"),
@@ -320,7 +320,7 @@ test_that("can get selected filter options", {
     )
   ))
 
-  selected_options <- get_selected_filter_options(filters, "sex")
+  selected_options <- get_selected_mappings(filters, "sex")
   expect_equal(selected_options, list(
     list(
       id = scalar("both"),
@@ -336,11 +336,10 @@ test_that("can get selected filter options", {
     )
   ))
 
-  expect_error(get_selected_filter_options(filters, "test"),
+  expect_error(get_selected_mappings(filters, "test"),
                "Found no matching filters for type test")
 
-  selected_options <- get_selected_filter_options(filters, "sex",
-                                                  c("male", "test"))
+  selected_options <- get_selected_mappings(filters, "sex", c("male", "test"))
   expect_equal(selected_options, list(
     list(
       id = scalar("male"),
