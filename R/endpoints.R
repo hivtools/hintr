@@ -234,13 +234,12 @@ calibrate_plot <- function(queue) {
             x_axis_id = scalar("spectrum_region"),
             disaggregate_by_id = scalar("type"),
             selected_filter_options = list(
-              spectrum_region = get_selected_filter_options(filters,
-                                                            "spectrum_region"),
-              quarter = get_selected_filter_options(filters, "quarter")[2],
-              sex = get_selected_filter_options(filters, "sex", "both"),
-              age = get_selected_filter_options(
+              spectrum_region = get_selected_mappings(filters, "spectrum_region"),
+              quarter = get_selected_mappings(filters, "quarter")[2],
+              sex = get_selected_mappings(filters, "sex", "both"),
+              age = get_selected_mappings(
                 filters, "age", naomi::get_five_year_age_groups())[1],
-              type = get_selected_filter_options(filters, "type")
+              type = get_selected_mappings(filters, "type")
             )
           )
         )

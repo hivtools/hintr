@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "column_id": {
+      "type": "string"
+    },
+    "label": {
+      "type": "string"
+    },
+    "values": {
+      "oneOf": [
+        { "$ref": "NestedColumnValue.schema.json" },
+        { "$ref": "ColumnValues.schema.json" }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "required": [ "id", "column_id", "label", "values" ]
+}

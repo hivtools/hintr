@@ -8,9 +8,6 @@
     "area_name": {
       "type": "string"
     },
-    "area_level_label": {
-      "type": "string"
-    },
     "time_step": {
       "type": "string"
     },
@@ -31,6 +28,5 @@
     }
   },
   "additionalProperties": false,
-  "required": [ "area_id", "area_name", "area_level_label", "time_period",
-    "time_step", "plot", "value" ]
+  "required": [ "area_id", "area_name", "time_period", "time_step", "plot", "value" ]
 }
