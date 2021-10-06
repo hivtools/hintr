@@ -493,7 +493,7 @@ test_that("download streams bytes", {
 
   ## Run a model
   r <- server$request(
-    "GET", "/model/submit",
+    "POST", "/model/submit",
     body = httr::upload_file(payload, type = "application/json"),
     encode = "json")
   expect_equal(httr::status_code(r), 200)
