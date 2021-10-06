@@ -552,7 +552,7 @@ test_that("download streams bytes", {
   expect_true(content_length > 100000)
 
   ## Can stream bytes
-  res <- server$request("HEAD", paste0("/download/result/", response$data$id),
+  res <- server$request("GET", paste0("/download/result/", response$data$id),
                         httr::add_headers("Accept-Encoding" = ""))
   expect_equal(httr::headers(res)$`content-type`, "application/octet-stream")
   expect_match(httr::headers(res)$`content-disposition`,
