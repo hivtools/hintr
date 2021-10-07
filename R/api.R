@@ -56,12 +56,10 @@ api_postserialize <- function(data, req, res, value) {
 api <- function(queue_id = NULL, workers = 2,
                 results_dir = tempdir(), prerun_dir = NULL,
                 log_level = "info") {
-  # nocov start
   queue <- Queue$new(queue_id, workers, results_dir = results_dir,
                      prerun_dir = prerun_dir)
   logger <- make_logger(log_level)
   api_build(queue, logger = logger)
-  # nocov end
 }
 
 api_set_language <- function(data, req, res) {
