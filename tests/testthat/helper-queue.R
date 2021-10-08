@@ -75,3 +75,7 @@ test_queue_result <- function(model = mock_model, calibrate = mock_calibrate,
     calibrate_id = calibrate_id
   )
 }
+
+response_from_json <- function(x) {
+  jsonlite::parse_json(httr::content(x, "text", encoding = "UTF-8"))
+}

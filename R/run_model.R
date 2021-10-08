@@ -11,6 +11,7 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
   }
 
   if (use_mock_model()) {
+    message("Starting mock model run")
     progress_start <- list(
       started = list(
         started = TRUE,
