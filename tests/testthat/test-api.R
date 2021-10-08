@@ -39,6 +39,18 @@ test_that("change language based on header", {
   expect_equal(tr_naomi$language(), "en")
 })
 
+test_that("can build api", {
+  test_redis_available()
+  api <- api(workers = 0)
+  expect_s3_class(api, "porcelain")
+  out <- capture_output(res <- api$request("GET", "/"))
+  expect_match(out, "request GET /")
+  expect_match(out, "response GET /")
+  expect_equal(res$status, 200)
+  body <- jsonlite::fromJSON(res$body)
+  expect_equal(body$data, "Welcome to hintr")
+})
+
 test_that("endpoint_baseline_individual", {
   endpoint <- endpoint_baseline_individual()
   response <- endpoint$run(readLines("payload/validate_pjnz_payload.json"))
