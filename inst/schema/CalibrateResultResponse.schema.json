@@ -11,6 +11,12 @@
       },
       "additionalProperties": false,
       "required": [ "barchart", "choropleth" ]
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "$ref": "Warning.schema.json"
+      }
     }
   },
   "required": [ "data", "plottingMetadata" ]

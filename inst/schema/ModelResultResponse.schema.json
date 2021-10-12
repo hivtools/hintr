@@ -6,6 +6,12 @@
     "complete": {
       "type": "boolean",
       "enum": [ true ]
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "$ref": "Warning.schema.json"
+      }
     }
   },
   "required": [ "id", "complete" ]
