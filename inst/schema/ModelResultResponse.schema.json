@@ -14,5 +14,5 @@
       }
     }
   },
-  "required": [ "id", "complete" ]
+  "required": [ "id", "complete", "warnings"]
 }

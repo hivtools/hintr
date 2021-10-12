@@ -19,5 +19,5 @@
       }
     }
   },
-  "required": [ "data", "plottingMetadata" ]
+  "required": [ "data", "plottingMetadata", "warnings" ]
 }

@@ -16,6 +16,6 @@
   },
   "additionalProperties": false,
   "required": [
-    "valid"
+    "valid", "warnings"
   ]
 }
