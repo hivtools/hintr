@@ -6,13 +6,16 @@
       "type": "string"
     },
     "location": {
-      "enum": [
-        "model_options",
-        "model_fit",
-        "model_calibrate",
-        "review_output",
-        "download_results"
-      ]
+      "type": "array",
+      "items": {
+        "enum": [
+          "model_options",
+          "model_fit",
+          "model_calibrate",
+          "review_output",
+          "download_results"
+        ]
+      }
     }
   },
   "additionalProperties": false,
