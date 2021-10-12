@@ -5,7 +5,7 @@
     "text": {
       "type": "string"
     },
-    "location": {
+    "locations": {
       "type": "array",
       "items": {
         "enum": [
@@ -21,6 +21,6 @@
   "additionalProperties": false,
   "required": [
     "text",
-    "location"
+    "locations"
   ]
 }
