@@ -534,7 +534,12 @@ test_that("endpoint_model_result can be run", {
   expect_equal(response$status_code, 200)
   expect_equal(response$data, list(
     id = scalar(run_response$data$id),
-    complete = scalar(TRUE)
+    complete = scalar(TRUE),
+    warnings = list(
+      list(text = scalar(paste0("Zero population input for 8 population ",
+                                "groups. Replaced with population 0.1.")),
+           locations = list(scalar("model_fit"))
+      ))
   ))
 })
 
@@ -554,13 +559,18 @@ test_that("api can call endpoint_model_result", {
   out <- queue$queue$task_wait(submit_body$data$id)
   res <- api$request("GET", sprintf("/model/result/%s", submit_body$data$id))
   expect_equal(res$status, 200)
-  body <- jsonlite::fromJSON(res$body)
+  body <- jsonlite::fromJSON(res$body,  simplifyVector = FALSE)
 
   expect_equal(body$status, "success")
   expect_null(body$errors)
   expect_equal(body$data, list(
     id = submit_body$data$id,
-    complete = TRUE
+    complete = TRUE,
+    warnings = list(
+      list(text = paste0("Zero population input for 8 population ",
+                                "groups. Replaced with population 0.1."),
+           locations = list("model_fit")
+      ))
   ))
 })
 
@@ -899,7 +909,7 @@ test_that("model calibrate can be queued and result returned", {
   response <- result$run(status_response$data$id)
 
   expect_equal(response$status_code, 200)
-  expect_equal(names(response$data), c("data", "plottingMetadata"))
+  expect_equal(names(response$data), c("data", "plottingMetadata", "warnings"))
   expect_equal(colnames(response$data$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
@@ -945,7 +955,8 @@ test_that("api can call endpoint_model_calibrate", {
   expect_equal(result_res$status, 200)
   result_body <- jsonlite::fromJSON(result_res$body)
   expect_null(result_body$errors)
-  expect_equal(names(result_body$data), c("data", "plottingMetadata"))
+  expect_equal(names(result_body$data),
+               c("data", "plottingMetadata", "warnings"))
   expect_equal(colnames(result_body$data$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))

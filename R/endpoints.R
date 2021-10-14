@@ -140,7 +140,14 @@ model_options_validate <- function(input) {
     data$anc_testing <- data$anc
     data$anc <- NULL
     data <- naomi:::format_data_input(data)
-    list(valid = scalar(naomi:::validate_model_options(data, input$options)))
+    list(valid = scalar(naomi:::validate_model_options(data, input$options)),
+         warnings = list(
+           list(text = scalar(paste0(
+             "You have chosen to fit model without estimating neightbouring ",
+             "ART attendance. You may wish to review your selection to ",
+             "include this option.")),
+             locations = list(scalar("model_options"))
+         )))
   }, error = function(e) {
     hintr_error(e$message, "INVALID_OPTIONS")
   })
@@ -179,7 +186,14 @@ model_result <- function(queue) {
   function(id) {
     verify_result_available(queue, id)
     list(id = scalar(id),
-         complete = scalar(TRUE))
+         complete = scalar(TRUE),
+         warnings = list(
+           list(
+             text = scalar(paste0("Zero population input for 8 population ",
+                                  "groups. Replaced with population 0.1.")),
+             locations = list(scalar("model_fit"))
+           )
+         ))
   }
 }
 

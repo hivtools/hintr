@@ -201,7 +201,7 @@ test_that("endpoint_model_options_validate validates options", {
     response <- model_options_validate(input)
   })
 
-  expect_equal(names(response), "valid")
+  expect_equal(names(response), c("valid", "warnings"))
   expect_equal(response$valid, scalar(TRUE))
 })
 

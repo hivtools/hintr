@@ -95,7 +95,21 @@ process_result <- function(model_output) {
     )
   )
   list(data = select_data(output),
-       plottingMetadata = metadata)
+       plottingMetadata = metadata,
+       warnings = list(
+         list(
+           text = scalar("ART coverage greater than 100% for 10 age groups"),
+           locations = list(scalar("model_calibrate"))
+         ),
+         list(
+           text = scalar("Prevalence greater than 40%"),
+           locations = list(scalar("model_calibrate"), scalar("review_output"))
+         ),
+         list(
+           text = scalar("ART coverage greater tha 100%"),
+           locations = list(scalar("review_output"))
+         )
+       ))
 }
 
 use_mock_model <- function() {

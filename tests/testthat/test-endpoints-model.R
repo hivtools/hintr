@@ -35,7 +35,14 @@ test_that("endpoint model run queues a model run", {
   result <- get_model_result(response$id)
   expect_equal(result, list(
     id = scalar(response$id),
-    complete = scalar(TRUE)
+    complete = scalar(TRUE),
+    warnings = list(
+      list(
+        text = scalar(paste0("Zero population input for 8 population groups. ",
+                             "Replaced with population 0.1.")),
+        locations = list(scalar("model_fit"))
+      )
+    )
   ))
 })
 

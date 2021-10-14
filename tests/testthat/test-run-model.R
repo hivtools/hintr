@@ -3,7 +3,7 @@ context("run-model")
 test_that("model can be run & calibrated and filters extracted", {
   test_mock_model_available()
   res <- process_result(mock_calibrate)
-  expect_equal(names(res), c("data", "plottingMetadata"))
+  expect_equal(names(res), c("data", "plottingMetadata", "warnings"))
   expect_equal(names(res$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
@@ -72,7 +72,7 @@ test_that("model without national level results can be processed", {
   output_temp <- tempfile()
   saveRDS(output, output_temp)
   res <- process_result(list(plot_data_path = output_temp))
-  expect_equal(names(res), c("data", "plottingMetadata"))
+  expect_equal(names(res), c("data", "plottingMetadata", "warnings"))
   expect_equal(names(res$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
