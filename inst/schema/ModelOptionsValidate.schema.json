@@ -7,12 +7,7 @@
         true
       ]
     },
-    "warnings": {
-      "type": "array",
-      "items": {
-        "$ref": "Warning.schema.json"
-      }
-    }
+    "warnings": { "$ref": "Warnings.schema.json" }
   },
   "additionalProperties": false,
   "required": [
