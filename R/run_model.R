@@ -106,7 +106,7 @@ process_result <- function(model_output) {
            locations = list(scalar("model_calibrate"), scalar("review_output"))
          ),
          list(
-           text = scalar("ART coverage greater tha 100%"),
+           text = scalar("ART coverage greater than 100%"),
            locations = list(scalar("review_output"))
          )
        ))
