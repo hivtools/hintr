@@ -306,7 +306,7 @@ test_that("real model can be run & calibrated by API", {
   response <- response_from_json(r)
   expect_equal(response$status, "success")
   expect_equal(response$errors, NULL)
-  expect_equal(names(response$data), c("data", "plottingMetadata"))
+  expect_equal(names(response$data), c("data", "plottingMetadata", "warnings"))
   expect_equal(names(response$data$data[[1]]),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
@@ -456,7 +456,7 @@ test_that("model options can be validated", {
   response <- response_from_json(r)
   expect_equal(response$status, "success")
   expect_equal(response$errors, NULL)
-  expect_equal(names(response$data), "valid")
+  expect_equal(names(response$data), c("valid", "warnings"))
   expect_equal(response$data$valid, TRUE)
 })
 
