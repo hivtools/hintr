@@ -8,7 +8,7 @@ test_that("input time series works with programme/art data", {
   expect_equal(names(out), c("data", "metadata"))
   expect_true(nrow(out$data) > 100)
   expect_equal(names(out$metadata$defaults$selected_filter_options),
-               c("plot_type", "area_level"))
+               c("plot_type", "area_level", "quarter"))
 })
 
 test_that("input time series works with anc data", {
@@ -21,7 +21,7 @@ test_that("input time series works with anc data", {
   expect_equal(names(out), c("data", "metadata"))
   expect_true(nrow(out$data) > 100)
   expect_equal(names(out$metadata$defaults$selected_filter_options),
-               c("plot_type", "area_level", "age"))
+               c("plot_type", "area_level", "age", "quarter"))
 })
 
 test_that("input time series works if both anc and programme are provided", {
@@ -42,7 +42,7 @@ test_that("input time series works if both anc and programme are provided", {
   expect_equal(names(out), c("data", "metadata"))
   expect_true(nrow(out$data) > 100)
   expect_equal(names(out$metadata$defaults$selected_filter_options),
-               c("plot_type", "area_level", "age"))
+               c("plot_type", "area_level", "age", "quarter"))
 })
 
 test_that("input_time_series throws error if unknown file type", {
@@ -78,7 +78,7 @@ test_that("endpoint_input_time_series_plot works with programme data", {
   expect_equal(names(body$data), c("data", "metadata"))
   expect_true(nrow(body$data$data) > 100)
   expect_equal(names(body$data$metadata$defaults$selected_filter_options),
-               c("plot_type", "area_level"))
+               c("plot_type", "area_level", "quarter"))
 })
 
 test_that("endpoint_input_time_series_plot works with anc data", {
@@ -95,7 +95,7 @@ test_that("endpoint_input_time_series_plot works with anc data", {
   expect_equal(names(body$data), c("data", "metadata"))
   expect_true(nrow(body$data$data) > 100)
   expect_equal(names(body$data$metadata$defaults$selected_filter_options),
-               c("plot_type", "area_level", "age"))
+               c("plot_type", "area_level", "age", "quarter"))
 })
 
 test_that("api can return input time series data for programme/art", {
@@ -115,7 +115,7 @@ test_that("api can return input time series data for programme/art", {
   expect_equal(names(body$data), c("data", "metadata"))
   expect_true(nrow(body$data$data) > 100)
   expect_equal(names(body$data$metadata$defaults$selected_filter_options),
-               c("plot_type", "area_level"))
+               c("plot_type", "area_level", "quarter"))
 })
 
 test_that("api can return input time series data for anc", {
@@ -135,5 +135,5 @@ test_that("api can return input time series data for anc", {
   expect_equal(names(body$data), c("data", "metadata"))
   expect_true(nrow(body$data$data) > 100)
   expect_equal(names(body$data$metadata$defaults$selected_filter_options),
-               c("plot_type", "area_level", "age"))
+               c("plot_type", "area_level", "age", "quarter"))
 })

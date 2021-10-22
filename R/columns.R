@@ -68,6 +68,12 @@ get_anc_time_series_columns <- function(data) {
       values = get_default_id_label_map(data, "time_period")
     ),
     list(
+      id = scalar("quarter"),
+      column_id = scalar("quarter"),
+      label = scalar(t_("INPUT_TIME_SERIES_COLUMN_QUARTER")),
+      values = get_quarter_id_label_map(data[["quarter"]])
+    ),
+    list(
       id = scalar("area"),
       column_id = scalar("area_id"),
       label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA")),
@@ -117,19 +123,19 @@ get_quarter_id_label_map <- function(quarters) {
   quarter_map <- list(
     list(
       id = scalar("Q1"),
-      name = scalar(t_("QUARTER_1"))
+      label = scalar(t_("QUARTER_1"))
     ),
     list(
       id = scalar("Q2"),
-      name = scalar(t_("QUARTER_2"))
+      label = scalar(t_("QUARTER_2"))
     ),
     list(
       id = scalar("Q3"),
-      name = scalar(t_("QUARTER_3"))
+      label = scalar(t_("QUARTER_3"))
     ),
     list(
       id = scalar("Q4"),
-      name = scalar(t_("QUARTER_4"))
+      label = scalar(t_("QUARTER_4"))
     )
   )
   keep <- vlapply(quarter_map, function(quarter) {
