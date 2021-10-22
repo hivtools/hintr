@@ -74,10 +74,14 @@
     "INVALID_TIME_SERIES_INPUT_TYPE": "Time series data can only be returned for {{types}}, received '{{type}}'.",
     "INPUT_TIME_SERIES_COLUMN_PLOT_TYPE": "Plot type",
     "INPUT_TIME_SERIES_COLUMN_AREA_LEVEL": "Area level",
-    "INPUT_TIME_SERIES_COLUMN_TIME_STEP": "Time step",
+    "INPUT_TIME_SERIES_COLUMN_QUARTER": "Quarter",
     "INPUT_TIME_SERIES_COLUMN_AGE": "Age",
     "INPUT_TIME_SERIES_COLUMN_TIME_PERIOD": "Time period",
     "INPUT_TIME_SERIES_COLUMN_AREA": "Area",
     "INPUT_TIME_SERIES_COLUMN_AREA_NAME": "Area name",
-    "INVALID_ID_LABEL": "Data is invalid, number of unique {{label_col}} values and {{id_col}} values is not equal"
+    "INVALID_ID_LABEL": "Data is invalid, number of unique {{label_col}} values and {{id_col}} values is not equal",
+    "QUARTER_1": "Quarter 1",
+    "QUARTER_2": "Quarter 2",
+    "QUARTER_3": "Quarter 3",
+    "QUARTER_4": "Quarter 4"
 }

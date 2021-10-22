@@ -1,3 +1,7 @@
+# hintr 1.0.8
+
+* Remove `time_step` from input tme series endpoints and add `quarter`
+
 # hintr 1.0.6
 
 * Return area and time_period column info in input time series metadata

@@ -8,7 +8,7 @@ test_that("input time series works with programme/art data", {
   expect_equal(names(out), c("data", "metadata"))
   expect_true(nrow(out$data) > 100)
   expect_equal(names(out$metadata$defaults$selected_filter_options),
-               c("plot_type", "area_level", "time_step"))
+               c("plot_type", "area_level"))
 })
 
 test_that("input time series works with anc data", {
@@ -78,7 +78,7 @@ test_that("endpoint_input_time_series_plot works with programme data", {
   expect_equal(names(body$data), c("data", "metadata"))
   expect_true(nrow(body$data$data) > 100)
   expect_equal(names(body$data$metadata$defaults$selected_filter_options),
-               c("plot_type", "area_level", "time_step"))
+               c("plot_type", "area_level"))
 })
 
 test_that("endpoint_input_time_series_plot works with anc data", {
@@ -115,7 +115,7 @@ test_that("api can return input time series data for programme/art", {
   expect_equal(names(body$data), c("data", "metadata"))
   expect_true(nrow(body$data$data) > 100)
   expect_equal(names(body$data$metadata$defaults$selected_filter_options),
-               c("plot_type", "area_level", "time_step"))
+               c("plot_type", "area_level"))
 })
 
 test_that("api can return input time series data for anc", {
