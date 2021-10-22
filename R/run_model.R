@@ -107,7 +107,7 @@ process_result <- function(model_output) {
          ),
          list(
            text = scalar("ART coverage greater than 100%"),
-           locations = list(scalar("review_output"))
+           locations = list(scalar("review_output", "download_results"))
          )
        ))
 }
