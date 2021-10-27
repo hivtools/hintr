@@ -418,6 +418,7 @@ test_that("endpoint_model_options_validate can be run", {
   expect_equal(response$status_code, 200)
   expect_null(response$error)
   expect_equal(response$data$valid, scalar(TRUE))
+  expect_equal(response$data$warnings, list())
 })
 
 test_that("api can call endpoint_model_options_validate", {
@@ -431,6 +432,7 @@ test_that("api can call endpoint_model_options_validate", {
   expect_equal(body$status, "success")
   expect_null(body$errors)
   expect_true(body$data$valid)
+  expect_equal(body$data$warnings, list())
 })
 
 test_that("endpoint_model_submit can be run", {
@@ -963,6 +965,24 @@ test_that("api can call endpoint_model_calibrate", {
   expect_true(nrow(result_body$data$data) > 84042)
   expect_equal(names(result_body$data$plottingMetadata),
                c("barchart", "choropleth"))
+})
+
+test_that("model calibrate result includes warnings", {
+  test_mock_model_available()
+  q <- test_queue_result()
+  result <- endpoint_model_calibrate_result(q$queue)
+  response <- result$run(q$calibrate_id)
+
+  expect_equal(response$status_code, 200)
+  expect_length(response$data$warnings, 2)
+  expect_equal(response$data$warnings[[1]]$text,
+               scalar("ART coverage greater than 100% for 10 age groups"))
+  expect_equal(response$data$warnings[[1]]$locations,
+               list(scalar("model_calibrate")))
+  expect_equal(response$data$warnings[[2]]$text,
+               scalar("Prevalence greater than 40%"))
+  expect_equal(response$data$warnings[[2]]$locations,
+               list(scalar("model_calibrate"), scalar("review_output")))
 })
 
 test_that("can get calibrate plot data", {

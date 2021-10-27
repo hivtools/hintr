@@ -196,13 +196,23 @@ test_that("endpoint_model_options_validate validates options", {
     }
   }'
 
-  mock_validate_model_options <- mockery::mock(TRUE)
-  with_mock("naomi:::validate_model_options" = mock_validate_model_options, {
+  mock_validate_model_options <- mockery::mock(list(
+    valid = TRUE,
+    warnings = list(
+      list(
+        text = "a warning",
+        location = list("location")
+      )
+    )
+  ))
+  with_mock("naomi::validate_model_options" = mock_validate_model_options, {
     response <- model_options_validate(input)
   })
 
   expect_equal(names(response), c("valid", "warnings"))
   expect_equal(response$valid, scalar(TRUE))
+  expect_equal(response$warnings[[1]]$text, scalar("a warning"))
+  expect_equal(response$wrnings[[1]]$location[[1]], scalar("location"))
 })
 
 test_that("invalid model options returns error", {

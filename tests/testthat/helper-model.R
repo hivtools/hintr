@@ -6,7 +6,14 @@ mock_model <- list(
   plot_data_path = NULL,
   model_output_path =
     system.file("output", "malawi_model_output.rds", package = "hintr"),
-  version = packageVersion("naomi")
+  version = packageVersion("naomi"),
+  warnings = list(
+    list(
+      text = scalar(paste0("Zero population input for 8 population ",
+                           "groups. Replaced with population 0.1.")),
+      locations = list(scalar("model_fit"))
+    )
+  )
 )
 class(mock_model) <- "hintr_output"
 
@@ -15,7 +22,17 @@ mock_calibrate <- list(
     system.file("output", "malawi_calibrate_plot_data.rds", package = "hintr"),
   model_output_path =
     system.file("output", "malawi_calibrate_output.rds", package = "hintr"),
-  version = packageVersion("naomi")
+  version = packageVersion("naomi"),
+  warnings = list(
+    list(
+      text = "ART coverage greater than 100% for 10 age groups",
+      locations = list("model_calibrate")
+    ),
+    list(
+      text = "Prevalence greater than 40%",
+      locations = list("model_calibrate", "review_output")
+    )
+  )
 )
 class(mock_calibrate) <- "hintr_output"
 
@@ -58,6 +75,25 @@ test_mock_model_available <- function() {
     }
   }))
 }
+
+## Model output as returned by
+## hintr version 0.1.39 to 1.0.8 and naomi version 2.4.3 to 2.5.4
+mock_model_v1.0.8 <- list(
+  plot_data_path = NULL,
+  model_output_path =
+    system.file("output", "malawi_model_output.rds", package = "hintr"),
+  version = "2.5.4"
+)
+class(mock_model) <- "hintr_output"
+
+mock_calibrate_v1.0.8 <- list(
+  plot_data_path =
+    system.file("output", "malawi_calibrate_plot_data.rds", package = "hintr"),
+  model_output_path =
+    system.file("output", "malawi_calibrate_output.rds", package = "hintr"),
+  version = "2.5.4"
+)
+class(mock_calibrate) <- "hintr_output"
 
 ## Model output as returned by
 ## hintr version 0.1.4 to 0.1.38 and naomi version 1.0.8 to 2.4.2
@@ -120,6 +156,7 @@ clone_model_output <- function(output) {
   out <- list(model_output_path = model_output_path,
               plot_data_path = plot_data_path,
               version = output$version)
+  out$warnings <- output$warnings
   class(out) <- "hintr_output"
   out
 }

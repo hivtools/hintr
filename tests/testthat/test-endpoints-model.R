@@ -364,3 +364,22 @@ test_that("Debug endpoint errors on nonexistant id", {
                scalar("Task '1234' not found"))
   expect_equal(error$status_code, 400)
 })
+
+test_that("getting result returns empty warnings with old run", {
+  test_redis_available()
+  test_mock_model_available()
+
+  ## Return v1.0.8 model results
+  q <- test_queue_result(model = mock_model_v1.0.8,
+                         calibrate = mock_calibrate_v1.0.8)
+
+  endpoint <- endpoint_model_result(q$queue)
+  res <- endpoint$run(q$model_run_id)
+  expect_equal(res$status_code, 200)
+  expect_equal(res$data$warnings, list())
+
+  calibrate_result <- endpoint_model_calibrate_result(q$queue)
+  res <- calibrate_result$run(q$calibrate_id)
+  expect_equal(res$status_code, 200)
+  expect_equal(res$data$warnings, list())
+})

@@ -46,7 +46,14 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
     output <- list(
       plot_data_path = NULL,
       model_output_path = system_file("output", "malawi_model_output.rds"),
-      version = packageVersion("naomi"))
+      version = packageVersion("naomi"),
+      warnings = list(
+        list(
+          text = scalar(paste0("Zero population input for 8 population ",
+                               "groups. Replaced with population 0.1.")),
+          locations = list(scalar("model_fit"))
+        )
+      ))
     class(output) <- "hintr_output"
     return(output)
   }
@@ -94,22 +101,13 @@ process_result <- function(model_output) {
       filters = output_filters
     )
   )
+  warnings <- list()
+  if (!is.null(model_output$warnings)) {
+    warnings <- recursive_scalar(model_output$warnings)
+  }
   list(data = select_data(output),
        plottingMetadata = metadata,
-       warnings = list(
-         list(
-           text = scalar("ART coverage greater than 100% for 10 age groups"),
-           locations = list(scalar("model_calibrate"))
-         ),
-         list(
-           text = scalar("Prevalence greater than 40%"),
-           locations = list(scalar("model_calibrate"), scalar("review_output"))
-         ),
-         list(
-           text = scalar("ART coverage greater than 100%"),
-           locations = list(scalar("review_output"), scalar("download_results"))
-         )
-       ))
+       warnings = warnings)
 }
 
 use_mock_model <- function() {
