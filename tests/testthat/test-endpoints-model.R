@@ -369,9 +369,9 @@ test_that("getting result returns empty warnings with old run", {
   test_redis_available()
   test_mock_model_available()
 
-  ## Return v1.0.8 model results
-  q <- test_queue_result(model = mock_model_v1.0.8,
-                         calibrate = mock_calibrate_v1.0.8)
+  ## Return v1.0.7 model results
+  q <- test_queue_result(model = mock_model_v1.0.7,
+                         calibrate = mock_calibrate_v1.0.7)
 
   endpoint <- endpoint_model_result(q$queue)
   res <- endpoint$run(q$model_run_id)
