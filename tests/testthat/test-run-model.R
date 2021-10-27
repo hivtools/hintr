@@ -180,7 +180,7 @@ test_that("real model can be run", {
     model_run <- run_model(data, options, tempdir())
   })
   expect_equal(names(model_run), c("plot_data_path", "model_output_path",
-                                   "version"))
+                                   "version", "warnings"))
 
   output <- readRDS(model_run$model_output_path)
   expect_setequal(names(output), c("output_package", "naomi_data", "info"))
@@ -241,5 +241,6 @@ test_that("real model can be run with csv2 data", {
                                    "version"))
 
   output <- readRDS(model_run$model_output_path)
-  expect_setequal(names(output), c("output_package", "naomi_data", "info"))
+  expect_setequal(names(output),
+                  c("output_package", "naomi_data", "info", "warnings"))
 })

@@ -104,9 +104,9 @@ test_that("all tasks can be migrated", {
   expect_equal(names(q$queue$result(q$calibrate_id)),
                c("plot_data_path", "model_output_path", "version"))
   expect_equal(names(q$queue$result(run_response$id)),
-               c("plot_data_path", "model_output_path", "version"))
+               c("plot_data_path", "model_output_path", "version", "warnings"))
   expect_equal(names(q$queue$result(calibrate_response$id)),
-               c("plot_data_path", "model_output_path", "version"))
+               c("plot_data_path", "model_output_path", "version", "warnings"))
 })
 
 test_that("only completed tasks are migrated", {
@@ -182,7 +182,7 @@ test_that("migration can be run in dry-run mode", {
                c("output_path", "spectrum_path", "coarse_output_path",
                  "calibration_path", "summary_report_path", "metadata"))
   expect_equal(names(q$queue$result(run_response$id)),
-               c("plot_data_path", "model_output_path", "version"))
+               c("plot_data_path", "model_output_path", "version", "warnings"))
   expect_equal(names(q$queue$result(calibrate_response$id)),
-               c("plot_data_path", "model_output_path", "version"))
+               c("plot_data_path", "model_output_path", "version", "warnings"))
 })
