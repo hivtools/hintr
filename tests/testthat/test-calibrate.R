@@ -14,7 +14,7 @@ test_that("calibration can be run", {
 
   ## Expected files are returned
   expect_equal(names(calibrated_result),
-               c("plot_data_path", "model_output_path", "version"))
+               c("plot_data_path", "model_output_path", "version", "warnings"))
 })
 
 test_that("calibrate can set language", {
