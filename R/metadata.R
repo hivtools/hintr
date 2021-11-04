@@ -1,5 +1,7 @@
 do_plotting_metadata <- function(iso3) {
   metadata <- naomi::get_plotting_metadata(iso3)
+  metadata <- metadata[metadata$data_type %in%
+                         c("survey", "anc", "output", "programme"), ]
   metadata <- metadata[order(metadata$indicator_sort_order), ]
   lapply(split(metadata, metadata$data_type), build_data_type_metadata)
 }
@@ -35,10 +37,10 @@ build_indicator_metadata <- function(metadata) {
   )
 }
 
-get_barchart_metadata <- function(output) {
+get_barchart_metadata <- function(output, data_type = "output") {
   metadata <- naomi::get_metadata()
   metadata <- metadata[
-    metadata$data_type == "output" & metadata$plot_type == "barchart",
+    metadata$data_type == data_type & metadata$plot_type == "barchart",
     c("indicator", "value_column", "error_low_column", "error_high_column",
       "indicator_column", "indicator_value", "indicator_sort_order",
       "name", "scale", "accuracy", "format")]

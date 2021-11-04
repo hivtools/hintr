@@ -1,3 +1,7 @@
+# hintr 1.0.8
+
+* Back `/calibrate/plot/<id>` endpoint with real data
+
 # hintr 1.0.6
 
 * Return area and time_period column info in input time series metadata

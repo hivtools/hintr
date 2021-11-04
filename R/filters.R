@@ -182,6 +182,21 @@ get_barchart_defaults <- function(output, output_filters) {
   )
 }
 
+get_calibrate_barchart_defaults <- function(filters) {
+  list(
+    indicator_id = scalar("population"),
+    x_axis_id = scalar("area_id"),
+    disaggregate_by_id = scalar("data_type"),
+    selected_filter_options = list(
+      quarter = get_selected_mappings(filters, "quarter")[2],
+      sex = get_selected_mappings(filters, "sex",
+                                        c("female", "male")),
+      age = get_selected_mappings(
+        filters, "age", naomi::get_five_year_age_groups())
+    )
+  )
+}
+
 #' Get selected id-label mapping from list of filter options or column mappings
 #'
 #' Gets the id to label mapping of a particular type matching a set of IDs.
@@ -285,7 +300,7 @@ get_region_filters <- function(json) {
 
 get_spectrum_region_filters <- function(data) {
   regions <- unique(data[, c("spectrum_region_code", "spectrum_region_name")])
-  regions <- regions[order(regions$spectrum_region_code)]
+  regions <- regions[order(regions$spectrum_region_code), ]
   lapply(seq_len(nrow(regions)), function(row_no) {
     row <- regions[row_no, ]
     list(id = scalar(as.character(row$spectrum_region_code)),

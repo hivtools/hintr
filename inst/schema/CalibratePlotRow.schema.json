@@ -26,16 +26,9 @@
     },
     "mean": {
       "type": [ "number", "null" ]
-    },
-    "lower": {
-      "type": [ "number", "null" ]
-    },
-    "upper": {
-      "type": [ "number", "null" ]
     }
   },
   "additionalProperties": true,
   "required": [ "data_type", "spectrum_region_code", "spectrum_region_name",
-    "sex", "age_group", "calendar_quarter", "indicator", "mean", "lower",
-    "upper" ]
+    "sex", "age_group", "calendar_quarter", "indicator", "mean" ]
 }
