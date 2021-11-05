@@ -185,14 +185,14 @@ get_barchart_defaults <- function(output, output_filters) {
 get_calibrate_barchart_defaults <- function(filters) {
   list(
     indicator_id = scalar("population"),
-    x_axis_id = scalar("area_id"),
-    disaggregate_by_id = scalar("data_type"),
+    x_axis_id = scalar("spectrum_region"),
+    disaggregate_by_id = scalar("type"),
     selected_filter_options = list(
       quarter = get_selected_mappings(filters, "quarter")[2],
-      sex = get_selected_mappings(filters, "sex",
-                                        c("female", "male")),
-      age = get_selected_mappings(
-        filters, "age", naomi::get_five_year_age_groups())
+      sex = get_selected_mappings(filters, "sex")[1],
+      age = get_selected_mappings(filters, "age", "Y015_049"),
+      spectrum_region = get_selected_mappings(filters, "spectrum_region"),
+      type = get_selected_mappings(filters, "type")
     )
   )
 }
