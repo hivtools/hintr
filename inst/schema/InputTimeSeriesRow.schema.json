@@ -8,9 +8,6 @@
     "area_name": {
       "type": "string"
     },
-    "time_step": {
-      "type": "string"
-    },
     "plot": {
       "type": [ "string", "null" ]
     },
@@ -20,13 +17,17 @@
     "area_level": {
       "type": "number"
     },
-     "age_group": {
+    "age_group": {
       "type": "string"
     },
-     "time_period": {
+    "time_period": {
+      "type": "string"
+    },
+    "quarter": {
       "type": "string"
     }
   },
   "additionalProperties": false,
-  "required": [ "area_id", "area_name", "time_period", "time_step", "plot", "value" ]
+  "required": [ "area_id", "area_name", "time_period", "plot", "value",
+                "quarter" ]
 }

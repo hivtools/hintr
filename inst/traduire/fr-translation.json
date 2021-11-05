@@ -72,8 +72,7 @@
     "FAILED_ADR_METADATA": "Échec de la génération des métadonnées, le format de sortie n'est pas valide.",
     "UNKNOWN_OUTPUT_TYPE": "L'exécution du modèle a renvoyé un type de sortie inconnu, veuillez contacter le support.",
     "INVALID_TIME_SERIES_INPUT_TYPE": "Les données de séries chronologiques ne peuvent être retournées que pour {{types}}, reçu '{{type}}'.",
-    "INPUT_TIME_SERIES_FILTER_PLOT_TYPE": "Type de parcelle",
-    "INPUT_TIME_SERIES_FILTER_AREA_LEVEL": "Niveau de la zone",
-    "INPUT_TIME_SERIES_FILTER_TIME_STEP": "Pas de temps",
-    "INPUT_TIME_SERIES_FILTER_AGE": "Âge"
+    "INPUT_TIME_SERIES_COLUMN_PLOT_TYPE": "Type de parcelle",
+    "INPUT_TIME_SERIES_COLUMN_AREA_LEVEL": "Niveau de la zone",
+    "INPUT_TIME_SERIES_COLUMN_AGE": "Âge"
 }

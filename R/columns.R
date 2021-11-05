@@ -14,16 +14,16 @@ get_programme_time_series_columns <- function(data) {
       values = get_default_id_label_map(data, "area_level", "area_level_label")
     ),
     list(
-      id = scalar("time_step"),
-      column_id = scalar("time_step"),
-      label = scalar(t_("INPUT_TIME_SERIES_COLUMN_TIME_STEP")),
-      values = get_default_id_label_map(data, "time_step", capitalise = TRUE)
-    ),
-    list(
       id = scalar("time_period"),
       column_id = scalar("time_period"),
       label = scalar(t_("INPUT_TIME_SERIES_COLUMN_TIME_PERIOD")),
       values = get_default_id_label_map(data, "time_period")
+    ),
+    list(
+      id = scalar("quarter"),
+      column_id = scalar("quarter"),
+      label = scalar(t_("INPUT_TIME_SERIES_COLUMN_QUARTER")),
+      values = get_quarter_id_label_map(data[["quarter"]])
     ),
     list(
       id = scalar("area"),
@@ -68,6 +68,12 @@ get_anc_time_series_columns <- function(data) {
       values = get_default_id_label_map(data, "time_period")
     ),
     list(
+      id = scalar("quarter"),
+      column_id = scalar("quarter"),
+      label = scalar(t_("INPUT_TIME_SERIES_COLUMN_QUARTER")),
+      values = get_quarter_id_label_map(data[["quarter"]])
+    ),
+    list(
       id = scalar("area"),
       column_id = scalar("area_id"),
       label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA")),
@@ -110,4 +116,30 @@ get_area_hierarchy <- function(data) {
     data[, c("area_id", "parent_area_id", "area_sort_order", "area_name")])
   colnames(hierarchy_table) <- c("id", "parent_id", "sort_order", "label")
   construct_tree(hierarchy_table)
+}
+
+get_quarter_id_label_map <- function(quarters) {
+  quarters <- unique(quarters)
+  quarter_map <- list(
+    list(
+      id = scalar("Q1"),
+      label = scalar(t_("QUARTER_1"))
+    ),
+    list(
+      id = scalar("Q2"),
+      label = scalar(t_("QUARTER_2"))
+    ),
+    list(
+      id = scalar("Q3"),
+      label = scalar(t_("QUARTER_3"))
+    ),
+    list(
+      id = scalar("Q4"),
+      label = scalar(t_("QUARTER_4"))
+    )
+  )
+  keep <- vlapply(quarter_map, function(quarter) {
+    quarter$id %in% quarters
+  })
+  quarter_map[keep]
 }
