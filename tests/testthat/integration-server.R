@@ -88,7 +88,7 @@ test_that("validate programme", {
                c("age", "calendar_quarter", "indicators"))
   expect_length(response$data$filters$age, 2)
   expect_length(response$data$filters$calendar_quarter, 8)
-  expect_length(response$data$filters$indicators, 1)
+  expect_length(response$data$filters$indicators, 4)
 })
 
 test_that("validate ANC", {

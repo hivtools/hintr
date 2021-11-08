@@ -106,9 +106,17 @@ test_that("do_validate_programme validates programme file", {
   expect_equal(data$filters$calendar_quarter[[1]]$id, scalar("CY2018Q4"))
   expect_equal(data$filters$calendar_quarter[[1]]$label, scalar("December 2018"))
 
-  expect_length(data$filters$indicators, 1)
+  expect_length(data$filters$indicators, 4)
   expect_equal(data$filters$indicators[[1]]$id, scalar("art_current"))
-  expect_equal(data$filters$indicators[[1]]$label, scalar("ART number (attending)"))
+  expect_equal(data$filters$indicators[[1]]$label,
+               scalar("ART number (attending)"))
+  expect_equal(data$filters$indicators[[2]]$id, scalar("art_new"))
+  expect_equal(data$filters$indicators[[2]]$label, scalar("ART new"))
+  expect_equal(data$filters$indicators[[3]]$id, scalar("vls_tested"))
+  expect_equal(data$filters$indicators[[3]]$label, scalar("VLS tested"))
+  expect_equal(data$filters$indicators[[4]]$id, scalar("vls_suppressed"))
+  expect_equal(data$filters$indicators[[4]]$label,
+               scalar("VLS tests suppressed"))
 })
 
 test_that("do_validate_anc validates ANC file and gets data for plotting", {
