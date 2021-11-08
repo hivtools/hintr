@@ -215,7 +215,7 @@ calibrate_plot <- function(queue) {
     ## converting to vector when selecting 1 column
     data <- as.data.frame(data)
     data <- data[
-      data$data_type %in% c("spectrum", "unadjusted", "calibrated"), ]
+      data$data_type %in% c("spectrum", "raw", "calibrated"), ]
     data$spectrum_region_code <- as.character(data$spectrum_region_code)
     filters <- get_calibrate_plot_output_filters(data)
     list(
