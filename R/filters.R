@@ -312,16 +312,6 @@ get_data_type_filters <- function(data) {
   recursive_scalar(naomi::data_type_labels())
 }
 
-get_simple_filter <- function(data, column) {
-  values <- unique(data[, column])
-  lapply(values, function(value) {
-    list(
-      id = scalar(value),
-      label = scalar(value)
-    )
-  })
-}
-
 #' Create an ordered tree from a data frame.
 #'
 #' Will create a tree as a nested list from a data frame with specified order.
