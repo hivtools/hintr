@@ -1052,3 +1052,28 @@ test_that("error returned from calibrate_plot for old model output", {
   expect_equal(response$value$errors[[1]]$detail, scalar(
                "Model output out of date please re-run model and try again"))
 })
+
+test_that("calibrate plot metadata is translated", {
+  test_mock_model_available()
+  test_redis_available()
+  q <- test_queue_result()
+
+  response <- with_hintr_language("fr", {
+    endpoint <- endpoint_model_calibrate_plot(q$queue)
+    response <- endpoint$run(q$calibrate_id)
+  })
+
+  expect_equal(response$status_code, 200)
+
+  filters <- response$data$plottingMetadata$barchart$filters
+  expect_equal(filters[[1]]$label, scalar("Zone"))
+  expect_equal(filters[[1]]$options[[1]]$label, scalar("Malawi"))
+  expect_equal(filters[[2]]$label, scalar("Période"))
+  expect_equal(filters[[2]]$options[[1]]$label, scalar("Juin 2019"))
+  expect_equal(filters[[3]]$label, scalar("Sexe"))
+  expect_equal(filters[[3]]$options[[1]]$label, scalar("Both"))
+  expect_equal(filters[[4]]$label, scalar("Âge"))
+  expect_equal(filters[[4]]$options[[1]]$label, scalar("15-49"))
+  expect_equal(filters[[5]]$label, scalar("Type de données"))
+  expect_equal(filters[[5]]$options[[2]]$label, scalar("Étalonné"))
+})

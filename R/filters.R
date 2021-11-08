@@ -309,7 +309,7 @@ get_spectrum_region_filters <- function(data) {
 }
 
 get_data_type_filters <- function(data) {
-  get_simple_filter(data, "data_type")
+  recursive_scalar(naomi::data_type_labels())
 }
 
 get_simple_filter <- function(data, column) {
