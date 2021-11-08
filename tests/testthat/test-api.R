@@ -955,8 +955,12 @@ test_that("api can call endpoint_model_calibrate", {
 })
 
 test_that("can get calibrate plot data", {
-  endpoint <- endpoint_model_calibrate_plot(NULL)
-  response <- endpoint$run("123")
+  test_mock_model_available()
+  test_redis_available()
+  q <- test_queue_result()
+
+  endpoint <- endpoint_model_calibrate_plot(q$queue)
+  response <- endpoint$run(q$calibrate_id)
 
   expect_equal(response$status_code, 200)
   response_data <- response$data
@@ -964,7 +968,7 @@ test_that("can get calibrate plot data", {
   expect_setequal(names(response_data$data),
                   c("data_type", "spectrum_region_code", "spectrum_region_name",
                     "sex", "age_group", "calendar_quarter", "indicator",
-                    "mean", "lower", "upper"))
+                    "mean"))
   expect_true(nrow(response_data$data) > 0)
   expect_equal(names(response_data$plottingMetadata), "barchart")
   expect_setequal(names(response_data$plottingMetadata$barchart),
@@ -973,7 +977,8 @@ test_that("can get calibrate plot data", {
   expect_setequal(names(response_data$plottingMetadata$barchart$indicators),
                   c("indicator", "value_column", "error_low_column",
                     "error_high_column", "indicator_column", "indicator_value",
-                    "name", "scale", "accuracy", "format"))
+                    "indicator_sort_order", "name", "scale", "accuracy",
+                    "format"))
   expect_true(nrow(response_data$plottingMetadata$barchart$indicators) > 0)
 
   filters <- lapply(response_data$plottingMetadata$barchart$filters, "[[",
@@ -991,10 +996,11 @@ test_that("can get calibrate plot data", {
 
 test_that("API can return calibration plotting data", {
   test_redis_available()
+  test_mock_model_available()
+  q <- test_queue_result()
 
-  queue <- test_queue(workers = 0)
-  api <- api_build(queue)
-  res <- api$request("GET", "/calibrate/plot/12345")
+  api <- api_build(q$queue)
+  res <- api$request("GET", paste0("/calibrate/plot/", q$calibrate_id))
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body, simplifyDataFrame = FALSE)
   expect_equal(body$status, "success")
@@ -1006,7 +1012,7 @@ test_that("API can return calibration plotting data", {
   expect_setequal(colnames(data),
                   c("data_type", "spectrum_region_code", "spectrum_region_name",
                     "sex", "age_group", "calendar_quarter", "indicator",
-                    "mean", "lower", "upper"))
+                    "mean"))
   expect_true(nrow(data) > 0)
   expect_equal(names(response_data$plottingMetadata), "barchart")
   expect_setequal(names(response_data$plottingMetadata$barchart),
@@ -1017,7 +1023,8 @@ test_that("API can return calibration plotting data", {
   expect_setequal(colnames(barchart_indicators),
                   c("indicator", "value_column", "error_low_column",
                     "error_high_column", "indicator_column", "indicator_value",
-                    "name", "scale", "accuracy", "format"))
+                    "indicator_sort_order", "name", "scale", "accuracy",
+                    "format"))
   expect_true(nrow(barchart_indicators) > 0)
 
   filters <- lapply(response_data$plottingMetadata$barchart$filters, "[[",
@@ -1031,4 +1038,42 @@ test_that("API can return calibration plotting data", {
   expect_setequal(names(response_data$plottingMetadata$barchart$defaults),
                   c("indicator_id", "x_axis_id", "disaggregate_by_id",
                     "selected_filter_options"))
+})
+
+test_that("error returned from calibrate_plot for old model output", {
+  test_mock_model_available()
+  test_redis_available()
+  q <- test_queue_result(calibrate = mock_calibrate_v1.0.7)
+
+  endpoint <- endpoint_model_calibrate_plot(q$queue)
+  response <- endpoint$run(q$calibrate_id)
+
+  expect_equal(response$status_code, 500)
+  expect_equal(response$value$errors[[1]]$detail, scalar(
+               "Model output out of date please re-run model and try again"))
+})
+
+test_that("calibrate plot metadata is translated", {
+  test_mock_model_available()
+  test_redis_available()
+  q <- test_queue_result()
+
+  response <- with_hintr_language("fr", {
+    endpoint <- endpoint_model_calibrate_plot(q$queue)
+    response <- endpoint$run(q$calibrate_id)
+  })
+
+  expect_equal(response$status_code, 200)
+
+  filters <- response$data$plottingMetadata$barchart$filters
+  expect_equal(filters[[1]]$label, scalar("Zone"))
+  expect_equal(filters[[1]]$options[[1]]$label, scalar("Malawi"))
+  expect_equal(filters[[2]]$label, scalar("Période"))
+  expect_equal(filters[[2]]$options[[1]]$label, scalar("Juin 2019"))
+  expect_equal(filters[[3]]$label, scalar("Sexe"))
+  expect_equal(filters[[3]]$options[[1]]$label, scalar("Both"))
+  expect_equal(filters[[4]]$label, scalar("Âge"))
+  expect_equal(filters[[4]]$options[[1]]$label, scalar("15-49"))
+  expect_equal(filters[[5]]$label, scalar("Type de données"))
+  expect_equal(filters[[5]]$options[[2]]$label, scalar("Étalonné"))
 })
