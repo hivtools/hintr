@@ -208,40 +208,23 @@ calibrate_result <- function(queue) {
 }
 
 calibrate_plot <- function(queue) {
-  data <- read_csv(system_file("extdata/dummy_calibrate_data.csv"))
-  data$spectrum_region_code <- as.character(data$spectrum_region_code)
-  filters <- get_calibrate_plot_output_filters(data)
   function(id) {
+    verify_result_available(queue, id)
+    data <- naomi::hintr_calibrate_plot(queue$result(id))
+    ## Strip tibble class to work with helper functions which rely on
+    ## converting to vector when selecting 1 column
+    data <- as.data.frame(data)
+    data <- data[
+      data$data_type %in% c("spectrum", "raw", "calibrated"), ]
+    data$spectrum_region_code <- as.character(data$spectrum_region_code)
+    filters <- get_calibrate_plot_output_filters(data)
     list(
       data = data,
       plottingMetadata = list(
         barchart = list(
-          indicators = data_frame(
-            indicator = "plhiv",
-            value_column = "mean",
-            error_low_column = "lower",
-            error_high_column = "upper",
-            indicator_column = "indicator",
-            indicator_value = "plhiv",
-            name = "PLHIV",
-            scale = 1,
-            accuracy = NA,
-            format = "0.0%"
-          ),
+          indicators = get_barchart_metadata(data, "calibrate"),
           filters = filters,
-          defaults = list(
-            indicator_id = scalar("plhiv"),
-            x_axis_id = scalar("spectrum_region"),
-            disaggregate_by_id = scalar("type"),
-            selected_filter_options = list(
-              spectrum_region = get_selected_mappings(filters, "spectrum_region"),
-              quarter = get_selected_mappings(filters, "quarter")[2],
-              sex = get_selected_mappings(filters, "sex", "both"),
-              age = get_selected_mappings(
-                filters, "age", naomi::get_five_year_age_groups())[1],
-              type = get_selected_mappings(filters, "type")
-            )
-          )
+          defaults = get_calibrate_barchart_defaults(filters)
         )
       )
     )

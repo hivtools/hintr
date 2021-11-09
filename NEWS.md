@@ -1,6 +1,10 @@
+# hintr 1.0.9
+
+* Back `/calibrate/plot/<id>` endpoint with real data
+
 # hintr 1.0.8
 
-* Remove `time_step` from input tme series endpoints and add `quarter`
+* Remove `time_step` from input time series endpoints and add `quarter`
 
 # hintr 1.0.6
 
