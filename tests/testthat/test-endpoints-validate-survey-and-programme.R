@@ -113,10 +113,19 @@ test_that("possible filters are returned for data", {
   expect_equal(response$filters$calendar_quarter[[1]]$id, scalar("CY2018Q4"))
   expect_equal(response$filters$calendar_quarter[[1]]$label, scalar("December 2018"))
 
-  expect_length(response$filters$indicators, 1)
+  expect_length(response$filters$indicators, 4)
   expect_equal(response$filters$indicators[[1]]$id, scalar("art_current"))
   expect_equal(response$filters$indicators[[1]]$label,
                scalar("ART number (attending)"))
+  expect_equal(response$filters$indicators[[2]]$id, scalar("art_new"))
+  expect_equal(response$filters$indicators[[2]]$label,
+               scalar("ART new"))
+  expect_equal(response$filters$indicators[[3]]$id, scalar("vls_tested"))
+  expect_equal(response$filters$indicators[[3]]$label,
+               scalar("VLS tested"))
+  expect_equal(response$filters$indicators[[4]]$id, scalar("vls_suppressed"))
+  expect_equal(response$filters$indicators[[4]]$label,
+               scalar("VLS tests suppressed"))
 
 
   input <- validate_programme_survey_input(
@@ -175,4 +184,23 @@ test_that("possible filters are returned for data", {
   expect_equal(response$filters$indicators[[4]]$id, scalar("viral_suppression_plhiv"))
   expect_equal(response$filters$indicators[[4]]$label,
                scalar("Viral load suppression"))
+})
+
+test_that("filters not returned if indicator missing from input data", {
+  input <- validate_programme_survey_input(
+    file.path("testdata", "programme_no_vls.csv"),
+    "programme",
+    file.path("testdata", "malawi.geojson"))
+  response <- validate_survey_programme(input)
+
+  expect_equal(names(response$filters),
+               c("age", "calendar_quarter", "indicators"))
+
+  expect_length(response$filters$indicators, 2)
+  expect_equal(response$filters$indicators[[1]]$id, scalar("art_current"))
+  expect_equal(response$filters$indicators[[1]]$label,
+               scalar("ART number (attending)"))
+  expect_equal(response$filters$indicators[[2]]$id, scalar("art_new"))
+  expect_equal(response$filters$indicators[[2]]$label,
+               scalar("ART new"))
 })

@@ -32,7 +32,11 @@ build_indicator_metadata <- function(metadata) {
     colour = scalar(metadata$colour),
     invert_scale = scalar(metadata$invert_scale),
     scale = scalar(metadata$scale),
-    accuracy = scalar(metadata$accuracy),
+    accuracy = if (is.na(metadata$accuracy)) {
+      json_null()
+    } else {
+      scalar(metadata$accuracy)
+    },
     format = scalar(metadata$format)
   )
 }
