@@ -81,6 +81,23 @@ test_that("endpoint_input_time_series_plot works with programme data", {
                c("plot_type", "area_level", "quarter"))
 })
 
+test_that("endpoint_input_time_series_plot works without vls indicators", {
+  endpoint <- endpoint_input_time_series_plot()
+  input <- input_time_series_request(
+    file.path("testdata", "programme_no_vls.csv"),
+    "programme",
+    file.path("testdata", "malawi.geojson"))
+  res <- endpoint$run("programme", input)
+  expect_equal(res$status_code, 200)
+  body <- jsonlite::fromJSON(res$body)
+  expect_equal(body$status, "success")
+  expect_null(body$errors)
+  expect_equal(names(body$data), c("data", "metadata"))
+  expect_true(nrow(body$data$data) > 100)
+  expect_equal(names(body$data$metadata$defaults$selected_filter_options),
+               c("plot_type", "area_level", "quarter"))
+})
+
 test_that("endpoint_input_time_series_plot works with anc data", {
   endpoint <- endpoint_input_time_series_plot()
   input <- input_time_series_request(
