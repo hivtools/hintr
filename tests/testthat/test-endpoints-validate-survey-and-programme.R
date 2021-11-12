@@ -120,12 +120,12 @@ test_that("possible filters are returned for data", {
   expect_equal(response$filters$indicators[[2]]$id, scalar("art_new"))
   expect_equal(response$filters$indicators[[2]]$label,
                scalar("ART new"))
-  expect_equal(response$filters$indicators[[3]]$id, scalar("vls_tested"))
+  expect_equal(response$filters$indicators[[3]]$id, scalar("vl_tested_12mos"))
   expect_equal(response$filters$indicators[[3]]$label,
-               scalar("VLS tested"))
-  expect_equal(response$filters$indicators[[4]]$id, scalar("vls_suppressed"))
+               scalar("VL tested"))
+  expect_equal(response$filters$indicators[[4]]$id, scalar("vl_suppressed_12mos"))
   expect_equal(response$filters$indicators[[4]]$label,
-               scalar("VLS tests suppressed"))
+               scalar("VL tests suppressed"))
 
 
   input <- validate_programme_survey_input(

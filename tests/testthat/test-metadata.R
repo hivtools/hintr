@@ -24,10 +24,10 @@ test_that("can build metadata response", {
                scalar("ART number (attending)"))
   expect_equal(programme_indicators[[2]]$indicator, scalar("art_new"))
   expect_equal(programme_indicators[[2]]$name, scalar("ART new"))
-  expect_equal(programme_indicators[[3]]$indicator, scalar("vls_tested"))
-  expect_equal(programme_indicators[[3]]$name, scalar("VLS tested"))
-  expect_equal(programme_indicators[[4]]$indicator, scalar("vls_suppressed"))
-  expect_equal(programme_indicators[[4]]$name, scalar("VLS tests suppressed"))
+  expect_equal(programme_indicators[[3]]$indicator, scalar("vl_tested_12mos"))
+  expect_equal(programme_indicators[[3]]$name, scalar("VL tested"))
+  expect_equal(programme_indicators[[4]]$indicator, scalar("vl_suppressed_12mos"))
+  expect_equal(programme_indicators[[4]]$name, scalar("VL tests suppressed"))
 })
 
 test_that("error thrown when metadata contains conflicting information", {
