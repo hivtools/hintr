@@ -216,10 +216,10 @@ test_that("can get indicator filters for programme data", {
   expect_equal(filters[[1]]$label, scalar("ART number (attending)"))
   expect_equal(filters[[2]]$id, scalar("art_new"))
   expect_equal(filters[[2]]$label, scalar("ART new"))
-  expect_equal(filters[[3]]$id, scalar("vls_tested"))
-  expect_equal(filters[[3]]$label, scalar("VLS tested"))
-  expect_equal(filters[[4]]$id, scalar("vls_suppressed"))
-  expect_equal(filters[[4]]$label, scalar("VLS tests suppressed"))
+  expect_equal(filters[[3]]$id, scalar("vl_tested_12mos"))
+  expect_equal(filters[[3]]$label, scalar("VL tested"))
+  expect_equal(filters[[4]]$id, scalar("vl_suppressed_12mos"))
+  expect_equal(filters[[4]]$label, scalar("VL tests suppressed"))
 })
 
 test_that("can get indicator filters for anc data", {
