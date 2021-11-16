@@ -17,6 +17,17 @@ test_that("can build metadata response", {
                scalar("ANC HIV prevalence"))
   expect_equal(metadata$anc$choropleth$indicators[[2]]$name,
                scalar("ANC prior ART coverage"))
+  expect_length(metadata$programme$choropleth$indicators, 4)
+  programme_indicators <- metadata$programme$choropleth$indicators
+  expect_equal(programme_indicators[[1]]$indicator, scalar("art_current"))
+  expect_equal(programme_indicators[[1]]$name,
+               scalar("ART number (attending)"))
+  expect_equal(programme_indicators[[2]]$indicator, scalar("art_new"))
+  expect_equal(programme_indicators[[2]]$name, scalar("ART new"))
+  expect_equal(programme_indicators[[3]]$indicator, scalar("vl_tested_12mos"))
+  expect_equal(programme_indicators[[3]]$name, scalar("VL tested"))
+  expect_equal(programme_indicators[[4]]$indicator, scalar("vl_suppressed_12mos"))
+  expect_equal(programme_indicators[[4]]$name, scalar("VL tests suppressed"))
 })
 
 test_that("error thrown when metadata contains conflicting information", {

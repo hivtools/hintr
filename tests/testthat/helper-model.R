@@ -76,6 +76,17 @@ test_mock_model_available <- function() {
   }))
 }
 
+## Model calibrate output as returned by
+## hintr version 0.1.39 to 1.0.7 and naomi version 2.4.3 to 2.5.6
+mock_calibrate_v1.0.7 <- list(
+  plot_data_path =
+    system.file("output", "malawi_calibrate_plot_data.rds", package = "hintr"),
+  model_output_path =
+    system.file("output", "malawi_calibrate_output.rds", package = "hintr"),
+  version = "2.5.6"
+)
+class(mock_calibrate) <- "hintr_output"
+
 ## Model output as returned by
 ## hintr version 0.1.39 to 1.0.7 and naomi version 2.4.3 to 2.5.4
 mock_model_v1.0.7 <- list(

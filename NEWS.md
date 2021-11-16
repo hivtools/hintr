@@ -1,3 +1,19 @@
+# hintr 1.0.11
+
+* Return warnings from model option validation, model fit and model calibrate endpoints
+
+# hintr 1.0.10
+
+* Recode `vls_tested` and `vls_suppressed` to `vl_tested_12mos` and `vl_suppressed_12mos`. Affects tests only.
+
+# hintr 1.0.9
+
+* Back `/calibrate/plot/<id>` endpoint with real data
+
+# hintr 1.0.8
+
+* Remove `time_step` from input time series endpoints and add `quarter`
+
 # hintr 1.0.6
 
 * Return area and time_period column info in input time series metadata

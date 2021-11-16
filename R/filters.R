@@ -182,6 +182,21 @@ get_barchart_defaults <- function(output, output_filters) {
   )
 }
 
+get_calibrate_barchart_defaults <- function(filters) {
+  list(
+    indicator_id = scalar("population"),
+    x_axis_id = scalar("spectrum_region"),
+    disaggregate_by_id = scalar("type"),
+    selected_filter_options = list(
+      quarter = get_selected_mappings(filters, "quarter")[2],
+      sex = get_selected_mappings(filters, "sex")[1],
+      age = get_selected_mappings(filters, "age", "Y015_049"),
+      spectrum_region = get_selected_mappings(filters, "spectrum_region"),
+      type = get_selected_mappings(filters, "type")
+    )
+  )
+}
+
 #' Get selected id-label mapping from list of filter options or column mappings
 #'
 #' Gets the id to label mapping of a particular type matching a set of IDs.
@@ -285,7 +300,7 @@ get_region_filters <- function(json) {
 
 get_spectrum_region_filters <- function(data) {
   regions <- unique(data[, c("spectrum_region_code", "spectrum_region_name")])
-  regions <- regions[order(regions$spectrum_region_code)]
+  regions <- regions[order(regions$spectrum_region_code), ]
   lapply(seq_len(nrow(regions)), function(row_no) {
     row <- regions[row_no, ]
     list(id = scalar(as.character(row$spectrum_region_code)),
@@ -294,17 +309,7 @@ get_spectrum_region_filters <- function(data) {
 }
 
 get_data_type_filters <- function(data) {
-  get_simple_filter(data, "data_type")
-}
-
-get_simple_filter <- function(data, column) {
-  values <- unique(data[, column])
-  lapply(values, function(value) {
-    list(
-      id = scalar(value),
-      label = scalar(value)
-    )
-  })
+  recursive_scalar(naomi::data_type_labels())
 }
 
 #' Create an ordered tree from a data frame.
