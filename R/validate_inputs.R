@@ -107,6 +107,9 @@ do_validate_population <- function(population) {
 #' @param shape A file object (path, hash, filename) corresponding to
 #'   the input shape file.
 #'
+#' @param strict If FALSE then run less stringent validation rules, used
+#'   for data exploration mode.
+#'
 #' @return An error if invalid.
 #' @keywords internal
 do_validate_programme <- function(programme, shape, strict = TRUE) {
@@ -144,6 +147,9 @@ do_validate_programme <- function(programme, shape, strict = TRUE) {
 #' @param shape A file object (path, hash, filename) corresponding to
 #'   the input shape file.
 #'
+#' @param strict If FALSE then run less stringent validation rules, used
+#'   for data exploration mode.
+#'
 #' @return An error if invalid.
 #' @keywords internal
 do_validate_anc <- function(anc, shape, strict = TRUE) {
@@ -176,6 +182,11 @@ do_validate_anc <- function(anc, shape, strict = TRUE) {
 #' Check that survey data file can be read and return serialised data.
 #'
 #' @param survey Path to input survey file.
+#'
+#' @param shape Path to input shape file.
+#'
+#' @param strict If FALSE then run less stringent validation rules, used
+#'   for data exploration mode.
 #'
 #' @return An error if invalid.
 #' @keywords internal
