@@ -180,7 +180,7 @@ test_that("calibrate fails with old model run result", {
   test_redis_available()
   test_mock_model_available()
 
-  ## Return v0.1.34 model results
+  ## Return v0.1.38 model results
   q <- test_queue_result(model = mock_model_v0.1.38,
                          calibrate = mock_model_v0.1.38)
 
@@ -195,13 +195,18 @@ test_that("calibrate fails with old model run result", {
 })
 
 test_that("can get data for calibration plot", {
-  endpoint <- calibrate_plot(NULL)
-  res <- endpoint("123")
+  test_redis_available()
+  test_mock_model_available()
+
+  q <- test_queue_result()
+
+  endpoint <- calibrate_plot(q$queue)
+  res <- endpoint(q$calibrate_id)
   expect_setequal(names(res), c("data", "plottingMetadata"))
   expect_setequal(names(res$data),
                   c("data_type", "spectrum_region_code", "spectrum_region_name",
                     "sex", "age_group", "calendar_quarter", "indicator",
-                    "mean", "lower", "upper"))
+                    "mean"))
   expect_true(nrow(res$data) > 0)
   expect_equal(names(res$plottingMetadata), "barchart")
   expect_setequal(names(res$plottingMetadata$barchart),
@@ -210,7 +215,8 @@ test_that("can get data for calibration plot", {
   expect_setequal(names(res$plottingMetadata$barchart$indicators),
                   c("indicator", "value_column", "error_low_column",
                     "error_high_column", "indicator_column", "indicator_value",
-                    "name", "scale", "accuracy", "format"))
+                    "indicator_sort_order", "name", "scale", "accuracy",
+                    "format"))
   expect_true(nrow(res$plottingMetadata$barchart$indicators) > 0)
 
   filters <- lapply(res$plottingMetadata$barchart$filters, function(filter) {

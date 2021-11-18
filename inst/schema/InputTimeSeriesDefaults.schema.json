@@ -11,9 +11,9 @@
         }
       },
       "additionalProperties": true,
-      "oneOf": [
-        { "required": [ "plot_type", "area_level", "time_step" ] },
-        { "required": [ "plot_type", "area_level", "age" ] }
+      "anyOf": [
+        { "required": [ "plot_type", "area_level", "quarter" ] },
+        { "required": [ "plot_type", "area_level", "age", "quarter" ] }
       ]
     }
   },

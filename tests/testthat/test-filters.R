@@ -211,9 +211,15 @@ test_that("can get indicator filters for programme data", {
   programme <- read_csv(programme_path, header = TRUE)
   filters <- get_indicator_filters(programme, "programme")
 
-  expect_length(filters, 1)
+  expect_length(filters, 4)
   expect_equal(filters[[1]]$id, scalar("art_current"))
   expect_equal(filters[[1]]$label, scalar("ART number (attending)"))
+  expect_equal(filters[[2]]$id, scalar("art_new"))
+  expect_equal(filters[[2]]$label, scalar("ART new"))
+  expect_equal(filters[[3]]$id, scalar("vl_tested_12mos"))
+  expect_equal(filters[[3]]$label, scalar("VL tested"))
+  expect_equal(filters[[4]]$id, scalar("vl_suppressed_12mos"))
+  expect_equal(filters[[4]]$label, scalar("VL tests suppressed"))
 })
 
 test_that("can get indicator filters for anc data", {

@@ -88,7 +88,7 @@ test_that("validate programme", {
                c("age", "calendar_quarter", "indicators"))
   expect_length(response$data$filters$age, 2)
   expect_length(response$data$filters$calendar_quarter, 8)
-  expect_length(response$data$filters$indicators, 1)
+  expect_length(response$data$filters$indicators, 4)
 })
 
 test_that("validate ANC", {
@@ -752,7 +752,7 @@ test_that("input time series can return plot data for programme", {
   expect_equal(names(response$data), c("data", "metadata"))
   expect_true(length(response$data$data) > 100)
   expect_equal(names(response$data$metadata$defaults$selected_filter_options),
-               c("plot_type", "area_level", "time_step"))
+               c("plot_type", "area_level", "quarter"))
 })
 
 test_that("input time series can return plot data for anc", {
@@ -773,5 +773,5 @@ test_that("input time series can return plot data for anc", {
   expect_equal(names(response$data), c("data", "metadata"))
   expect_true(length(response$data$data) > 100)
   expect_equal(names(response$data$metadata$defaults$selected_filter_options),
-               c("plot_type", "area_level", "age"))
+               c("plot_type", "area_level", "age", "quarter"))
 })
