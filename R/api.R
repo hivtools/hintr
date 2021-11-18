@@ -116,14 +116,16 @@ endpoint_baseline_combined <- function() {
 }
 
 endpoint_validate_survey_programme <- function() {
-  input <- porcelain::porcelain_input_body_json(
+  input_body <- porcelain::porcelain_input_body_json(
     "input", "ValidateSurveyAndProgrammeRequest.schema", schema_root())
+  input_query <- porcelain::porcelain_input_query(strict = "logical")
   response <- porcelain::porcelain_returning_json(
     "ValidateInputResponse.schema", schema_root())
   porcelain::porcelain_endpoint$new("POST",
                                     "/validate/survey-and-programme",
                                     validate_survey_programme,
-                                    input,
+                                    input_body,
+                                    input_query,
                                     returning = response)
 }
 

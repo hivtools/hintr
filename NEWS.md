@@ -1,3 +1,7 @@
+# hintr 1.0.11
+
+* Add query param `strict` to endpoint `/validate/survey-and-programme` to allow running with relaxed validation, by default this will run in strict mode.
+
 # hintr 1.0.10
 
 * Recode `vls_tested` and `vls_suppressed` to `vl_tested_12mos` and `vl_suppressed_12mos`. Affects tests only.

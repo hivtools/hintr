@@ -109,7 +109,7 @@ do_validate_population <- function(population) {
 #'
 #' @return An error if invalid.
 #' @keywords internal
-do_validate_programme <- function(programme, shape) {
+do_validate_programme <- function(programme, shape, strict = TRUE) {
   assert_file_extension(programme, "csv")
   data <- read_csv(programme$path, header = TRUE)
   data$art_current <- as.numeric(data$art_current)
@@ -146,7 +146,7 @@ do_validate_programme <- function(programme, shape) {
 #'
 #' @return An error if invalid.
 #' @keywords internal
-do_validate_anc <- function(anc, shape) {
+do_validate_anc <- function(anc, shape, strict = TRUE) {
   assert_file_extension(anc, "csv")
   data <- read_csv(anc$path, header = TRUE)
   assert_single_country(data, "anc")
@@ -162,7 +162,9 @@ do_validate_anc <- function(anc, shape) {
   assert_year_column(data)
   assert_column_positive_numeric(data, c("anc_clients", "anc_known_pos", "anc_already_art",
                                          "anc_tested", "anc_tested_pos"))
-  assert_anc_client_numbers(data)
+  if (strict) {
+    assert_anc_client_numbers(data)
+  }
   data <- naomi::calculate_prevalence_art_coverage(data)
   list(data = data,
        filters = list("year" = get_year_filters(data),
@@ -177,7 +179,7 @@ do_validate_anc <- function(anc, shape) {
 #'
 #' @return An error if invalid.
 #' @keywords internal
-do_validate_survey <- function(survey, shape) {
+do_validate_survey <- function(survey, shape, strict = TRUE) {
   assert_file_extension(survey, "csv")
   data <- read_csv(survey$path, header = TRUE)
   assert_single_country(data, "survey")
