@@ -564,8 +564,8 @@ test_that("endpoint_calibrate_options works", {
   expect_true(all(grepl("^(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$", body$version)))
 })
 
-test_that("endpoint_plotting_metadata can be run", {
-  endpoint <- endpoint_plotting_metadata()
+test_that("endpoint_plotting_metadata_iso3 can be run", {
+  endpoint <- endpoint_plotting_metadata_iso3()
   response <- endpoint$run("MWI")
 
   expect_equal(response$status_code, 200)
@@ -574,11 +574,34 @@ test_that("endpoint_plotting_metadata can be run", {
                     c("survey", "anc", "output", "programme")))
 })
 
-test_that("api can call endpoint_plotting_metadata", {
+test_that("endpoint_plotting_metadata_default can be run", {
+  endpoint <- endpoint_plotting_metadata_default()
+  response <- endpoint$run()
+
+  expect_equal(response$status_code, 200)
+  expect_null(response$error)
+  expect_true(all(names(response$data) %in%
+                    c("survey", "anc", "output", "programme")))
+})
+
+test_that("api can call endpoint_plotting_metadata with iso3", {
   test_redis_available()
   queue <- test_queue(workers = 0)
   api <- api_build(queue)
   res <- api$request("GET", "/meta/plotting/MWI")
+  expect_equal(res$status, 200)
+  body <- jsonlite::fromJSON(res$body)
+  expect_equal(body$status, "success")
+  expect_null(body$errors)
+  expect_true(all(names(body$data) %in%
+                    c("survey", "anc", "output", "programme")))
+})
+
+test_that("api can call endpoint_plotting_metadata without iso3", {
+  test_redis_available()
+  queue <- test_queue(workers = 0)
+  api <- api_build(queue)
+  res <- api$request("GET", "/meta/plotting")
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body)
   expect_equal(body$status, "success")

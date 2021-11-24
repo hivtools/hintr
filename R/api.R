@@ -17,7 +17,8 @@ api_build <- function(queue, validate = FALSE, logger = NULL) {
   api$handle(endpoint_model_calibrate_status(queue))
   api$handle(endpoint_model_calibrate_result(queue))
   api$handle(endpoint_model_calibrate_plot(queue))
-  api$handle(endpoint_plotting_metadata())
+  api$handle(endpoint_plotting_metadata_iso3())
+  api$handle(endpoint_plotting_metadata_default())
   api$handle(endpoint_download_submit(queue))
   api$handle(endpoint_download_status(queue))
   api$handle(endpoint_download_result(queue))
@@ -280,11 +281,19 @@ endpoint_model_calibrate_plot <- function(queue) {
                                     returning = response)
 }
 
-endpoint_plotting_metadata <- function() {
-  response <- porcelain::porcelain_returning_json("PlottingMetadataResponse.schema",
-                                                  schema_root())
+endpoint_plotting_metadata_iso3 <- function() {
+  endpoint_plotting_metadata("/meta/plotting/<iso3>")
+}
+
+endpoint_plotting_metadata_default <- function() {
+  endpoint_plotting_metadata("/meta/plotting")
+}
+
+endpoint_plotting_metadata <- function(path) {
+  response <- porcelain::porcelain_returning_json(
+    "PlottingMetadataResponse.schema", schema_root())
   porcelain::porcelain_endpoint$new("GET",
-                                    "/meta/plotting/<iso3>",
+                                    path,
                                     plotting_metadata,
                                     returning = response)
 }

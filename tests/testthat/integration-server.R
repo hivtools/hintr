@@ -338,6 +338,29 @@ test_that("plotting metadata is exposed", {
                "ANC prior ART coverage")
 })
 
+test_that("default plotting metadata is exposed", {
+  r <- server$request("GET", "/meta/plotting")
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+
+  expect_true(all(names(response$data) %in%
+                    c("survey", "anc", "output", "programme")))
+  expect_equal(names(response$data$survey), "choropleth")
+  expect_equal(names(response$data$anc), "choropleth")
+  expect_equal(names(response$data$output), c("barchart", "choropleth"))
+  expect_equal(names(response$data$programme), "choropleth")
+  expect_length(response$data$anc$choropleth$indicators, 2)
+  expect_equal(response$data$anc$choropleth$indicators[[1]]$indicator,
+               "anc_prevalence")
+  expect_equal(response$data$anc$choropleth$indicators[[2]]$indicator,
+               "anc_art_coverage")
+  expect_equal(response$data$anc$choropleth$indicators[[1]]$name,
+               "ANC HIV prevalence")
+  expect_equal(response$data$anc$choropleth$indicators[[2]]$name,
+               "ANC prior ART coverage")
+})
+
 test_that("model run options are exposed", {
   options <- file.path("payload", "model_run_options_payload.json")
   r <- server$request(

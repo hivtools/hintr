@@ -262,7 +262,7 @@ model_cancel <- function(queue) {
   }
 }
 
-plotting_metadata <- function(iso3) {
+plotting_metadata <- function(iso3 = NULL) {
   tryCatch(
     do_plotting_metadata(iso3),
     error = function(e) {
