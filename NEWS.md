@@ -1,6 +1,7 @@
 # hintr 1.0.11
 
 * Add query param `strict` to endpoint `/validate/survey-and-programme` to allow running with relaxed validation, by default this will run in strict mode.
+* Add `/meta/plotting` endpoint to return default plotting metadata.
 
 # hintr 1.0.10
 
