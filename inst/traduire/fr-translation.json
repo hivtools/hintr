@@ -74,5 +74,15 @@
     "INVALID_TIME_SERIES_INPUT_TYPE": "Les données de séries chronologiques ne peuvent être retournées que pour {{types}}, reçu '{{type}}'.",
     "INPUT_TIME_SERIES_COLUMN_PLOT_TYPE": "Type de parcelle",
     "INPUT_TIME_SERIES_COLUMN_AREA_LEVEL": "Niveau de la zone",
-    "INPUT_TIME_SERIES_COLUMN_AGE": "Âge"
+    "INPUT_TIME_SERIES_COLUMN_AGE": "Âge",
+    "INPUT_TIME_SERIES_COLUMN_AREA": "Zone",
+    "INPUT_TIME_SERIES_COLUMN_AREA_NAME": "Nom de zone",
+    "INPUT_TIME_SERIES_COLUMN_QUARTER": "trimestre",
+    "INPUT_TIME_SERIES_COLUMN_TIME_PERIOD": "période de temps",
+    "INVALID_ID_LABEL": "Les données ne sont pas valides, le nombre de valeurs uniques {{label_col}} et {{id_col}} n'est pas égal",
+    "MAPPING_NO_MATCHING": "Aucun filtre correspondant au type {{type}} trouvé",
+    "QUARTER_1": "trimestre 1",
+    "QUARTER_2": "trimestre 2",
+    "QUARTER_3": "trimestre 3",
+    "QUARTER_4": "trimestre 4"
 }
