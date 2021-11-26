@@ -1,3 +1,7 @@
+# hintr 1.0.11
+
+* Add new `metric` column and filter to calibrate plot for showing ratios vs calibration counts
+
 # hintr 1.0.10
 
 * Recode `vls_tested` and `vls_suppressed` to `vl_tested_12mos` and `vl_suppressed_12mos`. Affects tests only.

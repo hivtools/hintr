@@ -206,7 +206,7 @@ test_that("can get data for calibration plot", {
   expect_setequal(names(res$data),
                   c("data_type", "spectrum_region_code", "spectrum_region_name",
                     "sex", "age_group", "calendar_quarter", "indicator",
-                    "mean"))
+                    "mean", "metric"))
   expect_true(nrow(res$data) > 0)
   expect_equal(names(res$plottingMetadata), "barchart")
   expect_setequal(names(res$plottingMetadata$barchart),
@@ -227,6 +227,7 @@ test_that("can get data for calibration plot", {
   expect_equal(filters[[3]], scalar("sex"))
   expect_equal(filters[[4]], scalar("age_group"))
   expect_equal(filters[[5]], scalar("data_type"))
+  expect_equal(filters[[6]], scalar("metric"))
 
   expect_setequal(names(res$plottingMetadata$barchart$defaults),
                  c("indicator_id", "x_axis_id", "disaggregate_by_id",
