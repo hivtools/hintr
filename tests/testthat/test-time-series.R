@@ -16,7 +16,7 @@ test_that("get_programme_time_series returns data and columns", {
   expect_equal(columns[[1]]$label, scalar("Plot type"))
   expect_length(columns[[1]]$values, 20)
   expect_setequal(names(columns[[1]]$values[[1]]),
-                  c("id", "label", "description"))
+                  c("id", "label", "description", "format", "accuracy"))
   expect_equal(columns[[2]]$id, scalar("area_level"))
   expect_equal(columns[[2]]$column_id, scalar("area_level"))
   expect_equal(columns[[2]]$label, scalar("Area level"))
@@ -75,7 +75,7 @@ test_that("get_anc_time_series returns data and columns", {
   expect_equal(columns[[1]]$label, scalar("Plot type"))
   expect_length(columns[[1]]$values, 4)
   expect_setequal(names(columns[[1]]$values[[1]]),
-                  c("id", "label", "description"))
+                  c("id", "label", "description", "format", "accuracy"))
   expect_equal(columns[[2]]$id, scalar("area_level"))
   expect_equal(columns[[2]]$column_id, scalar("area_level"))
   expect_equal(columns[[2]]$label, scalar("Area level"))
