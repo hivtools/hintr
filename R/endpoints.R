@@ -214,6 +214,7 @@ calibrate_plot <- function(queue) {
     ## Strip tibble class to work with helper functions which rely on
     ## converting to vector when selecting 1 column
     data <- as.data.frame(data)
+    data[is.nan(data$mean), "mean"] <- 0
     is_ratio <- grepl("\\w+_ratio", data$data_type)
     data$metric[is_ratio] <- "ratio"
     data$metric[!is_ratio] <- "count"
