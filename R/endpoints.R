@@ -141,7 +141,9 @@ model_options_validate <- function(input) {
     data$anc <- NULL
     data <- naomi:::format_data_input(data)
     valid <- naomi::validate_model_options(data, input$options)
-    recursive_scalar(valid)
+    valid$valid <- scalar(valid$valid)
+    valid$warnings <- warnings_scalar(valid$warnings)
+    valid
   }, error = function(e) {
     hintr_error(e$message, "INVALID_OPTIONS")
   })
@@ -182,7 +184,7 @@ model_result <- function(queue) {
     result <- queue$result(id)
     warnings <- list()
     if (!is.null(result$warnings)) {
-      warnings <- recursive_scalar(result$warnings)
+      warnings <- warnings_scalar(result$warnings)
     }
     list(id = scalar(id),
          complete = scalar(TRUE),

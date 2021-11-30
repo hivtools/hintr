@@ -103,7 +103,7 @@ process_result <- function(model_output) {
   )
   warnings <- list()
   if (!is.null(model_output$warnings)) {
-    warnings <- recursive_scalar(model_output$warnings)
+    warnings <- warnings_scalar(model_output$warnings)
   }
   list(data = select_data(output),
        plottingMetadata = metadata,

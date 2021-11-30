@@ -418,7 +418,12 @@ test_that("endpoint_model_options_validate can be run", {
   expect_equal(response$status_code, 200)
   expect_null(response$error)
   expect_equal(response$data$valid, scalar(TRUE))
-  expect_equal(response$data$warnings, list())
+  expect_equal(response$data$warnings, list(list(
+    text = scalar(paste0("You have chosen to fit model without estimating ",
+                         "neighbouring ART attendance. You may wish to review ",
+                         "your selection to include this option.")),
+    locations = "model_options")
+  ))
 })
 
 test_that("api can call endpoint_model_options_validate", {
@@ -428,11 +433,16 @@ test_that("api can call endpoint_model_options_validate", {
   res <- api$request("POST", "/validate/options",
                      body = readLines("payload/validate_options_payload.json"))
   expect_equal(res$status, 200)
-  body <- jsonlite::fromJSON(res$body)
+  body <- jsonlite::fromJSON(res$body, simplifyVector = FALSE)
   expect_equal(body$status, "success")
   expect_null(body$errors)
   expect_true(body$data$valid)
-  expect_equal(body$data$warnings, list())
+  expect_equal(body$data$warnings, list(list(
+    text = paste0("You have chosen to fit model without estimating ",
+                  "neighbouring ART attendance. You may wish to review ",
+                  "your selection to include this option."),
+    locations = list("model_options"))
+  ))
 })
 
 test_that("endpoint_model_submit can be run", {
