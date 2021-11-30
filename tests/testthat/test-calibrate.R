@@ -14,7 +14,7 @@ test_that("calibration can be run", {
 
   ## Expected files are returned
   expect_equal(names(calibrated_result),
-               c("plot_data_path", "model_output_path", "version"))
+               c("plot_data_path", "model_output_path", "version", "warnings"))
 })
 
 test_that("calibrate can set language", {
@@ -54,7 +54,7 @@ test_that("can calibrate a model result", {
 
   get_result <- calibrate_result(q$queue)
   result <- get_result(res$id)
-  expect_equal(names(result), c("data", "plottingMetadata"))
+  expect_equal(names(result), c("data", "plottingMetadata", "warnings"))
   expect_equal(colnames(result$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))

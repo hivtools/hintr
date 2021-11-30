@@ -6,7 +6,8 @@
     "complete": {
       "type": "boolean",
       "enum": [ true ]
-    }
+    },
+    "warnings": { "$ref": "Warnings.schema.json" }
   },
-  "required": [ "id", "complete" ]
+  "required": [ "id", "complete", "warnings"]
 }

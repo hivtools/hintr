@@ -1,3 +1,7 @@
+# hintr 1.0.12
+
+* Return warnings from model option validation, model fit and model calibrate endpoints
+
 # hintr 1.0.11
 
 * Return format and accuracy metadata for data_type columns in input time series to specify how data of that type should be shown in the front end.

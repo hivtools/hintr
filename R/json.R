@@ -49,6 +49,15 @@ recursive_scalar <- function(x) {
   })
 }
 
+warnings_scalar <- function(warnings) {
+  lapply(warnings, function(warning) {
+    list(
+      text = scalar(warning$text),
+      locations = warning$locations
+    )
+  })
+}
+
 get_input_response_schema <- function(type) {
   paste0(to_upper_first(tolower(type)), "ResponseData")
 }
