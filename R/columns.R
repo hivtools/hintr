@@ -5,7 +5,7 @@ get_programme_time_series_columns <- function(data) {
       column_id = scalar("plot"),
       label = scalar(t_("INPUT_TIME_SERIES_COLUMN_PLOT_TYPE")),
       values = recursive_scalar(
-        naomi::get_plot_type_label_and_description(unique(data$plot)))
+        naomi::get_plot_type_column_metadata(unique(data$plot)))
     ),
     list(
       id = scalar("area_level"),
@@ -47,7 +47,7 @@ get_anc_time_series_columns <- function(data) {
       column_id = scalar("plot"),
       label = scalar(t_("INPUT_TIME_SERIES_COLUMN_PLOT_TYPE")),
       values = recursive_scalar(
-        naomi::get_plot_type_label_and_description(unique(data$plot)))
+        naomi::get_plot_type_column_metadata(unique(data$plot)))
     ),
     list(
       id = scalar("area_level"),

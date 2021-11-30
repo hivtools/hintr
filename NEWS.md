@@ -1,3 +1,7 @@
+# hintr 1.0.11
+
+* Return format and accuracy metadata for data_type columns in input time series to specify how data of that type should be shown in the front end.
+
 # hintr 1.0.10
 
 * Recode `vls_tested` and `vls_suppressed` to `vl_tested_12mos` and `vl_suppressed_12mos`. Affects tests only.
