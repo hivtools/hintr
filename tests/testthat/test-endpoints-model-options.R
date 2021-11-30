@@ -201,7 +201,7 @@ test_that("endpoint_model_options_validate validates options", {
     warnings = list(
       list(
         text = "a warning",
-        location = list("location")
+        locations = list("location")
       )
     )
   ))
@@ -212,7 +212,7 @@ test_that("endpoint_model_options_validate validates options", {
   expect_equal(names(response), c("valid", "warnings"))
   expect_equal(response$valid, scalar(TRUE))
   expect_equal(response$warnings[[1]]$text, scalar("a warning"))
-  expect_equal(response$warnings[[1]]$location[[1]], scalar("location"))
+  expect_equal(response$warnings[[1]]$locations[[1]], "location")
 })
 
 test_that("invalid model options returns error", {

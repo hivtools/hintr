@@ -980,6 +980,7 @@ test_that("api can call endpoint_model_calibrate", {
 test_that("model calibrate result includes warnings", {
   test_mock_model_available()
   q <- test_queue_result()
+
   result <- endpoint_model_calibrate_result(q$queue)
   response <- result$run(q$calibrate_id)
 
@@ -987,12 +988,11 @@ test_that("model calibrate result includes warnings", {
   expect_length(response$data$warnings, 2)
   expect_equal(response$data$warnings[[1]]$text,
                scalar("ART coverage greater than 100% for 10 age groups"))
-  expect_equal(response$data$warnings[[1]]$locations,
-               list(scalar("model_calibrate")))
+  expect_equal(response$data$warnings[[1]]$locations, "model_calibrate")
   expect_equal(response$data$warnings[[2]]$text,
                scalar("Prevalence greater than 40%"))
   expect_equal(response$data$warnings[[2]]$locations,
-               list(scalar("model_calibrate"), scalar("review_output")))
+               c("model_calibrate", "review_output"))
 })
 
 test_that("can get calibrate plot data", {
