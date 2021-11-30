@@ -41,13 +41,12 @@
     "spectrum_artnum_calibration_strat": "age_coarse",
     "spectrum_infections_calibration_level": "none",
     "spectrum_infections_calibration_strat": "age_coarse",
-    "calibrate_method": "logistic",      
+    "calibrate_method": "logistic",
     "artattend_log_gamma_offset": -4,
     "artattend": false,
     "rng_seed": 17,
     "no_of_samples": 20,
-    "max_iter": 250,
-    "permissive": false
+    "max_iter": 250
   },
   "version": <version_info>
 }

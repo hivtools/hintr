@@ -173,8 +173,7 @@ test_that("real model can be run", {
     output_aware_plhiv = "true",
     rng_seed = 17,
     no_of_samples = 20,
-    max_iter = 250,
-    permissive = "false"
+    max_iter = 250
   )
   withr::with_envvar(c("USE_MOCK_MODEL" = "false"), {
     model_run <- run_model(data, options, tempdir())
@@ -232,8 +231,7 @@ test_that("real model can be run with csv2 data", {
     output_aware_plhiv = "true",
     rng_seed = 17,
     no_of_samples = 20,
-    max_iter = 250,
-    permissive = "false"
+    max_iter = 250
   )
   withr::with_envvar(c("USE_MOCK_MODEL" = "false"), {
     model_run <- run_model(data, options, tempdir())
