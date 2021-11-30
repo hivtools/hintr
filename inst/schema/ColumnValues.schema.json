@@ -12,6 +12,12 @@
       },
       "description": {
         "type": "string"
+      },
+      "format": {
+        "type": "string"
+      },
+      "accuracy": {
+        "type": [ "number", "null" ]
       }
     },
     "additionalProperties": false,
