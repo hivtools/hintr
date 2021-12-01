@@ -1,3 +1,7 @@
+# hintr 1.0.13
+
+* Add validation error to programme/ART data to ensure only 1 area level is uploaded
+
 # hintr 1.0.12
 
 * Return warnings from model option validation, model fit and model calibrate endpoints

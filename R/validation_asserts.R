@@ -312,3 +312,15 @@ assert_file_extension <- function(file, types) {
   }
   invisible(TRUE)
 }
+
+assert_single_level <- function(data) {
+  levels <- lapply(data$area_id, function(area_id) {
+    gsub("\\w{3}_(\\d+)_\\d+.*", "\\1", area_id)
+  })
+  levels <- unique(levels)
+  if (length(levels) > 1) {
+    stop(t_("VALIDATION_MULTIPLE_LEVELS",
+            list(levels = paste(levels, collapse = ", "))))
+  }
+  invisible(TRUE)
+}

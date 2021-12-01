@@ -129,6 +129,7 @@ do_validate_programme <- function(programme, shape) {
   data$art_current <- as.numeric(data$art_current)
   assert_column_positive_numeric(data, "art_current")
   assert_calendar_quarter_column(data)
+  assert_single_level(data)
   list(data = data,
        filters = list("age" = get_age_filters(data),
                       "calendar_quarter" = get_quarter_filters(data),
