@@ -60,3 +60,15 @@ test_that("no_error swallows all errors", {
   expect_silent(no_error(f(1)))
   expect_silent(no_error(f(-1)))
 })
+
+test_that("can convert list to data frame", {
+  x <- list(
+    list(x = 3, y = 5, z = "example"),
+    list(x = 4, y = 2, z = "data"),
+    list(x = 8, y = 3, z = "frame")
+  )
+  expect_equal(list_to_data_frame(x),
+               data.frame(x = c(3, 4, 8),
+                          y = c(5, 2, 3),
+                          z = c("example", "data", "frame")))
+})

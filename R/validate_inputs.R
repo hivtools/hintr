@@ -31,7 +31,7 @@ read_iso3 <- function(file, type) {
 
 read_regions <- function(file, type) {
   func <- switch(type,
-    "shape" = read_geojson_regions,
+    "shape" = read_geojson_data,
     "population" = read_csv_regions,
     "programme" = read_csv_regions,
     "anc" = read_csv_regions,
@@ -117,9 +117,11 @@ do_validate_programme <- function(programme, shape) {
   assert_column_names(
     colnames(data),
     c("area_id", "calendar_quarter", "sex", "age_group", "art_current"))
-  assert_consistent_regions(read_regions(shape, "shape"),
-                            read_regions(programme, "programme"),
+  shape_regions <- read_regions(shape, "shape")
+  programme_regions <- read_regions(programme, "programme")
+  assert_consistent_regions(shape_regions$area_id, programme_regions,
                             "programme")
+  assert_single_level(shape_regions, programme_regions)
   assert_unique_combinations(
     data, c("area_id", "calendar_quarter", "sex", "age_group"))
   assert_expected_values(data, "sex", c("male", "female", "both"))
@@ -129,7 +131,6 @@ do_validate_programme <- function(programme, shape) {
   data$art_current <- as.numeric(data$art_current)
   assert_column_positive_numeric(data, "art_current")
   assert_calendar_quarter_column(data)
-  assert_single_level(data)
   list(data = data,
        filters = list("age" = get_age_filters(data),
                       "calendar_quarter" = get_quarter_filters(data),
@@ -155,9 +156,11 @@ do_validate_anc <- function(anc, shape) {
     colnames(data),
     c("area_id", "age_group", "year", "anc_clients",
       "anc_known_pos", "anc_already_art", "anc_tested", "anc_tested_pos"))
-  assert_consistent_regions(read_regions(shape, "shape"),
-                            read_regions(anc, "anc"),
+  shape_regions <- read_regions(shape, "shape")
+  anc_regions <- read_regions(anc, "anc")
+  assert_consistent_regions(shape_regions$area_id, anc_regions,
                             "ANC")
+  assert_single_level(shape_regions, anc_regions)
   assert_unique_combinations(data, c("area_id", "age_group", "year"))
   assert_expected_values(data, "age_group", "Y015_049")
   assert_year_column(data)
@@ -187,7 +190,8 @@ do_validate_survey <- function(survey, shape) {
     c("area_id", "survey_id", "sex", "age_group",
       "indicator", "n_clusters", "n_observations",
       "estimate", "std_error", "ci_lower", "ci_upper"))
-  assert_consistent_regions(read_regions(shape, "shape"),
+  survey_regions <- read_regions(shape, "shape")
+  assert_consistent_regions(survey_regions$area_id,
                             read_regions(survey, "survey"),
                             "survey")
   assert_calendar_quarter_column(data, "survey_mid_calendar_quarter")
@@ -250,6 +254,7 @@ validate_pjnz_shape <- function(pjnz, shape) {
 validate_shape_population <- function(shape, population) {
   shape_regions <- read_regions(shape, "shape")
   population_regions <- read_regions(population, "population")
-  assert_consistent_regions( shape_regions, population_regions, "population")
+  assert_consistent_regions(shape_regions$area_id, population_regions,
+                            "population")
   TRUE
 }
