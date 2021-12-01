@@ -84,5 +84,6 @@
     "QUARTER_1": "trimestre 1",
     "QUARTER_2": "trimestre 2",
     "QUARTER_3": "trimestre 3",
-    "QUARTER_4": "trimestre 4"
+    "QUARTER_4": "trimestre 4",
+    "VALIDATION_MULTIPLE_LEVELS": "Les données ne peuvent concerner que des régions au niveau d'une seule zone, les données téléchargées au niveau des zones {{levels}}"
 }

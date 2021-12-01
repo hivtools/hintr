@@ -238,7 +238,7 @@ test_that("can read iso3", {
 test_that("can read regions", {
   shape <- file_object(file.path("testdata", "malawi.geojson"))
   expect_true(all(grepl(
-    "^MWI[_\\d]*(demo)*$", read_regions(shape, "shape"), perl = TRUE)))
+    "^MWI[_\\d]*(demo)*$", read_regions(shape, "shape")$area_id, perl = TRUE)))
   population <- file_object(file.path("testdata", "population.csv"))
   expect_true(all(grepl(
     "^MWI[_\\d]*(demo)*$", read_regions(population, "population"),

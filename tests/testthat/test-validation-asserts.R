@@ -306,3 +306,13 @@ test_that("can check for non NA values", {
   expect_error(assert_no_na(data, "year"),
                "Found NA values in column year. NA values not allowed.")
 })
+
+test_that("can assert data has to have 1 area level", {
+  data <- read_regions(list(path = "testdata/programme.csv"), "programme")
+  shape_regions <- read_geojson_data(list(path = "testdata/malawi.geojson"))
+  expect_true(assert_single_level(shape_regions, data))
+  data[1] <- "MWI_2_1_demo"
+  expect_error(assert_single_level(shape_regions, data),
+               paste0("Data can only be for regions at a single area ",
+                      "level, uploaded data at area levels 2, 4"))
+})
