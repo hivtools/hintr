@@ -84,5 +84,6 @@
     "QUARTER_2": "Quarter 2",
     "QUARTER_3": "Quarter 3",
     "QUARTER_4": "Quarter 4",
-    "VALIDATION_MULTIPLE_LEVELS": "Data can only be for regions at a single area level, uploaded data at area levels {{levels}}"
+    "VALIDATION_MULTIPLE_LEVELS_DETAIL": "year {{year}} has area levels {{levels}}",
+    "VALIDATION_MULTIPLE_LEVELS": "Data can only be for regions at a single area level per year. In uploaded data {{detail}}."
 }

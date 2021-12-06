@@ -313,12 +313,26 @@ assert_file_extension <- function(file, types) {
   invisible(TRUE)
 }
 
-assert_single_level <- function(shape_regions, data_regions) {
-  levels <- shape_regions[shape_regions$area_id %in% data_regions, "area_level"]
-  levels <- unique(levels)
-  if (length(levels) > 1) {
+assert_single_level_per_year <- function(shape_regions, data) {
+  years <- unique(data$year)
+  levels_per_year <- lapply(unique(data$year), function(year) {
+    area_ids <- data[data$year == year, "area_id"]
+    levels <- shape_regions[shape_regions$area_id %in% area_ids, "area_level"]
+    unique(levels)
+  })
+  names(levels_per_year) <- years
+  problem_years <- vlapply(levels_per_year, function(levels) {
+    length(levels) > 1
+  })
+  problem_years <- levels_per_year[problem_years]
+  if (length(problem_years) > 0) {
+    error_msg <- lapply(names(problem_years), function(year) {
+      t_("VALIDATION_MULTIPLE_LEVELS_DETAIL",
+         list(year = year,
+              levels = paste(problem_years[[year]], collapse = ", ")))
+    })
     stop(t_("VALIDATION_MULTIPLE_LEVELS",
-            list(levels = paste(levels, collapse = ", "))))
+            list(detail = paste(error_msg, collapse = ", "))))
   }
   invisible(TRUE)
 }

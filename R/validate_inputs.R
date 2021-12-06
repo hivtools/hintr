@@ -118,10 +118,9 @@ do_validate_programme <- function(programme, shape) {
     colnames(data),
     c("area_id", "calendar_quarter", "sex", "age_group", "art_current"))
   shape_regions <- read_regions(shape, "shape")
-  programme_regions <- read_regions(programme, "programme")
-  assert_consistent_regions(shape_regions$area_id, programme_regions,
+  assert_consistent_regions(shape_regions$area_id, unique(data$area_id),
                             "programme")
-  assert_single_level(shape_regions, programme_regions)
+  assert_single_level_per_year(shape_regions, data)
   assert_unique_combinations(
     data, c("area_id", "calendar_quarter", "sex", "age_group"))
   assert_expected_values(data, "sex", c("male", "female", "both"))
@@ -157,10 +156,8 @@ do_validate_anc <- function(anc, shape) {
     c("area_id", "age_group", "year", "anc_clients",
       "anc_known_pos", "anc_already_art", "anc_tested", "anc_tested_pos"))
   shape_regions <- read_regions(shape, "shape")
-  anc_regions <- read_regions(anc, "anc")
-  assert_consistent_regions(shape_regions$area_id, anc_regions,
-                            "ANC")
-  assert_single_level(shape_regions, anc_regions)
+  assert_consistent_regions(shape_regions$area_id, unique(data$area_id), "ANC")
+  assert_single_level_per_year(shape_regions, data)
   assert_unique_combinations(data, c("area_id", "age_group", "year"))
   assert_expected_values(data, "age_group", "Y015_049")
   assert_year_column(data)

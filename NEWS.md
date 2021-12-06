@@ -1,3 +1,7 @@
+# hintr 1.0.15
+
+* Update programme & ANC validation to ensure only 1 area level per year is uploaded
+
 # hintr 1.0.13
 
 * Add validation error to programme/ART data to ensure only 1 area level is uploaded
