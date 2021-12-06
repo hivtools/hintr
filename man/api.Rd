@@ -5,16 +5,14 @@
 \title{Build and start the API}
 \usage{
 api(
-  port = 8888,
   queue_id = NULL,
   workers = 2,
   results_dir = tempdir(),
-  prerun_dir = NULL
+  prerun_dir = NULL,
+  log_level = "info"
 )
 }
 \arguments{
-\item{port}{Port for API}
-
 \item{queue_id}{ID of an existing queue to connect to, creates a new one
 if NULL}
 
@@ -23,6 +21,8 @@ if NULL}
 \item{results_dir}{The dir for results to be saved to}
 
 \item{prerun_dir}{The directory to store prerun results}
+
+\item{log_level}{The "lgr" log level to use}
 }
 \value{
 Running API

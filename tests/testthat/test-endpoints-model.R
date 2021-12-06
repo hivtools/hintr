@@ -35,7 +35,14 @@ test_that("endpoint model run queues a model run", {
   result <- get_model_result(response$id)
   expect_equal(result, list(
     id = scalar(response$id),
-    complete = scalar(TRUE)
+    complete = scalar(TRUE),
+    warnings = list(
+      list(
+        text = scalar(paste0("Zero population input for 8 population groups. ",
+                             "Replaced with population 0.1.")),
+        locations = list(scalar("model_fit"))
+      )
+    )
   ))
 })
 
@@ -356,4 +363,23 @@ test_that("Debug endpoint errors on nonexistant id", {
   expect_equal(error$data[[1]]$detail,
                scalar("Task '1234' not found"))
   expect_equal(error$status_code, 400)
+})
+
+test_that("getting result returns empty warnings with old run", {
+  test_redis_available()
+  test_mock_model_available()
+
+  ## Return v1.0.7 model results
+  q <- test_queue_result(model = mock_model_v1.0.7,
+                         calibrate = mock_calibrate_v1.0.7)
+
+  endpoint <- endpoint_model_result(q$queue)
+  res <- endpoint$run(q$model_run_id)
+  expect_equal(res$status_code, 200)
+  expect_equal(res$data$warnings, list())
+
+  calibrate_result <- endpoint_model_calibrate_result(q$queue)
+  res <- calibrate_result$run(q$calibrate_id)
+  expect_equal(res$status_code, 200)
+  expect_equal(res$data$warnings, list())
 })

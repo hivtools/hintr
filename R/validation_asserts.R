@@ -312,3 +312,13 @@ assert_file_extension <- function(file, types) {
   }
   invisible(TRUE)
 }
+
+assert_single_level <- function(shape_regions, data_regions) {
+  levels <- shape_regions[shape_regions$area_id %in% data_regions, "area_level"]
+  levels <- unique(levels)
+  if (length(levels) > 1) {
+    stop(t_("VALIDATION_MULTIPLE_LEVELS",
+            list(levels = paste(levels, collapse = ", "))))
+  }
+  invisible(TRUE)
+}

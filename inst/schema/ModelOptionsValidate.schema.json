@@ -2,10 +2,15 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "valid" : { "enum": [ true ] }
+    "valid": {
+      "enum": [
+        true
+      ]
+    },
+    "warnings": { "$ref": "Warnings.schema.json" }
   },
   "additionalProperties": false,
   "required": [
-    "valid"
+    "valid", "warnings"
   ]
 }

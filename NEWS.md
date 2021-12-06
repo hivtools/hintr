@@ -1,6 +1,18 @@
-# hintr 1.0.11
+# hintr 1.0.15
 
 * Add new `metric` column and filter to calibrate plot for showing ratios vs calibration counts
+
+# hintr 1.0.13
+
+* Add validation error to programme/ART data to ensure only 1 area level is uploaded
+
+# hintr 1.0.12
+
+* Return warnings from model option validation, model fit and model calibrate endpoints
+
+# hintr 1.0.11
+
+* Return format and accuracy metadata for data_type columns in input time series to specify how data of that type should be shown in the front end.
 
 # hintr 1.0.10
 

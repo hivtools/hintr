@@ -5,10 +5,7 @@
     "selected_filter_options": {
       "type": "object",
       "patternProperties": {
-        "^.*$": {
-          "type": "array",
-          "items": { "$ref": "FilterOption.schema.json" }
-        }
+        "^.*$": { "$ref": "ColumnValues.schema.json" }
       },
       "additionalProperties": true,
       "anyOf": [

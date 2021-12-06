@@ -6,12 +6,15 @@ test_that("geojson read applies geojson class", {
   expect_s3_class(json, "geojson")
 })
 
-test_that("can read geojson regions", {
+test_that("can read geojson data", {
   shape <- file_object(file.path("testdata", "malawi.geojson"))
-  regions <- read_geojson_regions(shape)
-  expect_length(regions, 69)
-  expect_equal(regions[1:5], c("MWI", "MWI_1_1_demo", "MWI_1_2_demo",
-                               "MWI_1_3_demo", "MWI_2_1_demo"))
+  regions <- read_geojson_data(shape)
+  expect_equal(nrow(regions), 69)
+  expect_equal(head(regions), data.frame(
+    area_id = c("MWI", "MWI_1_1_demo", "MWI_1_2_demo", "MWI_1_3_demo",
+                "MWI_2_1_demo", "MWI_2_2_demo"),
+    area_level = c(0, 1, 1, 1, 2, 2),
+    stringsAsFactors = FALSE))
 })
 
 test_that("can read regions from csv file", {
