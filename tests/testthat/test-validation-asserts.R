@@ -314,7 +314,7 @@ test_that("can assert data has to have 1 area level", {
   data$area_id[1] <- "MWI_2_1_demo"
   data$area_id[3] <- "MWI_2_1_demo"
   expect_error(assert_single_level_per_year(shape_regions, data),
-               paste0("Data can only be for regions at a single area level",
-                      "per year. In uploaded data year 2011 has area levels",
-                      "2, 4, year 2021 has area levels 2, 4."))
+               paste0("Data can only be for regions at a single area level ",
+                      "per year. In uploaded data year 2011 has area levels ",
+                      "2, 4, year 2012 has area levels 2, 4."))
 })
