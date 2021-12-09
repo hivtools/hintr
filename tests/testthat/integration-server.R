@@ -501,20 +501,48 @@ test_that("download streams bytes", {
   expect_equal(response$status, "success")
   expect_equal(response$errors, NULL)
   expect_equal(names(response$data), c("id"))
+  model_fit_id <- response$data$id
 
   ## Get the status
   testthat::try_again(5, {
     Sys.sleep(5)
-    r <- server$request("GET", paste0("/model/status/", response$data$id))
+    r <- server$request("GET", paste0("/model/status/", model_fit_id))
     expect_equal(httr::status_code(r), 200)
     response <- response_from_json(r)
     expect_equal(response$status, "success")
     expect_equal(response$data$status, "COMPLETE")
   })
 
+  ## Calibrate submit
+  payload <- setup_calibrate_payload()
+  r <- server$request(
+    "POST",  paste0("/calibrate/submit/", model_fit_id),
+    body = httr::upload_file(payload, type = "application/json"),
+    encode = "json")
+
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  calibrate_id <- response$data$id
+  expect_true(!is.null(response$data$id))
+
+  ## Calibrate status
+  testthat::try_again(10, {
+    Sys.sleep(5)
+    r <- server$request("GET", paste0("/calibrate/status/", calibrate_id))
+    expect_equal(httr::status_code(r), 200)
+    response <- response_from_json(r)
+    expect_equal(response$data$id, calibrate_id)
+    expect_true(response$data$done)
+    expect_equal(response$data$status, "COMPLETE")
+    expect_true(response$data$success)
+    expect_equal(response$data$queue, 0)
+    expect_match(response$data$progress[[1]],
+                 "Saving outputs - [\\d.m\\s]+s elapsed", perl = TRUE)
+  })
+
   ## Start the download
   r <- server$request("GET",
-                      paste0("/download/submit/spectrum/", response$data$id))
+                      paste0("/download/submit/spectrum/", calibrate_id))
   response <- response_from_json(r)
   expect_equal(httr::status_code(r), 200)
   expect_true(!is.null(response$data$id))
