@@ -102,105 +102,6 @@ test_that("endpoint_baseline_combined works", {
   expect_true(body$data$consistent)
 })
 
-test_that("endpoint_validate_survey_programme programme", {
-  endpoint <- endpoint_validate_survey_programme()
-  response <- endpoint$run(readLines("payload/validate_programme_payload.json"))
-
-  expect_equal(response$status_code, 200)
-  expect_null(response$error)
-  expect_equal(response$data$filename, scalar("original.csv"))
-  expect_equal(response$data$hash, scalar("12345"))
-  expect_equal(response$data$fromADR, scalar(FALSE))
-  ## Sanity check that data has been returned
-  expect_true(nrow(response$data$data) >= 200)
-  expect_type(response$data$data[, "art_current"], "double")
-})
-
-test_that("endpoint_validate_survey_programme works with programme data", {
-  test_redis_available()
-  queue <- test_queue(workers = 0)
-  api <- api_build(queue)
-  res <- api$request("POST", "/validate/survey-and-programme",
-                     body =
-                       readLines("payload/validate_programme_payload.json"))
-  expect_equal(res$status, 200)
-  body <- jsonlite::fromJSON(res$body)
-  expect_equal(body$status, "success")
-  expect_null(body$errors)
-  expect_equal(body$data$filename, "original.csv")
-  expect_equal(body$data$hash, "12345")
-  expect_equal(body$data$fromADR, FALSE)
-  ## Sanity check that data has been returned
-  expect_true(nrow(body$data$data) >= 200)
-  expect_type(body$data$data[, "art_current"], "integer")
-})
-
-test_that("endpoint_validate_survey_programme anc", {
-  endpoint <- endpoint_validate_survey_programme()
-  response <- endpoint$run(readLines("payload/validate_anc_payload.json"))
-
-  expect_equal(response$status_code, 200)
-  expect_null(response$error)
-  expect_equal(response$data$filename, scalar("original.csv"))
-  expect_equal(response$data$hash, scalar("12345"))
-  expect_equal(response$data$fromADR, scalar(FALSE))
-  ## Sanity check that data has been returned
-  expect_true(nrow(response$data$data) >= 200)
-  expect_type(response$data$data[, "anc_prevalence"], "double")
-  expect_type(response$data$data[, "anc_art_coverage"], "double")
-})
-
-test_that("endpoint_validate_survey_programme works with anc data", {
-  test_redis_available()
-  queue <- test_queue(workers = 0)
-  api <- api_build(queue)
-  res <- api$request("POST", "/validate/survey-and-programme",
-                     body = readLines("payload/validate_anc_payload.json"))
-  expect_equal(res$status, 200)
-  body <- jsonlite::fromJSON(res$body)
-  expect_equal(body$status, "success")
-  expect_null(body$errors)
-  expect_equal(body$data$filename, "original.csv")
-  expect_equal(body$data$hash, "12345")
-  expect_equal(body$data$fromADR, FALSE)
-  ## Sanity check that data has been returned
-  expect_true(nrow(body$data$data) >= 200)
-  expect_type(body$data$data[, "anc_prevalence"], "double")
-  expect_type(body$data$data[, "anc_art_coverage"], "double")
-})
-
-test_that("endpoint_validate_survey_programme survey", {
-  endpoint <- endpoint_validate_survey_programme()
-  response <- endpoint$run(readLines("payload/validate_survey_payload.json"))
-
-  expect_equal(response$status_code, 200)
-  expect_null(response$error)
-  expect_equal(response$data$filename, scalar("original.csv"))
-  expect_equal(response$data$hash, scalar("12345"))
-  expect_equal(response$data$fromADR, scalar(FALSE))
-  ## Sanity check that data has been returned
-  expect_true(nrow(response$data$data) >= 20000)
-  expect_type(response$data$data[, "estimate"], "double")
-})
-
-test_that("endpoint_validate_survey_programme works with survey data", {
-  test_redis_available()
-  queue <- test_queue(workers = 0)
-  api <- api_build(queue)
-  res <- api$request("POST", "/validate/survey-and-programme",
-                     body = readLines("payload/validate_survey_payload.json"))
-  expect_equal(res$status, 200)
-  body <- jsonlite::fromJSON(res$body)
-  expect_equal(body$status, "success")
-  expect_null(body$errors)
-  expect_equal(body$data$filename, "original.csv")
-  expect_equal(body$data$fromADR, FALSE)
-  expect_equal(body$data$hash, "12345")
-  ## Sanity check that data has been returned
-  expect_true(nrow(body$data$data) >= 20000)
-  expect_type(body$data$data[, "estimate"], "double")
-})
-
 test_that("endpoint_model_options", {
   endpoint <- endpoint_model_options()
   response <- endpoint$run(readLines("payload/model_run_options_payload.json"))
@@ -685,8 +586,8 @@ test_that("endpoint_calibrate_options works", {
   expect_true(all(grepl("^(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$", body$version)))
 })
 
-test_that("endpoint_plotting_metadata can be run", {
-  endpoint <- endpoint_plotting_metadata()
+test_that("endpoint_plotting_metadata_iso3 can be run", {
+  endpoint <- endpoint_plotting_metadata_iso3()
   response <- endpoint$run("MWI")
 
   expect_equal(response$status_code, 200)
@@ -695,11 +596,34 @@ test_that("endpoint_plotting_metadata can be run", {
                     c("survey", "anc", "output", "programme")))
 })
 
-test_that("api can call endpoint_plotting_metadata", {
+test_that("endpoint_plotting_metadata_default can be run", {
+  endpoint <- endpoint_plotting_metadata_default()
+  response <- endpoint$run()
+
+  expect_equal(response$status_code, 200)
+  expect_null(response$error)
+  expect_true(all(names(response$data) %in%
+                    c("survey", "anc", "output", "programme")))
+})
+
+test_that("api can call endpoint_plotting_metadata with iso3", {
   test_redis_available()
   queue <- test_queue(workers = 0)
   api <- api_build(queue)
   res <- api$request("GET", "/meta/plotting/MWI")
+  expect_equal(res$status, 200)
+  body <- jsonlite::fromJSON(res$body)
+  expect_equal(body$status, "success")
+  expect_null(body$errors)
+  expect_true(all(names(body$data) %in%
+                    c("survey", "anc", "output", "programme")))
+})
+
+test_that("api can call endpoint_plotting_metadata without iso3", {
+  test_redis_available()
+  queue <- test_queue(workers = 0)
+  api <- api_build(queue)
+  res <- api$request("GET", "/meta/plotting")
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body)
   expect_equal(body$status, "success")

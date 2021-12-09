@@ -72,7 +72,7 @@ validate_baseline_combined <- function(input) {
   })
 }
 
-validate_survey_programme <- function(input) {
+validate_survey_programme <- function(input, strict = TRUE) {
   input <- jsonlite::fromJSON(input)
   validate_func <- switch(input$type,
                           programme = do_validate_programme,
@@ -82,7 +82,8 @@ validate_survey_programme <- function(input) {
     shape <- file_object(input$shape)
     assert_file_exists(input$file$path)
     assert_file_exists(shape$path)
-    input_response(validate_func(input$file, shape), input$type, input$file)
+    input_response(
+      validate_func(input$file, shape, strict), input$type, input$file)
   },
   error = function(e) {
     hintr_error(e$message, "INVALID_FILE")
@@ -272,7 +273,7 @@ model_cancel <- function(queue) {
   }
 }
 
-plotting_metadata <- function(iso3) {
+plotting_metadata <- function(iso3 = NULL) {
   tryCatch(
     do_plotting_metadata(iso3),
     error = function(e) {

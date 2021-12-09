@@ -88,5 +88,6 @@
     "QUARTER_2": "trimestre 2",
     "QUARTER_3": "trimestre 3",
     "QUARTER_4": "trimestre 4",
-    "VALIDATION_MULTIPLE_LEVELS": "Les données ne peuvent concerner que des régions au niveau d'une seule zone, les données téléchargées au niveau des zones {{levels}}"
+    "VALIDATION_MULTIPLE_LEVELS_DETAIL": "l'année {{year}} a des niveaux de zone {{levels}}",
+    "VALIDATION_MULTIPLE_LEVELS": "Les données ne peuvent concerner que les régions à un seul niveau de zone par an. Dans les données téléchargées {{detail}}"
 }

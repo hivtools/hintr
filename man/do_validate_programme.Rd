@@ -4,7 +4,7 @@
 \alias{do_validate_programme}
 \title{Validate programme ART data file.}
 \usage{
-do_validate_programme(programme, shape)
+do_validate_programme(programme, shape, strict = TRUE)
 }
 \arguments{
 \item{programme}{A file object (path, hash, filename) corresponding to
@@ -12,6 +12,9 @@ the input population file.}
 
 \item{shape}{A file object (path, hash, filename) corresponding to
 the input shape file.}
+
+\item{strict}{If FALSE then run less stringent validation rules, used
+for data exploration mode.}
 }
 \value{
 An error if invalid.

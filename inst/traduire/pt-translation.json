@@ -87,5 +87,6 @@
     "QUARTER_2": "trimestre 2",
     "QUARTER_3": "trimestre 3",
     "QUARTER_4": "trimestre 4",
-    "VALIDATION_MULTIPLE_LEVELS": "Os dados só podem ser para regiões a um único nível de área, dados carregados a nível de área {{levels}}"
+    "VALIDATION_MULTIPLE_LEVELS_DETAIL": "ano {{year}} tem níveis de área {{levels}}",
+    "VALIDATION_MULTIPLE_LEVELS": "Os dados só podem ser relativos a regiões a um único nível de área por ano. Em dados carregados {{detail}}"
 }

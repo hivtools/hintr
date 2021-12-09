@@ -1,6 +1,15 @@
-# hintr 1.0.15
+# hintr 1.0.18
 
 * Add new `metric` column and filter to calibrate plot for showing ratios vs calibration counts
+
+# hintr 1.0.17
+
+* Add query param `strict` to endpoint `/validate/survey-and-programme` to allow running with relaxed validation, by default this will run in strict mode.
+* Add `/meta/plotting` endpoint to return default plotting metadata.
+
+# hintr 1.0.15
+
+* Update programme & ANC validation to ensure only 1 area level per year is uploaded
 
 # hintr 1.0.13
 
@@ -13,6 +22,7 @@
 # hintr 1.0.11
 
 * Return format and accuracy metadata for data_type columns in input time series to specify how data of that type should be shown in the front end.
+>>>>>>> master
 
 # hintr 1.0.10
 
