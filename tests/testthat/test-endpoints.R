@@ -161,6 +161,26 @@ test_that("endpoint_plotting_metadata returns default data for missing country",
                scalar("ANC prior ART coverage"))
 })
 
+test_that("endpoint_plotting_metadata returns default data for NULL country", {
+  response <- plotting_metadata()
+
+  expect_true(all(names(response) %in%
+                    c("survey", "anc", "output", "programme")))
+  expect_equal(names(response$survey), "choropleth")
+  expect_equal(names(response$anc), "choropleth")
+  expect_equal(names(response$output), c("barchart", "choropleth"))
+  expect_equal(names(response$programme), "choropleth")
+  expect_length(response$anc$choropleth$indicators, 2)
+  expect_equal(response$anc$choropleth$indicators[[1]]$indicator,
+               scalar("anc_prevalence"))
+  expect_equal(response$anc$choropleth$indicators[[2]]$indicator,
+               scalar("anc_art_coverage"))
+  expect_equal(response$anc$choropleth$indicators[[1]]$name,
+               scalar("ANC HIV prevalence"))
+  expect_equal(response$anc$choropleth$indicators[[2]]$name,
+               scalar("ANC prior ART coverage"))
+})
+
 test_that("can convert model status to scalar", {
   progress <- list(
     started = list(

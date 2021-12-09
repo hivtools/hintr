@@ -4,10 +4,15 @@
 \alias{do_validate_survey}
 \title{Validate survey data file.}
 \usage{
-do_validate_survey(survey, shape)
+do_validate_survey(survey, shape, strict = TRUE)
 }
 \arguments{
 \item{survey}{Path to input survey file.}
+
+\item{shape}{Path to input shape file.}
+
+\item{strict}{If FALSE then run less stringent validation rules, used
+for data exploration mode.}
 }
 \value{
 An error if invalid.
