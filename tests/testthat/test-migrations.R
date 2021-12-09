@@ -13,7 +13,8 @@ test_that("single task can be migrated", {
                   c("output_path", "spectrum_path", "coarse_output_path",
                     "calibration_path", "summary_report_path", "metadata"))
   expect_setequal(names(migrated$new_res),
-                  c("plot_data_path", "model_output_path", "version"))
+                  c("plot_data_path", "model_output_path", "version",
+                    "warnings"))
   expect_equal(migrated$from, "x.x.x")
   expect_equal(migrated$to, "2.5.0")
   expect_equal(migrated$action, "Successfully migrated")
@@ -100,13 +101,13 @@ test_that("all tasks can be migrated", {
 
   ## Data has been migrated
   expect_equal(names(q$queue$result(q$model_run_id)),
-               c("plot_data_path", "model_output_path", "version"))
+               c("plot_data_path", "model_output_path", "version", "warnings"))
   expect_equal(names(q$queue$result(q$calibrate_id)),
-               c("plot_data_path", "model_output_path", "version"))
+               c("plot_data_path", "model_output_path", "version", "warnings"))
   expect_equal(names(q$queue$result(run_response$id)),
-               c("plot_data_path", "model_output_path", "version"))
+               c("plot_data_path", "model_output_path", "version", "warnings"))
   expect_equal(names(q$queue$result(calibrate_response$id)),
-               c("plot_data_path", "model_output_path", "version"))
+               c("plot_data_path", "model_output_path", "version", "warnings"))
 })
 
 test_that("only completed tasks are migrated", {
@@ -182,7 +183,7 @@ test_that("migration can be run in dry-run mode", {
                c("output_path", "spectrum_path", "coarse_output_path",
                  "calibration_path", "summary_report_path", "metadata"))
   expect_equal(names(q$queue$result(run_response$id)),
-               c("plot_data_path", "model_output_path", "version"))
+               c("plot_data_path", "model_output_path", "version", "warnings"))
   expect_equal(names(q$queue$result(calibrate_response$id)),
-               c("plot_data_path", "model_output_path", "version"))
+               c("plot_data_path", "model_output_path", "version", "warnings"))
 })

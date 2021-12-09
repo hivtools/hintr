@@ -107,3 +107,10 @@ is_error <- function(x) {
 is_porcelain_error <- function(e) {
   inherits(e, "porcelain_error")
 }
+
+list_to_data_frame <- function(x) {
+  to_data_frame <- function(...) {
+    rbind.data.frame(..., make.row.names = FALSE, stringsAsFactors = FALSE)
+  }
+  do.call(to_data_frame, x)
+}

@@ -73,5 +73,17 @@
     "INVALID_TIME_SERIES_INPUT_TYPE": "Os dados das séries cronológicas só podem ser devolvidos para {{types}}, recebidos '{{type}}'.",
     "INPUT_TIME_SERIES_COLUMN_PLOT_TYPE": "Tipo de terreno",
     "INPUT_TIME_SERIES_COLUMN_AREA_LEVEL": "Nível de área",
-    "INPUT_TIME_SERIES_COLUMN_AGE": "Idade"
+    "INPUT_TIME_SERIES_COLUMN_AGE": "Idade",
+    "INPUT_TIME_SERIES_COLUMN_AREA": "área",
+    "INPUT_TIME_SERIES_COLUMN_AREA_NAME": "Nome da área",
+    "INPUT_TIME_SERIES_COLUMN_QUARTER": "trimestre",
+    "INPUT_TIME_SERIES_COLUMN_TIME_PERIOD": "período de tempo",
+    "INVALID_ID_LABEL": "Os dados são inválidos, o número de valores {{label_col}} exclusivos e valores {{id_col}} não é igual",
+    "MAPPING_NO_MATCHING": "Não foram encontrados filtros correspondentes para o tipo {{type}}",
+    "QUARTER_1": "trimestre 1",
+    "QUARTER_2": "trimestre 2",
+    "QUARTER_3": "trimestre 3",
+    "QUARTER_4": "trimestre 4",
+    "VALIDATION_MULTIPLE_LEVELS_DETAIL": "ano {{year}} tem níveis de área {{levels}}",
+    "VALIDATION_MULTIPLE_LEVELS": "Os dados só podem ser relativos a regiões a um único nível de área por ano. Em dados carregados {{detail}}"
 }

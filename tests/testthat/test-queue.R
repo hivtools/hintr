@@ -46,7 +46,8 @@ test_that("queue works as intended", {
 
   ## Result can be retrieved after task has completed
   res <- queue$result(job_id)
-  expect_equal(names(res), c("plot_data_path", "model_output_path", "version"))
+  expect_equal(names(res),
+               c("plot_data_path", "model_output_path", "version", "warnings"))
   expect_length(queue$queue$task_list(), 1)
 
   ## task can be cleaned up

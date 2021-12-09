@@ -141,7 +141,10 @@ model_options_validate <- function(input) {
     data$anc_testing <- data$anc
     data$anc <- NULL
     data <- naomi:::format_data_input(data)
-    list(valid = scalar(naomi:::validate_model_options(data, input$options)))
+    valid <- naomi::validate_model_options(data, input$options)
+    valid$valid <- scalar(valid$valid)
+    valid$warnings <- warnings_scalar(valid$warnings)
+    valid
   }, error = function(e) {
     hintr_error(e$message, "INVALID_OPTIONS")
   })
@@ -179,8 +182,14 @@ queue_status <- function(queue) {
 model_result <- function(queue) {
   function(id) {
     verify_result_available(queue, id)
+    result <- queue$result(id)
+    warnings <- list()
+    if (!is.null(result$warnings)) {
+      warnings <- warnings_scalar(result$warnings)
+    }
     list(id = scalar(id),
-         complete = scalar(TRUE))
+         complete = scalar(TRUE),
+         warnings = warnings)
   }
 }
 
