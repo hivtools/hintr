@@ -1,6 +1,6 @@
 # hintr 1.0.18
 
-* Add new `metric` column and filter to calibrate plot for showing ratios vs calibration counts
+* Return ratios as indicator types in calibrate plot
 
 # hintr 1.0.17
 

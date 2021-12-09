@@ -163,21 +163,6 @@ get_calibrate_plot_output_filters <- function(data) {
       column_id = scalar("data_type"),
       label = scalar(t_("OUTPUT_FILTER_DATA_TYPE")),
       options = get_data_type_filters(data)
-    ),
-    list(
-      id = scalar("metric"),
-      column_id = scalar("metric"),
-      label = scalar(t_("OUTPUT_FILTER_METRIC")),
-      options = list(
-        list(
-          id = scalar("ratio"),
-          label = scalar(t_("METRIC_RATIO"))
-        ),
-        list(
-          id = scalar("count"),
-          label = scalar(t_("METRIC_COUNT"))
-        )
-      )
     )
   )
 }
@@ -207,8 +192,7 @@ get_calibrate_barchart_defaults <- function(filters) {
       sex = get_selected_mappings(filters, "sex")[1],
       age = get_selected_mappings(filters, "age", "Y015_049"),
       spectrum_region = get_selected_mappings(filters, "spectrum_region"),
-      type = get_selected_mappings(filters, "type"),
-      metric = get_selected_mappings(filters, "metric", "count")
+      type = get_selected_mappings(filters, "type")
     )
   )
 }

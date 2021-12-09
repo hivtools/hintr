@@ -933,7 +933,7 @@ test_that("can get calibrate plot data", {
   expect_setequal(names(response_data$data),
                   c("data_type", "spectrum_region_code", "spectrum_region_name",
                     "sex", "age_group", "calendar_quarter", "indicator",
-                    "mean", "metric"))
+                    "mean"))
   expect_true(nrow(response_data$data) > 0)
   expect_equal(names(response_data$plottingMetadata), "barchart")
   expect_setequal(names(response_data$plottingMetadata$barchart),
@@ -953,7 +953,6 @@ test_that("can get calibrate plot data", {
   expect_equal(filters[[3]], scalar("sex"))
   expect_equal(filters[[4]], scalar("age_group"))
   expect_equal(filters[[5]], scalar("data_type"))
-  expect_equal(filters[[6]], scalar("metric"))
 
   expect_setequal(names(response_data$plottingMetadata$barchart$defaults),
                   c("indicator_id", "x_axis_id", "disaggregate_by_id",
@@ -978,7 +977,7 @@ test_that("API can return calibration plotting data", {
   expect_setequal(colnames(data),
                   c("data_type", "spectrum_region_code", "spectrum_region_name",
                     "sex", "age_group", "calendar_quarter", "indicator",
-                    "mean", "metric"))
+                    "mean"))
   expect_true(nrow(data) > 0)
   expect_equal(names(response_data$plottingMetadata), "barchart")
   expect_setequal(names(response_data$plottingMetadata$barchart),
@@ -1000,7 +999,6 @@ test_that("API can return calibration plotting data", {
   expect_equal(filters[[3]], "sex")
   expect_equal(filters[[4]], "age_group")
   expect_equal(filters[[5]], "data_type")
-  expect_equal(filters[[6]], "metric")
 
   expect_setequal(names(response_data$plottingMetadata$barchart$defaults),
                   c("indicator_id", "x_axis_id", "disaggregate_by_id",
@@ -1043,6 +1041,4 @@ test_that("calibrate plot metadata is translated", {
   expect_equal(filters[[4]]$options[[1]]$label, scalar("15-49"))
   expect_equal(filters[[5]]$label, scalar("Type de données"))
   expect_equal(filters[[5]]$options[[2]]$label, scalar("Étalonné"))
-  expect_equal(filters[[6]]$label, scalar("Métrique"))
-  expect_equal(filters[[6]]$options[[1]]$label, scalar("Rapport"))
 })

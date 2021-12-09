@@ -226,8 +226,7 @@ calibrate_plot <- function(queue) {
     data <- as.data.frame(data)
     data[is.nan(data$mean), "mean"] <- 0
     is_ratio <- grepl("\\w+_ratio", data$data_type)
-    data$metric[is_ratio] <- "ratio"
-    data$metric[!is_ratio] <- "count"
+    data$indicator[is_ratio] <- paste0(data$indicator[is_ratio], "_ratio")
     data$spectrum_region_code <- as.character(data$spectrum_region_code)
     filters <- get_calibrate_plot_output_filters(data)
     list(
