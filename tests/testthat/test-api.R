@@ -102,105 +102,6 @@ test_that("endpoint_baseline_combined works", {
   expect_true(body$data$consistent)
 })
 
-test_that("endpoint_validate_survey_programme programme", {
-  endpoint <- endpoint_validate_survey_programme()
-  response <- endpoint$run(readLines("payload/validate_programme_payload.json"))
-
-  expect_equal(response$status_code, 200)
-  expect_null(response$error)
-  expect_equal(response$data$filename, scalar("original.csv"))
-  expect_equal(response$data$hash, scalar("12345"))
-  expect_equal(response$data$fromADR, scalar(FALSE))
-  ## Sanity check that data has been returned
-  expect_true(nrow(response$data$data) >= 200)
-  expect_type(response$data$data[, "art_current"], "double")
-})
-
-test_that("endpoint_validate_survey_programme works with programme data", {
-  test_redis_available()
-  queue <- test_queue(workers = 0)
-  api <- api_build(queue)
-  res <- api$request("POST", "/validate/survey-and-programme",
-                     body =
-                       readLines("payload/validate_programme_payload.json"))
-  expect_equal(res$status, 200)
-  body <- jsonlite::fromJSON(res$body)
-  expect_equal(body$status, "success")
-  expect_null(body$errors)
-  expect_equal(body$data$filename, "original.csv")
-  expect_equal(body$data$hash, "12345")
-  expect_equal(body$data$fromADR, FALSE)
-  ## Sanity check that data has been returned
-  expect_true(nrow(body$data$data) >= 200)
-  expect_type(body$data$data[, "art_current"], "integer")
-})
-
-test_that("endpoint_validate_survey_programme anc", {
-  endpoint <- endpoint_validate_survey_programme()
-  response <- endpoint$run(readLines("payload/validate_anc_payload.json"))
-
-  expect_equal(response$status_code, 200)
-  expect_null(response$error)
-  expect_equal(response$data$filename, scalar("original.csv"))
-  expect_equal(response$data$hash, scalar("12345"))
-  expect_equal(response$data$fromADR, scalar(FALSE))
-  ## Sanity check that data has been returned
-  expect_true(nrow(response$data$data) >= 200)
-  expect_type(response$data$data[, "anc_prevalence"], "double")
-  expect_type(response$data$data[, "anc_art_coverage"], "double")
-})
-
-test_that("endpoint_validate_survey_programme works with anc data", {
-  test_redis_available()
-  queue <- test_queue(workers = 0)
-  api <- api_build(queue)
-  res <- api$request("POST", "/validate/survey-and-programme",
-                     body = readLines("payload/validate_anc_payload.json"))
-  expect_equal(res$status, 200)
-  body <- jsonlite::fromJSON(res$body)
-  expect_equal(body$status, "success")
-  expect_null(body$errors)
-  expect_equal(body$data$filename, "original.csv")
-  expect_equal(body$data$hash, "12345")
-  expect_equal(body$data$fromADR, FALSE)
-  ## Sanity check that data has been returned
-  expect_true(nrow(body$data$data) >= 200)
-  expect_type(body$data$data[, "anc_prevalence"], "double")
-  expect_type(body$data$data[, "anc_art_coverage"], "double")
-})
-
-test_that("endpoint_validate_survey_programme survey", {
-  endpoint <- endpoint_validate_survey_programme()
-  response <- endpoint$run(readLines("payload/validate_survey_payload.json"))
-
-  expect_equal(response$status_code, 200)
-  expect_null(response$error)
-  expect_equal(response$data$filename, scalar("original.csv"))
-  expect_equal(response$data$hash, scalar("12345"))
-  expect_equal(response$data$fromADR, scalar(FALSE))
-  ## Sanity check that data has been returned
-  expect_true(nrow(response$data$data) >= 20000)
-  expect_type(response$data$data[, "estimate"], "double")
-})
-
-test_that("endpoint_validate_survey_programme works with survey data", {
-  test_redis_available()
-  queue <- test_queue(workers = 0)
-  api <- api_build(queue)
-  res <- api$request("POST", "/validate/survey-and-programme",
-                     body = readLines("payload/validate_survey_payload.json"))
-  expect_equal(res$status, 200)
-  body <- jsonlite::fromJSON(res$body)
-  expect_equal(body$status, "success")
-  expect_null(body$errors)
-  expect_equal(body$data$filename, "original.csv")
-  expect_equal(body$data$fromADR, FALSE)
-  expect_equal(body$data$hash, "12345")
-  ## Sanity check that data has been returned
-  expect_true(nrow(body$data$data) >= 20000)
-  expect_type(body$data$data[, "estimate"], "double")
-})
-
 test_that("endpoint_model_options", {
   endpoint <- endpoint_model_options()
   response <- endpoint$run(readLines("payload/model_run_options_payload.json"))
@@ -418,6 +319,12 @@ test_that("endpoint_model_options_validate can be run", {
   expect_equal(response$status_code, 200)
   expect_null(response$error)
   expect_equal(response$data$valid, scalar(TRUE))
+  expect_equal(response$data$warnings, list(list(
+    text = scalar(paste0("You have chosen to fit model without estimating ",
+                         "neighbouring ART attendance. You may wish to review ",
+                         "your selection to include this option.")),
+    locations = "model_options")
+  ))
 })
 
 test_that("api can call endpoint_model_options_validate", {
@@ -427,10 +334,16 @@ test_that("api can call endpoint_model_options_validate", {
   res <- api$request("POST", "/validate/options",
                      body = readLines("payload/validate_options_payload.json"))
   expect_equal(res$status, 200)
-  body <- jsonlite::fromJSON(res$body)
+  body <- jsonlite::fromJSON(res$body, simplifyVector = FALSE)
   expect_equal(body$status, "success")
   expect_null(body$errors)
   expect_true(body$data$valid)
+  expect_equal(body$data$warnings, list(list(
+    text = paste0("You have chosen to fit model without estimating ",
+                  "neighbouring ART attendance. You may wish to review ",
+                  "your selection to include this option."),
+    locations = list("model_options"))
+  ))
 })
 
 test_that("endpoint_model_submit can be run", {
@@ -534,7 +447,12 @@ test_that("endpoint_model_result can be run", {
   expect_equal(response$status_code, 200)
   expect_equal(response$data, list(
     id = scalar(run_response$data$id),
-    complete = scalar(TRUE)
+    complete = scalar(TRUE),
+    warnings = list(
+      list(text = scalar(paste0("Zero population input for 8 population ",
+                                "groups. Replaced with population 0.1.")),
+           locations = list(scalar("model_fit"))
+      ))
   ))
 })
 
@@ -554,13 +472,18 @@ test_that("api can call endpoint_model_result", {
   out <- queue$queue$task_wait(submit_body$data$id)
   res <- api$request("GET", sprintf("/model/result/%s", submit_body$data$id))
   expect_equal(res$status, 200)
-  body <- jsonlite::fromJSON(res$body)
+  body <- jsonlite::fromJSON(res$body,  simplifyVector = FALSE)
 
   expect_equal(body$status, "success")
   expect_null(body$errors)
   expect_equal(body$data, list(
     id = submit_body$data$id,
-    complete = TRUE
+    complete = TRUE,
+    warnings = list(
+      list(text = paste0("Zero population input for 8 population ",
+                                "groups. Replaced with population 0.1."),
+           locations = list("model_fit")
+      ))
   ))
 })
 
@@ -663,8 +586,8 @@ test_that("endpoint_calibrate_options works", {
   expect_true(all(grepl("^(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$", body$version)))
 })
 
-test_that("endpoint_plotting_metadata can be run", {
-  endpoint <- endpoint_plotting_metadata()
+test_that("endpoint_plotting_metadata_iso3 can be run", {
+  endpoint <- endpoint_plotting_metadata_iso3()
   response <- endpoint$run("MWI")
 
   expect_equal(response$status_code, 200)
@@ -673,11 +596,34 @@ test_that("endpoint_plotting_metadata can be run", {
                     c("survey", "anc", "output", "programme")))
 })
 
-test_that("api can call endpoint_plotting_metadata", {
+test_that("endpoint_plotting_metadata_default can be run", {
+  endpoint <- endpoint_plotting_metadata_default()
+  response <- endpoint$run()
+
+  expect_equal(response$status_code, 200)
+  expect_null(response$error)
+  expect_true(all(names(response$data) %in%
+                    c("survey", "anc", "output", "programme")))
+})
+
+test_that("api can call endpoint_plotting_metadata with iso3", {
   test_redis_available()
   queue <- test_queue(workers = 0)
   api <- api_build(queue)
   res <- api$request("GET", "/meta/plotting/MWI")
+  expect_equal(res$status, 200)
+  body <- jsonlite::fromJSON(res$body)
+  expect_equal(body$status, "success")
+  expect_null(body$errors)
+  expect_true(all(names(body$data) %in%
+                    c("survey", "anc", "output", "programme")))
+})
+
+test_that("api can call endpoint_plotting_metadata without iso3", {
+  test_redis_available()
+  queue <- test_queue(workers = 0)
+  api <- api_build(queue)
+  res <- api$request("GET", "/meta/plotting")
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body)
   expect_equal(body$status, "success")
@@ -899,7 +845,7 @@ test_that("model calibrate can be queued and result returned", {
   response <- result$run(status_response$data$id)
 
   expect_equal(response$status_code, 200)
-  expect_equal(names(response$data), c("data", "plottingMetadata"))
+  expect_equal(names(response$data), c("data", "plottingMetadata", "warnings"))
   expect_equal(colnames(response$data$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
@@ -945,13 +891,32 @@ test_that("api can call endpoint_model_calibrate", {
   expect_equal(result_res$status, 200)
   result_body <- jsonlite::fromJSON(result_res$body)
   expect_null(result_body$errors)
-  expect_equal(names(result_body$data), c("data", "plottingMetadata"))
+  expect_equal(names(result_body$data),
+               c("data", "plottingMetadata", "warnings"))
   expect_equal(colnames(result_body$data$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
   expect_true(nrow(result_body$data$data) > 84042)
   expect_equal(names(result_body$data$plottingMetadata),
                c("barchart", "choropleth"))
+})
+
+test_that("model calibrate result includes warnings", {
+  test_mock_model_available()
+  q <- test_queue_result()
+
+  result <- endpoint_model_calibrate_result(q$queue)
+  response <- result$run(q$calibrate_id)
+
+  expect_equal(response$status_code, 200)
+  expect_length(response$data$warnings, 2)
+  expect_equal(response$data$warnings[[1]]$text,
+               scalar("ART coverage greater than 100% for 10 age groups"))
+  expect_equal(response$data$warnings[[1]]$locations, "model_calibrate")
+  expect_equal(response$data$warnings[[2]]$text,
+               scalar("Prevalence greater than 40%"))
+  expect_equal(response$data$warnings[[2]]$locations,
+               c("model_calibrate", "review_output"))
 })
 
 test_that("can get calibrate plot data", {

@@ -31,7 +31,7 @@ read_iso3 <- function(file, type) {
 
 read_regions <- function(file, type) {
   func <- switch(type,
-    "shape" = read_geojson_regions,
+    "shape" = read_geojson_data,
     "population" = read_csv_regions,
     "programme" = read_csv_regions,
     "anc" = read_csv_regions,
@@ -107,9 +107,12 @@ do_validate_population <- function(population) {
 #' @param shape A file object (path, hash, filename) corresponding to
 #'   the input shape file.
 #'
+#' @param strict If FALSE then run less stringent validation rules, used
+#'   for data exploration mode.
+#'
 #' @return An error if invalid.
 #' @keywords internal
-do_validate_programme <- function(programme, shape) {
+do_validate_programme <- function(programme, shape, strict = TRUE) {
   assert_file_extension(programme, "csv")
   data <- read_csv(programme$path, header = TRUE)
   data$art_current <- as.numeric(data$art_current)
@@ -117,9 +120,10 @@ do_validate_programme <- function(programme, shape) {
   assert_column_names(
     colnames(data),
     c("area_id", "calendar_quarter", "sex", "age_group", "art_current"))
-  assert_consistent_regions(read_regions(shape, "shape"),
-                            read_regions(programme, "programme"),
+  shape_regions <- read_regions(shape, "shape")
+  assert_consistent_regions(shape_regions$area_id, unique(data$area_id),
                             "programme")
+  assert_single_level_per_year(shape_regions, data)
   assert_unique_combinations(
     data, c("area_id", "calendar_quarter", "sex", "age_group"))
   assert_expected_values(data, "sex", c("male", "female", "both"))
@@ -144,9 +148,12 @@ do_validate_programme <- function(programme, shape) {
 #' @param shape A file object (path, hash, filename) corresponding to
 #'   the input shape file.
 #'
+#' @param strict If FALSE then run less stringent validation rules, used
+#'   for data exploration mode.
+#'
 #' @return An error if invalid.
 #' @keywords internal
-do_validate_anc <- function(anc, shape) {
+do_validate_anc <- function(anc, shape, strict = TRUE) {
   assert_file_extension(anc, "csv")
   data <- read_csv(anc$path, header = TRUE)
   assert_single_country(data, "anc")
@@ -154,15 +161,17 @@ do_validate_anc <- function(anc, shape) {
     colnames(data),
     c("area_id", "age_group", "year", "anc_clients",
       "anc_known_pos", "anc_already_art", "anc_tested", "anc_tested_pos"))
-  assert_consistent_regions(read_regions(shape, "shape"),
-                            read_regions(anc, "anc"),
-                            "ANC")
+  shape_regions <- read_regions(shape, "shape")
+  assert_consistent_regions(shape_regions$area_id, unique(data$area_id), "ANC")
+  assert_single_level_per_year(shape_regions, data)
   assert_unique_combinations(data, c("area_id", "age_group", "year"))
   assert_expected_values(data, "age_group", "Y015_049")
   assert_year_column(data)
   assert_column_positive_numeric(data, c("anc_clients", "anc_known_pos", "anc_already_art",
                                          "anc_tested", "anc_tested_pos"))
-  assert_anc_client_numbers(data)
+  if (strict) {
+    assert_anc_client_numbers(data)
+  }
   data <- naomi::calculate_prevalence_art_coverage(data)
   list(data = data,
        filters = list("year" = get_year_filters(data),
@@ -175,9 +184,14 @@ do_validate_anc <- function(anc, shape) {
 #'
 #' @param survey Path to input survey file.
 #'
+#' @param shape Path to input shape file.
+#'
+#' @param strict If FALSE then run less stringent validation rules, used
+#'   for data exploration mode.
+#'
 #' @return An error if invalid.
 #' @keywords internal
-do_validate_survey <- function(survey, shape) {
+do_validate_survey <- function(survey, shape, strict = TRUE) {
   assert_file_extension(survey, "csv")
   data <- read_csv(survey$path, header = TRUE)
   assert_single_country(data, "survey")
@@ -186,7 +200,8 @@ do_validate_survey <- function(survey, shape) {
     c("area_id", "survey_id", "sex", "age_group",
       "indicator", "n_clusters", "n_observations",
       "estimate", "std_error", "ci_lower", "ci_upper"))
-  assert_consistent_regions(read_regions(shape, "shape"),
+  survey_regions <- read_regions(shape, "shape")
+  assert_consistent_regions(survey_regions$area_id,
                             read_regions(survey, "survey"),
                             "survey")
   assert_calendar_quarter_column(data, "survey_mid_calendar_quarter")
@@ -249,6 +264,7 @@ validate_pjnz_shape <- function(pjnz, shape) {
 validate_shape_population <- function(shape, population) {
   shape_regions <- read_regions(shape, "shape")
   population_regions <- read_regions(population, "population")
-  assert_consistent_regions( shape_regions, population_regions, "population")
+  assert_consistent_regions(shape_regions$area_id, population_regions,
+                            "population")
   TRUE
 }

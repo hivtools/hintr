@@ -204,3 +204,146 @@ test_that("filters not returned if indicator missing from input data", {
   expect_equal(response$filters$indicators[[2]]$label,
                scalar("ART new"))
 })
+
+test_that("endpoint_validate_survey_programme programme", {
+  endpoint <- endpoint_validate_survey_programme()
+  response <- endpoint$run(readLines("payload/validate_programme_payload.json"))
+
+  expect_equal(response$status_code, 200)
+  expect_null(response$error)
+  expect_equal(response$data$filename, scalar("original.csv"))
+  expect_equal(response$data$hash, scalar("12345"))
+  expect_equal(response$data$fromADR, scalar(FALSE))
+  ## Sanity check that data has been returned
+  expect_true(nrow(response$data$data) >= 200)
+  expect_type(response$data$data[, "art_current"], "double")
+})
+
+test_that("endpoint_validate_survey_programme works with programme data", {
+  test_redis_available()
+  queue <- test_queue(workers = 0)
+  api <- api_build(queue)
+  res <- api$request("POST", "/validate/survey-and-programme",
+                     body =
+                       readLines("payload/validate_programme_payload.json"))
+  expect_equal(res$status, 200)
+  body <- jsonlite::fromJSON(res$body)
+  expect_equal(body$status, "success")
+  expect_null(body$errors)
+  expect_equal(body$data$filename, "original.csv")
+  expect_equal(body$data$hash, "12345")
+  expect_equal(body$data$fromADR, FALSE)
+  ## Sanity check that data has been returned
+  expect_true(nrow(body$data$data) >= 200)
+  expect_type(body$data$data[, "art_current"], "integer")
+})
+
+test_that("endpoint_validate_survey_programme anc", {
+  endpoint <- endpoint_validate_survey_programme()
+  response <- endpoint$run(readLines("payload/validate_anc_payload.json"))
+
+  expect_equal(response$status_code, 200)
+  expect_null(response$error)
+  expect_equal(response$data$filename, scalar("original.csv"))
+  expect_equal(response$data$hash, scalar("12345"))
+  expect_equal(response$data$fromADR, scalar(FALSE))
+  ## Sanity check that data has been returned
+  expect_true(nrow(response$data$data) >= 200)
+  expect_type(response$data$data[, "anc_prevalence"], "double")
+  expect_type(response$data$data[, "anc_art_coverage"], "double")
+})
+
+test_that("endpoint_validate_survey_programme works with anc data", {
+  test_redis_available()
+  queue <- test_queue(workers = 0)
+  api <- api_build(queue)
+  res <- api$request("POST", "/validate/survey-and-programme",
+                     body = readLines("payload/validate_anc_payload.json"))
+  expect_equal(res$status, 200)
+  body <- jsonlite::fromJSON(res$body)
+  expect_equal(body$status, "success")
+  expect_null(body$errors)
+  expect_equal(body$data$filename, "original.csv")
+  expect_equal(body$data$hash, "12345")
+  expect_equal(body$data$fromADR, FALSE)
+  ## Sanity check that data has been returned
+  expect_true(nrow(body$data$data) >= 200)
+  expect_type(body$data$data[, "anc_prevalence"], "double")
+  expect_type(body$data$data[, "anc_art_coverage"], "double")
+})
+
+test_that("endpoint_validate_survey_programme survey", {
+  endpoint <- endpoint_validate_survey_programme()
+  response <- endpoint$run(readLines("payload/validate_survey_payload.json"))
+
+  expect_equal(response$status_code, 200)
+  expect_null(response$error)
+  expect_equal(response$data$filename, scalar("original.csv"))
+  expect_equal(response$data$hash, scalar("12345"))
+  expect_equal(response$data$fromADR, scalar(FALSE))
+  ## Sanity check that data has been returned
+  expect_true(nrow(response$data$data) >= 20000)
+  expect_type(response$data$data[, "estimate"], "double")
+})
+
+test_that("endpoint_validate_survey_programme works with survey data", {
+  test_redis_available()
+  queue <- test_queue(workers = 0)
+  api <- api_build(queue)
+  res <- api$request("POST", "/validate/survey-and-programme",
+                     body = readLines("payload/validate_survey_payload.json"))
+  expect_equal(res$status, 200)
+  body <- jsonlite::fromJSON(res$body)
+  expect_equal(body$status, "success")
+  expect_null(body$errors)
+  expect_equal(body$data$filename, "original.csv")
+  expect_equal(body$data$fromADR, FALSE)
+  expect_equal(body$data$hash, "12345")
+  ## Sanity check that data has been returned
+  expect_true(nrow(body$data$data) >= 20000)
+  expect_type(body$data$data[, "estimate"], "double")
+})
+
+test_that("anc data can be validated can be run with relaxed validation", {
+  test_redis_available()
+  ## Create some data which will fail when validation is strict but
+  ## not otherwise
+  anc <- read.csv("testdata/anc.csv")
+  anc[1, "anc_tested_pos"] <- anc[1, "anc_tested"] + 5
+  t <- tempfile(fileext = ".csv")
+  write.csv(anc, t, row.names = FALSE)
+
+  input <- validate_programme_survey_input(
+    t,
+    "anc",
+    file.path("testdata", "malawi.geojson"))
+  queue <- test_queue(workers = 0)
+  api <- api_build(queue)
+
+  ## In strict mode
+  res <- api$request("POST", "/validate/survey-and-programme",
+                     body = input)
+  expect_equal(res$status, 400)
+  body <- jsonlite::fromJSON(res$body, simplifyVector = FALSE)
+  expect_equal(body$status, "failure")
+  expect_length(body$errors, 1)
+  expect_equal(body$errors[[1]]$error, "INVALID_FILE")
+  expect_equal(body$errors[[1]]$detail,
+    paste0("The number of people who tested positive is greater than the ",
+           "number of people tested"))
+
+  ## With strict = FALSE
+  res <- api$request("POST", "/validate/survey-and-programme",
+                     query = list(strict = "false"),
+                     body = input)
+  expect_equal(res$status, 200)
+  body <- jsonlite::fromJSON(res$body)
+  expect_equal(body$status, "success")
+  expect_null(body$errors)
+  expect_equal(body$data$hash, "12345")
+  expect_equal(body$data$fromADR, FALSE)
+  ## Sanity check that data has been returned
+  expect_true(nrow(body$data$data) >= 200)
+  expect_type(body$data$data[, "anc_prevalence"], "double")
+  expect_type(body$data$data[, "anc_art_coverage"], "double")
+})

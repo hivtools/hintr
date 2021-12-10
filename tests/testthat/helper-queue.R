@@ -63,6 +63,18 @@ test_queue_result <- function(model = mock_model, calibrate = mock_calibrate,
     } else {
       model <- clone_model_output(model)
       calibrate <- clone_model_output(calibrate)
+      if (model$version == packageVersion("naomi")) {
+        calibrate$warnings <- list(
+          list(
+            text = "ART coverage greater than 100% for 10 age groups",
+            locations = "model_calibrate"
+          ),
+          list(
+            text = "Prevalence greater than 40%",
+            locations = c("model_calibrate", "review_output")
+          )
+        )
+      }
     }
   }
   model_run_id <- queue$submit(quote(identity(model)))

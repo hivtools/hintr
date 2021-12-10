@@ -61,5 +61,6 @@ migrate_task <- function(task_id, queue, dry_run = FALSE) {
 
 migrate <- function(res) {
   naomi:::build_hintr_output(res$output_path,
-                             res$calibration_path)
+                             res$calibration_path,
+                             warnings = NULL)
 }

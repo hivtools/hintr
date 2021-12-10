@@ -7,11 +7,15 @@ hintr_geojson_read <- function(shape, cache = NULL) {
   })
 }
 
-read_geojson_regions <- function(shape) {
+read_geojson_data <- function(shape) {
   json <- hintr_geojson_read(shape)
-  vcapply(json$features, function(x) {
-    x$properties$area_id
+  data <- lapply(json$features, function(x) {
+    list(
+      area_id = x$properties$area_id,
+      area_level = x$properties$area_level
+    )
   })
+  list_to_data_frame(unique(data))
 }
 
 read_csv_regions <- function(csv_file) {

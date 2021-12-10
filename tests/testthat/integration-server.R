@@ -306,7 +306,7 @@ test_that("real model can be run & calibrated by API", {
   response <- response_from_json(r)
   expect_equal(response$status, "success")
   expect_equal(response$errors, NULL)
-  expect_equal(names(response$data), c("data", "plottingMetadata"))
+  expect_equal(names(response$data), c("data", "plottingMetadata", "warnings"))
   expect_equal(names(response$data$data[[1]]),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
@@ -317,6 +317,29 @@ test_that("real model can be run & calibrated by API", {
 
 test_that("plotting metadata is exposed", {
   r <- server$request("GET", paste0("/meta/plotting/", "MWI"))
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+
+  expect_true(all(names(response$data) %in%
+                    c("survey", "anc", "output", "programme")))
+  expect_equal(names(response$data$survey), "choropleth")
+  expect_equal(names(response$data$anc), "choropleth")
+  expect_equal(names(response$data$output), c("barchart", "choropleth"))
+  expect_equal(names(response$data$programme), "choropleth")
+  expect_length(response$data$anc$choropleth$indicators, 2)
+  expect_equal(response$data$anc$choropleth$indicators[[1]]$indicator,
+               "anc_prevalence")
+  expect_equal(response$data$anc$choropleth$indicators[[2]]$indicator,
+               "anc_art_coverage")
+  expect_equal(response$data$anc$choropleth$indicators[[1]]$name,
+               "ANC HIV prevalence")
+  expect_equal(response$data$anc$choropleth$indicators[[2]]$name,
+               "ANC prior ART coverage")
+})
+
+test_that("default plotting metadata is exposed", {
+  r <- server$request("GET", "/meta/plotting")
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
   expect_equal(response$status, "success")
@@ -456,7 +479,7 @@ test_that("model options can be validated", {
   response <- response_from_json(r)
   expect_equal(response$status, "success")
   expect_equal(response$errors, NULL)
-  expect_equal(names(response$data), "valid")
+  expect_equal(names(response$data), c("valid", "warnings"))
   expect_equal(response$data$valid, TRUE)
 })
 
@@ -501,20 +524,48 @@ test_that("download streams bytes", {
   expect_equal(response$status, "success")
   expect_equal(response$errors, NULL)
   expect_equal(names(response$data), c("id"))
+  model_fit_id <- response$data$id
 
   ## Get the status
   testthat::try_again(5, {
     Sys.sleep(5)
-    r <- server$request("GET", paste0("/model/status/", response$data$id))
+    r <- server$request("GET", paste0("/model/status/", model_fit_id))
     expect_equal(httr::status_code(r), 200)
     response <- response_from_json(r)
     expect_equal(response$status, "success")
     expect_equal(response$data$status, "COMPLETE")
   })
 
+  ## Calibrate submit
+  payload <- setup_calibrate_payload()
+  r <- server$request(
+    "POST",  paste0("/calibrate/submit/", model_fit_id),
+    body = httr::upload_file(payload, type = "application/json"),
+    encode = "json")
+
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  calibrate_id <- response$data$id
+  expect_true(!is.null(response$data$id))
+
+  ## Calibrate status
+  testthat::try_again(10, {
+    Sys.sleep(5)
+    r <- server$request("GET", paste0("/calibrate/status/", calibrate_id))
+    expect_equal(httr::status_code(r), 200)
+    response <- response_from_json(r)
+    expect_equal(response$data$id, calibrate_id)
+    expect_true(response$data$done)
+    expect_equal(response$data$status, "COMPLETE")
+    expect_true(response$data$success)
+    expect_equal(response$data$queue, 0)
+    expect_match(response$data$progress[[1]],
+                 "Saving outputs - [\\d.m\\s]+s elapsed", perl = TRUE)
+  })
+
   ## Start the download
   r <- server$request("GET",
-                      paste0("/download/submit/spectrum/", response$data$id))
+                      paste0("/download/submit/spectrum/", calibrate_id))
   response <- response_from_json(r)
   expect_equal(httr::status_code(r), 200)
   expect_true(!is.null(response$data$id))

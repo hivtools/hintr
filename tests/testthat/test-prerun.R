@@ -91,8 +91,7 @@ test_that("run with prerun", {
     artattend = "false",
     rng_seed = 17,
     no_of_samples = 20,
-    max_iter = 250,
-    permissive = "false"
+    max_iter = 250
   )
 
   path_results <- tempfile()

@@ -3,7 +3,7 @@ context("run-model")
 test_that("model can be run & calibrated and filters extracted", {
   test_mock_model_available()
   res <- process_result(mock_calibrate)
-  expect_equal(names(res), c("data", "plottingMetadata"))
+  expect_equal(names(res), c("data", "plottingMetadata", "warnings"))
   expect_equal(names(res$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
@@ -72,7 +72,7 @@ test_that("model without national level results can be processed", {
   output_temp <- tempfile()
   saveRDS(output, output_temp)
   res <- process_result(list(plot_data_path = output_temp))
-  expect_equal(names(res), c("data", "plottingMetadata"))
+  expect_equal(names(res), c("data", "plottingMetadata", "warnings"))
   expect_equal(names(res$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
@@ -173,17 +173,17 @@ test_that("real model can be run", {
     output_aware_plhiv = "true",
     rng_seed = 17,
     no_of_samples = 20,
-    max_iter = 250,
-    permissive = "false"
+    max_iter = 250
   )
   withr::with_envvar(c("USE_MOCK_MODEL" = "false"), {
     model_run <- run_model(data, options, tempdir())
   })
   expect_equal(names(model_run), c("plot_data_path", "model_output_path",
-                                   "version"))
+                                   "version", "warnings"))
 
   output <- readRDS(model_run$model_output_path)
-  expect_setequal(names(output), c("output_package", "naomi_data", "info"))
+  expect_setequal(names(output),
+                  c("output_package", "naomi_data", "info", "warnings"))
 })
 
 test_that("real model can be run with csv2 data", {
@@ -231,15 +231,15 @@ test_that("real model can be run with csv2 data", {
     output_aware_plhiv = "true",
     rng_seed = 17,
     no_of_samples = 20,
-    max_iter = 250,
-    permissive = "false"
+    max_iter = 250
   )
   withr::with_envvar(c("USE_MOCK_MODEL" = "false"), {
     model_run <- run_model(data, options, tempdir())
   })
   expect_equal(names(model_run), c("plot_data_path", "model_output_path",
-                                   "version"))
+                                   "version", "warnings"))
 
   output <- readRDS(model_run$model_output_path)
-  expect_setequal(names(output), c("output_package", "naomi_data", "info"))
+  expect_setequal(names(output),
+                  c("output_package", "naomi_data", "info", "warnings"))
 })
