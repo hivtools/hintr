@@ -4,7 +4,7 @@
   "properties": {
     "data_type": {
       "type": "string",
-      "enum": [ "spectrum", "calibrated", "raw" ]
+      "enum": [ "spectrum", "calibrated", "raw", "calibration_ratio" ]
     },
     "spectrum_region_code": {
       "type": "string"

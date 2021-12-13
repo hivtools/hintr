@@ -224,8 +224,9 @@ calibrate_plot <- function(queue) {
     ## Strip tibble class to work with helper functions which rely on
     ## converting to vector when selecting 1 column
     data <- as.data.frame(data)
-    data <- data[
-      data$data_type %in% c("spectrum", "raw", "calibrated"), ]
+    data[is.nan(data$mean), "mean"] <- 0
+    is_ratio <- grepl("\\w+_ratio", data$data_type)
+    data$indicator[is_ratio] <- paste0(data$indicator[is_ratio], "_ratio")
     data$spectrum_region_code <- as.character(data$spectrum_region_code)
     filters <- get_calibrate_plot_output_filters(data)
     list(

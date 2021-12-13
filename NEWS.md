@@ -1,3 +1,7 @@
+# hintr 1.0.18
+
+* Return ratios as indicator types in calibrate plot
+
 # hintr 1.0.17
 
 * Add query param `strict` to endpoint `/validate/survey-and-programme` to allow running with relaxed validation, by default this will run in strict mode.
