@@ -220,22 +220,22 @@ test_that("do_endpoint_model_options without programme data", {
   expect_length(params$survey_recently_infected_options, 1)
 })
 
-test_that("do_endpoint_model_options default anc year2 to 2020 if in data", {
+test_that("do_endpoint_model_options default anc year2 to 2021 if in data", {
   shape <- file_object(file.path("testdata", "malawi.geojson"))
   survey <- file_object(file.path("testdata", "survey.csv"))
   art <- file_object(file.path("testdata", "programme.csv"))
   anc <- file_object(file.path("testdata", "anc.csv"))
 
   mock_build_json <- mockery::mock('"{"test"}')
-  mock_get_years <- mockery::mock(c(2020, 2019, 2018))
+  mock_get_years <- mockery::mock(c(2021, 2020, 2019))
   with_mock("hintr:::build_json" = mock_build_json,
             "hintr:::get_years" = mock_get_years, {
     json <- do_endpoint_model_options(shape, survey, art, anc)
     args <- mockery::mock_args(mock_build_json)
   })
   params <- args[[1]][[2]]
-  expect_equal(params$anc_prevalence_year2_default, scalar("2020"))
-  expect_equal(params$anc_art_coverage_year2_default, scalar("2020"))
+  expect_equal(params$anc_prevalence_year2_default, scalar("2021"))
+  expect_equal(params$anc_art_coverage_year2_default, scalar("2021"))
   ## Year 1 defaults are NULL as survey year not in ANC years
   expect_equal(params$anc_prevalence_year1_default, scalar(""))
   expect_equal(params$anc_art_coverage_year1_default, scalar(""))
