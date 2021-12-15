@@ -231,4 +231,6 @@ test_that("can get data for calibration plot", {
   expect_setequal(names(res$plottingMetadata$barchart$defaults),
                  c("indicator_id", "x_axis_id", "disaggregate_by_id",
                    "selected_filter_options"))
+
+  expect_false(any(is.na(res$data$mean)))
 })

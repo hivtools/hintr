@@ -62,8 +62,8 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
       list(id = scalar(as.character(year)),
            label = scalar(as.character(year)))
     })
-    if (2020 %in% anc_years) {
-      anc_year2_default <- scalar(as.character(2020))
+    if (2021 %in% anc_years) {
+      anc_year2_default <- scalar(as.character(2021))
     }
     survey_year <- naomi::calendar_quarter_to_year(most_recent_survey_quarter)
     if (survey_year %in% anc_years) {
