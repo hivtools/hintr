@@ -1,6 +1,8 @@
 steps:
   - label: ":whale: Build"
     command: docker/build
+    agents:
+      queue: hint-deploy
 
   - wait
 
