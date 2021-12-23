@@ -25,3 +25,19 @@ steps:
       - "unit-tests"
       - "integration-tests"
       - "connection-tests"
+
+  - wait
+
+  # This makes sure that deploys are triggered in the same order as the
+  # test builds, no matter which test builds finish first.
+  - label: "Concurrency gate"
+    command: "exit 0"
+    if: build.branch == 'master'
+    concurrency: 1
+    concurrency_group: "hint-deploy-concurrency-gate"
+
+  - wait
+
+  - label: ":rocket:"
+    trigger: "hint-deploy"
+    if: build.branch == 'master'
