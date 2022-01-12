@@ -39,5 +39,5 @@ steps:
   - wait
 
   - label: ":rocket:"
-    trigger: "naomi-staging deploy"
+    trigger: "naomi-staging-deploy"
     if: build.branch == 'master'
