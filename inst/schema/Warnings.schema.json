@@ -11,6 +11,8 @@
         "type": "array",
         "items": {
           "enum": [
+            "upload_inputs",
+            "review_inputs",
             "model_options",
             "model_fit",
             "model_calibrate",

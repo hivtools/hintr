@@ -12,10 +12,11 @@
           "enum": [ "pjnz" ]
         },
         "data": { "$ref": "PjnzResponseData.schema.json" },
-        "filters": { "type": "null" }
+        "filters": { "type": "null" },
+        "warnings": { "$ref": "Warnings.schema.json" }
       },
       "additionalProperties": false,
-      "required": ["filename", "hash", "type", "data"]
+      "required": ["filename", "hash", "type", "data", "warnings"]
     },
 
     "shape_response": {
@@ -38,10 +39,11 @@
             },
             "regions": { "$ref": "NestedFilterOption.schema.json" }
           }
-        }
+        },
+        "warnings": { "$ref": "Warnings.schema.json" }
       },
       "additionalProperties": false,
-      "required": ["filename", "hash", "type", "data", "filters"]
+      "required": ["filename", "hash", "type", "data", "filters", "warnings"]
     },
 
     "population_response": {
@@ -55,10 +57,11 @@
           "enum": [ "population" ]
         },
         "data": { "$ref": "PopulationResponseData.schema.json" },
-        "filters": { "type": "null" }
+        "filters": { "type": "null" },
+        "warnings": { "$ref": "Warnings.schema.json" }
       },
       "additionalProperties": false,
-      "required": ["filename", "hash", "type", "data"]
+      "required": ["filename", "hash", "type", "data", "warnings"]
     },
 
     "programme_response": {
@@ -72,10 +75,11 @@
           "enum": [ "programme" ]
         },
         "data": { "$ref": "ProgrammeResponseData.schema.json" },
-        "filters": { "$ref": "ProgrammeFilters.schema.json" }
+        "filters": { "$ref": "ProgrammeFilters.schema.json" },
+        "warnings": { "$ref": "Warnings.schema.json" }
       },
       "additionalProperties": false,
-      "required": ["filename", "hash", "type", "data", "filters"]
+      "required": ["filename", "hash", "type", "data", "filters", "warnings"]
     },
 
     "anc_response": {
@@ -89,10 +93,11 @@
           "enum": [ "anc" ]
         },
         "data": { "$ref": "AncResponseData.schema.json" },
-        "filters": { "$ref": "AncFilters.schema.json" }
+        "filters": { "$ref": "AncFilters.schema.json" },
+        "warnings": { "$ref": "Warnings.schema.json" }
       },
       "additionalProperties": false,
-      "required": ["filename", "hash", "type", "data", "filters"]
+      "required": ["filename", "hash", "type", "data", "filters", "warnings"]
     },
 
     "survey_response": {
@@ -106,10 +111,11 @@
           "enum": [ "survey" ]
         },
         "data": { "$ref": "SurveyResponseData.schema.json" },
-        "filters": { "$ref": "SurveyFilters.schema.json" }
+        "filters": { "$ref": "SurveyFilters.schema.json" },
+        "warnings": { "$ref": "Warnings.schema.json" }
       },
       "additionalProperties": false,
-      "required": ["filename", "hash", "type", "data", "filters"]
+      "required": ["filename", "hash", "type", "data", "filters", "warnings"]
     }
   },
 

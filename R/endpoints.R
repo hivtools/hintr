@@ -1,10 +1,16 @@
 input_response <- function(value, type, file) {
   ret <- list(hash = scalar(file$hash),
-                            type = scalar(type),
-                            data = value$data,
-                            filename = scalar(file$filename),
-                            fromADR = scalar(file$fromADR),
-                            filters = value$filters)
+              type = scalar(type),
+              data = value$data,
+              filename = scalar(file$filename),
+              fromADR = scalar(file$fromADR),
+              filters = value$filters,
+              warnings <- list(
+                list(
+                  text = scalar("Dummy warning"),
+                  location = "upload_inputs"
+                )
+              ))
   validate_json_schema(to_json(ret), get_input_response_schema(type), "data")
   ret
 }
