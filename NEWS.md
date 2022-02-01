@@ -1,3 +1,7 @@
+# hintr 1.0.22
+
+* Validate columns present before other validation checks
+
 # hintr 1.0.18
 
 * Return ratios as indicator types in calibrate plot

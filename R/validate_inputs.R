@@ -115,7 +115,6 @@ do_validate_population <- function(population) {
 do_validate_programme <- function(programme, shape, strict = TRUE) {
   assert_file_extension(programme, "csv")
   data <- read_csv(programme$path, header = TRUE)
-  data$art_current <- as.numeric(data$art_current)
   assert_single_country(data, "programme")
   assert_column_names(
     colnames(data),
