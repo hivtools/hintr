@@ -1,3 +1,7 @@
+# hintr 1.0.22
+
+* Return warnings from input time series aggregation
+
 # hintr 1.0.18
 
 * Return ratios as indicator types in calibrate plot
@@ -22,7 +26,6 @@
 # hintr 1.0.11
 
 * Return format and accuracy metadata for data_type columns in input time series to specify how data of that type should be shown in the front end.
->>>>>>> master
 
 # hintr 1.0.10
 

@@ -18,6 +18,12 @@ get_programme_time_series <- function(programme, shape) {
                                           key = "values")
         )
       )
+    ),
+    warnings = list(
+      list(
+        text = scalar("Dummy warning"),
+        locations = "review_inputs"
+      )
     )
   )
 }
@@ -42,6 +48,12 @@ get_anc_time_series <- function(anc, shape) {
           quarter = get_selected_mappings(columns, "quarter",
                                           key = "values")
         )
+      )
+    ),
+    warnings = list(
+      list(
+        text = scalar("Dummy warning"),
+        locations = "review_inputs"
       )
     )
   )
