@@ -12,7 +12,7 @@ NAME_NETWORK=hintr_network
 function cleanup {
     echo "Cleaning up"
     docker kill $NAME_REDIS > /dev/null || true
-    docker kill hintr_tests > /dev/null || true
+    docker kill $NAME_HINTR_TESTS > /dev/null || true
     docker network rm $NAME_NETWORK > /dev/null || true
 }
 
