@@ -1,3 +1,7 @@
+# hintr 1.0.23
+
+* Validate that spectrum file and geojson contains same spectrum region codes
+
 # hintr 1.0.22
 
 * Validate columns present before other validation checks

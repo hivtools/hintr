@@ -250,13 +250,11 @@ validate_pjnz_shape <- function(pjnz, shape) {
   shape_country <- read_iso3(shape, "shape")
   assert_consistent_country(pjnz_country, "pjnz", shape_country, "shape")
 
-  ## TODO: Enable this validation - Jeff has request we disable it for the
-  ## time being mrc-1156
-  ##pjnz_spectrum_region_codes <- lapply(pjnz_paths,
-  ##                                     specio::read_spectrum_region_code)
-  ##shape_spectrum_region_codes <- read_geojson_spectrum_region_codes(shape)
-  ##assert_consistent_region_codes(pjnz_spectrum_region_codes,
-  ##                               shape_spectrum_region_codes)
+  pjnz_spectrum_region_codes <- lapply(pjnz_paths,
+                                      specio::read_spectrum_region_code)
+  shape_spectrum_region_codes <- read_geojson_spectrum_region_codes(shape)
+  assert_consistent_region_codes(pjnz_spectrum_region_codes,
+                                shape_spectrum_region_codes)
   TRUE
 }
 
