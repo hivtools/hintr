@@ -1,3 +1,7 @@
+# hintr 1.0.23
+
+* Ignore non-pjnz files from uploaded zip file instead of erroring (so that mac users whose system creates __MACOSX file in zip files do not get errors)
+
 # hintr 1.0.22
 
 * Validate columns present before other validation checks
