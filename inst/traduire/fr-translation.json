@@ -20,7 +20,7 @@
     "FILTERS_CANT_GET_HINT_ID": "Échec de localisation de l'ID d'indication à partir de naomi_id {{id}}.",
     "INDICATORS_ROW_ERROR": "Lignes trouvées {{nrow}} dans les métadonnées pour le type de données {{type}} et l'indicateur {{indicator}}. Il devrait y en avoir exactement une.",
     "MODEL_OPTIONS_FAIL": "Échec de la construction des options de modèle à partir du modèle et des paramètres : {{message}}",
-    "PJNZ_INVALID_ZIP": "Le Zip contient des fichiers non PJNZ :\n{{not_pjnz}}",
+    "PJNZ_INVALID_ZIP": "Le zip ne contient aucun fichier PJNZ",
     "RUN_MODEL_MOCK_START": "Maquette commencée",
     "RUN_MODEL_MOCK_FINISH": "Maquette terminée",
     "INPUTS_PJNZ_ZIP_MIXED": "Le Zip contient des PJNZ pour différents pays, il s’agit de {{countries}}",
