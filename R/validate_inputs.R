@@ -244,14 +244,14 @@ do_validate_baseline <- function(pjnz, shape, population) {
 
 validate_pjnz_shape <- function(pjnz, shape) {
   pjnz_paths <- get_pjnz_paths(pjnz)
+  metadata <- lapply(pjnz_paths, specio::read_pjn_metadata)
   ## Already validated that each subnational PJNZ has the same country
   ## so we only need to check 1 path here.
-  pjnz_country <- read_pjnz_iso3_from_path(pjnz_paths[[1]])
+  pjnz_country <- iso_numeric_to_alpha_3(metadata[[1]]$iso3)
   shape_country <- read_iso3(shape, "shape")
   assert_consistent_country(pjnz_country, "pjnz", shape_country, "shape")
 
-  pjnz_spectrum_region_codes <- lapply(pjnz_paths,
-                                      specio::read_spectrum_region_code)
+  pjnz_spectrum_region_codes <- lapply(metadata, function(x) x$region_code)
   shape_spectrum_region_codes <- read_geojson_spectrum_region_codes(shape)
   assert_consistent_region_codes(pjnz_spectrum_region_codes,
                                 shape_spectrum_region_codes)
