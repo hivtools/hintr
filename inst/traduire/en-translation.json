@@ -20,7 +20,7 @@
     "FILTERS_CANT_GET_HINT_ID": "Failed to locate hint ID from naomi_id {{id}}.",
     "INDICATORS_ROW_ERROR": "Found {{nrow}} rows in metadata for data type {{type}} and indicator {{indicator}}. Should be exactly one.",
     "MODEL_OPTIONS_FAIL": "Failed to construct model options from template and params:\n{{message}}",
-    "PJNZ_INVALID_ZIP": "Zip contains non PJNZ files: \n{{not_pjnz}}",
+    "PJNZ_INVALID_ZIP": "Zip contains no PJNZ files",
     "RUN_MODEL_MOCK_START": "Started mock model",
     "RUN_MODEL_MOCK_FINISH": "Finished mock model",
     "INPUTS_PJNZ_ZIP_MIXED": "Zip contains PJNZs for mixed countries, got {{countries}}",
