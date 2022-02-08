@@ -1,3 +1,7 @@
+# hintr 1.0.24
+
+* Validate that spectrum file and geojson contains same spectrum region codes
+
 # hintr 1.0.23
 
 * Ignore non-pjnz files from uploaded zip file instead of erroring (so that mac users whose system creates __MACOSX file in zip files do not get errors)
@@ -30,7 +34,6 @@
 # hintr 1.0.11
 
 * Return format and accuracy metadata for data_type columns in input time series to specify how data of that type should be shown in the front end.
->>>>>>> master
 
 # hintr 1.0.10
 
