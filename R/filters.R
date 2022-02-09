@@ -184,7 +184,7 @@ get_barchart_defaults <- function(output, output_filters) {
 
 get_calibrate_barchart_defaults <- function(filters) {
   list(
-    indicator_id = scalar("population"),
+    indicator_id = scalar("prevalence"),
     x_axis_id = scalar("spectrum_region"),
     disaggregate_by_id = scalar("type"),
     selected_filter_options = list(
