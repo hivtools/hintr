@@ -95,7 +95,7 @@ test_that("can calibrate a model result", {
 
   ## Barchart indicators are in numeric id order
   expect_equal(barchart$indicators$indicator,
-               c("prevalence", "population", "plhiv", "art_coverage",
+               c("population", "prevalence", "plhiv", "art_coverage",
                  "art_current_residents", "art_current",
                  "untreated_plhiv_num", "aware_plhiv_prop",
                  "unaware_plhiv_num", "aware_plhiv_num", "incidence",
@@ -137,7 +137,7 @@ test_that("can calibrate a model result", {
 
   ## Choropleth indicators are in numeric id order
   expect_equal(choropleth$indicators$indicator,
-               c("prevalence", "population", "plhiv", "art_coverage",
+               c("population", "prevalence", "plhiv", "art_coverage",
                  "art_current_residents", "art_current",
                  "untreated_plhiv_num", "aware_plhiv_prop",
                  "unaware_plhiv_num", "aware_plhiv_num", "incidence",
