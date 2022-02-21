@@ -50,3 +50,22 @@ test_that("validation works with inconsistent data", {
   expect_equal(error$status_code, 400)
 })
 
+test_that("validation errors if spectrum region codes mismatch", {
+  skip_if_sensitive_data_missing()
+  input <- validate_baseline_all_input(
+    file.path("testdata", "sensitive", "ZMB", "data",
+              "zmb_all_pjnz_extract.zip"),
+    file.path("testdata", "malawi.geojson"),
+    NULL)
+  mock_read_iso3 <- mockery::mock("ZMB")
+  with_mock("hintr:::read_iso3" = mock_read_iso3, {
+    error <- expect_error(validate_baseline_combined(input))
+  })
+  expect_equal(error$data[[1]]$error, scalar("INVALID_BASELINE"))
+  expect_match(error$data[[1]]$detail, paste0(
+    "Different spectrum region codes in PJNZ and shape file.\n",
+    "10 codes in PJNZ missing from shape file: 10, 11, 12, 13, 14, 15, 16, 17,",
+    " 18, 19\n", "1 code in shape file missing from PJNZ: 0"))
+  expect_equal(error$status_code, 400)
+})
+

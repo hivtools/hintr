@@ -63,9 +63,7 @@ test_that("error thrown if zip contains non PJNZ files", {
                                    "pjnz")
   error <- expect_error(validate_baseline(input))
   expect_equal(error$data[[1]]$error, scalar("INVALID_FILE"))
-  expect_equal(error$data[[1]]$detail, scalar(paste0(
-    "Zip contains non PJNZ files: \ncat.mp4, invalid_file1.zip,",
-    " invalid_file2.zip")))
+  expect_equal(error$data[[1]]$detail, scalar("Zip contains no PJNZ files"))
   expect_equal(error$status_code, 400)
 })
 
