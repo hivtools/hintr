@@ -29,7 +29,7 @@ ENTRYPOINT [ "/bin/bash", "-l", "-c" ]
 EOF
 
 rm -rf naomi
-git clone --single-branch --branch ben-psnu-update https://github.com/mrc-ide/naomi
+git clone https://github.com/mrc-ide/naomi
 if [ -z $NAOMI_SHA ]; then
     git -C $PACKAGE_ROOT/naomi checkout $NAOMI_SHA
 fi
