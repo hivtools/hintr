@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "text": {
+      "type": "string"
+    },
+    "locations": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "review_inputs",
+          "model_options",
+          "model_fit",
+          "model_calibrate",
+          "review_output",
+          "download_results"
+        ]
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "text",
+    "locations"
+  ]
+}
