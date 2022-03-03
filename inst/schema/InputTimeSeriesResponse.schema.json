@@ -4,7 +4,10 @@
   "properties": {
     "data": { "$ref": "InputTimeSeriesData.schema.json" },
     "metadata": { "$ref": "InputTimeSeriesMetadata.schema.json" },
-    "warnings": { "$ref": "Warnings.schema.json" }
+    "warnings": {
+      "type": "array",
+      "items": { "$ref": "Warning.schema.json"  }
+    }
   },
   "additionalProperties": false,
   "required": [ "data", "metadata", "warnings" ]
