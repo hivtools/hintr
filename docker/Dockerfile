@@ -12,19 +12,26 @@ RUN install_packages --repo=https://mrc-ide.github.io/drat \
         geojsonio \
         glue \
         jsonlite \
+        jsonvalidate \
         lgr \
-        methods \
         plumber \
+        porcelain \
         ps \
         remotes \
-        rlang
+        rlang \
+        rrq
 
 COPY docker/bin /usr/local/bin/
 
-RUN install_remote \
-        mrc-ide/rrq \
-        reside-ic/traduire \
-        ropensci/jsonvalidate
+# If tracking development versions of packages, install via
+# github. However, limt this (and prefer updating the drat) as this
+# can hit rate limits as we cannot use a PAT when building the
+# container.
+#
+# RUN install_remote \
+#         mrc-ide/rrq \
+#         reside-ic/traduire \
+#         ropensci/jsonvalidate
 
 COPY . /src
 RUN R CMD INSTALL /src/naomi \
