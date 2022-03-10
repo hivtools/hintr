@@ -12,12 +12,15 @@ RUN install_packages --repo=https://mrc-ide.github.io/drat \
         geojsonio \
         glue \
         jsonlite \
+        jsonvalidate \
         lgr \
         methods \
         plumber \
+        porcelain \
         ps \
         remotes \
-        rlang
+        rlang \
+        rrq
 
 COPY docker/bin /usr/local/bin/
 
