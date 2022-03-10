@@ -14,7 +14,6 @@ RUN install_packages --repo=https://mrc-ide.github.io/drat \
         jsonlite \
         jsonvalidate \
         lgr \
-        methods \
         plumber \
         porcelain \
         ps \
