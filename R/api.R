@@ -59,7 +59,7 @@ api <- function(queue_id = NULL, workers = 2,
                 log_level = "info") {
   queue <- Queue$new(queue_id, workers, results_dir = results_dir,
                      prerun_dir = prerun_dir)
-  logger <- make_logger(log_level)
+  logger <- porcelain::porcelain_logger(log_level)
   api_build(queue, logger = logger)
 }
 
