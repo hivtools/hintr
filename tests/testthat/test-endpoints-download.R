@@ -33,8 +33,16 @@ test_that("spectrum download returns bytes", {
                'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
   size <- length(response$data)
   expect_equal(response$headers$`Content-Length`, size)
-  expect_equal(size, file.size(
-    system_file("output", "malawi_spectrum_download.zip")))
+
+  ## Get HEAD
+  head <- endpoint_download_result_head(q$queue)
+  head_response <- head$run(status_response$data$id)
+  expect_equal(head_response$status_code, 200)
+  expect_equal(head_response$content_type, "application/octet-stream")
+  expect_match(head_response$headers$`Content-Disposition`,
+               'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
+  expect_equal(head_response$headers$`Content-Length`, size)
+  expect_null(head_response$body, NULL)
 })
 
 test_that("api can call spectrum download", {
@@ -74,8 +82,18 @@ test_that("api can call spectrum download", {
   ## Size of bytes is close to expected
   size <- length(res$body)
   expect_equal(res$headers$`Content-Length`, size)
-  expect_equal(size, file.size(
-    system_file("output", "malawi_spectrum_download.zip")))
+
+  ## Get HEAD
+  head_res <- api$request("HEAD",
+                          paste0("/download/result/", submit_body$data$id))
+
+  expect_equal(head_res$status, 200)
+  expect_equal(head_res$headers$`Content-Type`, "application/octet-stream")
+  expect_match(head_res$headers$`Content-Disposition`,
+               'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
+  expect_equal(head_res$headers$`Content-Length`, size)
+  ## Plumber uses an empty string to represent an empty body
+  expect_equal(res$body, "")
 })
 
 test_that("coarse output download returns bytes", {
@@ -111,8 +129,6 @@ test_that("coarse output download returns bytes", {
     'attachment; filename="MWI_coarse-output_\\d+-\\d+.zip"')
   size <- length(response$data)
   expect_equal(response$headers$`Content-Length`, size)
-  expect_equal(size, file.size(
-    system_file("output", "malawi_coarse_output_download.zip")))
 })
 
 test_that("api can call coarse_output download", {
@@ -297,82 +313,6 @@ test_that("download fails with old model run result", {
     res$value$errors[[1]]$detail,
     scalar("Model output out of date please re-run model and try again"))
   expect_equal(res$status_code, 500)
-})
-
-test_that("download HEAD returns headers only", {
-  test_mock_model_available()
-  q <- test_queue_result()
-
-  ## Submit download request
-  submit <- endpoint_download_submit(q$queue)
-  submit_response <- submit$run(q$calibrate_id, "spectrum")
-
-  expect_equal(submit_response$status_code, 200)
-  expect_true(!is.null(submit_response$data$id))
-
-  ## Status
-  out <- q$queue$queue$task_wait(submit_response$data$id)
-  status <- endpoint_download_status(q$queue)
-  status_response <- status$run(submit_response$data$id)
-
-  expect_equal(status_response$status_code, 200)
-  expect_equal(status_response$data$id, submit_response$data$id)
-  expect_true(status_response$data$done)
-  expect_equal(status_response$data$status, scalar("COMPLETE"))
-  expect_true(status_response$data$success)
-  expect_equal(status_response$data$queue, scalar(0))
-  expect_length(status_response$data$progress, 1)
-
-  ## Get HEAD
-  result <- endpoint_download_result_head(q$queue)
-  response <- result$run(status_response$data$id)
-  expect_equal(response$status_code, 200)
-  expect_equal(response$content_type, "application/octet-stream")
-  expect_match(response$headers$`Content-Disposition`,
-               'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
-  expect_equal(response$headers$`Content-Length`, file.size(
-    system_file("output", "malawi_spectrum_download.zip")))
-  expect_null(response$body, NULL)
-})
-
-test_that("api can call spectrum download", {
-  test_redis_available()
-  test_mock_model_available()
-  q <- test_queue_result()
-  api <- api_build(q$queue)
-
-  ## Submit download request
-  submit <- api$request("GET",
-                        paste0("/download/submit/spectrum/", q$calibrate_id))
-  submit_body <- jsonlite::fromJSON(submit$body)
-  expect_equal(submit$status, 200)
-  expect_true(!is.null(submit_body$data$id))
-
-  ## Status
-  out <- q$queue$queue$task_wait(submit_body$data$id)
-  status <- api$request("GET",
-                        paste0("/download/status/", submit_body$data$id))
-
-  expect_equal(status$status, 200)
-  status_body <- jsonlite::fromJSON(status$body)
-  expect_equal(status_body$data$id, submit_body$data$id)
-  expect_true(status_body$data$done)
-  expect_equal(status_body$data$status, "COMPLETE")
-  expect_true(status_body$data$success)
-  expect_equal(status_body$data$queue, 0)
-  expect_length(status_body$data$progress, 1)
-
-  ## Get result
-  res <- api$request("HEAD", paste0("/download/result/", submit_body$data$id))
-
-  expect_equal(res$status, 200)
-  expect_equal(res$headers$`Content-Type`, "application/octet-stream")
-  expect_match(res$headers$`Content-Disposition`,
-               'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
-  expect_equal(res$headers$`Content-Length`, file.size(
-    system_file("output", "malawi_spectrum_download.zip")))
-  ## Plumber uses an empty string to represent an empty body
-  expect_equal(res$body, "")
 })
 
 test_that("trying to download result for errored model run returns error", {
