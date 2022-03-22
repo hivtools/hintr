@@ -22,7 +22,7 @@ Imports:
     ids,
     jsonlite (>= 1.2.2),
     lgr,
-    naomi (>= 2.6.18),
+    naomi (>= 2.6.20),
     porcelain (>= 0.1.8),
     R6,
     redux,
