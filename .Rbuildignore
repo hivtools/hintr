@@ -2,6 +2,7 @@
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^\.travis\.yml$
+^\.hadolint\.yml$
 ^codecov\.yml$
 ^example$
 ^docker$
