@@ -316,7 +316,6 @@ download_result <- function(queue) {
                          coarse_output = ".zip",
                          summary = ".html")
       bytes <- readBin(res$path, "raw", n = file.size(res$path))
-      saveRDS(length(bytes), "from_code.rds")
       bytes <- porcelain::porcelain_add_headers(bytes, list(
         "Content-Disposition" = build_content_disp_header(res$metadata$areas,
                                                           filename, ext),
