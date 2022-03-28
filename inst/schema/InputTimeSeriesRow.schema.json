@@ -25,9 +25,12 @@
     },
     "quarter": {
       "type": "string"
+    },
+    "area_hierarchy": {
+      "type": [ "string", "null" ]
     }
   },
   "additionalProperties": false,
   "required": [ "area_id", "area_name", "time_period", "plot", "value",
-                "quarter" ]
+                "quarter", "area_hierarchy" ]
 }
