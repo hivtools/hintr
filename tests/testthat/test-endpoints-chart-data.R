@@ -163,9 +163,7 @@ test_that("input time series returns warnings programme data", {
   out <- input_time_series("programme", input)
 
   expect_equal(names(out), c("data", "metadata", "warnings"))
-  expect_length(out$warnings, 1)
-  expect_equal(out$warnings[[1]]$text, scalar("Dummy warning"))
-  expect_equal(out$warnings[[1]]$locations, "review_inputs")
+  expect_length(out$warnings, 0)
 })
 
 test_that("input time series returns warnings anc data", {
@@ -176,7 +174,5 @@ test_that("input time series returns warnings anc data", {
   out <- input_time_series("anc", input)
 
   expect_equal(names(out), c("data", "metadata", "warnings"))
-  expect_length(out$warnings, 1)
-  expect_equal(out$warnings[[1]]$text, scalar("Dummy warning"))
-  expect_equal(out$warnings[[1]]$locations, "review_inputs")
+  expect_length(out$warnings, 0)
 })

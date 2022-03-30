@@ -19,12 +19,8 @@ get_programme_time_series <- function(programme, shape) {
         )
       )
     ),
-    warnings = list(
-      list(
-        text = scalar("Dummy warning"),
-        locations = "review_inputs"
-      )
-    )
+    ## TODO: Return warnings from naomi
+    warnings = list()
   )
 }
 
@@ -50,11 +46,7 @@ get_anc_time_series <- function(anc, shape) {
         )
       )
     ),
-    warnings = list(
-      list(
-        text = scalar("Dummy warning"),
-        locations = "review_inputs"
-      )
-    )
+    ## TODO: Return warnings from naomi
+    warnings = list()
   )
 }
