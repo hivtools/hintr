@@ -1,4 +1,4 @@
-# hintr 1.0.26
+# hintr 1.0.29
 
 * Return warnings from input time series aggregation
 

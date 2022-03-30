@@ -3,7 +3,7 @@ context("logging")
 test_that("Can log verbosely", {
   tmp <- tempfile()
   on.exit(unlink(tmp))
-  logger <- make_logger("trace", tmp)
+  logger <- porcelain::porcelain_logger("trace", path = tmp)
   queue <- test_queue(workers = 0)
   api <- api_build(queue, logger = logger)
   res <- api$request("GET", "/")
@@ -15,7 +15,7 @@ test_that("Can log verbosely", {
 })
 
 test_that("Can log to console", {
-  logger <- make_logger("trace")
+  logger <- porcelain::porcelain_logger("trace")
   queue <- test_queue(workers = 0)
   api <- api_build(queue, logger = logger)
   output <- capture_output_lines(res <- api$request("GET", "/"))
