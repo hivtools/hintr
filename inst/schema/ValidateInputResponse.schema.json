@@ -72,10 +72,11 @@
           "enum": [ "programme" ]
         },
         "data": { "$ref": "ProgrammeResponseData.schema.json" },
-        "filters": { "$ref": "ProgrammeFilters.schema.json" }
+        "filters": { "$ref": "ProgrammeFilters.schema.json" },
+        "warnings": { "$ref": "Warnings.schema.json" }
       },
       "additionalProperties": false,
-      "required": ["filename", "hash", "type", "data", "filters"]
+      "required": ["filename", "hash", "type", "data", "filters", "warnings"]
     },
 
     "anc_response": {
@@ -89,10 +90,11 @@
           "enum": [ "anc" ]
         },
         "data": { "$ref": "AncResponseData.schema.json" },
-        "filters": { "$ref": "AncFilters.schema.json" }
+        "filters": { "$ref": "AncFilters.schema.json" },
+        "warnings": { "$ref": "Warnings.schema.json" }
       },
       "additionalProperties": false,
-      "required": ["filename", "hash", "type", "data", "filters"]
+      "required": ["filename", "hash", "type", "data", "filters", "warnings"]
     },
 
     "survey_response": {

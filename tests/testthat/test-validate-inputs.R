@@ -89,7 +89,8 @@ test_that("empty rows are ignored in validation", {
 test_that("do_validate_programme validates programme file", {
   programme <- file_object(file.path("testdata", "programme.csv"))
   shape <- file_object(file.path("testdata", "malawi.geojson"))
-  data <- do_validate_programme(programme, shape)
+  pjnz <- file_object(file.path("testdata", "Malawi2019.PJNZ"))
+  data <- do_validate_programme(programme, shape, pjnz)
   ## Some arbitrary test that the data has actually been returned
   expect_true(nrow(data$data) > 200)
   expect_type(data$data$art_current, "double")
@@ -117,12 +118,16 @@ test_that("do_validate_programme validates programme file", {
   expect_equal(data$filters$indicators[[4]]$id, scalar("vl_suppressed_12mos"))
   expect_equal(data$filters$indicators[[4]]$label,
                scalar("VL tests suppressed"))
+
+  expect_length(data$warnings, 1)
+  expect_equal(data$warnings[[1]]$locations, "review_inputs")
 })
 
 test_that("do_validate_anc validates ANC file and gets data for plotting", {
   anc <- file_object(file.path("testdata", "anc.csv"))
   shape <- file_object(file.path("testdata", "malawi.geojson"))
-  data <- do_validate_anc(anc, shape)
+  pjnz <- file_object(file.path("testdata", "Malawi2019.PJNZ"))
+  data <- do_validate_anc(anc, shape, pjnz)
 
   expect_true(nrow(data$data) > 200)
   expect_type(data$data$area_id, "character")
@@ -138,6 +143,9 @@ test_that("do_validate_anc validates ANC file and gets data for plotting", {
   expect_equal(data$filters$indicators[[1]]$label, scalar("ANC HIV prevalence"))
   expect_equal(data$filters$indicators[[2]]$id, scalar("anc_art_coverage"))
   expect_equal(data$filters$indicators[[2]]$label, scalar("ANC prior ART coverage"))
+
+  expect_length(data$warnings, 1)
+  expect_equal(data$warnings[[1]]$locations, "review_inputs")
 })
 
 test_that("do_validate_anc can include anc_hiv_status column", {
