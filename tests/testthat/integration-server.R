@@ -802,7 +802,7 @@ test_that("input time series can return plot data for programme", {
   response <- response_from_json(r)
   expect_equal(response$status, "success")
   expect_equal(response$errors, NULL)
-  expect_equal(names(response$data), c("data", "metadata"))
+  expect_equal(names(response$data), c("data", "metadata", "warnings"))
   expect_true(length(response$data$data) > 100)
   expect_equal(names(response$data$metadata$defaults$selected_filter_options),
                c("plot_type", "area_level", "quarter"))
@@ -823,7 +823,7 @@ test_that("input time series can return plot data for anc", {
   response <- response_from_json(r)
   expect_equal(response$status, "success")
   expect_equal(response$errors, NULL)
-  expect_equal(names(response$data), c("data", "metadata"))
+  expect_equal(names(response$data), c("data", "metadata", "warnings"))
   expect_true(length(response$data$data) > 100)
   expect_equal(names(response$data$metadata$defaults$selected_filter_options),
                c("plot_type", "area_level", "age", "quarter"))
