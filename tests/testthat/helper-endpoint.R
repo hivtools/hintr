@@ -56,8 +56,9 @@ validate_baseline_all_input <- function(pjnz, shape, population) {
   )
 }
 
-validate_programme_survey_input <- function(file_path, type, shape) {
-  sprintf(
+validate_programme_survey_input <- function(file_path, type, shape,
+                                            pjnz = NULL) {
+  body <-
     '{"type": "%s",
       "file": {
         "path": "%s",
@@ -65,8 +66,13 @@ validate_programme_survey_input <- function(file_path, type, shape) {
         "filename": "original",
         "fromADR": false
       },
-      "shape": "%s"
-    }', type, file_path, shape)
+      "shape": "%s"'
+  if (is.null(pjnz)) {
+    body <- sprintf(paste0(body, "}"), type, file_path, shape)
+  } else {
+    body <- sprintf(paste0(body, ',
+      "pjnz": "%s"}'), type, file_path, shape, pjnz)
+  }
 }
 
 input_time_series_request <- function(file_path, type, shape_path) {

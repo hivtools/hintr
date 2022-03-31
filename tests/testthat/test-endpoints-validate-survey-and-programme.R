@@ -4,7 +4,8 @@ test_that("endpoint_validate_survey_programme supports programme file", {
   input <- validate_programme_survey_input(
     file.path("testdata", "programme.csv"),
     "programme",
-    file.path("testdata", "malawi.geojson"))
+    file.path("testdata", "malawi.geojson"),
+    file.path("testdata", "Malawi2019.PJNZ"))
   response <- validate_survey_programme(input)
 
   expect_equal(response$filename, scalar("original"))
@@ -13,13 +14,15 @@ test_that("endpoint_validate_survey_programme supports programme file", {
   ## Sanity check that data has been returned
   expect_true(nrow(response$data) >= 200)
   expect_type(response$data[, "art_current"], "double")
+  expect_length(response$warnings, 1)
 })
 
 test_that("endpoint_validate_survey_programme returns error on invalid programme data", {
   input <- validate_programme_survey_input(
     file.path("testdata", "malformed_programme.csv"),
     "programme",
-    file.path("testdata", "malawi.geojson"))
+    file.path("testdata", "malawi.geojson"),
+    file.path("testdata", "Malawi2019.PJNZ"))
   error <- expect_error(validate_survey_programme(input))
 
   expect_equal(error$data[[1]]$error, scalar("INVALID_FILE"))
@@ -33,7 +36,8 @@ test_that("endpoint_validate_survey_programme supports ANC file", {
   input <- validate_programme_survey_input(
     file.path("testdata", "anc.csv"),
     "anc",
-    file.path("testdata", "malawi.geojson"))
+    file.path("testdata", "malawi.geojson"),
+    file.path("testdata", "Malawi2019.PJNZ"))
   response <- validate_survey_programme(input)
 
   expect_equal(response$filename, scalar("original"))
@@ -43,13 +47,15 @@ test_that("endpoint_validate_survey_programme supports ANC file", {
   expect_true(nrow(response$data) >= 200)
   expect_type(response$data[, "anc_prevalence"], "double")
   expect_type(response$data[, "anc_art_coverage"], "double")
+  expect_length(response$warnings, 2)
 })
 
 test_that("endpoint_validate_survey_programme returns error on invalid ANC data", {
   input <- validate_programme_survey_input(
     file.path("testdata", "malformed_anc.csv"),
     "anc",
-    file.path("testdata", "malawi.geojson"))
+    file.path("testdata", "malawi.geojson"),
+    file.path("testdata", "Malawi2019.PJNZ"))
   error <- expect_error(validate_survey_programme(input))
 
   expect_equal(error$data[[1]]$error, scalar("INVALID_FILE"))
@@ -94,7 +100,8 @@ test_that("possible filters are returned for data", {
   input <- validate_programme_survey_input(
     file.path("testdata", "programme.csv"),
     "programme",
-    file.path("testdata", "malawi.geojson"))
+    file.path("testdata", "malawi.geojson"),
+    file.path("testdata", "Malawi2019.PJNZ"))
   response <- validate_survey_programme(input)
 
   expect_equal(names(response$filters), c("age", "calendar_quarter", "indicators"))
@@ -131,7 +138,8 @@ test_that("possible filters are returned for data", {
   input <- validate_programme_survey_input(
     file.path("testdata", "anc.csv"),
     "anc",
-    file.path("testdata", "malawi.geojson"))
+    file.path("testdata", "malawi.geojson"),
+    file.path("testdata", "Malawi2019.PJNZ"))
   response <- validate_survey_programme(input)
 
   expect_equal(names(response$filters), c("year", "indicators"))
@@ -190,7 +198,8 @@ test_that("filters not returned if indicator missing from input data", {
   input <- validate_programme_survey_input(
     file.path("testdata", "programme_no_vls.csv"),
     "programme",
-    file.path("testdata", "malawi.geojson"))
+    file.path("testdata", "malawi.geojson"),
+    file.path("testdata", "Malawi2019.PJNZ"))
   response <- validate_survey_programme(input)
 
   expect_equal(names(response$filters),
@@ -217,6 +226,7 @@ test_that("endpoint_validate_survey_programme programme", {
   ## Sanity check that data has been returned
   expect_true(nrow(response$data$data) >= 200)
   expect_type(response$data$data[, "art_current"], "double")
+  expect_length(response$data$warnings, 1)
 })
 
 test_that("endpoint_validate_survey_programme works with programme data", {
@@ -236,6 +246,7 @@ test_that("endpoint_validate_survey_programme works with programme data", {
   ## Sanity check that data has been returned
   expect_true(nrow(body$data$data) >= 200)
   expect_type(body$data$data[, "art_current"], "integer")
+  expect_equal(nrow(body$data$warnings), 1)
 })
 
 test_that("endpoint_validate_survey_programme anc", {
@@ -251,6 +262,7 @@ test_that("endpoint_validate_survey_programme anc", {
   expect_true(nrow(response$data$data) >= 200)
   expect_type(response$data$data[, "anc_prevalence"], "double")
   expect_type(response$data$data[, "anc_art_coverage"], "double")
+  expect_length(response$data$warnings, 2)
 })
 
 test_that("endpoint_validate_survey_programme works with anc data", {
@@ -270,6 +282,7 @@ test_that("endpoint_validate_survey_programme works with anc data", {
   expect_true(nrow(body$data$data) >= 200)
   expect_type(body$data$data[, "anc_prevalence"], "double")
   expect_type(body$data$data[, "anc_art_coverage"], "double")
+  expect_equal(nrow(body$data$warnings), 2)
 })
 
 test_that("endpoint_validate_survey_programme survey", {
@@ -316,7 +329,8 @@ test_that("anc data can be validated can be run with relaxed validation", {
   input <- validate_programme_survey_input(
     t,
     "anc",
-    file.path("testdata", "malawi.geojson"))
+    file.path("testdata", "malawi.geojson"),
+    file.path("testdata", "Malawi2019.PJNZ"))
   queue <- test_queue(workers = 0)
   api <- api_build(queue)
 
@@ -346,4 +360,5 @@ test_that("anc data can be validated can be run with relaxed validation", {
   expect_true(nrow(body$data$data) >= 200)
   expect_type(body$data$data[, "anc_prevalence"], "double")
   expect_type(body$data$data[, "anc_art_coverage"], "double")
+  expect_equal(nrow(body$data$warnings), 2)
 })
