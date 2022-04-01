@@ -73,7 +73,10 @@
         },
         "data": { "$ref": "ProgrammeResponseData.schema.json" },
         "filters": { "$ref": "ProgrammeFilters.schema.json" },
-        "warnings": { "$ref": "Warnings.schema.json" }
+        "warnings": {
+          "type": "array",
+          "items": { "$ref": "Warning.schema.json"  }
+        }
       },
       "additionalProperties": false,
       "required": ["filename", "hash", "type", "data", "filters", "warnings"]
@@ -91,7 +94,10 @@
         },
         "data": { "$ref": "AncResponseData.schema.json" },
         "filters": { "$ref": "AncFilters.schema.json" },
-        "warnings": { "$ref": "Warnings.schema.json" }
+        "warnings": {
+          "type": "array",
+          "items": { "$ref": "Warning.schema.json"  }
+        }
       },
       "additionalProperties": false,
       "required": ["filename", "hash", "type", "data", "filters", "warnings"]
