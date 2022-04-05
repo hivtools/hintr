@@ -6,5 +6,6 @@
     "hash": "12345",
     "fromADR": false
   },
-  "shape": "testdata/malawi.geojson"
+  "shape": "testdata/malawi.geojson",
+  "pjnz": "testdata/Malawi2019.PJNZ"
 }

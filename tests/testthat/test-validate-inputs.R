@@ -178,7 +178,8 @@ test_that("do_validate_anc can include anc_hiv_status column", {
 test_that("do_validate_survey validates survey file", {
   survey <- file_object(file.path("testdata", "survey.csv"))
   shape <- file_object(file.path("testdata", "malawi.geojson"))
-  data <- do_validate_survey(survey, shape)
+  pjnz <- file_object(file.path("testdata", "Malawi2019.PJNZ"))
+  data <- do_validate_survey(survey, shape, pjnz)
   ## Some arbitrary test that the data has actually been returned
   expect_true(nrow(data$data) > 20000)
   expect_type(data$data$estimate, "double")
@@ -210,6 +211,8 @@ test_that("do_validate_survey validates survey file", {
   expect_equal(data$filters$indicators[[4]]$id, scalar("viral_suppression_plhiv"))
   expect_equal(data$filters$indicators[[4]]$label,
                scalar("Viral load suppression"))
+
+  expect_length(data$warnings, 0)
 })
 
 test_that("do_validate_programme returns useful error from shapefile comparison", {
@@ -231,7 +234,8 @@ test_that("do_validate_anc returns useful error from shapefile comparison", {
 test_that("do_validate_survey returns useful error from shapefile comparison", {
   survey <- file_object(file.path("testdata", "survey.csv"))
   shape <- file_object(file.path("testdata", "malawi_missing_regions.geojson"))
-  expect_error(do_validate_survey(survey, shape),
+  pjnz <- file_object(file.path("testdata", "Malawi2019.PJNZ"))
+  expect_error(do_validate_survey(survey, shape, pjnz),
     "Regions aren't consistent survey file contains 68 regions missing from shape file including:\n\\w+")
 })
 

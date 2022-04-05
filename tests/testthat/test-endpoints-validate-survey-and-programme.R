@@ -71,7 +71,8 @@ test_that("endpoint_validate_survey_programme supports survey file", {
   input <- validate_programme_survey_input(
     file.path("testdata", "survey.csv"),
     "survey",
-    file.path("testdata", "malawi.geojson"))
+    file.path("testdata", "malawi.geojson"),
+    file.path("testdata", "Malawi2019.PJNZ"))
   response <- validate_survey_programme(input)
 
   expect_equal(response$filename, scalar("original"))
@@ -80,13 +81,15 @@ test_that("endpoint_validate_survey_programme supports survey file", {
   ## Sanity check that data has been returned
   expect_true(nrow(response$data) >= 20000)
   expect_type(response$data[, "estimate"], "double")
+  expect_length(response$warnings, 0)
 })
 
 test_that("endpoint_validate_survey_programme returns error on invalid survey data", {
   input <- validate_programme_survey_input(
     file.path("testdata", "malformed_survey.csv"),
     "survey",
-    file.path("testdata", "malawi.geojson"))
+    file.path("testdata", "malawi.geojson"),
+    file.path("testdata", "Malawi2019.PJNZ"))
   error <- expect_error(validate_survey_programme(input))
 
   expect_equal(error$data[[1]]$error, scalar("INVALID_FILE"))
@@ -156,7 +159,8 @@ test_that("possible filters are returned for data", {
   input <- validate_programme_survey_input(
     file.path("testdata", "survey.csv"),
     "survey",
-    file.path("testdata", "malawi.geojson"))
+    file.path("testdata", "malawi.geojson"),
+    file.path("testdata", "Malawi2019.PJNZ"))
   response <- validate_survey_programme(input)
 
   expect_equal(names(response$filters), c("age", "surveys", "indicators"))

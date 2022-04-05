@@ -4,10 +4,8 @@ input_response <- function(value, type, file) {
               data = value$data,
               filename = scalar(file$filename),
               fromADR = scalar(file$fromADR),
-              filters = value$filters)
-  if (!is.null(value$warnings)) {
-    ret$warnings <- warnings_scalar(value$warnings)
-  }
+              filters = value$filters,
+              warnings = warnings_scalar(value$warnings))
   validate_json_schema(to_json(ret), get_input_response_schema(type), "data")
   ret
 }
@@ -77,24 +75,18 @@ validate_baseline_combined <- function(input) {
 
 validate_survey_programme <- function(input, strict = TRUE) {
   input <- jsonlite::fromJSON(input)
+  validate_func <- switch(input$type,
+                          programme = do_validate_programme,
+                          anc = do_validate_anc,
+                          survey = do_validate_survey)
   tryCatch({
     shape <- file_object(input$shape)
     assert_file_exists(input$file$path)
+    pjnz <- file_object(input$pjnz)
+    assert_file_exists(pjnz$path)
     assert_file_exists(shape$path)
-    if (input$type == "survey") {
-      input_response(do_validate_survey(input$file, shape, strict),
-                     input$type, input$file)
-    } else {
-      pjnz <- file_object(input$pjnz)
-      assert_file_exists(pjnz$path)
-      if (input$type == "programme") {
-        validate_func <- do_validate_programme
-      } else {
-        validate_func <- do_validate_anc
-      }
-      input_response(validate_func(input$file, shape, pjnz, strict),
-                     input$type, input$file)
-    }
+    input_response(
+      validate_func(input$file, shape, pjnz, strict), input$type, input$file)
   },
   error = function(e) {
     hintr_error(e$message, "INVALID_FILE")

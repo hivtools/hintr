@@ -134,6 +134,7 @@ test_that("validate survey", {
   expect_length(response$data$filters$age, 23)
   expect_length(response$data$filters$surveys, 4)
   expect_length(response$data$filters$indicators, 4)
+  expect_length(response$data$warnings, 0)
 })
 
 test_that("validate baseline", {

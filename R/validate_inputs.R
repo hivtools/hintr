@@ -201,9 +201,12 @@ do_validate_anc <- function(anc, shape, pjnz, strict = TRUE) {
 #' @param strict If FALSE then run less stringent validation rules, used
 #'   for data exploration mode.
 #'
+#' @param pjnz A file object (path, hash, filename) corresponding to
+#'   the input PJNZ file.
+#'
 #' @return An error if invalid.
 #' @keywords internal
-do_validate_survey <- function(survey, shape, strict = TRUE) {
+do_validate_survey <- function(survey, shape, pjnz, strict = TRUE) {
   assert_file_extension(survey, "csv")
   data <- read_csv(survey$path, header = TRUE)
   assert_single_country(data, "survey")
@@ -227,7 +230,8 @@ do_validate_survey <- function(survey, shape, strict = TRUE) {
   list(data = data,
        filters = list("age" = get_age_filters(data),
                       "surveys" = get_survey_filters(data),
-                      "indicators" = get_indicator_filters(data, "survey")))
+                      "indicators" = get_indicator_filters(data, "survey")),
+       warnings = list())
 }
 
 #' Validate collection of baseline data for consistency.
