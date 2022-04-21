@@ -12,7 +12,10 @@
       "additionalProperties": false,
       "required": [ "barchart", "choropleth" ]
     },
-    "warnings": { "$ref": "Warnings.schema.json" }
+    "warnings": {
+      "type": "array",
+      "items": { "$ref": "Warning.schema.json"  }
+    }
   },
   "required": [ "data", "plottingMetadata", "warnings" ]
 }

@@ -1,3 +1,7 @@
+# hintr 1.0.29
+
+* Return warnings from input time series aggregation
+
 # hintr 1.0.24
 
 * Validate that spectrum file and geojson contains same spectrum region codes

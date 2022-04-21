@@ -3,7 +3,7 @@ test_that("get_programme_time_series returns data and columns", {
   shape <- file_object(file.path("testdata", "malawi.geojson"))
   out <- get_programme_time_series(programme, shape)
 
-  expect_equal(names(out), c("data", "metadata"))
+  expect_equal(names(out), c("data", "metadata", "warnings"))
   expect_true(nrow(out$data) > 100) ## Check that we have read out some data
   expect_setequal(colnames(out$data),
                   c("area_id", "area_name", "area_level", "area_hierarchy",
@@ -62,7 +62,7 @@ test_that("get_anc_time_series returns data and columns", {
   anc <- file_object(file.path("testdata", "anc.csv"))
   shape <- file_object(file.path("testdata", "malawi.geojson"))
   out <- get_anc_time_series(anc, shape)
-  expect_equal(names(out), c("data", "metadata"))
+  expect_equal(names(out), c("data", "metadata", "warnings"))
   expect_true(nrow(out$data) > 100) ## Check that we have read out some data
   expect_setequal(colnames(out$data),
                   c("area_id", "area_name", "area_level", "area_hierarchy",

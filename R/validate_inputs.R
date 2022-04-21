@@ -107,12 +107,15 @@ do_validate_population <- function(population) {
 #' @param shape A file object (path, hash, filename) corresponding to
 #'   the input shape file.
 #'
+#' @param pjnz A file object (path, hash, filename) corresponding to
+#'   the input PJNZ file.
+#'
 #' @param strict If FALSE then run less stringent validation rules, used
 #'   for data exploration mode.
 #'
 #' @return An error if invalid.
 #' @keywords internal
-do_validate_programme <- function(programme, shape, strict = TRUE) {
+do_validate_programme <- function(programme, shape, pjnz, strict = TRUE) {
   assert_file_extension(programme, "csv")
   data <- read_csv(programme$path, header = TRUE)
   assert_single_country(data, "programme")
@@ -132,10 +135,13 @@ do_validate_programme <- function(programme, shape, strict = TRUE) {
   data$art_current <- as.numeric(data$art_current)
   assert_column_positive_numeric(data, "art_current")
   assert_calendar_quarter_column(data)
+  naomi_valid <- naomi::hintr_validate_art(programme$path, shape$path,
+                                           pjnz$path)
   list(data = data,
        filters = list("age" = get_age_filters(data),
                       "calendar_quarter" = get_quarter_filters(data),
-                      "indicators" = get_indicator_filters(data, "programme")))
+                      "indicators" = get_indicator_filters(data, "programme")),
+       warnings = naomi_valid$warnings)
 }
 
 #' Validate ANC data file.
@@ -147,12 +153,15 @@ do_validate_programme <- function(programme, shape, strict = TRUE) {
 #' @param shape A file object (path, hash, filename) corresponding to
 #'   the input shape file.
 #'
+#' @param pjnz A file object (path, hash, filename) corresponding to
+#'   the input PJNZ file.
+#'
 #' @param strict If FALSE then run less stringent validation rules, used
 #'   for data exploration mode.
 #'
 #' @return An error if invalid.
 #' @keywords internal
-do_validate_anc <- function(anc, shape, strict = TRUE) {
+do_validate_anc <- function(anc, shape, pjnz, strict = TRUE) {
   assert_file_extension(anc, "csv")
   data <- read_csv(anc$path, header = TRUE)
   assert_single_country(data, "anc")
@@ -171,26 +180,33 @@ do_validate_anc <- function(anc, shape, strict = TRUE) {
   if (strict) {
     assert_anc_client_numbers(data)
   }
+  naomi_valid <- naomi::hintr_validate_anc(anc$path, shape$path, pjnz$path)
   data <- naomi::calculate_prevalence_art_coverage(data)
   list(data = data,
        filters = list("year" = get_year_filters(data),
-                      "indicators" = get_indicator_filters(data, "anc")))
+                      "indicators" = get_indicator_filters(data, "anc")),
+       warnings = naomi_valid$warnings)
 }
 
 #' Validate survey data file.
 #'
 #' Check that survey data file can be read and return serialised data.
 #'
-#' @param survey Path to input survey file.
+#' @param survey A file object (path, hash, filename) corresponding to
+#'   the input survey file.
 #'
-#' @param shape Path to input shape file.
+#' @param shape A file object (path, hash, filename) corresponding to
+#'   the input shape file.
 #'
 #' @param strict If FALSE then run less stringent validation rules, used
 #'   for data exploration mode.
 #'
+#' @param pjnz A file object (path, hash, filename) corresponding to
+#'   the input PJNZ file.
+#'
 #' @return An error if invalid.
 #' @keywords internal
-do_validate_survey <- function(survey, shape, strict = TRUE) {
+do_validate_survey <- function(survey, shape, pjnz, strict = TRUE) {
   assert_file_extension(survey, "csv")
   data <- read_csv(survey$path, header = TRUE)
   assert_single_country(data, "survey")
@@ -214,7 +230,8 @@ do_validate_survey <- function(survey, shape, strict = TRUE) {
   list(data = data,
        filters = list("age" = get_age_filters(data),
                       "surveys" = get_survey_filters(data),
-                      "indicators" = get_indicator_filters(data, "survey")))
+                      "indicators" = get_indicator_filters(data, "survey")),
+       warnings = list())
 }
 
 #' Validate collection of baseline data for consistency.

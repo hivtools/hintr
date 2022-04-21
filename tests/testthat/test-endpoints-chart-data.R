@@ -5,7 +5,7 @@ test_that("input time series works with programme/art data", {
     file.path("testdata", "malawi.geojson"))
   out <- input_time_series("programme", input)
 
-  expect_equal(names(out), c("data", "metadata"))
+  expect_equal(names(out), c("data", "metadata", "warnings"))
   expect_true(nrow(out$data) > 100)
   expect_equal(names(out$metadata$defaults$selected_filter_options),
                c("plot_type", "area_level", "quarter"))
@@ -18,7 +18,7 @@ test_that("input time series works with anc data", {
     file.path("testdata", "malawi.geojson"))
   out <- input_time_series("anc", input)
 
-  expect_equal(names(out), c("data", "metadata"))
+  expect_equal(names(out), c("data", "metadata", "warnings"))
   expect_true(nrow(out$data) > 100)
   expect_equal(names(out$metadata$defaults$selected_filter_options),
                c("plot_type", "area_level", "age", "quarter"))
@@ -39,7 +39,7 @@ test_that("input time series works if both anc and programme are provided", {
   input_json <- jsonlite::toJSON(input, auto_unbox = TRUE)
   out <- input_time_series("anc", input_json)
 
-  expect_equal(names(out), c("data", "metadata"))
+  expect_equal(names(out), c("data", "metadata", "warnings"))
   expect_true(nrow(out$data) > 100)
   expect_equal(names(out$metadata$defaults$selected_filter_options),
                c("plot_type", "area_level", "age", "quarter"))
@@ -75,7 +75,7 @@ test_that("endpoint_input_time_series_plot works with programme data", {
   body <- jsonlite::fromJSON(res$body)
   expect_equal(body$status, "success")
   expect_null(body$errors)
-  expect_equal(names(body$data), c("data", "metadata"))
+  expect_equal(names(body$data), c("data", "metadata", "warnings"))
   expect_true(nrow(body$data$data) > 100)
   expect_equal(names(body$data$metadata$defaults$selected_filter_options),
                c("plot_type", "area_level", "quarter"))
@@ -92,7 +92,7 @@ test_that("endpoint_input_time_series_plot works without vls indicators", {
   body <- jsonlite::fromJSON(res$body)
   expect_equal(body$status, "success")
   expect_null(body$errors)
-  expect_equal(names(body$data), c("data", "metadata"))
+  expect_equal(names(body$data), c("data", "metadata", "warnings"))
   expect_true(nrow(body$data$data) > 100)
   expect_equal(names(body$data$metadata$defaults$selected_filter_options),
                c("plot_type", "area_level", "quarter"))
@@ -109,7 +109,7 @@ test_that("endpoint_input_time_series_plot works with anc data", {
   body <- jsonlite::fromJSON(res$body)
   expect_equal(body$status, "success")
   expect_null(body$errors)
-  expect_equal(names(body$data), c("data", "metadata"))
+  expect_equal(names(body$data), c("data", "metadata", "warnings"))
   expect_true(nrow(body$data$data) > 100)
   expect_equal(names(body$data$metadata$defaults$selected_filter_options),
                c("plot_type", "area_level", "age", "quarter"))
@@ -129,7 +129,7 @@ test_that("api can return input time series data for programme/art", {
   body <- jsonlite::fromJSON(res$body)
   expect_equal(body$status, "success")
   expect_null(body$errors)
-  expect_equal(names(body$data), c("data", "metadata"))
+  expect_equal(names(body$data), c("data", "metadata", "warnings"))
   expect_true(nrow(body$data$data) > 100)
   expect_equal(names(body$data$metadata$defaults$selected_filter_options),
                c("plot_type", "area_level", "quarter"))
@@ -149,8 +149,30 @@ test_that("api can return input time series data for anc", {
   body <- jsonlite::fromJSON(res$body)
   expect_equal(body$status, "success")
   expect_null(body$errors)
-  expect_equal(names(body$data), c("data", "metadata"))
+  expect_equal(names(body$data), c("data", "metadata", "warnings"))
   expect_true(nrow(body$data$data) > 100)
   expect_equal(names(body$data$metadata$defaults$selected_filter_options),
                c("plot_type", "area_level", "age", "quarter"))
+})
+
+test_that("input time series returns warnings programme data", {
+  input <- input_time_series_request(
+    file.path("testdata", "programme.csv"),
+    "programme",
+    file.path("testdata", "malawi.geojson"))
+  out <- input_time_series("programme", input)
+
+  expect_equal(names(out), c("data", "metadata", "warnings"))
+  expect_length(out$warnings, 0)
+})
+
+test_that("input time series returns warnings anc data", {
+  input <- input_time_series_request(
+    file.path("testdata", "anc.csv"),
+    "anc",
+    file.path("testdata", "malawi.geojson"))
+  out <- input_time_series("anc", input)
+
+  expect_equal(names(out), c("data", "metadata", "warnings"))
+  expect_length(out$warnings, 0)
 })

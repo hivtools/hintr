@@ -18,7 +18,9 @@ get_programme_time_series <- function(programme, shape) {
                                           key = "values")
         )
       )
-    )
+    ),
+    ## TODO: Return warnings from naomi
+    warnings = list()
   )
 }
 
@@ -43,6 +45,8 @@ get_anc_time_series <- function(anc, shape) {
                                           key = "values")
         )
       )
-    )
+    ),
+    ## TODO: Return warnings from naomi
+    warnings = list()
   )
 }

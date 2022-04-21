@@ -72,10 +72,14 @@
           "enum": [ "programme" ]
         },
         "data": { "$ref": "ProgrammeResponseData.schema.json" },
-        "filters": { "$ref": "ProgrammeFilters.schema.json" }
+        "filters": { "$ref": "ProgrammeFilters.schema.json" },
+        "warnings": {
+          "type": "array",
+          "items": { "$ref": "Warning.schema.json"  }
+        }
       },
       "additionalProperties": false,
-      "required": ["filename", "hash", "type", "data", "filters"]
+      "required": ["filename", "hash", "type", "data", "filters", "warnings"]
     },
 
     "anc_response": {
@@ -89,10 +93,14 @@
           "enum": [ "anc" ]
         },
         "data": { "$ref": "AncResponseData.schema.json" },
-        "filters": { "$ref": "AncFilters.schema.json" }
+        "filters": { "$ref": "AncFilters.schema.json" },
+        "warnings": {
+          "type": "array",
+          "items": { "$ref": "Warning.schema.json"  }
+        }
       },
       "additionalProperties": false,
-      "required": ["filename", "hash", "type", "data", "filters"]
+      "required": ["filename", "hash", "type", "data", "filters", "warnings"]
     },
 
     "survey_response": {
@@ -106,10 +114,14 @@
           "enum": [ "survey" ]
         },
         "data": { "$ref": "SurveyResponseData.schema.json" },
-        "filters": { "$ref": "SurveyFilters.schema.json" }
+        "filters": { "$ref": "SurveyFilters.schema.json" },
+        "warnings": {
+          "type": "array",
+          "items": { "$ref": "Warning.schema.json"  }
+        }
       },
       "additionalProperties": false,
-      "required": ["filename", "hash", "type", "data", "filters"]
+      "required": ["filename", "hash", "type", "data", "filters", "warnings"]
     }
   },
 
