@@ -27,7 +27,7 @@
       "type": "string"
     },
     "area_hierarchy": {
-      "type": [ "string", "null" ]
+      "type": [ "string" ]
     }
   },
   "additionalProperties": false,
