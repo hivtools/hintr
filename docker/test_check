@@ -23,7 +23,7 @@ docker network create $NAME_NETWORK
 docker run --rm -d --network=$NAME_NETWORK --network-alias=redis \
        --name $NAME_REDIS redis
 
-docker run --rm --network=$NAME_NETWORK \
+docker run --rm -it --network=$NAME_NETWORK \
        -e REDIS_URL=redis://redis:6379 \
        -e VALIDATE_JSON_SCHEMAS=true \
        -e PORCELAIN_VALIDATE=true \

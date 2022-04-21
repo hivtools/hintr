@@ -89,6 +89,7 @@ test_that("validate programme", {
   expect_length(response$data$filters$age, 2)
   expect_length(response$data$filters$calendar_quarter, 8)
   expect_length(response$data$filters$indicators, 4)
+  expect_length(response$data$warnings, 1)
 })
 
 test_that("validate ANC", {
@@ -110,6 +111,7 @@ test_that("validate ANC", {
   expect_equal(names(response$data$filters), c("year", "indicators"))
   expect_length(response$data$filters$year, 8)
   expect_length(response$data$filters$indicators, 2)
+  expect_length(response$data$warnings, 2)
 })
 
 test_that("validate survey", {
@@ -132,6 +134,7 @@ test_that("validate survey", {
   expect_length(response$data$filters$age, 23)
   expect_length(response$data$filters$surveys, 4)
   expect_length(response$data$filters$indicators, 4)
+  expect_length(response$data$warnings, 0)
 })
 
 test_that("validate baseline", {

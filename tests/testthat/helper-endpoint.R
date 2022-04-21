@@ -56,7 +56,8 @@ validate_baseline_all_input <- function(pjnz, shape, population) {
   )
 }
 
-validate_programme_survey_input <- function(file_path, type, shape) {
+validate_programme_survey_input <- function(file_path, type, shape,
+                                            pjnz) {
   sprintf(
     '{"type": "%s",
       "file": {
@@ -65,8 +66,9 @@ validate_programme_survey_input <- function(file_path, type, shape) {
         "filename": "original",
         "fromADR": false
       },
-      "shape": "%s"
-    }', type, file_path, shape)
+      "shape": "%s",
+      "pjnz": "%s"
+    }', type, file_path, shape, pjnz)
 }
 
 input_time_series_request <- function(file_path, type, shape_path) {
