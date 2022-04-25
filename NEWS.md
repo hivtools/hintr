@@ -1,3 +1,7 @@
+# hintr 1.0.31
+
+* Include input files when download_debug called with id from a calibrate run or output generation
+
 # hintr 1.0.29
 
 * Return warnings from input time series aggregation
