@@ -347,7 +347,6 @@ download_model_debug <- function(queue) {
   function(id) {
     tryCatch({
       data <- queue$queue$task_data(id)
-      browser()
       func <- as.list(data$expr)[[1]]
       if (func == "hintr:::run_model") {
         files <- unique(unlist(lapply(data$objects$data, function(x) {
