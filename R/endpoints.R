@@ -315,11 +315,13 @@ download_result <- function(queue) {
       filename <- switch(res$metadata$type,
                          spectrum = "naomi-output",
                          coarse_output = "coarse-output",
-                         summary = "summary-report")
+                         summary = "summary-report",
+                         comparison = "comparison-report")
       ext <- switch(res$metadata$type,
-                         spectrum = ".zip",
-                         coarse_output = ".zip",
-                         summary = ".html")
+                    spectrum = ".zip",
+                    coarse_output = ".zip",
+                    summary = ".html",
+                    comparison = ".html")
       bytes <- readBin(res$path, "raw", n = file.size(res$path))
       bytes <- porcelain::porcelain_add_headers(bytes, list(
         "Content-Disposition" = build_content_disp_header(res$metadata$areas,

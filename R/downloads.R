@@ -13,7 +13,7 @@ download <- function(model_output, type, path_results, language = NULL) {
                  spectrum = naomi::hintr_prepare_spectrum_download,
                  coarse_output = naomi::hintr_prepare_coarse_age_group_download,
                  summary = naomi::hintr_prepare_summary_report_download,
-                 comparison = naomi::hintr_prepare_summary_report_download,
+                 comparison = naomi::hintr_prepare_comparison_report_download,
                  hintr_error(t_("INVALID_DOWNLOAD_TYPE", list(type = type)),
                              "INVALID_DOWNLOAD_TYPE"))
   file_ext <- switch(type,

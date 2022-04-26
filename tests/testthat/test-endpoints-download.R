@@ -380,14 +380,13 @@ test_that("trying to get download with invalid result returns error", {
   expect_equal(out$status_code, 400)
 })
 
-
-test_that("summary report download returns bytes", {
+test_that("comparison report download returns bytes", {
   test_mock_model_available()
   q <- test_queue_result()
 
   ## Submit download request
   submit <- endpoint_download_submit(q$queue)
-  submit_response <- submit$run(q$calibrate_id, "summary")
+  submit_response <- submit$run(q$calibrate_id, "comparison")
 
   expect_equal(submit_response$status_code, 200)
   expect_true(!is.null(submit_response$data$id))
@@ -411,21 +410,21 @@ test_that("summary report download returns bytes", {
   expect_equal(response$status_code, 200)
   expect_match(
     response$headers$`Content-Disposition`,
-    'attachment; filename="MWI_summary-report_\\d+-\\d+.html"')
+    'attachment; filename="MWI_comparison-report_\\d+-\\d+.html"')
   size <- length(response$data)
   ## There is some data in the report
   expect_true(size > 10000)
   expect_equal(response$headers$`Content-Length`, size)
 })
 
-test_that("api can call summary report download", {
+test_that("api can call comparison report download", {
   test_redis_available()
   test_mock_model_available()
   q <- test_queue_result()
   api <- api_build(q$queue)
 
   ## Submit download request
-  submit <- api$request("GET", paste0("/download/submit/summary/",
+  submit <- api$request("GET", paste0("/download/submit/comparison/",
                                       q$calibrate_id))
   submit_body <- jsonlite::fromJSON(submit$body)
   expect_equal(submit$status, 200)
@@ -452,7 +451,7 @@ test_that("api can call summary report download", {
   expect_equal(res$headers$`Content-Type`, "application/octet-stream")
   expect_match(
     res$headers$`Content-Disposition`,
-    'attachment; filename="MWI_summary-report_\\d+-\\d+.html"')
+    'attachment; filename="MWI_comparison-report_\\d+-\\d+.html"')
   ## Size of bytes is close to expected
   size <- length(res$body)
   ## There is some data in the report
