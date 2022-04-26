@@ -6,8 +6,8 @@ test_that("get_programme_time_series returns data and columns", {
   expect_equal(names(out), c("data", "metadata", "warnings"))
   expect_true(nrow(out$data) > 100) ## Check that we have read out some data
   expect_setequal(colnames(out$data),
-                  c("area_id", "area_name", "area_level", "time_period",
-                    "quarter", "plot", "value"))
+                  c("area_id", "area_name", "area_level", "area_hierarchy",
+                    "time_period", "quarter", "plot", "value"))
 
   columns <- out$metadata$columns
   expect_length(columns, 6)
@@ -65,8 +65,8 @@ test_that("get_anc_time_series returns data and columns", {
   expect_equal(names(out), c("data", "metadata", "warnings"))
   expect_true(nrow(out$data) > 100) ## Check that we have read out some data
   expect_setequal(colnames(out$data),
-                  c("area_id", "area_name", "area_level", "age_group",
-                    "time_period", "quarter", "plot", "value"))
+                  c("area_id", "area_name", "area_level", "area_hierarchy",
+                    "age_group", "time_period", "quarter", "plot", "value"))
 
   columns <- out$metadata$columns
   expect_length(columns, 7)
