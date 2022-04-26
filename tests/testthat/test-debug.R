@@ -115,7 +115,7 @@ test_that("Debug endpoint returns debug information for download", {
   expect_is(info$sessionInfo, "sessionInfo")
   files <- c(info$objects$model_output$model_output_path,
              info$objects$model_output$plot_data_path)
-  expect_equal(files, dir(file.path(dest, id, "files")))
+  expect_setequal(files, dir(file.path(dest, id, "files")))
 })
 
 test_that("Debug endpoint errors on nonexistant id", {
