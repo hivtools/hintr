@@ -1,6 +1,10 @@
-# hintr 1.0.31
+# hintr 1.0.32
 
 * Include input files when download_debug called with id from a calibrate run or output generation
+
+# hintr 1.0.31
+
+* Add new download type "comparison" to return input to output comparison report
 
 # hintr 1.0.29
 
