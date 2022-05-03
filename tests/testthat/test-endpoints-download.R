@@ -379,3 +379,82 @@ test_that("trying to get download with invalid result returns error", {
                scalar("Failed to generate metadata, output format is invalid"))
   expect_equal(out$status_code, 400)
 })
+
+test_that("comparison report download returns bytes", {
+  test_mock_model_available()
+  q <- test_queue_result()
+
+  ## Submit download request
+  submit <- endpoint_download_submit(q$queue)
+  submit_response <- submit$run(q$calibrate_id, "comparison")
+
+  expect_equal(submit_response$status_code, 200)
+  expect_true(!is.null(submit_response$data$id))
+
+  ## Status
+  out <- q$queue$queue$task_wait(submit_response$data$id)
+  status <- endpoint_download_status(q$queue)
+  status_response <- status$run(submit_response$data$id)
+
+  expect_equal(status_response$status_code, 200)
+  expect_equal(status_response$data$id, submit_response$data$id)
+  expect_true(status_response$data$done)
+  expect_equal(status_response$data$status, scalar("COMPLETE"))
+  expect_true(status_response$data$success)
+  expect_equal(status_response$data$queue, scalar(0))
+  expect_length(status_response$data$progress, 1)
+
+  ## Get result
+  result <- endpoint_download_result(q$queue)
+  response <- result$run(status_response$data$id)
+  expect_equal(response$status_code, 200)
+  expect_match(
+    response$headers$`Content-Disposition`,
+    'attachment; filename="MWI_comparison-report_\\d+-\\d+.html"')
+  size <- length(response$data)
+  ## There is some data in the report
+  expect_true(size > 10000)
+  expect_equal(response$headers$`Content-Length`, size)
+})
+
+test_that("api can call comparison report download", {
+  test_redis_available()
+  test_mock_model_available()
+  q <- test_queue_result()
+  api <- api_build(q$queue)
+
+  ## Submit download request
+  submit <- api$request("GET", paste0("/download/submit/comparison/",
+                                      q$calibrate_id))
+  submit_body <- jsonlite::fromJSON(submit$body)
+  expect_equal(submit$status, 200)
+  expect_true(!is.null(submit_body$data$id))
+
+  ## Status
+  out <- q$queue$queue$task_wait(submit_body$data$id)
+  status <- api$request("GET",
+                        paste0("/download/status/", submit_body$data$id))
+
+  expect_equal(status$status, 200)
+  status_body <- jsonlite::fromJSON(status$body)
+  expect_equal(status_body$data$id, submit_body$data$id)
+  expect_true(status_body$data$done)
+  expect_equal(status_body$data$status, "COMPLETE")
+  expect_true(status_body$data$success)
+  expect_equal(status_body$data$queue, 0)
+  expect_length(status_body$data$progress, 1)
+
+  ## Get result
+  res <- api$request("GET", paste0("/download/result/", submit_body$data$id))
+
+  expect_equal(res$status, 200)
+  expect_equal(res$headers$`Content-Type`, "application/octet-stream")
+  expect_match(
+    res$headers$`Content-Disposition`,
+    'attachment; filename="MWI_comparison-report_\\d+-\\d+.html"')
+  ## Size of bytes is close to expected
+  size <- length(res$body)
+  ## There is some data in the report
+  expect_true(size > 10000)
+  expect_equal(res$headers$`Content-Length`, size)
+})

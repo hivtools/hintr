@@ -1,3 +1,7 @@
+# hintr 1.0.31
+
+* Add new download type "comparison" to return input to output comparison report
+
 # hintr 1.0.29
 
 * Return warnings from input time series aggregation
