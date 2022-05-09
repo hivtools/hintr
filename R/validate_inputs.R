@@ -139,7 +139,7 @@ do_validate_programme <- function(programme, shape, pjnz, strict = TRUE) {
        filters = list("age" = get_age_filters(data),
                       "calendar_quarter" = get_quarter_filters(data),
                       "indicators" = get_indicator_filters(data, "programme")),
-       warnings = naomi_valid$warnings)
+       warnings = list())
 }
 
 #' Validate ANC data file.
@@ -182,7 +182,7 @@ do_validate_anc <- function(anc, shape, pjnz, strict = TRUE) {
   list(data = data,
        filters = list("year" = get_year_filters(data),
                       "indicators" = get_indicator_filters(data, "anc")),
-       warnings = naomi_valid$warnings)
+       warnings = list())
 }
 
 #' Validate survey data file.
