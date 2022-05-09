@@ -250,7 +250,7 @@ test_that("endpoint_validate_survey_programme works with programme data", {
   ## Sanity check that data has been returned
   expect_true(nrow(body$data$data) >= 200)
   expect_type(body$data$data[, "art_current"], "integer")
-  expect_equal(nrow(body$data$warnings), 0)
+  expect_length(body$data$warnings, 0)
 })
 
 test_that("endpoint_validate_survey_programme anc", {
@@ -286,7 +286,7 @@ test_that("endpoint_validate_survey_programme works with anc data", {
   expect_true(nrow(body$data$data) >= 200)
   expect_type(body$data$data[, "anc_prevalence"], "double")
   expect_type(body$data$data[, "anc_art_coverage"], "double")
-  expect_equal(nrow(body$data$warnings), 0)
+  expect_length(body$data$warnings, 0)
 })
 
 test_that("endpoint_validate_survey_programme survey", {
@@ -364,5 +364,5 @@ test_that("anc data can be validated can be run with relaxed validation", {
   expect_true(nrow(body$data$data) >= 200)
   expect_type(body$data$data[, "anc_prevalence"], "double")
   expect_type(body$data$data[, "anc_art_coverage"], "double")
-  expect_equal(nrow(body$data$warnings), 0)
+  expect_length(body$data$warnings, 0)
 })
