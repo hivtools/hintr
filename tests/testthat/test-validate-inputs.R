@@ -119,8 +119,7 @@ test_that("do_validate_programme validates programme file", {
   expect_equal(data$filters$indicators[[4]]$label,
                scalar("VL tests suppressed"))
 
-  expect_length(data$warnings, 1)
-  expect_equal(data$warnings[[1]]$locations, "review_inputs")
+  expect_length(data$warnings, 0)
 })
 
 test_that("do_validate_anc validates ANC file and gets data for plotting", {
@@ -144,9 +143,7 @@ test_that("do_validate_anc validates ANC file and gets data for plotting", {
   expect_equal(data$filters$indicators[[2]]$id, scalar("anc_art_coverage"))
   expect_equal(data$filters$indicators[[2]]$label, scalar("ANC prior ART coverage"))
 
-  expect_length(data$warnings, 2)
-  expect_equal(data$warnings[[1]]$locations, "review_inputs")
-  expect_equal(data$warnings[[2]]$locations, "review_inputs")
+  expect_length(data$warnings, 0)
 })
 
 test_that("do_validate_anc can include anc_hiv_status column", {
