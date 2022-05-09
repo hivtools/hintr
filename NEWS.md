@@ -1,3 +1,7 @@
+# hintr 1.0.32
+
+* Temporarily stop warning generation from ANC & ART uploads as it is taking a long time (> 18s for Nigeria) which is causing time out issues in hint.
+
 # hintr 1.0.31
 
 * Add new download type "comparison" to return input to output comparison report
