@@ -347,7 +347,7 @@ test_that("download submit returns error if queueing fails", {
   test_redis_available()
   ## Create mocks
   queue <- test_queue(workers = 0)
-  mock_submit_download <- function(res, type) { stop("Failed to queue") }
+  mock_submit_download <- function(res, type, notes) { stop("Failed to queue") }
 
   ## Call the endpoint
   download <- download_submit(queue)
@@ -457,4 +457,92 @@ test_that("api can call comparison report download", {
   ## There is some data in the report
   expect_true(size > 10000)
   expect_equal(res$headers$`Content-Length`, size)
+})
+
+test_that("spectrum download can include notes", {
+  test_mock_model_available()
+  q <- test_queue_result()
+
+  ## Submit download request
+  submit <- endpoint_download_submit(q$queue)
+  path <- setup_download_request_payload()
+  submit_response <- submit$run(q$calibrate_id, "spectrum", readLines(path))
+
+  expect_equal(submit_response$status_code, 200)
+  expect_true(!is.null(submit_response$data$id))
+
+  ## Status
+  out <- q$queue$queue$task_wait(submit_response$data$id)
+  status <- endpoint_download_status(q$queue)
+  status_response <- status$run(submit_response$data$id)
+
+  expect_equal(status_response$status_code, 200)
+  expect_equal(status_response$data$id, submit_response$data$id)
+  expect_true(status_response$data$done)
+  expect_equal(status_response$data$status, scalar("COMPLETE"))
+  expect_true(status_response$data$success)
+  expect_equal(status_response$data$queue, scalar(0))
+  expect_length(status_response$data$progress, 1)
+
+  ## Get result
+  result <- endpoint_download_result(q$queue)
+  response <- result$run(status_response$data$id)
+  expect_equal(response$status_code, 200)
+  expect_match(response$headers$`Content-Disposition`,
+               'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
+
+  tmp <- tempfile()
+  dest <- tempfile()
+  writeBin(as.vector(response$data), tmp)
+  zip::unzip(tmp, exdir = dest)
+  expect_true("notes.txt" %in% list.files(dest))
+  notes <- readLines(file.path(dest, "notes.txt"))
+  expect_equal(notes, c(
+    "Project notes:",
+    "",
+    "My project 123",
+    "May 17th 2022 12:34",
+    "These are my project notes",
+    "",
+    "Version notes:",
+    "",
+    "Version 2",
+    "May 17th 2022 12:34",
+    "Notes specific to this version",
+    "",
+    "Version 1",
+    "May 12th 2022 09:57",
+    "Notes from the first version",
+    ""))
+})
+
+test_that("sending notes to non-spectrum download doesn't fail", {
+  test_mock_model_available()
+  q <- test_queue_result()
+
+  ## Submit download request
+  submit <- endpoint_download_submit(q$queue)
+  path <- setup_download_request_payload()
+  submit_response <- submit$run(q$calibrate_id, "summary", readLines(path))
+
+  expect_equal(submit_response$status_code, 200)
+  expect_true(!is.null(submit_response$data$id))
+
+  ## Status
+  out <- q$queue$queue$task_wait(submit_response$data$id)
+  status <- endpoint_download_status(q$queue)
+  status_response <- status$run(submit_response$data$id)
+
+  expect_equal(status_response$status_code, 200)
+  expect_equal(status_response$data$id, submit_response$data$id)
+  expect_true(status_response$data$done)
+  expect_equal(status_response$data$status, scalar("COMPLETE"))
+  expect_true(status_response$data$success)
+  expect_equal(status_response$data$queue, scalar(0))
+  expect_length(status_response$data$progress, 1)
+
+  ## Get result
+  result <- endpoint_download_result(q$queue)
+  response <- result$run(status_response$data$id)
+  expect_equal(response$status_code, 200)
 })

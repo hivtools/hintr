@@ -1,0 +1,21 @@
+{
+  "notes": {
+    "project_notes": {
+      "name": "My project 123",
+      "updated": "May 17th 2022 12:34",
+      "note": "These are my project notes"
+    },
+    "version_notes": [
+      {
+        "name": "Version 2",
+        "updated": "May 17th 2022 12:34",
+        "note": "Notes specific to this version"
+      },
+      {
+        "name": "Version 1",
+        "updated": "May 12th 2022 09:57",
+        "note": "Notes from the first version"
+      }
+    ]
+  }
+}
