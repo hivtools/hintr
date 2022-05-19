@@ -5,7 +5,10 @@
       "type": "object",
       "properties": {
         "name": { "type": "string" },
-        "updated": { "type": "string" },
+        "updated": {
+          "type": "string",
+          "pattern": "[0-9]{1,2}/[0-9]{1,2}/[0-9]{1,4} [0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2}"
+        },
         "note": { "type": "string" }
       },
       "additionalProperties": false,
