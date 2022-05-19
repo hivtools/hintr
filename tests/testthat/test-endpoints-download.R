@@ -465,7 +465,7 @@ test_that("spectrum download can include notes", {
 
   ## Submit download request
   submit <- endpoint_download_submit(q$queue)
-  path <- setup_download_request_payload()
+  path <- setup_download_request_payload(include_state = FALSE)
   submit_response <- submit$run(q$calibrate_id, "spectrum", readLines(path))
 
   expect_equal(submit_response$status_code, 200)
@@ -545,4 +545,45 @@ test_that("sending notes to non-spectrum download doesn't fail", {
   result <- endpoint_download_result(q$queue)
   response <- result$run(status_response$data$id)
   expect_equal(response$status_code, 200)
+})
+
+test_that("spectrum download can include project state", {
+  test_mock_model_available()
+  q <- test_queue_result()
+
+  ## Submit download request
+  submit <- endpoint_download_submit(q$queue)
+  path <- setup_download_request_payload(include_notes = FALSE)
+  submit_response <- submit$run(q$calibrate_id, "spectrum", readLines(path))
+
+  expect_equal(submit_response$status_code, 200)
+  expect_true(!is.null(submit_response$data$id))
+
+  ## Status
+  out <- q$queue$queue$task_wait(submit_response$data$id)
+  status <- endpoint_download_status(q$queue)
+  status_response <- status$run(submit_response$data$id)
+
+  expect_equal(status_response$status_code, 200)
+  expect_equal(status_response$data$id, submit_response$data$id)
+  expect_true(status_response$data$done)
+  expect_equal(status_response$data$status, scalar("COMPLETE"))
+  expect_true(status_response$data$success)
+  expect_equal(status_response$data$queue, scalar(0))
+  expect_length(status_response$data$progress, 1)
+
+  ## Get result
+  result <- endpoint_download_result(q$queue)
+  response <- result$run(status_response$data$id)
+  expect_equal(response$status_code, 200)
+  expect_match(response$headers$`Content-Disposition`,
+               'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
+
+  tmp <- tempfile()
+  dest <- tempfile()
+  writeBin(as.vector(response$data), tmp)
+  zip::unzip(tmp, exdir = dest)
+  expect_true("project_state.json" %in% list.files(dest))
+  state <- readLines(file.path(dest, "project_state.json"))
+  expect_equal(state, "something")
 })

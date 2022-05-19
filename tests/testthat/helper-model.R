@@ -215,6 +215,22 @@ wait_status <- function(t, obj, timeout = 2, time_poll = 0.05,
   stop(sprintf("Did not change status from %s in time", status))
 }
 
-setup_download_request_payload <- function() {
-  "payload/spectrum_download_payload.json"
+setup_download_request_payload <- function(version = NULL,
+                                           include_notes = TRUE,
+                                           include_state = TRUE) {
+  path <- tempfile()
+  if (include_notes) {
+    notes_payload <- readLines("payload/spectrum_download_notes_payload.json")
+    writeLines(notes_payload, path)
+  }
+  if (include_state) {
+    if (is.null(version)) {
+      version <- to_json(cfg$version_info)
+    }
+    state_payload <- readLines("payload/spectrum_download_state_payload.json")
+    state_payload <- gsub("<version_info>", version, state_payload,
+                          fixed = TRUE)
+    writeLines(state_payload, path)
+  }
+  path
 }

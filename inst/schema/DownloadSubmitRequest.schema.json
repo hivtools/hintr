@@ -26,7 +26,8 @@
           "items": { "$ref": "#/definitions/note" }
         }
       }
-    }
+    },
+    "state": { "$ref": "ProjectState.schema.json" }
   },
   "additionalProperties": false
 }
