@@ -293,13 +293,22 @@ download_submit <- function(queue) {
     ## use _ for names in naomi
     type <- gsub("-", "_", type, fixed = TRUE)
     notes <- NULL
+    state <- NULL
     if (!is.null(input)) {
-      input <- jsonlite::fromJSON(input, simplifyVector = FALSE)
-      notes <- format_notes(input$notes)
+      parsed_input <- jsonlite::fromJSON(input, simplifyVector = FALSE)
+      if (!is.null(parsed_input$notes)) {
+        notes <- format_notes(parsed_input$notes)
+      }
+      if (!is.null(parsed_input$state)) {
+        ## Keep this as raw JSON because we want to write it straight out to
+        ## the output zip and this way we can avoid unboxing problems
+        ## from deserializing and reserializing the data
+        state <- jqr::jq(input, ".state")
+      }
     }
     tryCatch(
       list(id = scalar(
-        queue$submit_download(queue$result(id), type, notes))),
+        queue$submit_download(queue$result(id), type, notes, state))),
       error = function(e) {
         hintr_error(e$message, "FAILED_TO_QUEUE")
       }

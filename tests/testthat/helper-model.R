@@ -218,19 +218,43 @@ wait_status <- function(t, obj, timeout = 2, time_poll = 0.05,
 setup_download_request_payload <- function(version = NULL,
                                            include_notes = TRUE,
                                            include_state = TRUE) {
+  if (!any(include_notes, include_state)) {
+    stop("Must include notes and/or state info in payload")
+  }
+  payload <- "{"
   path <- tempfile()
   if (include_notes) {
-    notes_payload <- readLines("payload/spectrum_download_notes_payload.json")
-    writeLines(notes_payload, path)
+    payload <- c(payload,
+                 '"notes":',
+                 readLines("payload/spectrum_download_notes_payload.json"),
+                 "}")
   }
   if (include_state) {
+    if (include_notes) {
+      payload <- c(payload, ",")
+    }
     if (is.null(version)) {
       version <- to_json(cfg$version_info)
     }
     state_payload <- readLines("payload/spectrum_download_state_payload.json")
     state_payload <- gsub("<version_info>", version, state_payload,
                           fixed = TRUE)
-    writeLines(state_payload, path)
+    payload <- c(payload,
+                 '"state":',
+                 state_payload,
+                 "}")
   }
+  writeLines(payload, path)
+  path
+}
+
+setup_project_state_json <- function(version = NULL) {
+  path <- tempfile()
+  if (is.null(version)) {
+    version <- to_json(cfg$version_info)
+  }
+  payload <- readLines("payload/spectrum_download_state_payload.json")
+  payload <- gsub("<version_info>", version, payload, fixed = TRUE)
+  writeLines(payload, path)
   path
 }

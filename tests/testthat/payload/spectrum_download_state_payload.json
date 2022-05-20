@@ -59,9 +59,9 @@
       "rng_seed": 17,
       "no_of_samples": 500,
       "max_iter": 250
-    }
+    },
     "id": "17d40b32f8e649349e047561a6831144"
-  }
+  },
   "calibrate": {
     "options": {
       "spectrum_plhiv_calibration_level": "national",

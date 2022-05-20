@@ -20,6 +20,7 @@ Imports:
     geojsonio (>= 0.8.0),
     glue,
     ids,
+    jqr,
     jsonlite (>= 1.2.2),
     lgr,
     naomi (>= 2.6.26),

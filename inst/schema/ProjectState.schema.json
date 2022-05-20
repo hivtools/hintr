@@ -38,10 +38,10 @@
         "shape": { "$ref": "#/definitions/file" },
         "survey": { "$ref": "#/definitions/file" },
         "programme": { "$ref": "#/definitions/file" },
-        "anc": { "$ref": "#/definitions/file" },
-        "additionalProperties": false,
-        "required": [ "pjnz", "population", "shape", "survey", "programme" ]
-      }
+        "anc": { "$ref": "#/definitions/file" }
+      },
+      "additionalProperties": false,
+      "required": [ "pjnz", "population", "shape", "survey", "programme" ]
     },
     "model_fit": { "$ref": "#/definitions/async_run_options" },
     "calibrate": { "$ref": "#/definitions/async_run_options" },

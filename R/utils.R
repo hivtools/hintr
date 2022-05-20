@@ -132,3 +132,7 @@ format_notes <- function(notes) {
           project_notes,
           paste0(version_notes, collapse = "\n"))
 }
+
+file_exists <- function(file) {
+  is.null(file) || !file.exists(file)
+}

@@ -347,7 +347,9 @@ test_that("download submit returns error if queueing fails", {
   test_redis_available()
   ## Create mocks
   queue <- test_queue(workers = 0)
-  mock_submit_download <- function(res, type, notes) { stop("Failed to queue") }
+  mock_submit_download <- function(res, type, notes, state) {
+    stop("Failed to queue")
+  }
 
   ## Call the endpoint
   download <- download_submit(queue)
@@ -523,7 +525,7 @@ test_that("api: spectrum download can include notes", {
   api <- api_build(q$queue)
 
   ## Submit download request
-  path <- setup_download_request_payload()
+  path <- setup_download_request_payload(include_state = FALSE)
   submit <- api$request("GET",
                         paste0("/download/submit/spectrum/", q$calibrate_id),
                         body = path)
@@ -544,7 +546,6 @@ test_that("api: spectrum download can include notes", {
 
   ## Get result
   res <- api$request("GET", paste0("/download/result/", submit_body$data$id))
-
   expect_equal(res$status, 200)
 
   tmp <- tempfile()
@@ -578,7 +579,7 @@ test_that("sending notes to non-spectrum download doesn't fail", {
 
   ## Submit download request
   submit <- endpoint_download_submit(q$queue)
-  path <- setup_download_request_payload()
+  path <- setup_download_request_payload(include_state = FALSE)
   submit_response <- submit$run(q$calibrate_id, "summary", readLines(path))
 
   expect_equal(submit_response$status_code, 200)
@@ -640,6 +641,110 @@ test_that("spectrum download can include project state", {
   writeBin(as.vector(response$data), tmp)
   zip::unzip(tmp, exdir = dest)
   expect_true("project_state.json" %in% list.files(dest))
-  state <- readLines(file.path(dest, "project_state.json"))
-  expect_equal(state, "something")
+  state <- jsonlite::read_json(file.path(dest, "project_state.json"),
+                               simplifyVector = FALSE)
+  expect_equal(state, jsonlite::read_json(setup_project_state_json(),
+                                          simplifyVector = FALSE))
+})
+
+test_that("api: spectrum download can include project state", {
+  test_redis_available()
+  test_mock_model_available()
+  q <- test_queue_result()
+  api <- api_build(q$queue)
+
+  ## Submit download request
+  path <- setup_download_request_payload(include_notes = FALSE)
+  submit <- api$request("GET",
+                        paste0("/download/submit/spectrum/", q$calibrate_id),
+                        body = path)
+  submit_body <- jsonlite::fromJSON(submit$body)
+  expect_equal(submit$status, 200)
+  expect_true(!is.null(submit_body$data$id))
+
+  ## Status
+  out <- q$queue$queue$task_wait(submit_body$data$id)
+  status <- api$request("GET",
+                        paste0("/download/status/", submit_body$data$id))
+
+  expect_equal(status$status, 200)
+  status_body <- jsonlite::fromJSON(status$body)
+  expect_equal(status_body$data$id, submit_body$data$id)
+  expect_true(status_body$data$done)
+  expect_equal(status_body$data$status, "COMPLETE")
+
+  ## Get result
+  res <- api$request("GET", paste0("/download/result/", submit_body$data$id))
+  expect_equal(res$status, 200)
+
+  tmp <- tempfile()
+  dest <- tempfile()
+  writeBin(as.vector(res$body), tmp)
+  zip::unzip(tmp, exdir = dest)
+  expect_true("project_state.json" %in% list.files(dest))
+  state <- jsonlite::read_json(file.path(dest, "project_state.json"),
+                               simplifyVector = FALSE)
+  expect_equal(state, jsonlite::read_json(setup_project_state_json(),
+                                          simplifyVector = FALSE))
+})
+
+test_that("api: spectrum download can include notes and state", {
+  test_redis_available()
+  test_mock_model_available()
+  q <- test_queue_result()
+  api <- api_build(q$queue)
+
+  ## Submit download request
+  path <- setup_download_request_payload()
+  submit <- api$request("GET",
+                        paste0("/download/submit/spectrum/", q$calibrate_id),
+                        body = path)
+  submit_body <- jsonlite::fromJSON(submit$body)
+  expect_equal(submit$status, 200)
+  expect_true(!is.null(submit_body$data$id))
+
+  ## Status
+  out <- q$queue$queue$task_wait(submit_body$data$id)
+  status <- api$request("GET",
+                        paste0("/download/status/", submit_body$data$id))
+
+  expect_equal(status$status, 200)
+  status_body <- jsonlite::fromJSON(status$body)
+  expect_equal(status_body$data$id, submit_body$data$id)
+  expect_true(status_body$data$done)
+  expect_equal(status_body$data$status, "COMPLETE")
+
+  ## Get result
+  res <- api$request("GET", paste0("/download/result/", submit_body$data$id))
+  expect_equal(res$status, 200)
+
+  tmp <- tempfile()
+  dest <- tempfile()
+  writeBin(as.vector(res$body), tmp)
+  zip::unzip(tmp, exdir = dest)
+  expect_true("notes.txt" %in% list.files(dest))
+  notes <- readLines(file.path(dest, "notes.txt"))
+  expect_equal(notes, c(
+    "Project notes:",
+    "",
+    "My project 123",
+    "2022/05/17 12:34:21",
+    "These are my project notes",
+    "",
+    "Version notes:",
+    "",
+    "Version 2",
+    "2022/05/17 12:34:21",
+    "Notes specific to this version",
+    "",
+    "Version 1",
+    "2022/05/14 09:12:54",
+    "Notes from the first version",
+    ""))
+
+  expect_true("project_state.json" %in% list.files(dest))
+  state <- jsonlite::read_json(file.path(dest, "project_state.json"),
+                               simplifyVector = FALSE)
+  expect_equal(state, jsonlite::read_json(setup_project_state_json(),
+                                          simplifyVector = FALSE))
 })
