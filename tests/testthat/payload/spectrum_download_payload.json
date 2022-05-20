@@ -2,18 +2,18 @@
   "notes": {
     "project_notes": {
       "name": "My project 123",
-      "updated": "May 17th 2022 12:34",
+      "updated": "2022/05/17 12:34:21",
       "note": "These are my project notes"
     },
     "version_notes": [
       {
         "name": "Version 2",
-        "updated": "May 17th 2022 12:34",
+        "updated": "2022/05/17 12:34:21",
         "note": "Notes specific to this version"
       },
       {
         "name": "Version 1",
-        "updated": "May 12th 2022 09:57",
+        "updated": "2022/05/14 09:12:54",
         "note": "Notes from the first version"
       }
     ]
