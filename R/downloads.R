@@ -21,12 +21,13 @@ download <- function(model_output, type, path_results, notes, state,
   download_path <- tempfile(type, tmpdir = path_results, fileext = file_ext)
 
   if (type == "spectrum") {
+    notes <- format_notes(notes)
     out <- naomi::hintr_prepare_spectrum_download(model_output, download_path,
                                                   notes)
     if (file_exists(out$path) && !is.null(state)) {
       t <- tempfile()
       dir.create(t, FALSE, TRUE)
-      state_path <- file.path(t, "project_state.json")
+      state_path <- file.path(t, PROJECT_STATE_PATH)
       writeLines(jsonlite::prettify(state), state_path)
       zip::zip_append(out$path, state_path, mode = "cherry-pick")
     }

@@ -640,8 +640,8 @@ test_that("spectrum download can include project state", {
   dest <- tempfile()
   writeBin(as.vector(response$data), tmp)
   zip::unzip(tmp, exdir = dest)
-  expect_true("project_state.json" %in% list.files(dest))
-  state <- jsonlite::read_json(file.path(dest, "project_state.json"),
+  expect_true(PROJECT_STATE_PATH %in% list.files(dest))
+  state <- jsonlite::read_json(file.path(dest, PROJECT_STATE_PATH),
                                simplifyVector = FALSE)
   expect_equal(state, jsonlite::read_json(setup_project_state_json(),
                                           simplifyVector = FALSE))
@@ -681,8 +681,8 @@ test_that("api: spectrum download can include project state", {
   dest <- tempfile()
   writeBin(as.vector(res$body), tmp)
   zip::unzip(tmp, exdir = dest)
-  expect_true("project_state.json" %in% list.files(dest))
-  state <- jsonlite::read_json(file.path(dest, "project_state.json"),
+  expect_true(PROJECT_STATE_PATH %in% list.files(dest))
+  state <- jsonlite::read_json(file.path(dest, PROJECT_STATE_PATH),
                                simplifyVector = FALSE)
   expect_equal(state, jsonlite::read_json(setup_project_state_json(),
                                           simplifyVector = FALSE))
@@ -742,8 +742,8 @@ test_that("api: spectrum download can include notes and state", {
     "Notes from the first version",
     ""))
 
-  expect_true("project_state.json" %in% list.files(dest))
-  state <- jsonlite::read_json(file.path(dest, "project_state.json"),
+  expect_true(PROJECT_STATE_PATH %in% list.files(dest))
+  state <- jsonlite::read_json(file.path(dest, PROJECT_STATE_PATH),
                                simplifyVector = FALSE)
   expect_equal(state, jsonlite::read_json(setup_project_state_json(),
                                           simplifyVector = FALSE))
