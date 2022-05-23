@@ -21,7 +21,6 @@ download <- function(model_output, type, path_results, notes, state,
   download_path <- tempfile(type, tmpdir = path_results, fileext = file_ext)
 
   if (type == "spectrum") {
-    notes <- format_notes(notes)
     out <- naomi::hintr_prepare_spectrum_download(model_output, download_path,
                                                   notes)
     if (file_exists(out$path) && !is.null(state)) {

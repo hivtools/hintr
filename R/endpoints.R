@@ -297,7 +297,7 @@ download_submit <- function(queue) {
     if (!is.null(input)) {
       parsed_input <- jsonlite::fromJSON(input, simplifyVector = FALSE)
       if (!is.null(parsed_input$notes)) {
-        notes <- parsed_input$notes
+        notes <- format_notes(parsed_input$notes)
       }
       if (!is.null(parsed_input$state)) {
         ## Keep this as raw JSON because we want to write it straight out to
