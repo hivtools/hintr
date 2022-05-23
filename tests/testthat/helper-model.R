@@ -226,8 +226,7 @@ setup_download_request_payload <- function(version = NULL,
   if (include_notes) {
     payload <- c(payload,
                  '"notes":',
-                 readLines("payload/spectrum_download_notes_payload.json"),
-                 "}")
+                 readLines("payload/spectrum_download_notes_payload.json"))
   }
   if (include_state) {
     if (include_notes) {
@@ -241,9 +240,9 @@ setup_download_request_payload <- function(version = NULL,
                           fixed = TRUE)
     payload <- c(payload,
                  '"state":',
-                 state_payload,
-                 "}")
+                 state_payload)
   }
+  payload <- c(payload, "}")
   writeLines(payload, path)
   path
 }
