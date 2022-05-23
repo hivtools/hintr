@@ -67,11 +67,11 @@ Queue <- R6::R6Class(
         queue = QUEUE_CALIBRATE)
     },
 
-    submit_download = function(model_output, type) {
+    submit_download = function(model_output, type, notes) {
       results_dir <- self$results_dir
       language <- traduire::translator()$language()
       self$submit(quote(
-        hintr:::download(model_output, type, results_dir, language)),
+        hintr:::download(model_output, type, results_dir, notes, language)),
         queue = QUEUE_CALIBRATE)
     },
 
