@@ -44,13 +44,20 @@ message(sprintf("Saving calibrate plot data at %s",
 
 download_payload <- jsonlite::fromJSON(dat$download_payload,
                                         simplifyVector = FALSE)
+notes <- sprintf("%s\n%s\n%s\n",
+                 download_payload$notes$project_notes$name,
+                 download_payload$notes$project_notes$updated,
+                 download_payload$notes$project_notes$note)
+spectrum <- naomi::hintr_prepare_spectrum_download(calibrated,
+                                                   dat$spectrum_path,
+                                                   notes)
+
 state <- jqr::jq(readLines(dat$download_payload), ".state")
 t <- tempfile()
 dir.create(t, FALSE, TRUE)
-spectrum <- hintr:::download(calibrated, "spectrum", t,
-                             notes = download_payload$notes,
-                             state = state)
-file.copy(list.files(t, full.names = TRUE), dat$spectrum_path)
+state_path <- file.path(t, "project_state.json")
+writeLines(jsonlite::prettify(state), state_path)
+zip::zip_append(spectrum$path, state_path, mode = "cherry-pick")
 message(
   sprintf("Saving spectrum download at %s", normalizePath(dat$spectrum_path,
                                                           mustWork = TRUE)))
