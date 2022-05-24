@@ -287,13 +287,19 @@ plotting_metadata <- function(iso3 = NULL) {
 }
 
 download_submit <- function(queue) {
-  function(id, type) {
+  function(id, type, input = NULL) {
     verify_result_available(queue, id)
     ## API path should be - separated but we
     ## use _ for names in naomi
     type <- gsub("-", "_", type, fixed = TRUE)
+    notes <- NULL
+    if (!is.null(input)) {
+      input <- jsonlite::fromJSON(input, simplifyVector = FALSE)
+      notes <- format_notes(input$notes)
+    }
     tryCatch(
-      list(id = scalar(queue$submit_download(queue$result(id), type))),
+      list(id = scalar(
+        queue$submit_download(queue$result(id), type, notes))),
       error = function(e) {
         hintr_error(e$message, "FAILED_TO_QUEUE")
       }

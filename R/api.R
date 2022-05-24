@@ -306,11 +306,15 @@ returning_binary_head <- function(status_code = 200L) {
 }
 
 endpoint_download_submit <- function(queue) {
+  input <- porcelain::porcelain_input_body_json("input",
+                                                "DownloadSubmitRequest.schema",
+                                                schema_root())
   response <- porcelain::porcelain_returning_json(
     "DownloadSubmitResponse.schema", schema_root())
   porcelain::porcelain_endpoint$new("GET",
                                     "/download/submit/<type>/<id>",
                                     download_submit(queue),
+                                    input,
                                     returning = response)
 }
 

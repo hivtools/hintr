@@ -72,3 +72,25 @@ test_that("can convert list to data frame", {
                           y = c(5, 2, 3),
                           z = c("example", "data", "frame")))
 })
+
+test_that("notes can be formatted", {
+  notes <- jsonlite::read_json(setup_download_request_payload())
+  formatted <- format_notes(notes$notes)
+  expect_equal(formatted, paste0(c(
+    "Project notes:",
+    "",
+    "My project 123",
+    "2022/05/17 12:34:21",
+    "These are my project notes",
+    "",
+    "Version notes:",
+    "",
+    "Version 2",
+    "2022/05/17 12:34:21",
+    "Notes specific to this version",
+    "",
+    "Version 1",
+    "2022/05/14 09:12:54",
+    "Notes from the first version",
+    ""), collapse = "\n"))
+})

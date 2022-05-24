@@ -114,3 +114,21 @@ list_to_data_frame <- function(x) {
   }
   do.call(to_data_frame, x)
 }
+
+#' Take "notes" from DownloadSubmitRequest schema and transform
+#' into single string for passing to naomi
+#'
+#' @param notes The notes to parse
+#'
+#' @return The notes as a single string.
+#' @keywords internal
+format_notes <- function(notes) {
+  format_single <- function(note) {
+    sprintf("%s\n%s\n%s\n", note$name, note$updated, note$note)
+  }
+  project_notes <- format_single(notes$project_notes)
+  version_notes <- lapply(notes$version_notes, format_single)
+  sprintf("Project notes:\n\n%s\nVersion notes:\n\n%s",
+          project_notes,
+          paste0(version_notes, collapse = "\n"))
+}

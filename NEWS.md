@@ -1,6 +1,14 @@
-# hintr 1.0.32
+# hintr 1.0.34
 
 * Include input files when download_debug called with id from a calibrate run or output generation
+
+# hintr 1.0.33
+
+* `/download/submit/<type>/<id>` can now take a body with `notes` which will be added to spectrum download zip, it is ignored for other download types.
+
+# hintr 1.0.32
+
+* Temporarily stop warning generation from ANC & ART uploads as it is taking a long time (> 18s for Nigeria) which is causing time out issues in hint.
 
 # hintr 1.0.31
 

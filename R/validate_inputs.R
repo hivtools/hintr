@@ -135,13 +135,11 @@ do_validate_programme <- function(programme, shape, pjnz, strict = TRUE) {
   data$art_current <- as.numeric(data$art_current)
   assert_column_positive_numeric(data, "art_current")
   assert_calendar_quarter_column(data)
-  naomi_valid <- naomi::hintr_validate_art(programme$path, shape$path,
-                                           pjnz$path)
   list(data = data,
        filters = list("age" = get_age_filters(data),
                       "calendar_quarter" = get_quarter_filters(data),
                       "indicators" = get_indicator_filters(data, "programme")),
-       warnings = naomi_valid$warnings)
+       warnings = list())
 }
 
 #' Validate ANC data file.
@@ -180,12 +178,11 @@ do_validate_anc <- function(anc, shape, pjnz, strict = TRUE) {
   if (strict) {
     assert_anc_client_numbers(data)
   }
-  naomi_valid <- naomi::hintr_validate_anc(anc$path, shape$path, pjnz$path)
   data <- naomi::calculate_prevalence_art_coverage(data)
   list(data = data,
        filters = list("year" = get_year_filters(data),
                       "indicators" = get_indicator_filters(data, "anc")),
-       warnings = naomi_valid$warnings)
+       warnings = list())
 }
 
 #' Validate survey data file.

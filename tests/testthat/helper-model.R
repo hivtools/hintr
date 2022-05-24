@@ -214,3 +214,7 @@ wait_status <- function(t, obj, timeout = 2, time_poll = 0.05,
   }
   stop(sprintf("Did not change status from %s in time", status))
 }
+
+setup_download_request_payload <- function() {
+  "payload/spectrum_download_payload.json"
+}
