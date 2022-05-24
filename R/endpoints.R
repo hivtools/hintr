@@ -303,7 +303,7 @@ download_submit <- function(queue) {
         ## Keep this as raw JSON because we want to write it straight out to
         ## the output zip and this way we can avoid unboxing problems
         ## from deserializing and reserializing the data
-        state <- V8::v8()$call("(d) => JSON.stringify(d.state",
+        state <- V8::v8()$call("(d) => JSON.stringify(d.state)",
                                V8::JS(paste0(input, collapse = "\n")))
       }
     }
