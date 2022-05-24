@@ -257,3 +257,9 @@ setup_project_state_json <- function(version = NULL) {
   writeLines(payload, path)
   path
 }
+
+setup_reydrate_payload <- function() {
+  path <- system.file("output", "malawi_spectrum_download.zip",
+                      package = "hintr")
+  c("{", '"files":', path, "}")
+}
