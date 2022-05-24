@@ -20,7 +20,6 @@ Imports:
     geojsonio (>= 0.8.0),
     glue,
     ids,
-    jqr,
     jsonlite (>= 1.2.2),
     lgr,
     naomi (>= 2.6.26),
@@ -31,6 +30,7 @@ Imports:
     specio (>= 0.1.4),
     storr,
     traduire (>= 0.0.5),
+    V8,
     zip
 Suggests:
     callr,
