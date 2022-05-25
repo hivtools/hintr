@@ -1,3 +1,7 @@
+# hintr 1.0.35
+
+* Add endpoints `/rehydrate/submit` `/rehydrate/status/<id>` and `/rehydrate/result/<id>` for getting state JSON required by the front end for rehydrating a project
+
 # hintr 1.0.34
 
 * Include input files when download_debug called with id from a calibrate run or output generation

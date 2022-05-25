@@ -397,6 +397,7 @@ endpoint_rehydrate_submit <- function(queue) {
   porcelain::porcelain_endpoint$new("POST",
                                     "/rehydrate/submit",
                                     rehydrate_submit(queue),
+                                    input,
                                     returning = response)
 }
 

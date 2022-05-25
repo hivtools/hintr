@@ -299,7 +299,8 @@ is_superset <- function(super, sub) {
 
 assert_file_exists <- function(file) {
   if (!file_exists(file)) {
-    stop(t_("VALIDATION_FILE_EXISTS", list(path = file %||% "NULL")))
+    hintr_error(t_("VALIDATION_FILE_EXISTS", list(path = file %||% "NULL")),
+                "FILE_NOT_EXIST")
   }
   invisible(TRUE)
 }

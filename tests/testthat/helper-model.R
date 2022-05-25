@@ -258,8 +258,14 @@ setup_project_state_json <- function(version = NULL) {
   path
 }
 
-setup_reydrate_payload <- function() {
-  path <- system.file("output", "malawi_spectrum_download.zip",
-                      package = "hintr")
-  c("{", '"files":', path, "}")
+setup_reydrate_payload <- function(
+    path = system.file("output", "malawi_spectrum_download.zip",
+                       package = "hintr")) {
+  c('{"file":{',
+    paste0('"path": "', path, '",'),
+    '"hash": "1234",',
+    '"filename": "malawi_spectrum_download.zip"',
+    '}',
+    '}'
+  )
 }

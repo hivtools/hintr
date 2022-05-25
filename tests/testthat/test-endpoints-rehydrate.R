@@ -1,4 +1,19 @@
 test_that("rehydrate returns json", {
+  payload <- setup_reydrate_payload()
+  input <- jsonlite::fromJSON(payload)
+  out <- rehydrate(input$file)
+
+  output <- jsonlite::fromJSON(out)
+  expect_setequal(names(output),
+                  c("datasets", "model_fit", "calibrate", "model_output",
+                    "coarse_output", "summary_report", "comparison_report",
+                    "version"))
+  expect_setequal(
+    names(output$datasets),
+    c("pjnz", "population", "shape", "survey", "programme", "anc"))
+})
+
+test_that("rehydrate endpoint returns json", {
   test_mock_model_available()
   q <- test_queue_result()
 
@@ -21,13 +36,20 @@ test_that("rehydrate returns json", {
   expect_equal(status_response$data$status, scalar("COMPLETE"))
   expect_true(status_response$data$success)
   expect_equal(status_response$data$queue, scalar(0))
-  expect_length(status_response$data$progress, 1)
+  expect_length(status_response$data$progress, 0)
 
   ## Get result
-  result <- endount_rehydrate_result(q$queue)
+  result <- endpoint_rehydrate_result(q$queue)
   response <- result$run(status_response$data$id)
+  res <- jsonlite::fromJSON(response$data)
   expect_equal(response$status_code, 200)
-  expect_equal(response$data, readLines("....some json"))
+  expect_setequal(names(res),
+                  c("datasets", "model_fit", "calibrate", "model_output",
+                    "coarse_output", "summary_report", "comparison_report",
+                    "version"))
+  expect_setequal(
+    names(res$datasets),
+    c("pjnz", "population", "shape", "survey", "programme", "anc"))
 })
 
 test_that("api can call spectrum download", {
@@ -38,11 +60,9 @@ test_that("api can call spectrum download", {
 
   ## Submit rehydrate request
   payload <- setup_reydrate_payload()
-  submit <- api$request("GET",
-                        paste0("/rehydrate/submit/spectrum/", q$calibrate_id),
-                        body = payload)
-  submit_body <- jsonlite::fromJSON(submit$body)
+  submit <- api$request("POST", "/rehydrate/submit", body = payload)
   expect_equal(submit$status, 200)
+  submit_body <- jsonlite::fromJSON(submit$body)
   expect_true(!is.null(submit_body$data$id))
 
   ## Status
@@ -57,33 +77,58 @@ test_that("api can call spectrum download", {
   expect_equal(status_body$data$status, "COMPLETE")
   expect_true(status_body$data$success)
   expect_equal(status_body$data$queue, 0)
-  expect_length(status_body$data$progress, 1)
+  expect_length(status_body$data$progress, 0)
 
   ## Get result
-  res <- api$request("GET", paste0("/rehydrate/result/", submit_body$data$id))
-
-  expect_equal(res$status, 200)
-  expect_equal(response$data, readLines("....some json"))
+  response <- api$request("GET",
+                          paste0("/rehydrate/result/", submit_body$data$id))
+  expect_equal(response$status, 200)
+  res <- jsonlite::fromJSON(response$body)
+  expect_equal(res$status, "success")
+  expect_length(res$errors, 0)
+  expect_setequal(names(res$data),
+                  c("datasets", "model_fit", "calibrate", "model_output",
+                    "coarse_output", "summary_report", "comparison_report",
+                    "version"))
+  expect_setequal(
+    names(res$data$datasets),
+    c("pjnz", "population", "shape", "survey", "programme", "anc"))
 })
 
-test_that("error case 1 - failed to submit", {
+test_that("rehydrate returns useful error if cannot rehydrate from zip", {
   test_mock_model_available()
   q <- test_queue_result()
 
-  ## Submit rehydrate request
-  payload <- c("{", '"path": "testdata/Malawi2019.PJNZ"', "}")
+  ## Submit rehydrate request which will error
+  payload <- setup_reydrate_payload("testdata/Malawi2019.PJNZ")
   submit <- endpoint_rehydrate_submit(q$queue)
   submit_response <- submit$run(payload)
+  expect_equal(submit_response$status_code, 200)
 
-  expect_equal(submit_response$status_code, 400)
-  ## errorr
+  ## Get result
+  out <- q$queue$queue$task_wait(submit_response$data$id)
+  result <- endpoint_rehydrate_result(q$queue)
+  response <- result$run(submit_response$data$id)
+  expect_equal(response$status_code, 400)
+  expect_equal(response$value$errors[[1]]$error,
+               scalar("PROJECT_REHYDRATE_FAILED"))
+  expect_equal(response$value$errors[[1]]$detail,
+               scalar(paste0("Cannot rehydrate from zip file, archive missing",
+                             " required information. Please regenerate output",
+                             " zip and try again.")))
 })
 
-test_that("error case 2 - fail to retrieve result", {
+test_that("rehydrate returns useful error when submission fails", {
   test_mock_model_available()
   q <- test_queue_result()
 
-  result <- endount_rehydrate_result(q$queue)
-  response <- result$run(status_response$data$id)
-  ## Errorr
+  payload <- setup_reydrate_payload("missing/file.zip")
+  submit <- endpoint_rehydrate_submit(q$queue)
+  response <- submit$run(payload)
+
+  expect_equal(response$status_code, 400)
+  expect_equal(response$value$errors[[1]]$error, scalar("FILE_NOT_EXIST"))
+  expect_equal(response$value$errors[[1]]$detail,
+               scalar(paste0("File at path missing/file.zip does not exist. ",
+                             "Create it, or fix the path.")))
 })
