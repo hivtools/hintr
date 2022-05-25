@@ -365,21 +365,37 @@ download_model_debug <- function(queue) {
   function(id) {
     tryCatch({
       data <- queue$queue$task_data(id)
-      files <- unique(unlist(lapply(data$objects$data, function(x) {
-        if (!is.null(x)) {
-          x$path
+      func <- as.list(data$expr)[[1]]
+      if (func == "hintr:::run_model") {
+        files <- unique(unlist(lapply(data$objects$data, function(x) {
+          if (!is.null(x)) {
+            x$path
+          }
+        }), FALSE, FALSE))
+        data$objects$data <- lapply(data$objects$data, function(x) {
+          if (!is.null(x)) {
+            list(path = basename(x$path), hash = x$hash, filename = x$filename)
+          }
+        })
+      } else {
+        ## Calibrate, file download requests have format of "hintr_output"
+        ## object from naomi. They have files at plot_data_path
+        ## and model_output_path
+        files <- data$objects$model_output$model_output_path
+        data$objects$model_output$model_output_path <- basename(
+          data$objects$model_output$model_output_path)
+        if (!is.null(data$objects$model_output$plot_data_path)) {
+          ## This file only exists after calibrate has been run
+          files <- c(files, data$objects$model_output$plot_data_path)
+          data$objects$model_output$plot_data_path <- basename(
+            data$objects$model_output$plot_data_path)
         }
-      }), FALSE, FALSE))
+      }
       tmp <- tempfile()
       path <- file.path(tmp, id)
       dir.create(path, FALSE, TRUE)
 
       data$sessionInfo <- utils::sessionInfo()
-      data$objects$data <- lapply(data$objects$data, function(x) {
-        if (!is.null(x)) {
-          list(path = basename(x$path), hash = x$hash, filename = x$filename)
-        }
-      })
 
       path_files <- file.path(path, "files")
       dir.create(path_files)
