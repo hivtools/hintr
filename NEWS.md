@@ -1,3 +1,7 @@
+# hintr 1.0.35
+
+* Delete exited workers when API starts (so metrics on worker counts are up to date see mrc-2893)
+
 # hintr 1.0.34
 
 * Include input files when download_debug called with id from a calibrate run or output generation
