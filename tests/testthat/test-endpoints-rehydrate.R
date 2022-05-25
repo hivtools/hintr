@@ -127,7 +127,8 @@ test_that("rehydrate returns useful error when submission fails", {
   response <- submit$run(payload)
 
   expect_equal(response$status_code, 400)
-  expect_equal(response$value$errors[[1]]$error, scalar("FILE_NOT_EXIST"))
+  expect_equal(response$value$errors[[1]]$error,
+               scalar("REHYDRATE_SUBMIT_FAILED"))
   expect_equal(response$value$errors[[1]]$detail,
                scalar(paste0("File at path missing/file.zip does not exist. ",
                              "Create it, or fix the path.")))

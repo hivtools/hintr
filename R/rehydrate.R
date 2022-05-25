@@ -6,17 +6,20 @@ rehydrate <- function(output_zip) {
   con <- unz(output_zip$path, PROJECT_STATE_PATH)
   on.exit(close(con))
   state <- paste0(readLines(con), collapse = "\n")
-  ## Mark state as JSON so when serialized it seralizes this JSON as is
-  class(state) <- "json"
+  state <- json_verbatim(state)
   scalar(state)
 }
 
 rehydrate_submit <- function(queue) {
   function(input) {
-    input <- jsonlite::fromJSON(input)
-    assert_file_exists(input$file$path)
-    queue$submit_rehydrate(input$file)
-    list(id = scalar(queue$submit_rehydrate(input$file)))
+    tryCatch({
+      input <- jsonlite::fromJSON(input)
+      assert_file_exists(input$file$path)
+      queue$submit_rehydrate(input$file)
+      list(id = scalar(queue$submit_rehydrate(input$file)))
+    }, error = function(e) {
+      hintr_error(e$message, "REHYDRATE_SUBMIT_FAILED")
+    })
   }
 }
 
