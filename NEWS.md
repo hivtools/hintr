@@ -1,3 +1,7 @@
+# hintr 1.0.35
+
+* Download submit for spectrum can take optional `state` JSON which is saved out as is into the output zip which can be used to by the web end to recover the project
+
 # hintr 1.0.34
 
 * Include input files when download_debug called with id from a calibrate run or output generation
