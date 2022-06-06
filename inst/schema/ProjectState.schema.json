@@ -41,7 +41,7 @@
         "anc": { "$ref": "#/definitions/file" }
       },
       "additionalProperties": false,
-      "required": [ "pjnz", "population", "shape", "survey", "programme" ]
+      "required": [ "pjnz", "population", "shape", "survey" ]
     },
     "model_fit": { "$ref": "#/definitions/async_run_options" },
     "calibrate": { "$ref": "#/definitions/async_run_options" },
