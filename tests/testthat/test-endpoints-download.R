@@ -748,3 +748,51 @@ test_that("api: spectrum download can include notes and state", {
   expect_equal(state, jsonlite::read_json(setup_project_state_json(),
                                           simplifyVector = FALSE))
 })
+
+test_that("api: programme and anc files are optional in spectrum download", {
+  test_redis_available()
+  test_mock_model_available()
+  q <- test_queue_result()
+  api <- api_build(q$queue)
+
+  ## Prepare body without anc or programme
+  path <- setup_download_request_payload(include_notes = FALSE)
+  json <- jsonlite::read_json(path, simplifyVector = FALSE)
+  json$state$datasets$programme <- NULL
+  json$state$datasets$anc <- NULL
+  t <- tempfile()
+  jsonlite::write_json(json, t, auto_unbox = TRUE)
+
+  ## Submit download request
+  submit <- api$request("GET",
+                        paste0("/download/submit/spectrum/", q$calibrate_id),
+                        body = readLines(t))
+  submit_body <- jsonlite::fromJSON(submit$body)
+  expect_equal(submit$status, 200)
+  expect_true(!is.null(submit_body$data$id))
+
+  ## Status
+  out <- q$queue$queue$task_wait(submit_body$data$id)
+  status <- api$request("GET",
+                        paste0("/download/status/", submit_body$data$id))
+
+  expect_equal(status$status, 200)
+  status_body <- jsonlite::fromJSON(status$body)
+  expect_equal(status_body$data$id, submit_body$data$id)
+  expect_true(status_body$data$done)
+  expect_equal(status_body$data$status, "COMPLETE")
+
+  ## Get result
+  res <- api$request("GET", paste0("/download/result/", submit_body$data$id))
+  expect_equal(res$status, 200)
+
+  tmp <- tempfile()
+  dest <- tempfile()
+  writeBin(as.vector(res$body), tmp)
+  zip::unzip(tmp, exdir = dest)
+  expect_true(PROJECT_STATE_PATH %in% list.files(dest))
+  state <- jsonlite::read_json(file.path(dest, PROJECT_STATE_PATH),
+                               simplifyVector = FALSE)
+  expect_setequal(names(state$datasets),
+                  c("pjnz", "population", "shape", "survey"))
+})
