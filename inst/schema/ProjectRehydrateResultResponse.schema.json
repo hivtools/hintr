@@ -2,8 +2,9 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "notes" : { "$ref": "Notes.schema.json" }
+    "notes": { "type": [ "string", "null" ] },
     "state": { "$ref": "ProjectState.schema.json" }
   },
+  "required": [ "notes", "state" ],
   "additionalProperties": false
 }

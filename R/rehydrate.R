@@ -7,7 +7,12 @@ rehydrate <- function(output_zip) {
   on.exit(close(con))
   state <- paste0(readLines(con), collapse = "\n")
   state <- json_verbatim(state)
-  scalar(state)
+  notes_con <- unz(output_zip$path, NOTES_PATH)
+  notes <- paste0(readLines(notes_con), collapse = "\n")
+  list(
+    notes = scalar(notes),
+    state = scalar(state)
+  )
 }
 
 rehydrate_submit <- function(queue) {

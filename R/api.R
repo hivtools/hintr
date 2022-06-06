@@ -412,7 +412,7 @@ endpoint_rehydrate_status <- function(queue) {
 
 endpoint_rehydrate_result <- function(queue) {
   response <- porcelain::porcelain_returning_json(
-    "ProjectState.schema", schema_root())
+    "ProjectRehydrateResultResponse.schema", schema_root())
   porcelain::porcelain_endpoint$new("GET",
                                     "/rehydrate/result/<id>",
                                     rehydrate_result(queue),
