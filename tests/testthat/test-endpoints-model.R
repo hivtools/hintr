@@ -317,54 +317,6 @@ test_that("failed cancel sends reasonable message", {
   expect_equal(error$status_code, 400)
 })
 
-test_that("Debug endpoint returns debug information", {
-  test_redis_available()
-  test_mock_model_available()
-
-  ## Start the model running
-  path <- setup_submit_payload()
-  queue <- test_queue(workers = 1)
-  model_submit <- submit_model(queue)
-  response <- model_submit(readLines(path))
-  expect_true("id" %in% names(response))
-  id <- response$id
-
-  model_debug <- download_model_debug(queue)
-  bin <- model_debug(id)
-  tmp <- tempfile()
-  dest <- tempfile()
-  writeBin(as.vector(bin), tmp)
-  zip::unzip(tmp, exdir = dest)
-  expect_equal(scalar(dir(dest)), id)
-  expect_setequal(
-    dir(file.path(dest, id)),
-    c("data.rds", "files"))
-  info <- readRDS(file.path(dest, id, "data.rds"))
-  ## Smoke test options are passed through
-  expect_true(length(info$objects$options) > 25)
-  expect_true(list(area_scope = "MWI") %in% info$objects$options)
-  expect_is(info$sessionInfo, "sessionInfo")
-  expect_equal(names(info$objects$data),
-               c("pjnz", "shape", "population", "survey", "programme", "anc"))
-  expect_equal(names(info$objects$data$pjnz), c("path", "hash", "filename"))
-  expect_setequal(
-    dir(file.path(dest, id, "files")),
-    c("anc.csv", "malawi.geojson", "Malawi2019.PJNZ", "population.csv",
-      "programme.csv", "survey.csv"))
-})
-
-test_that("Debug endpoint errors on nonexistant id", {
-  test_redis_available()
-  queue <- test_queue()
-  model_debug <- download_model_debug(queue)
-
-  error <- expect_error(model_debug("1234"))
-  expect_equal(error$data[[1]]$error, scalar("INVALID_TASK"))
-  expect_equal(error$data[[1]]$detail,
-               scalar("Task '1234' not found"))
-  expect_equal(error$status_code, 400)
-})
-
 test_that("getting result returns empty warnings with old run", {
   test_redis_available()
   test_mock_model_available()
