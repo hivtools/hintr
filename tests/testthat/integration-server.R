@@ -829,3 +829,44 @@ test_that("input time series can return plot data for anc", {
   expect_equal(names(response$data$metadata$defaults$selected_filter_options),
                c("plot_type", "area_level", "age", "quarter"))
 })
+
+test_that("rehydrate", {
+  payload <- setup_reydrate_payload()
+
+  r <- server$request("POST",
+                      "/rehydrate/submit",
+                      body = payload,
+                      encode = "json",
+                      httr::content_type_json())
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+  expect_equal(response$errors, NULL)
+  expect_equal(names(response$data), c("id"))
+  id <- response$data$id
+
+  ## Get the status
+  testthat::try_again(5, {
+    Sys.sleep(1)
+    r <- server$request("GET", paste0("/rehydrate/status/", id))
+    expect_equal(httr::status_code(r), 200)
+    response <- response_from_json(r)
+    expect_equal(response$status, "success")
+    expect_equal(response$data$status, "COMPLETE")
+  })
+
+  ## Result
+  r <- server$request("GET", paste0("/rehydrate/result/", id))
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+  expect_equal(response$errors, NULL)
+  expect_setequal(names(response$data$state),
+                  c("datasets", "model_fit", "calibrate", "model_output",
+                    "coarse_output", "summary_report", "comparison_report",
+                    "version"))
+  expect_setequal(
+    names(response$data$state$datasets),
+    c("pjnz", "population", "shape", "survey", "programme", "anc"))
+  expect_match(response$data$notes, "These are my project notes")
+})

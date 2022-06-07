@@ -18,6 +18,7 @@ out <- system2("./scripts/run_model",
   args = c(
     "--model-payload", "./scripts/model_payload.json",
     "--calibrate-payload", "./scripts/calibrate_payload.json",
+    "--download-payload", "./scripts/download_payload.json",
     "--model-output-path", paths$model_output_path,
     "--calibrate-output-path", paths$calibrate_output_path,
     "--calibrate-plot-path", paths$calibrate_plot_path,
