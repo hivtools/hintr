@@ -163,3 +163,22 @@ test_that("trying to rehydrate with no notes does not error", {
 
   expect_null(out$notes)
 })
+
+test_that("rehydrate: unexpected error returns useful message", {
+  test_mock_model_available()
+  q <- test_queue_result()
+
+  ## Get result
+  result <- endpoint_rehydrate_result(q$queue)
+  response <- result$run("some id")
+  state <- jsonlite::fromJSON(response$data$state)
+  expect_equal(response$status_code, 500)
+  expect_setequal(names(state),
+                  c("datasets", "model_fit", "calibrate", "model_output",
+                    "coarse_output", "summary_report", "comparison_report",
+                    "version"))
+  expect_setequal(
+    names(state$datasets),
+    c("pjnz", "population", "shape", "survey", "programme", "anc"))
+  expect_match(response$data$notes, "These are my project notes")
+})

@@ -36,11 +36,7 @@ rehydrate_result <- function(queue) {
   function(id) {
     res <- queue$result(id)
     if (is_error(res)) {
-      msg <- res$message
-      if (is.null(msg)) {
-        msg <- t_("FAILED_ZIP_REHYDRATE")
-      }
-      hintr_error(msg, "PROJECT_REHYDRATE_FAILED")
+      hintr_error(res$message, "PROJECT_REHYDRATE_FAILED")
     }
     res
   }

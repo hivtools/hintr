@@ -87,6 +87,5 @@
     "QUARTER_4": "trimestre 4",
     "VALIDATION_MULTIPLE_LEVELS_DETAIL": "l'année {{year}} a des niveaux de zone {{levels}}",
     "VALIDATION_MULTIPLE_LEVELS": "Les données ne peuvent concerner que les régions à un seul niveau de zone par an. Dans les données téléchargées {{detail}}",
-    "FAILED_ZIP_REHYDRATE_SUBMIT": "Impossible de réhydrater à partir du fichier zip, l'archive manque d'informations requises. Veuillez régénérer le zip de sortie et réessayer.",
-    "FAILED_ZIP_REHYDRATE": "Échec de la réhydratation à partir du fichier zip. Veuillez régénérer le zip de sortie et réessayer."
+    "FAILED_ZIP_REHYDRATE_SUBMIT": "Impossible de réhydrater à partir du fichier zip, l'archive manque d'informations requises. Veuillez régénérer le zip de sortie et réessayer."
 }
