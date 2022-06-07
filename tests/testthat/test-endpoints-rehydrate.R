@@ -3,14 +3,16 @@ test_that("rehydrate returns json", {
   input <- jsonlite::fromJSON(payload)
   out <- rehydrate(input$file)
 
-  output <- jsonlite::fromJSON(out)
-  expect_setequal(names(output),
+  state <- jsonlite::fromJSON(out$state)
+  expect_setequal(names(state),
                   c("datasets", "model_fit", "calibrate", "model_output",
                     "coarse_output", "summary_report", "comparison_report",
                     "version"))
   expect_setequal(
-    names(output$datasets),
+    names(state$datasets),
     c("pjnz", "population", "shape", "survey", "programme", "anc"))
+
+  expect_match(out$notes, "These are my project notes")
 })
 
 test_that("rehydrate endpoint returns json", {
@@ -41,15 +43,16 @@ test_that("rehydrate endpoint returns json", {
   ## Get result
   result <- endpoint_rehydrate_result(q$queue)
   response <- result$run(status_response$data$id)
-  res <- jsonlite::fromJSON(response$data)
+  state <- jsonlite::fromJSON(response$data$state)
   expect_equal(response$status_code, 200)
-  expect_setequal(names(res),
+  expect_setequal(names(state),
                   c("datasets", "model_fit", "calibrate", "model_output",
                     "coarse_output", "summary_report", "comparison_report",
                     "version"))
   expect_setequal(
-    names(res$datasets),
+    names(state$datasets),
     c("pjnz", "population", "shape", "survey", "programme", "anc"))
+  expect_match(response$data$notes, "These are my project notes")
 })
 
 test_that("api can call spectrum download", {
@@ -86,13 +89,14 @@ test_that("api can call spectrum download", {
   res <- jsonlite::fromJSON(response$body)
   expect_equal(res$status, "success")
   expect_length(res$errors, 0)
-  expect_setequal(names(res$data),
+  expect_setequal(names(res$data$state),
                   c("datasets", "model_fit", "calibrate", "model_output",
                     "coarse_output", "summary_report", "comparison_report",
                     "version"))
   expect_setequal(
-    names(res$data$datasets),
+    names(res$data$state$datasets),
     c("pjnz", "population", "shape", "survey", "programme", "anc"))
+  expect_match(res$data$notes, "These are my project notes")
 })
 
 test_that("rehydrate returns useful error if cannot rehydrate from zip", {

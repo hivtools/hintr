@@ -861,11 +861,12 @@ test_that("rehydrate", {
   response <- response_from_json(r)
   expect_equal(response$status, "success")
   expect_equal(response$errors, NULL)
-  expect_setequal(names(response$data),
+  expect_setequal(names(response$data$state),
                   c("datasets", "model_fit", "calibrate", "model_output",
                     "coarse_output", "summary_report", "comparison_report",
                     "version"))
   expect_setequal(
-    names(response$data$datasets),
+    names(response$data$state$datasets),
     c("pjnz", "population", "shape", "survey", "programme", "anc"))
+  expect_match(response$data$notes, "These are my project notes")
 })

@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "notes" : { "$ref": "Notes.schema.json" }
+    "notes": { "$ref": "Notes.schema.json" },
     "state": { "$ref": "ProjectState.schema.json" }
   },
   "additionalProperties": false

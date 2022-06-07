@@ -9,6 +9,7 @@ rehydrate <- function(output_zip) {
   state <- json_verbatim(state)
   notes_con <- unz(output_zip$path, NOTES_PATH)
   notes <- paste0(readLines(notes_con), collapse = "\n")
+  on.exit(close(notes_con), add = TRUE)
   list(
     notes = scalar(notes),
     state = scalar(state)
