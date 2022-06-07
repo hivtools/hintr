@@ -8,5 +8,5 @@
     "fromADR":  {"type": "boolean"}
   },
   "additionalProperties": false,
-  "required": ["filename", "hash", "path"]
+  "required": ["filename", "hash", "path", "fromADR"]
 }

@@ -1,13 +1,12 @@
 #!/usr/bin/env Rscript
 "Run a model and save outputs at specified paths
 Usage:
-  run_model (--model-payload=<model-payload> --calibrate-payload=<calibrate-payload> --download-payload=<download-payload> --model-output-path=<output-path> --calibrate-output-path=<calibrate-output-path> --calibrate-plot-path=<calibrate-plot-path> --spectrum-path=<spectrum-path> --coarse-output-path=<coarse-output-path> --summary-report-path=<summary-report-path>)
+  run_model (--model-payload=<model-payload> --calibrate-payload=<calibrate-payload> --model-output-path=<output-path> --calibrate-output-path=<calibrate-output-path> --calibrate-plot-path=<calibrate-plot-path> --spectrum-path=<spectrum-path> --coarse-output-path=<coarse-output-path> --summary-report-path=<summary-report-path>)
 
 Options:
   -h --help                                       Show this screen.
   --model-payload=<model-payload>                 Path to model run payload.
   --calibrate-payload=<calibrate-payload>         Path to calibrate payload.
-  --download-payload=<download-payload>           Path to spectrum download payload.
   --model-output-path=<output-path>               Path to model output data RDS.
   --calibrate-output-path=<calibrate-output-path> Path to calibrate output data RDS.
   --calibrate-plot-path=<calibrate-plot-path>     Path to calibrate plot data RDS.
@@ -42,22 +41,8 @@ message(sprintf("Saving calibrate output at %s",
 message(sprintf("Saving calibrate plot data at %s",
                 normalizePath(dat$calibrate_plot_path, mustWork = TRUE)))
 
-download_payload <- jsonlite::fromJSON(dat$download_payload,
-                                        simplifyVector = FALSE)
-notes <- sprintf("%s\n%s\n%s\n",
-                 download_payload$notes$project_notes$name,
-                 download_payload$notes$project_notes$updated,
-                 download_payload$notes$project_notes$note)
 spectrum <- naomi::hintr_prepare_spectrum_download(calibrated,
-                                                   dat$spectrum_path,
-                                                   notes)
-
-state <- jqr::jq(readLines(dat$download_payload), ".state")
-t <- tempfile()
-dir.create(t, FALSE, TRUE)
-state_path <- file.path(t, "project_state.json")
-writeLines(jsonlite::prettify(state), state_path)
-zip::zip_append(spectrum$path, state_path, mode = "cherry-pick")
+                                                   dat$spectrum_path)
 message(
   sprintf("Saving spectrum download at %s", normalizePath(dat$spectrum_path,
                                                           mustWork = TRUE)))

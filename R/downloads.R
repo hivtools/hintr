@@ -1,5 +1,4 @@
-download <- function(model_output, type, path_results, notes, state,
-                     language = NULL) {
+download <- function(model_output, type, path_results, notes, language = NULL) {
   if (!is.null(language)) {
     reset_hintr <- traduire::translator_set_language(language)
     reset_naomi <-
@@ -21,15 +20,7 @@ download <- function(model_output, type, path_results, notes, state,
   download_path <- tempfile(type, tmpdir = path_results, fileext = file_ext)
 
   if (type == "spectrum") {
-    out <- naomi::hintr_prepare_spectrum_download(model_output, download_path,
-                                                  notes)
-    if (file_exists(out$path) && !is.null(state)) {
-      t <- tempfile()
-      dir.create(t, FALSE, TRUE)
-      state_path <- file.path(t, PROJECT_STATE_PATH)
-      writeLines(jsonlite::prettify(state), state_path)
-      zip::zip_append(out$path, state_path, mode = "cherry-pick")
-    }
+    naomi::hintr_prepare_spectrum_download(model_output, download_path, notes)
   } else {
     func <- switch(type,
                    coarse_output = naomi::hintr_prepare_coarse_age_group_download,
@@ -37,7 +28,6 @@ download <- function(model_output, type, path_results, notes, state,
                    comparison = naomi::hintr_prepare_comparison_report_download,
                    hintr_error(t_("INVALID_DOWNLOAD_TYPE", list(type = type)),
                                "INVALID_DOWNLOAD_TYPE"))
-    out <- func(model_output, download_path)
+    func(model_output, download_path)
   }
-  out
 }
