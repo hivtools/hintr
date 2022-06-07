@@ -497,8 +497,8 @@ test_that("spectrum download can include notes", {
   dest <- tempfile()
   writeBin(as.vector(response$data), tmp)
   zip::unzip(tmp, exdir = dest)
-  expect_true("notes.txt" %in% list.files(dest))
-  notes <- readLines(file.path(dest, "notes.txt"))
+  expect_true(NOTES_PATH %in% list.files(dest))
+  notes <- readLines(file.path(dest, NOTES_PATH))
   expect_equal(notes, c(
     "Project notes:",
     "",
@@ -552,8 +552,8 @@ test_that("api: spectrum download can include notes", {
   dest <- tempfile()
   writeBin(as.vector(res$body), tmp)
   zip::unzip(tmp, exdir = dest)
-  expect_true("notes.txt" %in% list.files(dest))
-  notes <- readLines(file.path(dest, "notes.txt"))
+  expect_true(NOTES_PATH %in% list.files(dest))
+  notes <- readLines(file.path(dest, NOTES_PATH))
   expect_equal(notes, c(
     "Project notes:",
     "",
@@ -722,8 +722,8 @@ test_that("api: spectrum download can include notes and state", {
   dest <- tempfile()
   writeBin(as.vector(res$body), tmp)
   zip::unzip(tmp, exdir = dest)
-  expect_true("notes.txt" %in% list.files(dest))
-  notes <- readLines(file.path(dest, "notes.txt"))
+  expect_true(NOTES_PATH %in% list.files(dest))
+  notes <- readLines(file.path(dest, NOTES_PATH))
   expect_equal(notes, c(
     "Project notes:",
     "",

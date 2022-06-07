@@ -137,3 +137,29 @@ test_that("rehydrate returns useful error when submission fails", {
                scalar(paste0("File at path missing/file.zip does not exist. ",
                              "Create it, or fix the path.")))
 })
+
+test_that("trying to rehydrate with no notes does not error", {
+  ## Setup payload and remove notes.txt from zip
+  payload <- setup_reydrate_payload()
+  input <- jsonlite::fromJSON(payload)
+  t <- tempfile()
+  dir.create(t, FALSE, TRUE)
+  zip::unzip(input$file$path, exdir = t)
+  file.remove(file.path(t, NOTES_PATH))
+  zip_without_notes <- tempfile(fileext = ".zip")
+  zip::zip(zip_without_notes, list.files(t), root = t)
+  input$file$path <- zip_without_notes
+
+  out <- rehydrate(input$file)
+
+  state <- jsonlite::fromJSON(out$state)
+  expect_setequal(names(state),
+                  c("datasets", "model_fit", "calibrate", "model_output",
+                    "coarse_output", "summary_report", "comparison_report",
+                    "version"))
+  expect_setequal(
+    names(state$datasets),
+    c("pjnz", "population", "shape", "survey", "programme", "anc"))
+
+  expect_null(out$notes)
+})
