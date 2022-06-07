@@ -311,7 +311,7 @@ endpoint_download_submit <- function(queue) {
                                                 schema_root())
   response <- porcelain::porcelain_returning_json(
     "DownloadSubmitResponse.schema", schema_root())
-  porcelain::porcelain_endpoint$new("GET",
+  porcelain::porcelain_endpoint$new("POST",
                                     "/download/submit/<type>/<id>",
                                     download_submit(queue),
                                     input,

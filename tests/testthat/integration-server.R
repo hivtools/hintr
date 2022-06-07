@@ -567,7 +567,7 @@ test_that("download streams bytes", {
   })
 
   ## Start the download
-  r <- server$request("GET",
+  r <- server$request("POST",
                       paste0("/download/submit/spectrum/", calibrate_id))
   response <- response_from_json(r)
   expect_equal(httr::status_code(r), 200)

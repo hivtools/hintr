@@ -52,7 +52,7 @@ test_that("api can call spectrum download", {
   api <- api_build(q$queue)
 
   ## Submit download request
-  submit <- api$request("GET",
+  submit <- api$request("POST",
                         paste0("/download/submit/spectrum/", q$calibrate_id))
   submit_body <- jsonlite::fromJSON(submit$body)
   expect_equal(submit$status, 200)
@@ -138,7 +138,7 @@ test_that("api can call coarse_output download", {
   api <- api_build(q$queue)
 
   ## Submit download request
-  submit <- api$request("GET", paste0("/download/submit/coarse-output/",
+  submit <- api$request("POST", paste0("/download/submit/coarse-output/",
                                       q$calibrate_id))
   submit_body <- jsonlite::fromJSON(submit$body)
   expect_equal(submit$status, 200)
@@ -217,7 +217,7 @@ test_that("api can call summary report download", {
   api <- api_build(q$queue)
 
   ## Submit download request
-  submit <- api$request("GET", paste0("/download/submit/summary/",
+  submit <- api$request("POST", paste0("/download/submit/summary/",
                                       q$calibrate_id))
   submit_body <- jsonlite::fromJSON(submit$body)
   expect_equal(submit$status, 200)
@@ -426,7 +426,7 @@ test_that("api can call comparison report download", {
   api <- api_build(q$queue)
 
   ## Submit download request
-  submit <- api$request("GET", paste0("/download/submit/comparison/",
+  submit <- api$request("POST", paste0("/download/submit/comparison/",
                                       q$calibrate_id))
   submit_body <- jsonlite::fromJSON(submit$body)
   expect_equal(submit$status, 200)
@@ -526,7 +526,7 @@ test_that("api: spectrum download can include notes", {
 
   ## Submit download request
   path <- setup_download_request_payload(include_state = FALSE)
-  submit <- api$request("GET",
+  submit <- api$request("POST",
                         paste0("/download/submit/spectrum/", q$calibrate_id),
                         body = readLines(path))
   submit_body <- jsonlite::fromJSON(submit$body)
@@ -655,7 +655,7 @@ test_that("api: spectrum download can include project state", {
 
   ## Submit download request
   path <- setup_download_request_payload(include_notes = FALSE)
-  submit <- api$request("GET",
+  submit <- api$request("POST",
                         paste0("/download/submit/spectrum/", q$calibrate_id),
                         body = readLines(path))
   submit_body <- jsonlite::fromJSON(submit$body)
@@ -696,7 +696,7 @@ test_that("api: spectrum download can include notes and state", {
 
   ## Submit download request
   path <- setup_download_request_payload()
-  submit <- api$request("GET",
+  submit <- api$request("POST",
                         paste0("/download/submit/spectrum/", q$calibrate_id),
                         body = readLines(path))
   submit_body <- jsonlite::fromJSON(submit$body)
@@ -764,7 +764,7 @@ test_that("api: programme and anc files are optional in spectrum download", {
   jsonlite::write_json(json, t, auto_unbox = TRUE)
 
   ## Submit download request
-  submit <- api$request("GET",
+  submit <- api$request("POST",
                         paste0("/download/submit/spectrum/", q$calibrate_id),
                         body = readLines(t))
   submit_body <- jsonlite::fromJSON(submit$body)
