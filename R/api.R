@@ -62,6 +62,7 @@ api <- function(queue_id = NULL, workers = 2,
                 log_level = "info") {
   queue <- Queue$new(queue_id, workers, results_dir = results_dir,
                      prerun_dir = prerun_dir)
+  queue$queue$worker_delete_exited()
   logger <- porcelain::porcelain_logger(log_level)
   api_build(queue, logger = logger)
 }
@@ -314,7 +315,7 @@ endpoint_download_submit <- function(queue) {
                                                 schema_root())
   response <- porcelain::porcelain_returning_json(
     "DownloadSubmitResponse.schema", schema_root())
-  porcelain::porcelain_endpoint$new("GET",
+  porcelain::porcelain_endpoint$new("POST",
                                     "/download/submit/<type>/<id>",
                                     download_submit(queue),
                                     input,

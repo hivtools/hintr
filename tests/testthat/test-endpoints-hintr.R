@@ -36,3 +36,20 @@ test_that("stop calls quit and stop_workers", {
   mockery::expect_called(queue$queue$worker_stop, 1)
   expect_equal(length(mockery::mock_calls(queue$queue$worker_stop)[[1]]), 1)
 })
+
+test_that("starting API clears any exited workers", {
+  test_redis_available()
+  queue_id <- "test-id"
+  queue <- Queue$new(queue_id, workers = 0)
+  status <- worker_status(queue)
+
+  api <- api(queue_id, workers = 2)
+  queue$queue$worker_stop(timeout = 5)
+  Sys.sleep(5)
+  response <- status()
+  expect_equal(unlist(response, FALSE, FALSE), rep("EXITED", 2))
+
+  api <- api(queue_id, workers = 0)
+  response <- status()
+  expect_equal(response, setNames(list(), character()))
+})

@@ -18,14 +18,6 @@
       },
       "additionalProperties": false,
       "required": [ "options", "id" ]
-    },
-    "async_run": {
-      "type": "object",
-      "properties": {
-        "id": { "type": "string" }
-      },
-      "additionalProperties": false,
-      "required": [ "id" ]
     }
   },
   "type": "object",
@@ -45,10 +37,6 @@
     },
     "model_fit": { "$ref": "#/definitions/async_run_options" },
     "calibrate": { "$ref": "#/definitions/async_run_options" },
-    "model_output": { "$ref": "#/definitions/async_run" },
-    "coarse_output": { "$ref": "#/definitions/async_run" },
-    "summary_report": { "$ref": "#/definitions/async_run" },
-    "comparison_report": { "$ref": "#/definitions/async_run" },
     "version": { "$ref": "VersionInfo.schema.json" }
   },
   "additionalProperties": false,
@@ -56,10 +44,6 @@
     "datasets",
     "model_fit",
     "calibrate",
-    "model_output",
-    "coarse_output",
-    "summary_report",
-    "comparison_report",
     "version"
   ]
 }

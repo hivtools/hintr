@@ -1,6 +1,10 @@
-# hintr 1.0.36
+# hintr 1.0.37
 
 * Add endpoints `/rehydrate/submit` `/rehydrate/status/<id>` and `/rehydrate/result/<id>` for getting state JSON required by the front end for rehydrating a project
+
+# hintr 1.0.36
+
+* Delete exited workers when API starts (so metrics on worker counts are up to date see mrc-2893)
 
 # hintr 1.0.35
 
