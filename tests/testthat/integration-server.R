@@ -846,7 +846,7 @@ test_that("rehydrate", {
   id <- response$data$id
 
   ## Get the status
-  testthat::try_again(5, {
+  testthat::try_again(10, {
     Sys.sleep(1)
     r <- server$request("GET", paste0("/rehydrate/status/", id))
     expect_equal(httr::status_code(r), 200)
