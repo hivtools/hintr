@@ -5,9 +5,7 @@ test_that("rehydrate returns json", {
 
   state <- jsonlite::fromJSON(out$state)
   expect_setequal(names(state),
-                  c("datasets", "model_fit", "calibrate", "model_output",
-                    "coarse_output", "summary_report", "comparison_report",
-                    "version"))
+                  c("datasets", "model_fit", "calibrate", "version"))
   expect_setequal(
     names(state$datasets),
     c("pjnz", "population", "shape", "survey", "programme", "anc"))
@@ -46,9 +44,7 @@ test_that("rehydrate endpoint returns json", {
   state <- jsonlite::fromJSON(response$data$state)
   expect_equal(response$status_code, 200)
   expect_setequal(names(state),
-                  c("datasets", "model_fit", "calibrate", "model_output",
-                    "coarse_output", "summary_report", "comparison_report",
-                    "version"))
+                  c("datasets", "model_fit", "calibrate", "version"))
   expect_setequal(
     names(state$datasets),
     c("pjnz", "population", "shape", "survey", "programme", "anc"))
@@ -90,9 +86,7 @@ test_that("api can call spectrum download", {
   expect_equal(res$status, "success")
   expect_length(res$errors, 0)
   expect_setequal(names(res$data$state),
-                  c("datasets", "model_fit", "calibrate", "model_output",
-                    "coarse_output", "summary_report", "comparison_report",
-                    "version"))
+                  c("datasets", "model_fit", "calibrate", "version"))
   expect_setequal(
     names(res$data$state$datasets),
     c("pjnz", "population", "shape", "survey", "programme", "anc"))
@@ -154,9 +148,7 @@ test_that("trying to rehydrate with no notes does not error", {
 
   state <- jsonlite::fromJSON(out$state)
   expect_setequal(names(state),
-                  c("datasets", "model_fit", "calibrate", "model_output",
-                    "coarse_output", "summary_report", "comparison_report",
-                    "version"))
+                  c("datasets", "model_fit", "calibrate", "version"))
   expect_setequal(
     names(state$datasets),
     c("pjnz", "population", "shape", "survey", "programme", "anc"))

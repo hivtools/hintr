@@ -86,18 +86,6 @@
       },
       "id": "6e457f5a9f0413708624b7b0384e5fd0"
     },
-    "model_output": {
-      "id": "123"
-    },
-    "coarse_output": {
-      "id": "456"
-    },
-    "summary_report": {
-      "id": "789"
-    },
-    "comparison_report": {
-      "id": "1011"
-    },
     "version": {
       "hintr": "1.0.33",
       "naomi": "2.6.26",
