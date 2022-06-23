@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions": {
+    "note": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "updated": {
+          "type": "string",
+          "pattern": "[0-9]{1,4}/[0-9]{1,2}/[0-9]{1,2} [0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2}"
+        },
+        "note": { "type": "string" }
+      },
+      "additionalProperties": false,
+      "required": [ "note" ]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "project_notes": { "$ref": "#/definitions/note" },
+    "version_notes": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/note" }
+    }
+  },
+  "additionalProperties": false
+}

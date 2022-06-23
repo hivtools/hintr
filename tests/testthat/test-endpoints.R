@@ -3,10 +3,10 @@ context("endpoints")
 test_that("plumber api can be built", {
   api <- api_build(NULL)
   expect_s3_class(api, "Plumber")
-  expect_length(api$routes, 8)
+  expect_length(api$routes, 9)
   expect_setequal(names(api$routes),
                  c("", "validate", "model", "calibrate", "meta", "download",
-                   "hintr", "chart-data"))
+                   "hintr", "chart-data", "rehydrate"))
   expect_setequal(names(api$routes$validate),
                   c("baseline-individual", "baseline-combined",
                     "survey-and-programme", "options"))
@@ -16,6 +16,7 @@ test_that("plumber api can be built", {
                   c("options", "submit", "status", "result", "plot"))
   expect_setequal(names(api$routes$meta), c("plotting", "adr"))
   expect_equal(names(api$routes$`chart-data`), "input-time-series")
+  expect_setequal(names(api$routes$rehydrate), c("submit", "status", "result"))
 })
 
 test_that("input_response correctly formats data and validates it", {

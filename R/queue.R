@@ -76,6 +76,10 @@ Queue <- R6::R6Class(
         queue = QUEUE_CALIBRATE)
     },
 
+    submit_rehydrate = function(output_zip) {
+      self$submit(quote(hintr:::rehydrate(output_zip)), queue = QUEUE_CALIBRATE)
+    },
+
     status = function(id) {
       status <- unname(self$queue$task_status(id))
       done <- c("ERROR", "DIED", "CANCELLED", "TIMEOUT", "COMPLETE")
