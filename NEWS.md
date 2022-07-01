@@ -1,3 +1,7 @@
+# hintr 1.0.38
+
+* Save `project_state.json` into `info` dir in the output zip to make it less visible to users
+
 # hintr 1.0.37
 
 * Add endpoints `/rehydrate/submit` `/rehydrate/status/<id>` and `/rehydrate/result/<id>` for getting state JSON required by the front end for rehydrating a project
