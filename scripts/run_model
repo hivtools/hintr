@@ -54,10 +54,10 @@ spectrum <- naomi::hintr_prepare_spectrum_download(calibrated,
 
 state <- jqr::jq(readLines(dat$download_payload), ".state")
 t <- tempfile()
-dir.create(t, FALSE, TRUE)
-state_path <- file.path(t, "project_state.json")
+state_path <- file.path(t, "info", "project_state.json")
+dir.create(dirname(state_path), FALSE, TRUE)
 writeLines(jsonlite::prettify(state), state_path)
-zip::zip_append(spectrum$path, state_path, mode = "cherry-pick")
+zip::zip_append(spectrum$path, dirname(state_path), mode = "cherry-pick")
 message(
   sprintf("Saving spectrum download at %s", normalizePath(dat$spectrum_path,
                                                           mustWork = TRUE)))
