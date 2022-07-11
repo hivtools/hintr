@@ -123,14 +123,14 @@ input_time_series <- function(type, input) {
 
 model_options <- function(input) {
   input <- jsonlite::fromJSON(input)
-  tryCatch({
+  withCallingHandlers({
     assert_file_exists(input$shape$path)
     assert_file_exists(input$survey$path)
     json_verbatim(
       do_endpoint_model_options(input$shape, input$survey,
                                 input$programme, input$anc))
   }, error = function(e) {
-    hintr_error(paste0(e$message, e$call, collapse = " / "), "INVALID_OPTIONS")
+    hintr_error(paste(sys.calls(), collapse = " \n "), "INVALID_OPTIONS")
   })
 }
 
