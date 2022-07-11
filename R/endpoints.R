@@ -21,6 +21,7 @@ model_options <- function(input) {
       do_endpoint_model_options(input$shape, input$survey,
                                 input$programme, input$anc))
   }, error = function(e) {
+    browser()
     hintr_error(e$message, "INVALID_OPTIONS")
   })
 }
@@ -129,7 +130,7 @@ model_options <- function(input) {
       do_endpoint_model_options(input$shape, input$survey,
                                 input$programme, input$anc))
   }, error = function(e) {
-    hintr_error(e$message, "INVALID_OPTIONS")
+    hintr_error(paste0(e$message, e$call, collapse = " / "), "INVALID_OPTIONS")
   })
 }
 
