@@ -22,7 +22,7 @@ model_options <- function(input) {
                                 input$programme, input$anc))
   }, error = function(e) {
     cache <- get_cache(NULL)
-    msg <- paste("Cache has functions", paste(ls(cache$.__enclos_env__$self), collapse = ", "))
+    msg <- paste("Cache has functions", paste(ls(cache), collapse = ", "))
     hintr_error(msg, "INVALID_OPTIONS")
   })
 }
