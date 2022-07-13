@@ -122,19 +122,6 @@ input_time_series <- function(type, input) {
   })
 }
 
-model_options <- function(input) {
-  input <- jsonlite::fromJSON(input)
-  tryCatch({
-    assert_file_exists(input$shape$path)
-    assert_file_exists(input$survey$path)
-    json_verbatim(
-      do_endpoint_model_options(input$shape, input$survey,
-                                input$programme, input$anc))
-  }, error = function(e) {
-    hintr_error(e$message, "INVALID_OPTIONS")
-  })
-}
-
 model_options_validate <- function(input) {
   input <- jsonlite::fromJSON(input)
   tryCatch({
