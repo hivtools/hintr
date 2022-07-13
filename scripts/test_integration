@@ -1,4 +1,9 @@
 #!/usr/bin/env Rscript
+env <- pkgload::load_all(".")$env
+## Since pkgload 1.3.0 the namespace is now locked just before onLoad
+## hooks are run. testthat evaluates helper functions in passed env so
+## we need to create a new environment for testing
+test_env <- new.env(parent = env)
 testthat::test_file("tests/testthat/integration-server.R",
-                    env = pkgload::load_all(".")$env,
+                    env = test_env,
                     stop_on_failure = TRUE)
