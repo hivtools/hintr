@@ -21,7 +21,10 @@ model_options <- function(input) {
       do_endpoint_model_options(input$shape, input$survey,
                                 input$programme, input$anc))
   }, error = function(e) {
-    hintr_error(e$message, "INVALID_OPTIONS")
+    cache <- get_cache(NULL)
+    msg <- paste(ls(cache), collapse = ", ")
+    msg <- paste(e$message, msg)
+    hintr_error(msg, "INVALID_OPTIONS")
   })
 }
 
