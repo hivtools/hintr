@@ -38,7 +38,7 @@ docker run -it --network=$NAME_NETWORK \
 
 if [[ $result -ne 0 ]]; then
     docker commit $NAME_HINTR_TESTS log_image
-    docker run --rm -it --entrypoint=cat log_image /src/hintr.Rcheck/00check.log
+    docker run --rm -it --entrypoint=cat log_image /src/hintr.Rcheck/tests/testthat.Rfail
 fi
 
 exit $result
