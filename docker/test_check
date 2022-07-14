@@ -13,7 +13,6 @@ function cleanup {
     echo "Cleaning up"
     docker kill $NAME_REDIS > /dev/null || true
     docker kill $NAME_HINTR_TESTS > /dev/null || true
-    docker rm $NAME_HINTR_TESTS > /dev/null || true
     docker network rm $NAME_NETWORK > /dev/null || true
 }
 
@@ -24,8 +23,7 @@ docker network create $NAME_NETWORK
 docker run --rm -d --network=$NAME_NETWORK --network-alias=redis \
        --name $NAME_REDIS redis
 
-result=0
-docker run -it --network=$NAME_NETWORK \
+docker run --rm -it --network=$NAME_NETWORK \
        -e REDIS_URL=redis://redis:6379 \
        -e VALIDATE_JSON_SCHEMAS=true \
        -e PORCELAIN_VALIDATE=true \
@@ -34,11 +32,5 @@ docker run -it --network=$NAME_NETWORK \
        --entrypoint R \
        --name $NAME_HINTR_TESTS \
        $TAG_HINTR_TESTS \
-       CMD check --as-cran hintr_$PACKAGE_VERSION.tar.gz || result=$?
+       CMD check --as-cran hintr_$PACKAGE_VERSION.tar.gz
 
-if [[ $result -ne 0 ]]; then
-    docker commit $NAME_HINTR_TESTS log_image
-    docker run --rm -it --entrypoint=cat log_image /src/hintr.Rcheck/tests/testthat.Rfail
-fi
-
-exit $result
