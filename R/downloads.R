@@ -25,10 +25,10 @@ download <- function(model_output, type, path_results, notes, state,
                                                   notes)
     if (file_exists(out$path) && !is.null(state)) {
       t <- tempfile()
-      dir.create(t, FALSE, TRUE)
       state_path <- file.path(t, PROJECT_STATE_PATH)
+      dir.create(dirname(state_path), FALSE, TRUE)
       writeLines(jsonlite::prettify(state), state_path)
-      zip::zip_append(out$path, state_path, mode = "cherry-pick")
+      zip::zip_append(out$path, dirname(state_path), mode = "cherry-pick")
     }
   } else {
     func <- switch(type,

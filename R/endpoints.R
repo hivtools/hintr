@@ -21,6 +21,9 @@ model_options <- function(input) {
       do_endpoint_model_options(input$shape, input$survey,
                                 input$programme, input$anc))
   }, error = function(e) {
+    ## Get the cache for no reason as this seems to prevent flaky test failure
+    ## due to caching, see https://buildkite.com/mrc-ide/hintr/builds/1619
+    cache <- get_cache(NULL)
     hintr_error(e$message, "INVALID_OPTIONS")
   })
 }
@@ -117,19 +120,6 @@ input_time_series <- function(type, input) {
   },
   error = function(e) {
     hintr_error(e$message, "FAILED_TO_GENERATE_TIME_SERIES")
-  })
-}
-
-model_options <- function(input) {
-  input <- jsonlite::fromJSON(input)
-  tryCatch({
-    assert_file_exists(input$shape$path)
-    assert_file_exists(input$survey$path)
-    json_verbatim(
-      do_endpoint_model_options(input$shape, input$survey,
-                                input$programme, input$anc))
-  }, error = function(e) {
-    hintr_error(e$message, "INVALID_OPTIONS")
   })
 }
 
