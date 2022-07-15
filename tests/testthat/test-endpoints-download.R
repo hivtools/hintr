@@ -1,5 +1,6 @@
 context("endpoints-download")
 
+gc()
 
 test_that("spectrum download returns bytes", {
   test_mock_model_available()
