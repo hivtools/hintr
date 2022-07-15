@@ -1,3 +1,7 @@
+# hintr 1.0.39
+
+* Add dummy `/comparison/plot/<id>` endpoint to return data for comparison barchart
+
 # hintr 1.0.38
 
 * Save `project_state.json` into `info` dir in the output zip to make it less visible to users
