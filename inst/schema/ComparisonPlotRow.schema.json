@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "area_id": {
+      "type": "string"
+    },
+    "area_name": {
+      "type": "string"
+    },
+    "sex": {
+      "type": "string"
+    },
+    "age_group": {
+      "type": "string"
+    },
+    "calendar_quarter": {
+      "type": "string"
+    },
+    "indicator": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string"
+    },
+    "mean": {
+      "type": [ "number", "null" ]
+    },
+     "lower": {
+      "type": [ "number", "null" ]
+    },
+     "upper": {
+      "type": [ "number", "null" ]
+    }
+  },
+  "additionalProperties": true,
+  "required": [ "area_id", "area_name", "age_group", "sex",
+    "calendar_quarter", "indicator", "source", "mean", "lower", "upper" ]
+}

@@ -17,6 +17,7 @@ api_build <- function(queue, validate = FALSE, logger = NULL) {
   api$handle(endpoint_model_calibrate_status(queue))
   api$handle(endpoint_model_calibrate_result(queue))
   api$handle(endpoint_model_calibrate_plot(queue))
+  api$handle(endpoint_comparison_plot(queue))
   api$handle(endpoint_plotting_metadata_iso3())
   api$handle(endpoint_plotting_metadata_default())
   api$handle(endpoint_download_submit(queue))
@@ -282,6 +283,15 @@ endpoint_model_calibrate_plot <- function(queue) {
   porcelain::porcelain_endpoint$new("GET",
                                     "/calibrate/plot/<id>",
                                     calibrate_plot(queue),
+                                    returning = response)
+}
+
+endpoint_comparison_plot <- function(queue) {
+  response <- porcelain::porcelain_returning_json(
+    "ComparisonPlotResponse.schema", schema_root())
+  porcelain::porcelain_endpoint$new("GET",
+                                    "/comparison/plot/<id>",
+                                    comparison_plot(queue),
                                     returning = response)
 }
 
