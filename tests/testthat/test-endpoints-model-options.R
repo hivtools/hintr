@@ -174,11 +174,11 @@ test_that("endpoint_model_options fails without shape & survey data", {
 
   error <- expect_error(model_options(input))
 
-  # expect_equal(error$data[[1]]$error, scalar("INVALID_OPTIONS"))
-  # expect_equal(
-    # error$data[[1]]$detail,
-    # scalar("File at path NULL does not exist. Create it, or fix the path."))
-  # expect_equal(error$status_code, 400)
+  expect_equal(error$data[[1]]$error, scalar("INVALID_OPTIONS"))
+  expect_equal(
+    error$data[[1]]$detail,
+    scalar("File at path NULL does not exist. Create it, or fix the path."))
+  expect_equal(error$status_code, 400)
 })
 
 test_that("endpoint_model_options_validate validates options", {

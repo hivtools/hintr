@@ -21,10 +21,10 @@ model_options <- function(input) {
       do_endpoint_model_options(input$shape, input$survey,
                                 input$programme, input$anc))
   }, error = function(e) {
+    ## Get the cache for no reason as this seems to prevent flaky test failure
+    ## due to caching, see https://buildkite.com/mrc-ide/hintr/builds/1619
     cache <- get_cache(NULL)
-    msg <- paste(ls(cache), collapse = ", ")
-    msg <- paste(e$message, msg)
-    hintr_error(msg, "INVALID_OPTIONS")
+    hintr_error(e$message, "INVALID_OPTIONS")
   })
 }
 
