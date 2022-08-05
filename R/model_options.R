@@ -20,7 +20,7 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
   ## General options
   json <- hintr_geojson_read(shape)
   regions <- get_region_filters(json)
-  parent_region_id <- regions$id
+  country_region_id <- read_geojson_iso3(shape)
   area_level_options <- get_level_options(json)
   time_options <- get_time_options()
 
@@ -73,7 +73,7 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
 
   params <- list(
     area_scope_options = list(regions),
-    area_scope_default = parent_region_id,
+    area_scope_default = country_region_id,
     area_level_options = area_level_options,
     area_level_default = area_level_options[[length(area_level_options)]]$id,
     calendar_quarter_t1_options = time_options,
