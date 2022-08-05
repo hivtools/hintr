@@ -1042,3 +1042,91 @@ test_that("calibrate plot metadata is translated", {
   expect_equal(filters[[5]]$label, scalar("Type de données"))
   expect_equal(filters[[5]]$options[[2]]$label, scalar("Étalonné"))
 })
+
+test_that("can get comparison plot data", {
+  test_mock_model_available()
+  test_redis_available()
+  q <- test_queue_result()
+
+  endpoint <- endpoint_comparison_plot(q$queue)
+  response <- endpoint$run(q$calibrate_id)
+
+  expect_equal(response$status_code, 200)
+  response_data <- response$data
+  expect_setequal(names(response_data), c("data", "plottingMetadata"))
+  ## TODO: enable all tests when schema finalised
+  # expect_setequal(names(response_data$data),
+  #                 c("data_type", "spectrum_region_code", "spectrum_region_name",
+  #                   "sex", "age_group", "calendar_quarter", "indicator",
+  #                   "mean"))
+  expect_true(nrow(response_data$data) > 0)
+  expect_equal(names(response_data$plottingMetadata), "barchart")
+  expect_setequal(names(response_data$plottingMetadata$barchart),
+                  c("indicators", "filters", "defaults"))
+
+  expect_setequal(names(response_data$plottingMetadata$barchart$indicators),
+                  c("indicator", "value_column", "error_low_column",
+                    "error_high_column", "indicator_column", "indicator_value",
+                    "indicator_sort_order", "name", "scale", "accuracy",
+                    "format"))
+  expect_true(nrow(response_data$plottingMetadata$barchart$indicators) > 0)
+
+  filters <- lapply(response_data$plottingMetadata$barchart$filters, "[[",
+                    "column_id")
+  expect_equal(filters[[1]], scalar("area_id"))
+  expect_equal(filters[[2]], scalar("calendar_quarter"))
+  expect_equal(filters[[3]], scalar("sex"))
+  expect_equal(filters[[4]], scalar("age_group"))
+  expect_equal(filters[[5]], scalar("source"))
+
+  expect_setequal(names(response_data$plottingMetadata$barchart$defaults),
+                  c("indicator_id", "x_axis_id", "disaggregate_by_id",
+                    "selected_filter_options"))
+})
+
+test_that("API can return comparison plotting data", {
+  test_redis_available()
+  test_mock_model_available()
+  q <- test_queue_result()
+
+  api <- api_build(q$queue)
+  res <- api$request("GET", paste0("/comparison/plot/", q$calibrate_id))
+  expect_equal(res$status, 200)
+  body <- jsonlite::fromJSON(res$body, simplifyDataFrame = FALSE)
+  expect_equal(body$status, "success")
+  expect_null(body$errors)
+
+  response_data <- body$data
+  expect_setequal(names(response_data), c("data", "plottingMetadata"))
+  data <- do.call(rbind, response_data$data)
+  ## TODO: enable all tests when schema finalised
+  # expect_setequal(colnames(data),
+  #                 c("data_type", "spectrum_region_code", "spectrum_region_name",
+  #                   "sex", "age_group", "calendar_quarter", "indicator",
+  #                   "mean"))
+  expect_true(nrow(data) > 0)
+  expect_equal(names(response_data$plottingMetadata), "barchart")
+  expect_setequal(names(response_data$plottingMetadata$barchart),
+                  c("indicators", "filters", "defaults"))
+
+  barchart_indicators <- do.call(
+    rbind, response_data$plottingMetadata$barchart$indicators)
+  expect_setequal(colnames(barchart_indicators),
+                  c("indicator", "value_column", "error_low_column",
+                    "error_high_column", "indicator_column", "indicator_value",
+                    "indicator_sort_order", "name", "scale", "accuracy",
+                    "format"))
+  expect_true(nrow(barchart_indicators) > 0)
+
+  filters <- lapply(response_data$plottingMetadata$barchart$filters, "[[",
+                    "column_id")
+  expect_equal(filters[[1]], "area_id")
+  expect_equal(filters[[2]], "calendar_quarter")
+  expect_equal(filters[[3]], "sex")
+  expect_equal(filters[[4]], "age_group")
+  expect_equal(filters[[5]], "source")
+
+  expect_setequal(names(response_data$plottingMetadata$barchart$defaults),
+                  c("indicator_id", "x_axis_id", "disaggregate_by_id",
+                    "selected_filter_options"))
+})

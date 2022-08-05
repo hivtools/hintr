@@ -167,6 +167,42 @@ get_calibrate_plot_output_filters <- function(data) {
   )
 }
 
+get_comparison_plot_filters <- function(data) {
+  list(
+    list(
+      id = scalar("area"),
+      column_id = scalar("area_id"),
+      label = scalar(t_("OUTPUT_FILTER_AREA")),
+      options = json_verbatim("null"),
+      use_shape_regions = scalar(TRUE)
+    ),
+    list(
+      id = scalar("quarter"),
+      column_id = scalar("calendar_quarter"),
+      label = scalar(t_("OUTPUT_FILTER_PERIOD")),
+      options = get_quarter_filters(data)
+    ),
+    list(
+      id = scalar("sex"),
+      column_id = scalar("sex"),
+      label = scalar(t_("OUTPUT_FILTER_SEX")),
+      options = get_sex_filters(data)
+    ),
+    list(
+      id = scalar("age"),
+      column_id = scalar("age_group"),
+      label = scalar(t_("OUTPUT_FILTER_AGE")),
+      options = get_age_filters(data)
+    ),
+    list(
+      id = scalar("source"),
+      column_id = scalar("source"),
+      label = scalar(t_("OUTPUT_FILTER_DATA_TYPE")),
+      options = get_source_filters(data)
+    )
+  )
+}
+
 get_barchart_defaults <- function(output, output_filters) {
   list(
     indicator_id = scalar("prevalence"),
@@ -193,6 +229,22 @@ get_calibrate_barchart_defaults <- function(filters) {
       age = get_selected_mappings(filters, "age", "Y015_049"),
       spectrum_region = get_selected_mappings(filters, "spectrum_region"),
       type = get_selected_mappings(filters, "type")
+    )
+  )
+}
+
+get_comparison_barchart_defaults <- function(output, filters) {
+  list(
+    indicator_id = scalar("prevalence"),
+    x_axis_id = scalar("age"),
+    disaggregate_by_id = scalar("source"),
+    selected_filter_options = list(
+      area = get_area_level_filter_option(output),
+      quarter = get_selected_mappings(filters, "quarter")[2],
+      sex = get_selected_mappings(filters, "sex")[1],
+      age = get_selected_mappings(filters, "age",
+                                  naomi::get_five_year_age_groups()),
+      source = get_selected_mappings(filters, "source")
     )
   )
 }
@@ -310,6 +362,14 @@ get_spectrum_region_filters <- function(data) {
 
 get_data_type_filters <- function(data) {
   recursive_scalar(naomi::data_type_labels())
+}
+
+get_source_filters <- function(data) {
+  sources <- sort(unique(data$source), decreasing = TRUE)
+  lapply(sources, function(source) {
+    list(id = scalar(source),
+         label = scalar(source))
+  })
 }
 
 #' Create an ordered tree from a data frame.

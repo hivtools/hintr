@@ -237,6 +237,31 @@ calibrate_plot <- function(queue) {
   }
 }
 
+comparison_plot <- function(queue) {
+  function(id) {
+    verify_result_available(queue, id)
+    data <- readRDS(system_file("comparison_plot_mock.rds"))
+    data <- data[c("area_id", "area_name", "age_group", "sex",
+                   "calendar_quarter", "indicator", "source", "mean",
+                   "lower", "upper")]
+    ## Strip tibble class to work with helper functions which rely on
+    ## converting to vector when selecting 1 column
+    filters <- get_comparison_plot_filters(data)
+    list(
+      data = data,
+      plottingMetadata = list(
+        barchart = list(
+          ## TODO: add and use calibrate barchart metadata (or make it clear that
+          ## we want to use the same here)
+          indicators = get_barchart_metadata(data, "calibrate"),
+          filters = filters,
+          defaults = get_comparison_barchart_defaults(data, filters)
+        )
+      )
+    )
+  }
+}
+
 verify_result_available <- function(queue, id) {
   task_status <- queue$queue$task_status(id)
   if (task_status == "COMPLETE") {
