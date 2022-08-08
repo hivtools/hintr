@@ -93,7 +93,8 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
     anc_art_coverage_year1_default = anc_year1_default,
     anc_art_coverage_year2_default = anc_year2_default
   )
-  build_json(options_stitched, params)
+  defaults <- get_country_option_defaults(country_region_id, params)
+  build_json(options_stitched, defaults)
 }
 
 
@@ -235,4 +236,35 @@ get_survey_options <- function(survey, indicator) {
 get_years <- function(data) {
   years <- unique(data$year)
   sort(years, decreasing = TRUE)
+}
+
+get_country_option_defaults <- function(iso3, params) {
+  defaults <- naomi::get_country_option_defaults()
+  iso3 <- toupper(iso3)
+  if (!(iso3 %in% colnames(defaults))) {
+    return(list())
+  }
+  default_options <- as.list(defaults[, iso3])
+  names(default_options) <- defaults[, "model_options"]
+  default_options <- default_options[is_set(default_options)]
+  recursive_scalar(default_options)
+  verify_option_defaults(default_options, params)
+}
+
+is_set <- function(options) {
+  lapply(options, function(x) !is.na(x) && !is.null(x))
+}
+
+## Defaults have names which match the name of the control in the options JSON
+## But the default value in the template is <name>_default
+## We need to check that the default from the csv
+## Merge 2 lists, if name is present in both uses the value from the primary
+verify_option_defaults <- function(defaults, params) {
+  merged <- primary
+  for (name in names(secondary)) {
+    if (!(name %in% names(merged))) {
+      merged[[name]] <- secondary[[name]]
+    }
+  }
+  merged
 }
