@@ -17,7 +17,25 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
   options_template <- naomi::get_model_options_template(has_art, has_anc)
   options_stitched <- build_options_from_template(options_template)
 
-  ## General options
+  data_defaults <- get_data_defaults(shape, survey, programme, anc)
+  hardcoded_defaults <- get_hardcoded_defaults(data_defaults$area_scope$value)
+
+  defaults <- verify_option_defaults(data_defaults, hardcoded_defaults,
+                                     options_stitched)
+  params <- unlist(lapply(names(defaults), function(name) {
+    x <- list()
+    x[[paste0(name, "_default")]] <- defaults[[name]]$default
+    if (!is.null(defaults[[name]]$options)) {
+      x[[paste0(name, "_options")]] <- defaults[[name]]$options
+    }
+    x
+  }), recursive = FALSE)
+  build_json(options_stitched, params)
+}
+
+get_data_defaults <- function(shape, survey, programme, anc) {
+  has_art <- !is.null(programme)
+  has_anc <- !is.null(anc)
   json <- hintr_geojson_read(shape)
   regions <- get_region_filters(json)
   country_region_id <- read_geojson_iso3(shape)
@@ -71,30 +89,42 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
     }
   }
 
-  params <- list(
-    area_scope_options = list(regions),
-    area_scope_default = country_region_id,
-    area_level_options = area_level_options,
-    area_level_default = area_level_options[[length(area_level_options)]]$id,
-    calendar_quarter_t1_options = time_options,
-    calendar_quarter_t1_default = most_recent_survey_quarter,
-    calendar_quarter_t2_options = time_options,
-    survey_prevalence_options = survey_prevalence_options$options,
-    survey_prevalence_default = survey_prevalence_options$default,
-    survey_art_coverage_options = survey_art_coverage_options$options,
-    survey_art_coverage_default = survey_art_coverage_options$default,
-    survey_recently_infected_options = survey_recently_infected_options$options,
-    anc_prevalence_year1_options = anc_year_options,
-    anc_prevalence_year2_options = anc_year_options,
-    anc_art_coverage_year1_options = anc_year_options,
-    anc_art_coverage_year2_options = anc_year_options,
-    anc_prevalence_year1_default = anc_year1_default,
-    anc_prevalence_year2_default = anc_year2_default,
-    anc_art_coverage_year1_default = anc_year1_default,
-    anc_art_coverage_year2_default = anc_year2_default
+  list(
+    area_scope = list(
+      options = list(regions),
+      value = country_region_id
+    ),
+    area_level = list(
+      options = area_level_options,
+      value = area_level_options[[length(area_level_options)]]$id
+    ),
+    calendar_quarter_t1 = list(
+      options = time_options,
+      value = most_recent_survey_quarter
+    ),
+    calendar_quarter_t2 = list(
+      options = time_options
+    ),
+    survey_prevalence = survey_prevalence_options,
+    survey_art_coverage = survey_art_coverage_options,
+    survey_recently_infected = survey_recently_infected_options,
+    anc_prevalence_year1 = list(
+      options = anc_year_options,
+      value = anc_year1_default
+    ),
+    anc_prevalence_year2 = list(
+      options = anc_year_options,
+      value = anc_year2_default
+    ),
+    anc_art_coverage_year1 = list(
+      options = anc_year_options,
+      value = anc_year1_default
+    ),
+    anc_art_coverage_year2 = list(
+      options = anc_year_options,
+      value = anc_year2_default
+    )
   )
-  defaults <- get_country_option_defaults(country_region_id, params)
-  build_json(options_stitched, defaults)
 }
 
 
@@ -113,8 +143,8 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
 build_json <- function(options_template, params) {
   param_env <- list2env(params, parent = .GlobalEnv)
   tryCatch(
-    glue::glue(options_template, .envir = param_env, .open = "<+", .close = "+>",
-               .transformer = json_transformer),
+    glue::glue(options_template, .envir = param_env, .open = '"<+',
+               .close = '+>"', .transformer = json_transformer),
     error = function(e) {
       e$message <- t_("MODEL_OPTIONS_FAIL", list(message = e$message))
       stop(e)
@@ -230,7 +260,7 @@ get_survey_options <- function(survey, indicator) {
   }
   list(
     options = options,
-    default = option_default)
+    value = option_default)
 }
 
 get_years <- function(data) {
@@ -238,33 +268,100 @@ get_years <- function(data) {
   sort(years, decreasing = TRUE)
 }
 
-get_country_option_defaults <- function(iso3, params) {
+get_hardcoded_defaults <- function(iso3) {
   defaults <- naomi::get_country_option_defaults()
   iso3 <- toupper(iso3)
   if (!(iso3 %in% colnames(defaults))) {
     return(list())
   }
-  default_options <- as.list(defaults[, iso3])
-  names(default_options) <- defaults[, "model_options"]
-  default_options <- default_options[is_set(default_options)]
-  recursive_scalar(default_options)
-  verify_option_defaults(default_options, params)
+  to_option <- function(option) {
+    list(
+      value = scalar(option)
+    )
+  }
+  lapply(setNames(defaults[, iso3], defaults[, "model_options"]),
+         to_option)
 }
 
-is_set <- function(options) {
-  lapply(options, function(x) !is.na(x) && !is.null(x))
-}
+
 
 ## Defaults have names which match the name of the control in the options JSON
 ## But the default value in the template is <name>_default
 ## We need to check that the default from the csv
 ## Merge 2 lists, if name is present in both uses the value from the primary
-verify_option_defaults <- function(defaults, params) {
-  merged <- primary
-  for (name in names(secondary)) {
-    if (!(name %in% names(merged))) {
-      merged[[name]] <- secondary[[name]]
+verify_option_defaults <- function(data_defaults, hardcoded_defaults,
+                                   options_json) {
+  ## options come from data or template
+  ## values come from data or hardcoded
+  ## prefer hardcoded options
+  ## Merge all 3 data, if a value in both data and hardcoded, prefer the hardcoded
+  ## If a set of options in both data and template then error, that shouldn't happen
+  ## Merge to list(option_name: list(options, data_value, hardcoded_value))
+  ## Check hardcoded from options if so use that, if not fallback to data
+  ## if not fallback to no value (do we need to update template for this?)
+
+  all_options <- jsonlite::fromJSON(options_json, simplifyVector = FALSE)
+  controls <- list()
+  for (section in all_options$controlSections) {
+    for (group in section$controlGroups) {
+      for (control in group$controls) {
+        controls <- c(controls, setNames(list(control), control$name))
+      }
     }
   }
-  merged
+
+  all_names <- union(names(data_defaults), names(hardcoded_defaults))
+  # if (!all(names(controls) %in% all_names)) {
+  #   missing <- names(controls)[!(names(controls) %in% all_names)]
+  #   stop(t_("All controls must have a default value, control %s missing value. Contact system admin.")
+  # }
+
+  defaults <- lapply(setNames(all_names, all_names), verify_default, controls,
+                     data_defaults, hardcoded_defaults)
+}
+
+is_templated <- function(x) grepl('^<\\+\\w+\\+>$', x)
+
+##' Select default value from hardcoded and input data and verify it
+##'
+##' Verify that (if set) hardcoded default value is in the set of possible
+##' options otherwise fallback to data default otherwise fallback to no
+##' selection
+##'
+##' @param name Name of the control to verify
+##' @param controls Named list of controls from the options JSON
+##' @param merged_defaults List containg merge of options from data and
+##'   hardcoding in naomi.
+##'
+##' @return A named list of list containing any options and default values
+##'   for controls.
+##' @keywords internal
+verify_default <- function(name, controls, data_defaults, hardcoded_defaults) {
+  opts <- controls[[name]]$options
+  if (isTRUE(is_templated(controls[[name]]$options))) {
+    ## Options are templated so get get options from data
+    opts <- vcapply(data_defaults[[name]]$options, "[[", "id")
+  }
+  if (!is.null(opts)) {
+    is_valid <- function(x) !is_empty(x) && x %in% opts
+  } else {
+    is_valid <- function(x) !is_empty(x)
+  }
+
+  hardcoded_default <- hardcoded_defaults[[name]]$value
+  data_default <- data_defaults[[name]]$value
+  if (is_valid(hardcoded_default)) {
+    default <- hardcoded_default
+  } else if (is_valid(data_default)) {
+    default <- data_default
+  } else {
+    default <- scalar("")
+  }
+  ret <- list(
+    default = default
+  )
+  if (!is.null(opts)) {
+    ret$options <- data_defaults[[name]]$options
+  }
+  ret
 }

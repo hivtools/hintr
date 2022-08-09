@@ -456,7 +456,7 @@ test_that("model options work when survey_mid_calendar_quarter missing", {
 test_that("can get survey options & default for different indicators", {
   survey <- file_object(file.path("testdata", "survey.csv"))
   prev_options <- get_survey_options(survey, "prevalence")
-  expect_equal(prev_options$default, scalar("DEMO2016PHIA"))
+  expect_equal(prev_options$value, scalar("DEMO2016PHIA"))
   expect_equal(prev_options$options, list(
     list(
       id = scalar("DEMO2016PHIA"),
@@ -477,7 +477,7 @@ test_that("can get survey options & default for different indicators", {
   ))
 
   art_options <- get_survey_options(survey, "art_coverage")
-  expect_equal(art_options$default, scalar("DEMO2016PHIA"))
+  expect_equal(art_options$value, scalar("DEMO2016PHIA"))
   expect_equal(art_options$options, list(
     list(id = scalar("DEMO2016PHIA"),
          label = scalar("DEMO2016PHIA"))
@@ -485,7 +485,7 @@ test_that("can get survey options & default for different indicators", {
 
   mock_get_indicator_data <- mockery::mock(NULL)
   recent_infected_options <- get_survey_options(survey, "recent_infected")
-  expect_equal(art_options$default, scalar("DEMO2016PHIA"))
+  expect_equal(art_options$value, scalar("DEMO2016PHIA"))
   expect_equal(art_options$options, list(
     list(id = scalar("DEMO2016PHIA"),
          label = scalar("DEMO2016PHIA"))
@@ -498,7 +498,7 @@ test_that("getting survey options for missing indicator returns empty values", {
     get_survey_options(survey, "art_coverage"),
     list(
       options = NULL,
-      default = scalar("")
+      value = scalar("")
     )
   )
 })
