@@ -1,3 +1,7 @@
+# hintr 1.0.40
+
+* Get country specific model option defaults from naomi
+
 # hintr 1.0.39
 
 * Add dummy `/comparison/plot/<id>` endpoint to return data for comparison barchart
