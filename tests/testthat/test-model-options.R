@@ -1,14 +1,14 @@
 context("model-options")
 
 test_that("can build JSON from template", {
-  json <- build_json("test <+param1+>", list(param1 = scalar("test string")))
+  json <- build_json("test \"<+param1+>\"", list(param1 = scalar("test string")))
   expect_equal(json, 'test "test string"')
 
-  json <- build_json("<+param1+> test, <+param_2+>",
+  json <- build_json("\"<+param1+>\" test, \"<+param_2+>\"",
                      list(param1 = scalar("x"), param_2 = scalar("y")))
   expect_equal(json, '"x" test, "y"')
 
-  json <- build_json('{"options": <+options+>, "test": <+test+>}',
+  json <- build_json('{"options": \"<+options+>\", "test": \"<+test+>\"}',
                      list(options = c(scalar("MWI"),
                                       scalar("MWI_1_1"),
                                       scalar("MWI_1_2")),
@@ -16,7 +16,7 @@ test_that("can build JSON from template", {
   expect_equal(json,
                '{"options": ["MWI","MWI_1_1","MWI_1_2"], "test": "test_value"}')
 
-  json <- build_json('{"options": <+options+>, "test": <+test+>, "text": "Age < 5"}',
+  json <- build_json('{"options": \"<+options+>\", "test": \"<+test+>\", "text": "Age < 5"}',
                      list(options = list(
                        list(id = scalar("MWI"),
                             label = scalar("Malawi")),
@@ -29,16 +29,17 @@ test_that("can build JSON from template", {
                '{"options": [{"id":"MWI","label":"Malawi"},{"id":"MWI_1_1","label":"Northern"},{"id":"MWI_1_2","label":"Central"}], "test": "test_value", "text": "Age < 5"}')
 
   ## Additional params are ignored
-  json <- build_json("test <+param+>", list(param = scalar("test"), param2 = scalar("test2")))
+  json <- build_json("test \"<+param+>\"",
+                     list(param = scalar("test"), param2 = scalar("test2")))
   expect_equal(json, 'test "test"')
 
   ## Null params
-  json <- build_json('{"options": <+param+>}', list(param = scalar(NULL)))
+  json <- build_json('{"options": \"<+param+>\"}', list(param = scalar(NULL)))
   expect_equal(json, '{"options": {}}')
 })
 
 test_that("JSON build fails if params are missing", {
-  expect_error(build_json('{"options": <+param+>}', list(value = "test")),
+  expect_error(build_json('{"options": \"<+param+>\"}', list(value = "test")),
                "Failed to construct model options from template and params:
 object 'param' not found")
 })
@@ -58,25 +59,6 @@ test_that("do_endpoint_model_options correctly builds params list", {
   expect_true(grepl('"label": "ART"', args[[1]][[1]]))
   expect_true(grepl('"label": "ANC"', args[[1]][[1]]))
   params <- args[[1]][[2]]
-  expect_equal(names(params),
-               c("area_scope_options", "area_scope_default",
-                 "area_level_options", "area_level_default",
-                 "calendar_quarter_t1_options",
-                 "calendar_quarter_t1_default",
-                 "calendar_quarter_t2_options",
-                 "survey_prevalence_options",
-                 "survey_prevalence_default",
-                 "survey_art_coverage_options",
-                 "survey_art_coverage_default",
-                 "survey_recently_infected_options",
-                 "anc_prevalence_year1_options",
-                 "anc_prevalence_year2_options",
-                 "anc_art_coverage_year1_options",
-                 "anc_art_coverage_year2_options",
-                 "anc_prevalence_year1_default",
-                 "anc_prevalence_year2_default",
-                 "anc_art_coverage_year1_default",
-                 "anc_art_coverage_year2_default"))
 
   expect_length(params$area_scope_options, 1)
   expect_equal(names(params$area_scope_options[[1]]),
@@ -155,25 +137,6 @@ test_that("do_endpoint_model_options without programme data", {
   expect_false(grepl('"label": "ART"', args[[1]][[1]]))
   expect_false(grepl('"label": "ANC"', args[[1]][[1]]))
   params <- args[[1]][[2]]
-  expect_equal(names(params),
-               c("area_scope_options", "area_scope_default",
-                 "area_level_options", "area_level_default",
-                 "calendar_quarter_t1_options",
-                 "calendar_quarter_t1_default",
-                 "calendar_quarter_t2_options",
-                 "survey_prevalence_options",
-                 "survey_prevalence_default",
-                 "survey_art_coverage_options",
-                 "survey_art_coverage_default",
-                 "survey_recently_infected_options",
-                 "anc_prevalence_year1_options",
-                 "anc_prevalence_year2_options",
-                 "anc_art_coverage_year1_options",
-                 "anc_art_coverage_year2_options",
-                 "anc_prevalence_year1_default",
-                 "anc_prevalence_year2_default",
-                 "anc_art_coverage_year1_default",
-                 "anc_art_coverage_year2_default"))
 
   expect_length(params$area_scope_options, 1)
   expect_equal(names(params$area_scope_options[[1]]),
@@ -228,8 +191,11 @@ test_that("do_endpoint_model_options default anc year2 to 2021 if in data", {
 
   mock_build_json <- mockery::mock('"{"test"}')
   mock_get_years <- mockery::mock(c(2021, 2020, 2019))
+  ## Mock remove hardcoded defaults as we want to test fallback from data
+  mock_get_hardcoded_defaults <- mockery::mock(list())
   with_mock("hintr:::build_json" = mock_build_json,
-            "hintr:::get_years" = mock_get_years, {
+            "hintr:::get_years" = mock_get_years,
+            "hintr:::get_hardcoded_defaults" = mock_get_hardcoded_defaults, {
     json <- do_endpoint_model_options(shape, survey, art, anc)
     args <- mockery::mock_args(mock_build_json)
   })
@@ -422,31 +388,15 @@ test_that("model options work when survey_mid_calendar_quarter missing", {
   survey$path <- t
 
   mock_build_json <- mockery::mock('"{"test"}')
-  with_mock("hintr:::build_json" = mock_build_json,  {
+  ## Mock out hardcoded defaults to test fallback in data
+  mock_get_hardcoded_defaults <- mockery::mock(list())
+  with_mock("hintr:::build_json" = mock_build_json,
+            "hintr:::get_hardcoded_defaults" = mock_get_hardcoded_defaults, {
     json <- do_endpoint_model_options(shape, survey, art, anc)
     args <- mockery::mock_args(mock_build_json)
   })
   expect_length(args[[1]], 2)
   params <- args[[1]][[2]]
-  expect_equal(names(params),
-               c("area_scope_options", "area_scope_default",
-                 "area_level_options", "area_level_default",
-                 "calendar_quarter_t1_options",
-                 "calendar_quarter_t1_default",
-                 "calendar_quarter_t2_options",
-                 "survey_prevalence_options",
-                 "survey_prevalence_default",
-                 "survey_art_coverage_options",
-                 "survey_art_coverage_default",
-                 "survey_recently_infected_options",
-                 "anc_prevalence_year1_options",
-                 "anc_prevalence_year2_options",
-                 "anc_art_coverage_year1_options",
-                 "anc_art_coverage_year2_options",
-                 "anc_prevalence_year1_default",
-                 "anc_prevalence_year2_default",
-                 "anc_art_coverage_year1_default",
-                 "anc_art_coverage_year2_default"))
 
   ## Defaults to most recent time option
   time_options <- get_time_options()
@@ -498,7 +448,50 @@ test_that("getting survey options for missing indicator returns empty values", {
     get_survey_options(survey, "art_coverage"),
     list(
       options = NULL,
-      value = scalar("")
+      default = scalar("")
     )
   )
+})
+
+test_that("do_endpoint_model_options handles multiselect", {
+  ## Use CMR as an example as that has 2 surveys in defaults
+  ## We don't have data here for testing so mock options from data
+  time_options <- list(list(id = "CY2017Q3", label = "CY2017Q3"),
+                       list(id = "CY2020Q4", label = "CY2020Q4"),
+                       list(id = "CY2021Q3", label = "CY2021Q3"))
+  survey_opts <- list(list(id = "CMR2018DHS", label = "CMR2018DHS"),
+                      list(id = "CMR2017PHIA", label = "CMR2017PHIA"))
+  year_opts <- list(list(id = "2020", label = "2020"),
+                    list(id = "2019", label = "2019"),
+                    list(id = "2018", label = "2018"))
+  mock_get_data_defaults <- mockery::mock(list(
+    area_scope = list(
+      options = list(list(id = "CMR", label = "CMR")),
+      value = "CMR"
+    ),
+    area_level = list(
+      options = list(list(id = "3", label = "3")),
+      value = "3"
+    ),
+    calendar_quarter_t1 = list(options = time_options),
+    calendar_quarter_t2 = list(options = time_options),
+    survey_prevalence = list(options = survey_opts),
+    survey_art_coverage = list(options = survey_opts),
+    survey_recently_infected = list(options = survey_opts),
+    anc_prevalence_year1 = list(options = year_opts),
+    anc_prevalence_year2 = list(options = year_opts),
+    anc_art_coverage_year1 = list(options = year_opts),
+    anc_art_coverage_year2 = list(options = year_opts)
+  ))
+  ## Mock remove hardcoded defaults as we want to test fallback from data
+  with_mock("hintr:::get_data_defaults" = mock_get_data_defaults, {
+              json <- do_endpoint_model_options("", "", "", "")
+            })
+
+  out <- jsonlite::fromJSON(json, simplifyVector = FALSE)
+  expect_equal(out$controlSections[[2]]$label, "Survey")
+  expect_equal(out$controlSections[[2]]$controlGroups[[2]]$controls[[1]]$name,
+               "survey_prevalence")
+  expect_length(out$controlSections[[2]]$controlGroups[[2]]$controls[[1]]$value,
+                2)
 })

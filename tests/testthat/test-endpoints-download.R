@@ -93,7 +93,7 @@ test_that("api can call spectrum download", {
                'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
   expect_equal(head_res$headers$`Content-Length`, size)
   ## Plumber uses an empty string to represent an empty body
-  expect_null(head_res$body)
+  expect_true(is_empty(head_res$body))
 })
 
 test_that("coarse output download returns bytes", {

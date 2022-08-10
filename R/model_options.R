@@ -271,19 +271,11 @@ get_years <- function(data) {
 get_hardcoded_defaults <- function(iso3) {
   defaults <- naomi::get_country_option_defaults()
   iso3 <- toupper(iso3)
-  if (!(iso3 %in% colnames(defaults))) {
+  if (!(iso3 %in% names(defaults))) {
     return(list())
   }
-  to_option <- function(option) {
-    list(
-      value = scalar(option)
-    )
-  }
-  lapply(setNames(defaults[, iso3], defaults[, "model_options"]),
-         to_option)
+  recursive_scalar(defaults[[iso3]])
 }
-
-
 
 ## Defaults have names which match the name of the control in the options JSON
 ## But the default value in the template is <name>_default
@@ -311,11 +303,6 @@ verify_option_defaults <- function(data_defaults, hardcoded_defaults,
   }
 
   all_names <- union(names(data_defaults), names(hardcoded_defaults))
-  # if (!all(names(controls) %in% all_names)) {
-  #   missing <- names(controls)[!(names(controls) %in% all_names)]
-  #   stop(t_("All controls must have a default value, control %s missing value. Contact system admin.")
-  # }
-
   defaults <- lapply(setNames(all_names, all_names), verify_default, controls,
                      data_defaults, hardcoded_defaults)
 }
@@ -340,15 +327,20 @@ verify_default <- function(name, controls, data_defaults, hardcoded_defaults) {
   opts <- controls[[name]]$options
   if (isTRUE(is_templated(controls[[name]]$options))) {
     ## Options are templated so get get options from data
-    opts <- vcapply(data_defaults[[name]]$options, "[[", "id")
+    opts <- data_defaults[[name]]$options
   }
-  if (!is.null(opts)) {
-    is_valid <- function(x) !is_empty(x) && x %in% opts
+  opts <- vcapply(opts, "[[", "id")
+  if (!is.null(opts) && length(opts) > 0) {
+    is_valid <- function(x) {
+      all(vlapply(x, function(y) !is_empty(y) && y %in% opts))
+    }
   } else {
-    is_valid <- function(x) !is_empty(x)
+    is_valid <- function(x) {
+      all(vlapply(x, function(y) !is_empty(y)))
+    }
   }
 
-  hardcoded_default <- hardcoded_defaults[[name]]$value
+  hardcoded_default <- hardcoded_defaults[[name]]
   data_default <- data_defaults[[name]]$value
   if (is_valid(hardcoded_default)) {
     default <- hardcoded_default
