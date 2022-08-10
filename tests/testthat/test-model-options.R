@@ -453,7 +453,57 @@ test_that("getting survey options for missing indicator returns empty values", {
   )
 })
 
-test_that("do_endpoint_model_options handles multiselect", {
+test_that("do_endpoint_model_options gets defaults from hardcoded options", {
+  ## Mock data options so we can unambiguously see that
+  ## default values are coming from hardcoding
+  time_options <- list(list(id = "CY2017Q3", label = "CY2017Q3"),
+                       list(id = "CY2020Q4", label = "CY2020Q4"),
+                       list(id = "CY2021Q3", label = "CY2021Q3"))
+  survey_opts <- list(list(id = "CMR2018DHS", label = "CMR2018DHS"),
+                      list(id = "CMR2017PHIA", label = "CMR2017PHIA"))
+  year_opts <- list(list(id = "2020", label = "2020"),
+                    list(id = "2019", label = "2019"),
+                    list(id = "2018", label = "2018"))
+  data_area_level_default <- "1"
+  mock_get_data_defaults <- mockery::mock(list(
+    area_scope = list(
+      options = list(list(id = "CMR", label = "CMR")),
+      value = "CMR"
+    ),
+    area_level = list(
+      options = list(list(id = "1", label = "1"),
+                     list(id = "2", label = "2"),
+                     list(id = "3", label = "3")),
+      value = data_area_level_default
+    ),
+    calendar_quarter_t1 = list(options = time_options),
+    calendar_quarter_t2 = list(options = time_options),
+    survey_prevalence = list(options = survey_opts),
+    survey_art_coverage = list(options = survey_opts),
+    survey_recently_infected = list(options = survey_opts),
+    anc_prevalence_year1 = list(options = year_opts),
+    anc_prevalence_year2 = list(options = year_opts),
+    anc_art_coverage_year1 = list(options = year_opts),
+    anc_art_coverage_year2 = list(options = year_opts)
+  ))
+  ## Mock remove hardcoded defaults as we want to test fallback from data
+  with_mock("hintr:::get_data_defaults" = mock_get_data_defaults, {
+    json <- do_endpoint_model_options("", "", "", "")
+  })
+
+  out <- jsonlite::fromJSON(json, simplifyVector = FALSE)
+  expect_equal(out$controlSections[[1]]$label, "General")
+
+  expect_equal(out$controlSections[[1]]$controlGroups[[2]]$controls[[1]]$name,
+               "area_level")
+  area_level <- out$controlSections[[1]]$controlGroups[[2]]$controls[[1]]$value
+  expect_true(nzchar(area_level))
+  ## Not checking the exact value of default here as science could change it
+  ## anytime and this should mean less churn on metadata changes
+  expect_true(area_level != data_area_level_default)
+})
+
+test_that("do_endpoint_model_options handles multiselect options", {
   ## Use CMR as an example as that has 2 surveys in defaults
   ## We don't have data here for testing so mock options from data
   time_options <- list(list(id = "CY2017Q3", label = "CY2017Q3"),
