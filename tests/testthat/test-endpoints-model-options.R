@@ -241,10 +241,16 @@ test_that("invalid model options returns error", {
 })
 
 test_that("can get calibration options", {
-  options <- calibration_options()
-  expect_length(options, 1)
-  expect_true(any(grepl("Calibration options", options)))
-  expect_true(any(grepl("controlSections", options)))
+  options <- calibration_options("MWI")
+  opts <- jsonlite::fromJSON(options, simplifyVector = FALSE)
+  expect_length(opts, 1)
+  expect_equal(opts$controlSections[[1]]$label, "Calibration options")
+
+  ## Calibration options coming from hardcoded defaults
+  expect_equal(opts$controlSection[[1]]$controlGroups[[1]]$controls[[1]]$name,
+               "spectrum_plhiv_calibration_level")
+  expect_equal(opts$controlSection[[1]]$controlGroups[[1]]$controls[[1]]$value,
+               "none")
 })
 
 test_that("failing to get calibration options throws hintr error", {
