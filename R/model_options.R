@@ -132,6 +132,10 @@ do_endpoint_calibration_options <- function(iso3) {
   options_template <- naomi::get_model_calibration_options()
   options_stitched <- build_options_from_template(options_template)
   hardcoded_defaults <- get_hardcoded_defaults(iso3)
+  if (length(hardcoded_defaults) == 0) {
+    stop(sprintf(
+      "Failed to get calibration options for country '%s'", iso3))
+  }
   defaults <- verify_option_defaults(list(), hardcoded_defaults,
                                      options_stitched)
   build_json(options_stitched, defaults)

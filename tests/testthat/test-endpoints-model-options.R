@@ -262,3 +262,12 @@ test_that("failing to get calibration options throws hintr error", {
   expect_equal(error$data[[1]]$detail, scalar("Failed to get options"))
   expect_equal(error$status_code, 400)
 })
+
+test_that("getting calibration options for unknown country throws error", {
+  error <- expect_error(calibration_options("123"))
+
+  expect_equal(error$data[[1]]$error, scalar("INVALID_CALIBRATION_OPTIONS"))
+  expect_equal(error$data[[1]]$detail,
+               scalar("Failed to get calibration options for country '123'"))
+  expect_equal(error$status_code, 400)
+})
