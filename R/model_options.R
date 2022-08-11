@@ -319,7 +319,6 @@ verify_option_defaults <- function(data_defaults, hardcoded_defaults,
   all_names <- union(names(data_defaults), names(hardcoded_defaults))
   defaults <- lapply(setNames(all_names, all_names), verify_default, controls,
                      data_defaults, hardcoded_defaults)
-
   ## Collapse nested list
   unlist(lapply(names(defaults), function(name) {
     x <- list()
@@ -356,11 +355,11 @@ verify_default <- function(name, controls, data_defaults, hardcoded_defaults) {
   opts <- vcapply(opts, "[[", "id")
   if (!is.null(opts) && length(opts) > 0) {
     is_valid <- function(x) {
-      all(vlapply(x, function(y) !is_empty(y) && y %in% opts))
+      !is.null(x) && all(vlapply(x, function(y) !is_empty(y) && y %in% opts))
     }
   } else {
     is_valid <- function(x) {
-      all(vlapply(x, function(y) !is_empty(y)))
+      !is.null(x) && all(vlapply(x, function(y) !is_empty(y)))
     }
   }
 
