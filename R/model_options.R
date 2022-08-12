@@ -269,7 +269,7 @@ get_years <- function(data) {
 }
 
 get_hardcoded_defaults <- function(iso3) {
-  defaults <- naomi::get_country_option_defaults()
+  defaults <- naomi::get_country_option_defaults(iso3)
   iso3 <- toupper(iso3)
   if (!(iso3 %in% names(defaults))) {
     return(list())
