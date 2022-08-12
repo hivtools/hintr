@@ -241,7 +241,7 @@ endpoint_model_debug <- function(queue) {
 endpoint_model_calibrate_options <- function() {
   response <- returning_json_version("ModelRunOptions.schema", schema_root())
   porcelain::porcelain_endpoint$new("POST",
-                                    "/calibrate/options",
+                                    "/calibrate/options/<iso3>",
                                     calibration_options,
                                     returning = response)
 }

@@ -22,15 +22,7 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
 
   defaults <- verify_option_defaults(data_defaults, hardcoded_defaults,
                                      options_stitched)
-  params <- unlist(lapply(names(defaults), function(name) {
-    x <- list()
-    x[[paste0(name, "_default")]] <- defaults[[name]]$default
-    if (!is.null(defaults[[name]]$options)) {
-      x[[paste0(name, "_options")]] <- defaults[[name]]$options
-    }
-    x
-  }), recursive = FALSE)
-  build_json(options_stitched, params)
+  build_json(options_stitched, defaults)
 }
 
 get_data_defaults <- function(shape, survey, programme, anc) {
@@ -125,6 +117,28 @@ get_data_defaults <- function(shape, survey, programme, anc) {
       value = anc_year2_default
     )
   )
+}
+
+#' Get calibration options declarative UI from naomi
+#'
+#' Get's UI template from Naomi and substitutes any params within the
+#' template with real values.
+#'
+#' @param iso3 The iso3 to get options for.
+#'
+#' @return The model options declarative JSON UI.
+#' @keywords internal
+do_endpoint_calibration_options <- function(iso3) {
+  options_template <- naomi::get_model_calibration_options()
+  options_stitched <- build_options_from_template(options_template)
+  hardcoded_defaults <- get_hardcoded_defaults(iso3)
+  if (length(hardcoded_defaults) == 0) {
+    stop(sprintf(
+      "Failed to get calibration options for country '%s'", iso3))
+  }
+  defaults <- verify_option_defaults(list(), hardcoded_defaults,
+                                     options_stitched)
+  build_json(options_stitched, defaults)
 }
 
 
@@ -277,21 +291,21 @@ get_hardcoded_defaults <- function(iso3) {
   recursive_scalar(defaults[[iso3]])
 }
 
-## Defaults have names which match the name of the control in the options JSON
-## But the default value in the template is <name>_default
-## We need to check that the default from the csv
-## Merge 2 lists, if name is present in both uses the value from the primary
+##' Verify default options
+##'
+##' Defaults have names which match the name of the control in the options JSON
+##' But the default value in the template has key <name>_default
+##' We need to check that the hardcoded default is in the list of possible
+##' options, if not fallback to the default in the data, or to empty if not set
+##'
+##' @param data_defaults Default options and values from the data
+##' @param hardcoded_defaults Hardcoded default values from naomi
+##' @param options_json The templated options JSON
+##'
+##' @return Full set of validated options and values to be used in the template
+##' @keywords internal
 verify_option_defaults <- function(data_defaults, hardcoded_defaults,
                                    options_json) {
-  ## options come from data or template
-  ## values come from data or hardcoded
-  ## prefer hardcoded options
-  ## Merge all 3 data, if a value in both data and hardcoded, prefer the hardcoded
-  ## If a set of options in both data and template then error, that shouldn't happen
-  ## Merge to list(option_name: list(options, data_value, hardcoded_value))
-  ## Check hardcoded from options if so use that, if not fallback to data
-  ## if not fallback to no value (do we need to update template for this?)
-
   all_options <- jsonlite::fromJSON(options_json, simplifyVector = FALSE)
   controls <- list()
   for (section in all_options$controlSections) {
@@ -305,6 +319,15 @@ verify_option_defaults <- function(data_defaults, hardcoded_defaults,
   all_names <- union(names(data_defaults), names(hardcoded_defaults))
   defaults <- lapply(setNames(all_names, all_names), verify_default, controls,
                      data_defaults, hardcoded_defaults)
+  ## Collapse nested list
+  unlist(lapply(names(defaults), function(name) {
+    x <- list()
+    x[[paste0(name, "_default")]] <- defaults[[name]]$default
+    if (!is.null(defaults[[name]]$options)) {
+      x[[paste0(name, "_options")]] <- defaults[[name]]$options
+    }
+    x
+  }), recursive = FALSE)
 }
 
 is_templated <- function(x) grepl('^<\\+\\w+\\+>$', x)
@@ -332,11 +355,11 @@ verify_default <- function(name, controls, data_defaults, hardcoded_defaults) {
   opts <- vcapply(opts, "[[", "id")
   if (!is.null(opts) && length(opts) > 0) {
     is_valid <- function(x) {
-      all(vlapply(x, function(y) !is_empty(y) && y %in% opts))
+      !is.null(x) && all(vlapply(x, function(y) !is_empty(y) && y %in% opts))
     }
   } else {
     is_valid <- function(x) {
-      all(vlapply(x, function(y) !is_empty(y)))
+      !is.null(x) && all(vlapply(x, function(y) !is_empty(y)))
     }
   }
 

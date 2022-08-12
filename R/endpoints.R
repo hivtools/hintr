@@ -28,10 +28,9 @@ model_options <- function(input) {
   })
 }
 
-calibration_options <- function() {
+calibration_options <- function(iso3) {
   tryCatch({
-    json_verbatim(
-      build_options_from_template(naomi::get_model_calibration_options()))
+    json_verbatim(do_endpoint_calibration_options(iso3))
   }, error = function(e) {
     hintr_error(e$message, "INVALID_CALIBRATION_OPTIONS")
   })
