@@ -161,7 +161,7 @@ do_validate_programme <- function(programme, shape, pjnz, strict = TRUE) {
 #' @keywords internal
 do_validate_anc <- function(anc, shape, pjnz, strict = TRUE) {
   assert_file_extension(anc, "csv")
-  data <- naomi::read_anc_testing(anc$path)
+  data <- as.data.frame(naomi::read_anc_testing(anc$path))
   assert_single_country(data, "anc")
   assert_column_names(
     colnames(data),
