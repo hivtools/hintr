@@ -1054,11 +1054,10 @@ test_that("can get comparison plot data", {
   expect_equal(response$status_code, 200)
   response_data <- response$data
   expect_setequal(names(response_data), c("data", "plottingMetadata"))
-  ## TODO: enable all tests when schema finalised
-  # expect_setequal(names(response_data$data),
-  #                 c("data_type", "spectrum_region_code", "spectrum_region_name",
-  #                   "sex", "age_group", "calendar_quarter", "indicator",
-  #                   "mean"))
+  expect_setequal(names(response_data$data),
+                  c("area_id", "area_name", "age_group", "sex",
+                    "calendar_quarter", "indicator", "source", "mean",
+                    "lower", "upper"))
   expect_true(nrow(response_data$data) > 0)
   expect_equal(names(response_data$plottingMetadata), "barchart")
   expect_setequal(names(response_data$plottingMetadata$barchart),
@@ -1099,11 +1098,10 @@ test_that("API can return comparison plotting data", {
   response_data <- body$data
   expect_setequal(names(response_data), c("data", "plottingMetadata"))
   data <- do.call(rbind, response_data$data)
-  ## TODO: enable all tests when schema finalised
-  # expect_setequal(colnames(data),
-  #                 c("data_type", "spectrum_region_code", "spectrum_region_name",
-  #                   "sex", "age_group", "calendar_quarter", "indicator",
-  #                   "mean"))
+  expect_setequal(colnames(data),
+                  c("area_id", "area_name", "age_group", "sex",
+                    "calendar_quarter", "indicator", "source", "mean",
+                    "lower", "upper"))
   expect_true(nrow(data) > 0)
   expect_equal(names(response_data$plottingMetadata), "barchart")
   expect_setequal(names(response_data$plottingMetadata$barchart),
