@@ -172,6 +172,22 @@ test_that("do_validate_anc can include anc_hiv_status column", {
   expect_equal(data$filters$indicators[[2]]$label, scalar("ANC prior ART coverage"))
 })
 
+test_that("do_validate_anc adds default anc_known_neg column", {
+  anc <- file_object(file.path("testdata", "anc.csv"))
+  x <- read.csv(anc$path)
+  x$anc_known_neg <- NULL
+  t <- tempfile(fileext = ".csv")
+  write.csv(x, t, row.names = FALSE)
+  shape <- file_object(file.path("testdata", "malawi.geojson"))
+  pjnz <- file_object(file.path("testdata", "Malawi2019.PJNZ"))
+  data <- do_validate_anc(file_object(t), shape, pjnz)
+
+  expect_true(nrow(data$data) > 200)
+  expect_type(data$data$area_id, "character")
+  expect_true("anc_known_neg" %in% colnames(data$data))
+  expect_equal(data$data$anc_known_neg, rep(0, nrow(data$data)))
+})
+
 test_that("do_validate_survey validates survey file", {
   survey <- file_object(file.path("testdata", "survey.csv"))
   shape <- file_object(file.path("testdata", "malawi.geojson"))
