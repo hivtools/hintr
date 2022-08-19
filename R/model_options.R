@@ -56,7 +56,7 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
   anc_year1_default <- scalar("")
   anc_year2_default <- scalar("")
   if (has_anc) {
-    anc_data <- read_csv(anc$path)
+    anc_data <- naomi::read_anc_testing(anc$path)
     anc_years <- get_years(anc_data)
     anc_year_options <- lapply(anc_years, function(year) {
       list(id = scalar(as.character(year)),

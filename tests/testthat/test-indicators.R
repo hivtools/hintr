@@ -16,8 +16,8 @@ test_that("can get filtered data for indicator", {
   anc_prevalence <- get_indicator_data(anc, "anc", "anc_prevalence")
   expect_equal(names(anc_prevalence),
                c("area_id", "area_name", "age_group", "year", "anc_clients",
-                 "anc_known_pos", "anc_already_art",
-                 "anc_tested", "anc_tested_pos"))
+                 "anc_known_pos", "anc_already_art", "anc_tested",
+                 "anc_tested_pos", "anc_known_neg", "births_facility"))
   anc_art <- get_indicator_data(anc, "anc", "anc_art_coverage")
   expect_equal(nrow(anc_art), nrow(anc_prevalence))
 
