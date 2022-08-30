@@ -7,11 +7,10 @@ test_that("can get data for calibration plot", {
   endpoint <- comparison_plot(q$queue)
   res <- endpoint(q$calibrate_id)
   expect_setequal(names(res), c("data", "plottingMetadata"))
-  ## TODO: enable all tests when schema finalised
-  # expect_setequal(names(res$data),
-  #                 c("data_type", "spectrum_region_code", "spectrum_region_name",
-  #                   "sex", "age_group", "calendar_quarter", "indicator",
-  #                   "mean"))
+  expect_setequal(names(res$data),
+                  c("area_id", "area_name", "age_group", "sex",
+                    "calendar_quarter", "indicator", "source", "mean",
+                    "lower", "upper"))
   expect_true(nrow(res$data) > 0)
   expect_equal(names(res$plottingMetadata), "barchart")
   expect_setequal(names(res$plottingMetadata$barchart),
