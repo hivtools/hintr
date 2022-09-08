@@ -796,3 +796,46 @@ test_that("api: programme and anc files are optional in spectrum download", {
   expect_setequal(names(state$datasets),
                   c("pjnz", "population", "shape", "survey"))
 })
+
+test_that("spectrum download is translated", {
+  test_mock_model_available()
+  q <- test_queue_result()
+
+  response <- with_hintr_language("fr", {
+    submit <- endpoint_download_submit(q$queue)
+    submit_response <- submit$run(q$calibrate_id, "spectrum")
+  })
+
+  expect_equal(submit_response$status_code, 200)
+  expect_true(!is.null(submit_response$data$id))
+
+  ## Status
+  out <- q$queue$queue$task_wait(submit_response$data$id)
+  status <- endpoint_download_status(q$queue)
+  status_response <- status$run(submit_response$data$id)
+
+  expect_equal(status_response$status_code, 200)
+  expect_equal(status_response$data$id, submit_response$data$id)
+  expect_true(status_response$data$done)
+  expect_equal(status_response$data$status, scalar("COMPLETE"))
+  expect_true(status_response$data$success)
+  expect_equal(status_response$data$queue, scalar(0))
+  expect_length(status_response$data$progress, 1)
+
+  ## Get result
+  result <- endpoint_download_result(q$queue)
+  response <- result$run(status_response$data$id)
+  expect_equal(response$status_code, 200)
+  expect_match(response$headers$`Content-Disposition`,
+               'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
+  size <- length(response$data)
+  expect_equal(response$headers$`Content-Length`, size)
+
+  t <- tempfile()
+  dest <- tempfile()
+  writeBin(as.vector(response$data), t)
+  zip::unzip(t, exdir = dest)
+  expect_true(INDICATORS_PATH %in% list.files(dest))
+  indicators <- read.csv(file.path(dest, INDICATORS_PATH))
+  expect_true("Prévalence du VIH" %in% unique(indicators$indicator_label))
+})
