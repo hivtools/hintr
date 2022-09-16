@@ -6,12 +6,49 @@
       "properties": {
         "name": { "type": "string" },
         "label": { "type": "string" },
-        "type": { "enum": [ "select", "multiselect" ] },
+        "type": { "enum": [ "select" ] },
         "required": { "type": "boolean" },
         "value": { "type": "string" },
         "helpText": { "type": "string" },
         "options": {
           "type":  "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "label": { "type": "string" },
+              "children": {
+                "type": "array",
+                "items": { "type": "object" }
+              }
+            },
+            "additionalProperties": false,
+            "required": [ "id", "label" ]
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [ "name", "type", "required" ]
+    },
+    "multiselectControl": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "label": { "type": "string" },
+        "type": { "enum": [ "multiselect" ] },
+        "required": { "type": "boolean" },
+        "value": { "oneOf":
+          [
+            {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            { "type": "string" }
+          ]
+        },
+        "helpText": { "type": "string" },
+        "options": {
+          "type": "array",
           "items": {
             "type": "object",
             "properties": {
@@ -54,6 +91,7 @@
           "items": { "oneOf":
             [
               { "$ref": "#/definitions/selectControl" },
+              { "$ref": "#/definitions/multiselectControl" },
               { "$ref": "#/definitions/numberControl" }
             ]
           }

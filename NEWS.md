@@ -1,3 +1,7 @@
+# hintr 1.0.41
+
+* Add country specific default values to all model and calibration options
+
 # hintr 1.0.39
 
 * Add dummy `/comparison/plot/<id>` endpoint to return data for comparison barchart

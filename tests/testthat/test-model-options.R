@@ -1,91 +1,32 @@
 context("model-options")
 
-test_that("can build JSON from template", {
-  json <- build_json("test <+param1+>", list(param1 = scalar("test string")))
-  expect_equal(json, 'test "test string"')
-
-  json <- build_json("<+param1+> test, <+param_2+>",
-                     list(param1 = scalar("x"), param_2 = scalar("y")))
-  expect_equal(json, '"x" test, "y"')
-
-  json <- build_json('{"options": <+options+>, "test": <+test+>}',
-                     list(options = c(scalar("MWI"),
-                                      scalar("MWI_1_1"),
-                                      scalar("MWI_1_2")),
-                          test = scalar("test_value")))
-  expect_equal(json,
-               '{"options": ["MWI","MWI_1_1","MWI_1_2"], "test": "test_value"}')
-
-  json <- build_json('{"options": <+options+>, "test": <+test+>, "text": "Age < 5"}',
-                     list(options = list(
-                       list(id = scalar("MWI"),
-                            label = scalar("Malawi")),
-                       list(id = scalar("MWI_1_1"),
-                            label = scalar("Northern")),
-                       list(id = scalar("MWI_1_2"),
-                            label = scalar("Central"))),
-                       test = scalar("test_value")))
-  expect_equal(json,
-               '{"options": [{"id":"MWI","label":"Malawi"},{"id":"MWI_1_1","label":"Northern"},{"id":"MWI_1_2","label":"Central"}], "test": "test_value", "text": "Age < 5"}')
-
-  ## Additional params are ignored
-  json <- build_json("test <+param+>", list(param = scalar("test"), param2 = scalar("test2")))
-  expect_equal(json, 'test "test"')
-
-  ## Null params
-  json <- build_json('{"options": <+param+>}', list(param = scalar(NULL)))
-  expect_equal(json, '{"options": {}}')
-})
-
-test_that("JSON build fails if params are missing", {
-  expect_error(build_json('{"options": <+param+>}', list(value = "test")),
-               "Failed to construct model options from template and params:
-object 'param' not found")
-})
-
-test_that("do_endpoint_model_options correctly builds params list", {
+test_that("do_endpoint_model_options correctly builds options and fallbacks", {
   shape <- file_object(file.path("testdata", "malawi.geojson"))
   survey <- file_object(file.path("testdata", "survey.csv"))
   art <- file_object(file.path("testdata", "programme.csv"))
   anc <- file_object(file.path("testdata", "anc.csv"))
 
-  mock_build_json <- mockery::mock('"{"test"}')
-  with_mock("hintr:::build_json" = mock_build_json,  {
+  mock_get_controls_json <- mockery::mock('"{"test"}')
+  with_mock("naomi.options::get_controls_json" = mock_get_controls_json,  {
     json <- do_endpoint_model_options(shape, survey, art, anc)
-    args <- mockery::mock_args(mock_build_json)
+    args <- mockery::mock_args(mock_get_controls_json)
   })
-  expect_length(args[[1]], 2)
-  expect_true(grepl('"label": "ART"', args[[1]][[1]]))
-  expect_true(grepl('"label": "ANC"', args[[1]][[1]]))
-  params <- args[[1]][[2]]
-  expect_equal(names(params),
-               c("area_scope_options", "area_scope_default",
-                 "area_level_options", "area_level_default",
-                 "calendar_quarter_t1_options",
-                 "calendar_quarter_t1_default",
-                 "calendar_quarter_t2_options",
-                 "survey_prevalence_options",
-                 "survey_prevalence_default",
-                 "survey_art_coverage_options",
-                 "survey_art_coverage_default",
-                 "survey_recently_infected_options",
-                 "anc_prevalence_year1_options",
-                 "anc_prevalence_year2_options",
-                 "anc_art_coverage_year1_options",
-                 "anc_art_coverage_year2_options",
-                 "anc_prevalence_year1_default",
-                 "anc_prevalence_year2_default",
-                 "anc_art_coverage_year1_default",
-                 "anc_art_coverage_year2_default"))
+  options <- args[[1]][[3]]
+  expect_setequal(names(options),
+                  c("area_scope", "area_level",
+                    "calendar_quarter_t1", "calendar_quarter_t2",
+                    "survey_prevalence", "survey_art_coverage",
+                    "survey_recently_infected", "anc_clients_year2",
+                    "anc_prevalence_year1", "anc_prevalence_year2",
+                    "anc_art_coverage_year1", "anc_art_coverage_year2"))
 
-  expect_length(params$area_scope_options, 1)
-  expect_equal(names(params$area_scope_options[[1]]),
+  expect_length(options$area_scope, 1)
+  expect_equal(names(options$area_scope[[1]]),
                c("id", "label", "children"))
-  expect_equal(params$area_scope_options[[1]]$id, scalar("MWI"))
-  expect_equal(params$area_scope_options[[1]]$label, scalar("Malawi - Demo"))
-  expect_length(params$area_scope_options[[1]]$children, 3)
-  expect_equal(params$area_scope_default, scalar("MWI"))
-  expect_equal(params$area_level_options, list(
+  expect_equal(options$area_scope[[1]]$id, scalar("MWI"))
+  expect_equal(options$area_scope[[1]]$label, scalar("Malawi - Demo"))
+  expect_length(options$area_scope[[1]]$children, 3)
+  expect_equal(options$area_level, list(
     list(
       id = scalar("0"),
       label = scalar("Country")
@@ -106,83 +47,74 @@ test_that("do_endpoint_model_options correctly builds params list", {
       id = scalar("4"),
       label = scalar("District + Metro")
     )))
-  t1 <- params$calendar_quarter_t1_options
+  t1 <- options$calendar_quarter_t1
   expect_equal(t1[[length(t1)]]$id, scalar("CY2010Q1"))
   expect_equal(t1[[length(t1)]]$label, scalar("March 2010"))
   expect_true(length(t1) >= 32)
 
-  expect_equal(params$calendar_quarter_t1_default, scalar("CY2016Q1"))
-
-  t2 <- params$calendar_quarter_t2_options
+  t2 <- options$calendar_quarter_t2
   expect_equal(t2[[length(t2)]]$id, scalar("CY2010Q1"))
   expect_equal(t2[[length(t2)]]$label, scalar("March 2010"))
   expect_true(length(t2) >= 32)
-  expect_length(params$survey_prevalence_options, 4)
-  expect_equal(params$survey_prevalence_options[[1]]$id,
+  expect_length(options$survey_prevalence, 4)
+  expect_equal(options$survey_prevalence[[1]]$id,
                scalar("DEMO2016PHIA"))
-  expect_equal(params$survey_prevalence_options[[1]]$label,
+  expect_equal(options$survey_prevalence[[1]]$label,
                scalar("DEMO2016PHIA"))
-  expect_equal(params$survey_prevalence_default, scalar("DEMO2016PHIA"))
-  expect_length(params$survey_art_coverage_options, 1)
-  expect_equal(params$survey_art_coverage_default, scalar("DEMO2016PHIA"))
-  expect_length(params$survey_recently_infected_options, 1)
-  expect_length(params$anc_prevalence_year1_options, 8)
-  expect_equal(params$anc_prevalence_year1_options[[1]]$id, scalar("2018"))
-  expect_equal(params$anc_prevalence_year1_options[[1]]$label, scalar("2018"))
-  expect_equal(params$anc_prevalence_year1_options,
-               params$anc_prevalence_year2_options)
-  expect_equal(params$anc_prevalence_year1_options,
-               params$anc_art_coverage_year1_options)
-  expect_equal(params$anc_prevalence_year1_options,
-               params$anc_art_coverage_year2_options)
+  expect_length(options$survey_art_coverage, 1)
+  expect_length(options$survey_recently_infected, 1)
+  expect_length(options$anc_prevalence_year1, 8)
+  expect_equal(options$anc_prevalence_year1[[1]]$id, scalar("2018"))
+  expect_equal(options$anc_prevalence_year1[[1]]$label, scalar("2018"))
+  expect_equal(options$anc_prevalence_year1,
+               options$anc_prevalence_year2)
+  expect_equal(options$anc_prevalence_year1,
+               options$anc_art_coverage_year1)
+  expect_equal(options$anc_prevalence_year1,
+               options$anc_art_coverage_year2)
 
-  expect_equal(params$anc_prevalence_year1_default, scalar("2016"))
-  expect_equal(params$anc_prevalence_year2_default, scalar(""))
-  expect_equal(params$anc_art_coverage_year1_default, scalar("2016"))
-  expect_equal(params$anc_art_coverage_year2_default, scalar(""))
+  fallback <- args[[1]][[4]]
+  expect_setequal(names(fallback),
+                  c("area_scope", "area_level",
+                    "calendar_quarter_t1", "survey_prevalence",
+                    "survey_art_coverage", "anc_prevalence_year1",
+                    "anc_prevalence_year2", "anc_art_coverage_year1",
+                    "anc_art_coverage_year2"))
+  expect_equal(fallback$area_scope, scalar("MWI"))
+  expect_equal(fallback$calendar_quarter_t1, scalar("CY2016Q1"))
+  expect_equal(fallback$survey_prevalence, scalar("DEMO2016PHIA"))
+  expect_equal(fallback$survey_art_coverage, scalar("DEMO2016PHIA"))
+  expect_equal(fallback$anc_prevalence_year1, scalar("2016"))
+  expect_equal(fallback$anc_prevalence_year2, scalar(""))
+  expect_equal(fallback$anc_art_coverage_year1, scalar("2016"))
+  expect_equal(fallback$anc_art_coverage_year2, scalar(""))
 })
 
 test_that("do_endpoint_model_options without programme data", {
   shape <- file_object(file.path("testdata", "malawi.geojson"))
   survey <- file_object(file.path("testdata", "survey.csv"))
 
-  mock_build_json <- mockery::mock('"{"test"}')
-  with_mock("hintr:::build_json" = mock_build_json,  {
+  mock_get_controls_json <- mockery::mock('"{"test"}')
+  with_mock("naomi.options::get_controls_json" = mock_get_controls_json,  {
     json <- do_endpoint_model_options(shape, survey, NULL, NULL)
-    args <- mockery::mock_args(mock_build_json)
+    args <- mockery::mock_args(mock_get_controls_json)
   })
-  expect_length(args[[1]], 2)
-  expect_false(grepl('"label": "ART"', args[[1]][[1]]))
-  expect_false(grepl('"label": "ANC"', args[[1]][[1]]))
-  params <- args[[1]][[2]]
-  expect_equal(names(params),
-               c("area_scope_options", "area_scope_default",
-                 "area_level_options", "area_level_default",
-                 "calendar_quarter_t1_options",
-                 "calendar_quarter_t1_default",
-                 "calendar_quarter_t2_options",
-                 "survey_prevalence_options",
-                 "survey_prevalence_default",
-                 "survey_art_coverage_options",
-                 "survey_art_coverage_default",
-                 "survey_recently_infected_options",
-                 "anc_prevalence_year1_options",
-                 "anc_prevalence_year2_options",
-                 "anc_art_coverage_year1_options",
-                 "anc_art_coverage_year2_options",
-                 "anc_prevalence_year1_default",
-                 "anc_prevalence_year2_default",
-                 "anc_art_coverage_year1_default",
-                 "anc_art_coverage_year2_default"))
+  options <- args[[1]][[3]]
+  expect_setequal(names(options),
+                  c("area_scope", "area_level",
+                    "calendar_quarter_t1", "calendar_quarter_t2",
+                    "survey_prevalence", "survey_art_coverage",
+                    "survey_recently_infected", "anc_clients_year2",
+                    "anc_prevalence_year1", "anc_prevalence_year2",
+                    "anc_art_coverage_year1", "anc_art_coverage_year2"))
 
-  expect_length(params$area_scope_options, 1)
-  expect_equal(names(params$area_scope_options[[1]]),
+  expect_length(options$area_scope, 1)
+  expect_equal(names(options$area_scope[[1]]),
                c("id", "label", "children"))
-  expect_equal(params$area_scope_options[[1]]$id, scalar("MWI"))
-  expect_equal(params$area_scope_options[[1]]$label, scalar("Malawi - Demo"))
-  expect_length(params$area_scope_options[[1]]$children, 3)
-  expect_equal(params$area_scope_default, scalar("MWI"))
-  expect_equal(params$area_level_options, list(
+  expect_equal(options$area_scope[[1]]$id, scalar("MWI"))
+  expect_equal(options$area_scope[[1]]$label, scalar("Malawi - Demo"))
+  expect_length(options$area_scope[[1]]$children, 3)
+  expect_equal(options$area_level, list(
     list(
       id = scalar("0"),
       label = scalar("Country")
@@ -203,42 +135,45 @@ test_that("do_endpoint_model_options without programme data", {
       id = scalar("4"),
       label = scalar("District + Metro")
     )))
-  t1 <- params$calendar_quarter_t1_options
+  t1 <- options$calendar_quarter_t1
   expect_equal(t1[[length(t1)]]$id, scalar("CY2010Q1"))
   expect_equal(t1[[length(t1)]]$label, scalar("March 2010"))
   expect_true(length(t1) >= 32)
-  t2 <- params$calendar_quarter_t2_options
+  t2 <- options$calendar_quarter_t2
   expect_equal(t2[[length(t2)]]$id, scalar("CY2010Q1"))
   expect_equal(t2[[length(t2)]]$label, scalar("March 2010"))
   expect_true(length(t2) >= 32)
-  expect_length(params$survey_prevalence_options, 4)
-  expect_equal(params$survey_prevalence_options[[1]]$id,
+  expect_length(options$survey_prevalence, 4)
+  expect_equal(options$survey_prevalence[[1]]$id,
                scalar("DEMO2016PHIA"))
-  expect_equal(params$survey_prevalence_options[[1]]$label,
+  expect_equal(options$survey_prevalence[[1]]$label,
                scalar("DEMO2016PHIA"))
-  expect_length(params$survey_art_coverage_options, 1)
-  expect_length(params$survey_recently_infected_options, 1)
+  expect_length(options$survey_art_coverage, 1)
+  expect_length(options$survey_recently_infected, 1)
+
+  fallback <- args[[1]][[4]]
+  expect_equal(fallback$area_scope, scalar("MWI"))
 })
 
-test_that("do_endpoint_model_options default anc year2 to 2021 if in data", {
+test_that("do_endpoint_model_options fallback anc year2 to 2021 if in data", {
   shape <- file_object(file.path("testdata", "malawi.geojson"))
   survey <- file_object(file.path("testdata", "survey.csv"))
   art <- file_object(file.path("testdata", "programme.csv"))
   anc <- file_object(file.path("testdata", "anc.csv"))
 
-  mock_build_json <- mockery::mock('"{"test"}')
+  mock_get_controls_json <- mockery::mock('"{"test"}')
   mock_get_years <- mockery::mock(c(2021, 2020, 2019))
-  with_mock("hintr:::build_json" = mock_build_json,
+  with_mock("naomi.options::get_controls_json" = mock_get_controls_json,
             "hintr:::get_years" = mock_get_years, {
     json <- do_endpoint_model_options(shape, survey, art, anc)
-    args <- mockery::mock_args(mock_build_json)
+    args <- mockery::mock_args(mock_get_controls_json)
   })
-  params <- args[[1]][[2]]
-  expect_equal(params$anc_prevalence_year2_default, scalar("2021"))
-  expect_equal(params$anc_art_coverage_year2_default, scalar("2021"))
+  fallback <- args[[1]][[4]]
+  expect_equal(fallback$anc_prevalence_year2, scalar("2021"))
+  expect_equal(fallback$anc_art_coverage_year2, scalar("2021"))
   ## Year 1 defaults are NULL as survey year not in ANC years
-  expect_equal(params$anc_prevalence_year1_default, scalar(""))
-  expect_equal(params$anc_art_coverage_year1_default, scalar(""))
+  expect_equal(fallback$anc_prevalence_year1, scalar(""))
+  expect_equal(fallback$anc_art_coverage_year1, scalar(""))
 })
 
 test_that("can retrieve validated model options", {
@@ -421,36 +356,16 @@ test_that("model options work when survey_mid_calendar_quarter missing", {
   write.csv(survey_data, t)
   survey$path <- t
 
-  mock_build_json <- mockery::mock('"{"test"}')
-  with_mock("hintr:::build_json" = mock_build_json,  {
+  mock_get_controls_json <- mockery::mock('"{"test"}')
+  with_mock("naomi.options::get_controls_json" = mock_get_controls_json,  {
     json <- do_endpoint_model_options(shape, survey, art, anc)
-    args <- mockery::mock_args(mock_build_json)
+    args <- mockery::mock_args(mock_get_controls_json)
   })
-  expect_length(args[[1]], 2)
-  params <- args[[1]][[2]]
-  expect_equal(names(params),
-               c("area_scope_options", "area_scope_default",
-                 "area_level_options", "area_level_default",
-                 "calendar_quarter_t1_options",
-                 "calendar_quarter_t1_default",
-                 "calendar_quarter_t2_options",
-                 "survey_prevalence_options",
-                 "survey_prevalence_default",
-                 "survey_art_coverage_options",
-                 "survey_art_coverage_default",
-                 "survey_recently_infected_options",
-                 "anc_prevalence_year1_options",
-                 "anc_prevalence_year2_options",
-                 "anc_art_coverage_year1_options",
-                 "anc_art_coverage_year2_options",
-                 "anc_prevalence_year1_default",
-                 "anc_prevalence_year2_default",
-                 "anc_art_coverage_year1_default",
-                 "anc_art_coverage_year2_default"))
 
-  ## Defaults to most recent time option
+  ## Fallback set to most recent time option
+  fallback <- args[[1]][[4]]
   time_options <- get_time_options()
-  expect_equal(params$calendar_quarter_t1_default, time_options[[1]]$id)
+  expect_equal(fallback$calendar_quarter_t1, time_options[[1]]$id)
 })
 
 test_that("can get survey options & default for different indicators", {
