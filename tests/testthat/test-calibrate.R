@@ -20,7 +20,7 @@ test_that("calibration can be run", {
 test_that("calibrate can set language", {
   model_output <- list(calibration_path = "test")
   expect_error(run_calibrate(model_output, list(opt = "options"), tempdir()),
-               "Model output out of date please re-run model and try again")
+               "Model output out of date please re-run model and try again.")
 
   ## With french translation
   expect_error(run_calibrate(model_output, list(opt = "options"), tempdir(),
@@ -190,7 +190,7 @@ test_that("calibrate fails with old model run result", {
   expect_equal(res$value$errors[[1]]$error, scalar("SERVER_ERROR"))
   expect_equal(
     res$value$errors[[1]]$detail,
-    scalar("Model output out of date please re-run model and try again"))
+    scalar("Model output out of date please re-run model and try again."))
   expect_equal(res$status_code, 500)
 })
 
