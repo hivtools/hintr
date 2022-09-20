@@ -249,7 +249,7 @@ test_that("can get calibration options", {
 
 test_that("failing to get calibration options throws hintr error", {
   mock_calibration_options <- mockery::mock(stop("Failed to get options"))
-  with_mock("naomi::get_model_calibration_options" = mock_calibration_options, {
+  with_mock("naomi.options::get_controls_json" = mock_calibration_options, {
     error <- expect_error(calibration_options("MWI"))
   })
   expect_equal(error$data[[1]]$error, scalar("INVALID_CALIBRATION_OPTIONS"))
