@@ -188,19 +188,6 @@ build_options_from_template <- function(options_template) {
         , ']}', collapse = "")
 }
 
-#' Validate model options
-#'
-#' @param data The set of input data for the model run
-#' @param options Key value list of model options
-#'
-#' @return TRUE if valid else throws an error
-#' @keywords internal
-do_validate_model_options <- function(data, options) {
-  list(
-    valid = scalar(naomi:::validate_model_options(data, options))
-  )
-}
-
 ## Survey options
 ## Have to use the metadata to work out where within the output data these
 ## values can be located
