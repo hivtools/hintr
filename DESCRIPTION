@@ -12,7 +12,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.1
 Additional_repositories: https://mrc-ide.github.io/drat
 Imports:
     digest,
@@ -22,7 +22,7 @@ Imports:
     ids,
     jsonlite (>= 1.2.2),
     lgr,
-    naomi (>= 2.7.5),
+    naomi (>= 2.7.6),
     porcelain (>= 0.1.8),
     R6,
     redux,
