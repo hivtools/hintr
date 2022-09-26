@@ -14,10 +14,9 @@
 do_endpoint_model_options <- function(shape, survey, programme, anc) {
   has_art <- !is.null(programme)
   has_anc <- !is.null(anc)
-  options_template <- naomi::get_model_options_template(has_art, has_anc)
-  options_stitched <- build_options_from_template(options_template)
 
   ## General options
+  iso3 <- read_geojson_iso3(shape)
   json <- hintr_geojson_read(shape)
   regions <- get_region_filters(json)
   parent_region_id <- regions$id
@@ -71,59 +70,36 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
     }
   }
 
-  params <- list(
-    area_scope_options = list(regions),
-    area_scope_default = parent_region_id,
-    area_level_options = area_level_options,
-    area_level_default = area_level_options[[length(area_level_options)]]$id,
-    calendar_quarter_t1_options = time_options,
-    calendar_quarter_t1_default = most_recent_survey_quarter,
-    calendar_quarter_t2_options = time_options,
-    survey_prevalence_options = survey_prevalence_options$options,
-    survey_prevalence_default = survey_prevalence_options$default,
-    survey_art_coverage_options = survey_art_coverage_options$options,
-    survey_art_coverage_default = survey_art_coverage_options$default,
-    survey_recently_infected_options = survey_recently_infected_options$options,
-    anc_prevalence_year1_options = anc_year_options,
-    anc_prevalence_year2_options = anc_year_options,
-    anc_art_coverage_year1_options = anc_year_options,
-    anc_art_coverage_year2_options = anc_year_options,
-    anc_prevalence_year1_default = anc_year1_default,
-    anc_prevalence_year2_default = anc_year2_default,
-    anc_art_coverage_year1_default = anc_year1_default,
-    anc_art_coverage_year2_default = anc_year2_default
+  options <- list(
+    area_scope = list(regions),
+    area_level = area_level_options,
+    calendar_quarter_t1 = time_options,
+    calendar_quarter_t2 = time_options,
+    survey_prevalence = survey_prevalence_options$options,
+    survey_art_coverage = survey_art_coverage_options$options,
+    survey_recently_infected = survey_recently_infected_options$options,
+    anc_clients_year2 = anc_year_options,
+    anc_prevalence_year1 = anc_year_options,
+    anc_prevalence_year2 = anc_year_options,
+    anc_art_coverage_year1 = anc_year_options,
+    anc_art_coverage_year2 = anc_year_options
   )
-  build_json(options_stitched, params)
-}
 
-
-#' Build JSON from template and a set of params
-#'
-#' This wraps params in quotes and collapses any arrays into a single comma
-#' separated list. Therefore only substitutes in string types for the time
-#' being.
-#'
-#' @param options_template Template JSON of model run options
-#' @param params List of named key value pairs for substituting from template.
-#'
-#' @return JSON built from template and params.
-#' @keywords internal
-#'
-build_json <- function(options_template, params) {
-  param_env <- list2env(params, parent = .GlobalEnv)
-  tryCatch(
-    glue::glue(options_template, .envir = param_env, .open = "<+", .close = "+>",
-               .transformer = json_transformer),
-    error = function(e) {
-      e$message <- t_("MODEL_OPTIONS_FAIL", list(message = e$message))
-      stop(e)
-    }
+  values <- list(
+    area_scope = parent_region_id,
+    area_level = area_level_options[[length(area_level_options)]]$id,
+    calendar_quarter_t1 = most_recent_survey_quarter,
+    survey_prevalence = survey_prevalence_options$default,
+    survey_art_coverage = survey_art_coverage_options$default,
+    anc_prevalence_year1 = anc_year1_default,
+    anc_prevalence_year2 = anc_year2_default,
+    anc_art_coverage_year1 = anc_year1_default,
+    anc_art_coverage_year2 = anc_year2_default
   )
-}
 
-json_transformer <- function(text, envir) {
-  res <- get(text, envir = envir, inherits = FALSE)
-  to_json(res)
+  naomi.options::get_controls_json("model", iso3, options, values,
+                                   config = list(include_art = has_art,
+                                                 include_anc = has_anc))
 }
 
 get_level_options <- function(json) {
@@ -173,19 +149,6 @@ union_time_list <- function(times1, times2, decreasing = TRUE) {
   times_new <- c(times1, times2[newidx])
 
   sort_time_json_list(times_new, decreasing)
-}
-
-
-#' Stitch together separate sections of the options template
-#'
-#' @param options_template List of separate options sections
-#'
-#' @return The stiched together options template
-#' @keywords internal
-build_options_from_template <- function(options_template) {
-  paste('{"controlSections": [ ',
-        paste(options_template, collapse = ", ")
-        , ']}', collapse = "")
 }
 
 ## Survey options
