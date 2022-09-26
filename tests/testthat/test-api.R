@@ -1015,7 +1015,7 @@ test_that("error returned from calibrate_plot for old model output", {
 
   expect_equal(response$status_code, 500)
   expect_equal(response$value$errors[[1]]$detail, scalar(
-               "Model output out of date please re-run model and try again"))
+               "Model output out of date please re-run model and try again."))
 })
 
 test_that("calibrate plot metadata is translated", {
