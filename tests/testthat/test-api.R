@@ -558,7 +558,7 @@ test_that("erroring model run returns useful messages", {
 
 test_that("endpoint_model_calibrate_options", {
   endpoint <- endpoint_model_calibrate_options()
-  response <- endpoint$run()
+  response <- endpoint$run("MWI")
 
   expect_equal(response$status_code, 200)
   expect_null(response$error)
@@ -575,7 +575,7 @@ test_that("endpoint_calibrate_options works", {
   test_redis_available()
   queue <- test_queue(workers = 0)
   api <- api_build(queue)
-  res <- api$request("POST", "/calibrate/options")
+  res <- api$request("POST", "/calibrate/options/MWI")
   expect_equal(res$status, 200)
   body <- jsonlite::parse_json(res$body)
   expect_equal(names(body$data), "controlSections")
@@ -1015,7 +1015,7 @@ test_that("error returned from calibrate_plot for old model output", {
 
   expect_equal(response$status_code, 500)
   expect_equal(response$value$errors[[1]]$detail, scalar(
-               "Model output out of date please re-run model and try again"))
+               "Model output out of date please re-run model and try again."))
 })
 
 test_that("calibrate plot metadata is translated", {
