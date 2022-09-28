@@ -6,7 +6,7 @@ RUN apt-get update && apt-get -y install --no-install-recommends \
         && apt-get clean \
         && rm -rf /var/lib/apt/lists/*
 
-RUN install_packages --repo=https://mrc-ide.github.io/drat \
+RUN install_packages --repo=https://mrc-ide.r-universe.dev \
         callr \
         docopt \
         geojsonio \
@@ -14,6 +14,7 @@ RUN install_packages --repo=https://mrc-ide.github.io/drat \
         jsonlite \
         jsonvalidate \
         lgr \
+        naomi.options \
         plumber \
         porcelain \
         ps \
