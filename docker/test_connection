@@ -3,8 +3,8 @@ set -ex
 HERE=$(dirname $0)
 . $HERE/common
 
-# In case we switch agents between steps
-[ ! -z $(docker images -q $TAG_SHA) ] || docker pull $TAG_SHA
+# In case we switch agents between steps or tag has been updated
+docker pull $TAG_SHA
 
 NAME_REDIS=hintr_redis
 NAME_SERVER=hintr_server
