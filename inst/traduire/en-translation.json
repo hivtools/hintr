@@ -86,5 +86,5 @@
     "QUARTER_4": "Quarter 4",
     "VALIDATION_MULTIPLE_LEVELS_DETAIL": "year {{year}} has area levels {{levels}}",
     "VALIDATION_MULTIPLE_LEVELS": "Data can only be for regions at a single area level per year. In uploaded data {{detail}}.",
-    "FAILED_ZIP_REHYDRATE_SUBMIT": "Cannot rehydrate from zip file, archive missing required information. Please regenerate output zip and try again."
+    "FAILED_ZIP_REHYDRATE_SUBMIT": "Cannot load from this zip file, archive missing required information. Please regenerate output zip and try again."
 }
