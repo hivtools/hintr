@@ -24,7 +24,6 @@ rehydrate_submit <- function(queue) {
     tryCatch({
       input <- jsonlite::fromJSON(input)
       assert_file_exists(input$file$path)
-      queue$submit_rehydrate(input$file)
       list(id = scalar(queue$submit_rehydrate(input$file)))
     }, error = function(e) {
       hintr_error(e$message, "REHYDRATE_SUBMIT_FAILED")
