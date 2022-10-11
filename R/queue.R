@@ -14,7 +14,7 @@ Queue <- R6::R6Class(
                           prerun_dir = NULL,
                           timeout = Inf) {
       self$cleanup_on_exit <- cleanup_on_exit
-      self$results_dir = results_dir
+      self$results_dir <- results_dir
 
       message(t_("QUEUE_CONNECTING", list(redis = redux::redis_config()$url)))
       con <- redux::hiredis()
