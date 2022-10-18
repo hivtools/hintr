@@ -5,9 +5,13 @@ test_that("get_programme_time_series returns data and columns", {
 
   expect_equal(names(out), c("data", "metadata", "warnings"))
   expect_true(nrow(out$data) > 100) ## Check that we have read out some data
-  expect_setequal(colnames(out$data),
-                  c("area_id", "area_name", "area_level", "area_hierarchy",
-                    "time_period", "quarter", "plot", "value"))
+  expect_setequal(
+    colnames(out$data),
+    c(
+      "area_id", "area_name", "area_level", "area_hierarchy",
+      "time_period", "quarter", "plot", "value"
+    )
+  )
 
   columns <- out$metadata$columns
   expect_length(columns, 6)
@@ -15,8 +19,10 @@ test_that("get_programme_time_series returns data and columns", {
   expect_equal(columns[[1]]$column_id, scalar("plot"))
   expect_equal(columns[[1]]$label, scalar("Plot type"))
   expect_length(columns[[1]]$values, 20)
-  expect_setequal(names(columns[[1]]$values[[1]]),
-                  c("id", "label", "description", "format", "accuracy"))
+  expect_setequal(
+    names(columns[[1]]$values[[1]]),
+    c("id", "label", "description", "format", "accuracy")
+  )
   expect_equal(columns[[2]]$id, scalar("area_level"))
   expect_equal(columns[[2]]$column_id, scalar("area_level"))
   expect_equal(columns[[2]]$label, scalar("Area level"))
@@ -64,18 +70,24 @@ test_that("get_anc_time_series returns data and columns", {
   out <- get_anc_time_series(anc, shape)
   expect_equal(names(out), c("data", "metadata", "warnings"))
   expect_true(nrow(out$data) > 100) ## Check that we have read out some data
-  expect_setequal(colnames(out$data),
-                  c("area_id", "area_name", "area_level", "area_hierarchy",
-                    "age_group", "time_period", "quarter", "plot", "value"))
+  expect_setequal(
+    colnames(out$data),
+    c(
+      "area_id", "area_name", "area_level", "area_hierarchy",
+      "age_group", "time_period", "quarter", "plot", "value"
+    )
+  )
 
   columns <- out$metadata$columns
   expect_length(columns, 7)
   expect_equal(columns[[1]]$id, scalar("plot_type"))
   expect_equal(columns[[1]]$column_id, scalar("plot"))
   expect_equal(columns[[1]]$label, scalar("Plot type"))
-  expect_length(columns[[1]]$values, 6)
-  expect_setequal(names(columns[[1]]$values[[1]]),
-                  c("id", "label", "description", "format", "accuracy"))
+  expect_length(columns[[1]]$values, 7)
+  expect_setequal(
+    names(columns[[1]]$values[[1]]),
+    c("id", "label", "description", "format", "accuracy")
+  )
   expect_equal(columns[[2]]$id, scalar("area_level"))
   expect_equal(columns[[2]]$column_id, scalar("area_level"))
   expect_equal(columns[[2]]$label, scalar("Area level"))
@@ -117,15 +129,20 @@ test_that("get_anc_time_series returns data and columns", {
   expect_length(out$metadata$defaults, 1)
   selected_filters <- out$metadata$defaults$selected_filter_options
   expect_length(selected_filters, 4)
-  expect_equal(names(selected_filters),
-               c("plot_type", "area_level", "age", "quarter"))
+  expect_equal(
+    names(selected_filters),
+    c("plot_type", "area_level", "age", "quarter")
+  )
 })
 
 test_that("get_default_id_label_map errors if ID has more than 1 label", {
-  data <- data.frame(id = c(1, 1, 2, 2),
-                     name = c("one", "one", "two", "three"),
-                     stringsAsFactors = FALSE)
+  data <- data.frame(
+    id = c(1, 1, 2, 2),
+    name = c("one", "one", "two", "three"),
+    stringsAsFactors = FALSE
+  )
   expect_error(
     get_default_id_label_map(data, "id", "name"),
-    "Data is invalid, number of unique name values and id values is not equal")
+    "Data is invalid, number of unique name values and id values is not equal"
+  )
 })
