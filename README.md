@@ -7,7 +7,7 @@
 [![codecov.io](https://codecov.io/github/mrc-ide/hintr/coverage.svg?branch=master)](https://codecov.io/github/mrc-ide/hintr?branch=master)
 <!-- badges: end -->
 
-R API for Naomi app
+R API for Naomi web app
 
 App to show district level estimates of HIV indicators
 
