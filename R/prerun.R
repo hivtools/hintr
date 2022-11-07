@@ -5,7 +5,7 @@ PrerunModelResults <- R6::R6Class(
     validate_path = function(path, dir, name = deparse(substitute(path))) {
       if (grepl("/", path, fixed = TRUE)) {
         stop(sprintf("Path for '%s' must be just the filename, no slashes",
-                     name))
+          name))
       }
       path_full <- file.path(dir, path)
       if (!file.exists(path_full)) {
@@ -56,7 +56,7 @@ PrerunModelResults <- R6::R6Class(
       file_copy(model_output, file.path(import, "model-output.rds"))
       invisible(hash)
     }
-  ))
+))
 
 ##' Import prerun model results
 ##'
@@ -92,12 +92,20 @@ prerun_push <- function(path, model_output = "model-output.rds") {
 read_info_inputs <- function(path) {
   model_output <- readRDS(path)
   read.table(text = model_output$info$inputs.csv, header = TRUE, sep = ",",
-             stringsAsFactors = FALSE)
+    stringsAsFactors = FALSE)
 }
 
 
 hash_info_inputs <- function(inputs) {
   inputs$role[inputs$role == "art_number"] <- "programme"
   inputs$role[inputs$role == "anc_testing"] <- "anc"
+  ## Hashes created by format_data_input i.e. from
+  ## hintr_run_model are lowercase without the file extension
+  ## hashes coming from web app are uppercase with the
+  ## extension from the original file. Remove these before
+  ## getting the digest.
+  inputs$md5sum <- vcapply(inputs$md5sum, function(x) {
+    tolower(strsplit(x, "\\.")[[1]][1])
+  }, USE.NAMES = FALSE)
   digest::digest(inputs$md5sum[order(inputs$role)])
 }
