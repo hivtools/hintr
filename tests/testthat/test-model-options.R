@@ -330,8 +330,8 @@ test_that("integrating time options works", {
   quarter_ids1 <- naomi::calendar_quarter_to_quarter_id(ids1)
   quarter_ids2 <- naomi::calendar_quarter_to_quarter_id(ids2)
 
-  times1 <- lapply(quarter_ids1, quarter_id_to_json_list)
-  times2 <- lapply(quarter_ids2, quarter_id_to_json_list)
+  times1 <- quarter_id_to_json_list(quarter_ids1)
+  times2 <- quarter_id_to_json_list(quarter_ids2)
 
   times <- union_time_list(times1, times2)
 

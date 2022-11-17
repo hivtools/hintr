@@ -32,7 +32,7 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
     ## included in options
     most_recent_survey_qid <- naomi::calendar_quarter_to_quarter_id(
       most_recent_survey_quarter)
-    mr_qlist <- list(quarter_id_to_json_list(most_recent_survey_qid))
+    mr_qlist <- quarter_id_to_json_list(most_recent_survey_qid)
     time_options <- union_time_list(time_options, mr_qlist, decreasing = TRUE)
   } else {
     ## Use the most recent time option
@@ -134,7 +134,7 @@ quarter_id_to_json_list <- function(times) {
   format <- function(id, label) {
     list(id = scalar(id), label = scalar(label))
   }
-  Map(format, ids, labels)
+  Map(format, ids, labels, USE.NAMES = FALSE)
 }
 
 sort_time_json_list <- function(time_list, decreasing = TRUE) {
