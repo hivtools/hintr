@@ -5,13 +5,13 @@
 #' return the rows containing the specified indicator.
 #'
 #' @param data The input data type to filter.
+#' @param metadata The metadata from naomi.
 #' @param type The type of input data.
 #' @param indicator The indicator to filter on.
 #'
 #' @return The read data filtered for the indicator
 #' @keywords internal
-get_indicator_data <- function(file, type, indicator) {
-  metadata <- naomi::get_metadata()
+get_indicator_data <- function(data, metadata, type, indicator) {
   type_metadata <- metadata[
     metadata$data_type == type & metadata$indicator == indicator, ]
   if (nrow(type_metadata) != 1) {
@@ -19,7 +19,6 @@ get_indicator_data <- function(file, type, indicator) {
             list(nrow = nrow(type_metadata), type = type,
                  indicator = indicator)))
   }
-  data <- read_csv(file$path)
   if (!is.null(type_metadata$indicator_column) && !identical(type_metadata$indicator_column, "")) {
     ## Filter indicator column based on indicator value of data
     ret <- data[data[[type_metadata$indicator_column]] == type_metadata$indicator_value, ]

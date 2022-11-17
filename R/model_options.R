@@ -16,8 +16,8 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
   has_anc <- !is.null(anc)
 
   ## General options
-  iso3 <- read_geojson_iso3(shape)
   json <- hintr_geojson_read(shape)
+  iso3 <- get_geojson_iso3(json)
   regions <- get_region_filters(json)
   parent_region_id <- regions$id
   area_level_options <- get_level_options(json)
@@ -39,10 +39,13 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
     most_recent_survey_quarter <- time_options[[1]]$id
   }
 
-  survey_prevalence_options <- get_survey_options(survey, "prevalence")
-  survey_art_coverage_options <- get_survey_options(survey, "art_coverage")
-  survey_recently_infected_options <- get_survey_options(survey,
-                                                         "recent_infected")
+  metadata <- naomi::get_metadata()
+  survey_prevalence_options <- get_survey_options(
+    survey_data, metadata, "prevalence")
+  survey_art_coverage_options <- get_survey_options(
+    survey_data, metadata, "art_coverage")
+  survey_recently_infected_options <- get_survey_options(
+    survey_data, metadata, "recent_infected")
 
   ## ART options
   art_year_options <- NULL
@@ -122,14 +125,16 @@ get_time_options <- function() {
   end_date <- naomi::convert_quarter_id(as.integer(format(Sys.Date(), "%Y")),
                                         as.integer(current_quarter))
   times <- seq.int(end_date, start_date, -1)
-  lapply(times, quarter_id_to_json_list)
+  quarter_id_to_json_list(times)
 }
 
-quarter_id_to_json_list <- function(time) {
-  list(
-    id = scalar(naomi::quarter_id_to_calendar_quarter(time)),
-    label = scalar(naomi::quarter_year_labels(time))
-  )
+quarter_id_to_json_list <- function(times) {
+  ids <- naomi::quarter_id_to_calendar_quarter(times)
+  labels <- naomi::quarter_year_labels(times)
+  format <- function(id, label) {
+    list(id = scalar(id), label = scalar(label))
+  }
+  Map(format, ids, labels)
 }
 
 sort_time_json_list <- function(time_list, decreasing = TRUE) {
@@ -154,8 +159,9 @@ union_time_list <- function(times1, times2, decreasing = TRUE) {
 ## Survey options
 ## Have to use the metadata to work out where within the output data these
 ## values can be located
-get_survey_options <- function(survey, indicator) {
-  indicator_data <- get_indicator_data(survey, "survey", indicator)
+get_survey_options <- function(survey_data, metadata, indicator) {
+  indicator_data <- get_indicator_data(survey_data, metadata, "survey",
+                                       indicator)
   if (nrow(indicator_data) == 0) {
     ## Gets serialised to JSON and requires an obj
     ## for options NULL -> {}
