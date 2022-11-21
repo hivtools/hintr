@@ -136,3 +136,4 @@ format_notes <- function(notes) {
 file_exists <- function(file) {
   !is.null(file) && file.exists(file)
 }
+

@@ -24,16 +24,12 @@ read_csv_regions <- function(csv_file) {
 }
 
 read_csv <- function(file, ...) {
-  header <- readLines(file, 1)
-  if (!grepl(",", header) && grepl(";", header)) {
-    read <- utils::read.csv2
-  } else {
-    read <- utils::read.csv
-  }
-
-  data <- read(file, ..., stringsAsFactors = FALSE)
-  na_or_empty_rows <- rowSums(is.na(data)) + rowSums(data == "", na.rm = TRUE)
-  data[na_or_empty_rows != ncol(data), ]
+  data <- data.table::fread(file, ...,
+                            blank.lines.skip = TRUE,
+                            data.table = FALSE,
+                            nThread = 1,
+                            na.strings = c("NA", ""))
+  data[rowSums(is.na(data)) != ncol(data), ]
 }
 
 read_pjnz_iso3 <- function(pjnz) {
@@ -56,6 +52,10 @@ read_geojson_iso3 <- function(shape) {
   json <- hintr_geojson_read(shape)
   ## At this point we have validated there is only data for 1 country so we can
   ## just take the first.
+  get_geojson_iso3(json)
+}
+
+get_geojson_iso3 <- function(json) {
   substr(json$features[[1]]$properties$area_id, 1, 3)
 }
 
@@ -71,4 +71,3 @@ read_country <- function(pjnz_path) {
   hiv_params <- specio::read_pjn_metadata(pjnz_path)
   hiv_params$country
 }
-
