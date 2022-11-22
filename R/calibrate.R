@@ -12,9 +12,9 @@ run_calibrate <- function(model_output, calibration_options, path_results,
 
   path_results <- normalizePath(path_results, mustWork = TRUE)
   plot_data_path <- tempfile("plot_data", tmpdir = path_results,
-                             fileext = ".rds")
+                             fileext = ".qs")
   model_output_path <- tempfile("model_output", tmpdir = path_results,
-                                fileext = ".rds")
+                                fileext = ".qs")
 
   naomi::hintr_calibrate(model_output, calibration_options, plot_data_path,
                          model_output_path)

@@ -61,7 +61,7 @@ main_import_prerun <- function(args = commandArgs(TRUE)) {
   hintr-import-prerun <prerun> <path> [options]
 
 Options:
---model-output=PATH    Path to model output file [default: model-output.rds]"
+--model-output=PATH    Path to model output file [default: model-output.qs]"
   args <- docopt_parse(usage, args)
   h <- prerun_import(args$prerun, args$path, args$model_output)
   message(sprintf("Imported data as '%s'", h))

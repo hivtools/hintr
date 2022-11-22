@@ -45,7 +45,7 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
                               class = c("progress", "condition")))
     output <- list(
       plot_data_path = NULL,
-      model_output_path = system_file("output", "malawi_model_output.rds"),
+      model_output_path = system_file("output", "malawi_model_output.qs"),
       version = packageVersion("naomi"),
       warnings = list(
         list(
@@ -88,7 +88,7 @@ select_data <- function(data) {
 }
 
 process_result <- function(model_output) {
-  output <- readRDS(model_output$plot_data_path)
+  output <- naomi::read_hintr_output(model_output$plot_data_path)
   output_filters <- get_model_output_filters(output)
   metadata <- list(
     barchart = list(

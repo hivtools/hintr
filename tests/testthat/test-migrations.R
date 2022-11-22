@@ -96,7 +96,7 @@ test_that("all tasks can be migrated", {
   expect_setequal(summary$action,
                   c("Successfully migrated", "No change - up to date"))
 
-  migration_output <- readRDS(file.path(t, "output.rds"))
+  migration_output <- naomi::read_hintr_output(file.path(t, "output.qs"))
   expect_equal(migration_output, migrate)
 
   ## Data has been migrated
@@ -172,7 +172,7 @@ test_that("migration can be run in dry-run mode", {
   expect_setequal(summary$action,
                   c("Successfully migrated", "No change - up to date"))
 
-  migration_output <- readRDS(file.path(t, "output.rds"))
+  migration_output <- readRDS(file.path(t, "output.qs"))
   expect_equal(migration_output, migrate)
 
   ## Data has not been migrated

@@ -4,14 +4,16 @@
 \alias{get_indicator_data}
 \title{Filter data to only return rows containing data for the specified indicator}
 \usage{
-get_indicator_data(file, type, indicator)
+get_indicator_data(data, metadata, type, indicator)
 }
 \arguments{
+\item{data}{The input data type to filter.}
+
+\item{metadata}{The metadata from naomi.}
+
 \item{type}{The type of input data.}
 
 \item{indicator}{The indicator to filter on.}
-
-\item{data}{The input data type to filter.}
 }
 \value{
 The read data filtered for the indicator

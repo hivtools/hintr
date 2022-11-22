@@ -69,7 +69,7 @@ test_that("model can be run & calibrated and filters extracted", {
 
 test_that("model without national level results can be processed", {
   test_mock_model_available()
-  output <- readRDS(mock_calibrate$plot_data_path)
+  output <- naomi::read_hintr_output(mock_calibrate$plot_data_path)
   output <- output[output$area_level != 0, ]
   output_temp <- tempfile()
   saveRDS(output, output_temp)
@@ -185,7 +185,7 @@ test_that("real model can be run", {
   expect_equal(names(model_run), c("plot_data_path", "model_output_path",
                                    "version", "warnings"))
 
-  output <- readRDS(model_run$model_output_path)
+  output <- naomi::read_hintr_output(model_run$model_output_path)
   expect_setequal(names(output),
                   c("output_package", "naomi_data", "info", "warnings"))
 })
@@ -243,7 +243,7 @@ test_that("real model can be run with csv2 data", {
   expect_equal(names(model_run), c("plot_data_path", "model_output_path",
                                    "version", "warnings"))
 
-  output <- readRDS(model_run$model_output_path)
+  output <- naomi::read_hintr_output(model_run$model_output_path)
   expect_setequal(names(output),
                   c("output_package", "naomi_data", "info", "warnings"))
 })
