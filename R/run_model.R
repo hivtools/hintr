@@ -70,7 +70,7 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
 
   path_results <- normalizePath(path_results, mustWork = TRUE)
   model_output_path <- tempfile("model_output", tmpdir = path_results,
-                                fileext = ".rds")
+                                fileext = ".qs")
 
   ## Fix some labels to match what naomi requires
   data$art_number <- data$programme
