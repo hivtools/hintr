@@ -261,11 +261,11 @@ comparison_plot <- function(queue) {
   }
 }
 
-verify_result_available <- function(queue, id) {
+verify_result_available <- function(queue, id, version = NULL) {
   task_status <- queue$queue$task_status(id)
   if (task_status == "COMPLETE") {
     result <- queue$result(id)
-    naomi:::assert_model_output_version(result)
+    naomi:::assert_model_output_version(result, version = version)
   } else if (task_status == "ERROR") {
     result <- queue$result(id)
     trace <- c(sprintf("# %s", id), result$trace)
@@ -302,10 +302,14 @@ plotting_metadata <- function(iso3 = NULL) {
 
 download_submit <- function(queue) {
   function(id, type, input = NULL) {
-    verify_result_available(queue, id)
     ## API path should be - separated but we
     ## use _ for names in naomi
     type <- gsub("-", "_", type, fixed = TRUE)
+    version <- NULL
+    if (type == "comparison") {
+      version <- "2.7.16"
+    }
+    verify_result_available(queue, id, version)
     notes <- NULL
     state <- NULL
     if (!is.null(input)) {
