@@ -23,7 +23,7 @@ Imports:
     ids,
     jsonlite (>= 1.2.2),
     lgr,
-    naomi (>= 2.8.0),
+    naomi (>= 2.8.1),
     naomi.options,
     porcelain (>= 0.1.8),
     R6,
