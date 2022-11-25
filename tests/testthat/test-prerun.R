@@ -6,8 +6,8 @@ test_that("import failures", {
   expect_error(obj$import(p), "Import directory .+ does not exist")
   dir.create(p)
   expect_error(obj$import(p),
-               "Path 'model-output.rds' for 'model_output' does not exist")
-  file.create(file.path(p, "model-output.rds"))
+               "Path 'model-output.qs' for 'model_output' does not exist")
+  file.create(file.path(p, "model-output.qs"))
   expect_error(obj$import(p, "path/to/output.zip"),
                "Path for 'model_output' must be just the filename, no slashes")
 })
@@ -20,18 +20,18 @@ test_that("import base data", {
 
   p <- system_file("output")
 
-  inputs <- read_info_inputs(file.path(p, "malawi_model_output.rds"))
+  inputs <- read_info_inputs(file.path(p, "malawi_model_output.qs"))
   expect_false(obj$exists(inputs))
 
-  h <- obj$import(p, "malawi_model_output.rds")
+  h <- obj$import(p, "malawi_model_output.qs")
   expect_equal(obj$list(), h)
   expect_true(obj$exists(inputs))
   expect_equal(obj$get(inputs), list(
-    model_output_path = file.path(path_prerun, h, "model-output.rds")))
+    model_output_path = file.path(path_prerun, h, "model-output.qs")))
   expect_true(all(vapply(obj$get(inputs), file.exists, TRUE)))
 
   expect_error(
-    obj$import(p, "malawi_model_output.rds"),
+    obj$import(p, "malawi_model_output.qs"),
     "This set of data has been imported already")
 })
 
@@ -42,7 +42,7 @@ test_that("run with prerun", {
   expect_equal(obj$list(), character(0))
 
   h <- prerun_import(path_prerun, system_file("output"),
-                     "malawi_model_output.rds")
+                     "malawi_model_output.qs")
 
   data <- list(
     pjnz = list(filename = "Malawi2019.PJNZ",
@@ -112,7 +112,7 @@ test_that("run with prerun", {
   expect_equal(obj$list(), character(0))
 
   args <- c(path_prerun, system_file("output"),
-            "--model-output=malawi_model_output.rds")
+            "--model-output=malawi_model_output.qs")
   expect_message(main_import_prerun(args),
                  "Imported data as '[[:xdigit:]]+'")
   expect_equal(length(obj$list()), 1)

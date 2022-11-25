@@ -37,12 +37,12 @@ PrerunModelResults <- R6::R6Class(
     get_by_hash = function(hash) {
       p <- file.path(private$path, hash)
       ret <- list(
-        model_output_path = file.path(private$path, hash, "model-output.rds"))
+        model_output_path = file.path(private$path, hash, "model-output.qs"))
       stopifnot(all(file.exists(vcapply(ret, identity))))
       ret
     },
 
-    import = function(path, model_output = "model-output.rds") {
+    import = function(path, model_output = "model-output.qs") {
       if (!file.exists(path)) {
         stop(sprintf("Import directory %s does not exist", path))
       }
@@ -53,7 +53,7 @@ PrerunModelResults <- R6::R6Class(
         stop("This set of data has been imported already")
       }
       dir.create(import)
-      file_copy(model_output, file.path(import, "model-output.rds"))
+      file_copy(model_output, file.path(import, "model-output.qs"))
       invisible(hash)
     }
 ))
@@ -63,9 +63,9 @@ PrerunModelResults <- R6::R6Class(
 ##' @title Import prerun model results
 ##' @param prerun Path to the prerun model store
 ##' @param path Path to your results
-##' @param model_output Path, within \code{path} to your model output rds
+##' @param model_output Path, within \code{path} to your model output qs
 ##' @export
-prerun_import <- function(prerun, path, model_output = "model-output.rds") {
+prerun_import <- function(prerun, path, model_output = "model-output.qs") {
   PrerunModelResults$new(prerun)$import(path, model_output)
 }
 
@@ -74,7 +74,7 @@ prerun_import <- function(prerun, path, model_output = "model-output.rds") {
 ##' @title Push prerun model results to naomi.dide.ic.ac.uk
 ##' @inheritParams prerun_import
 ##' @export
-prerun_push <- function(path, model_output = "model-output.rds") {
+prerun_push <- function(path, model_output = "model-output.qs") {
   loadNamespace("ssh")
   session <- ssh::ssh_connect("incoming@naomi.dide.ic.ac.uk")
   on.exit(ssh::ssh_disconnect(session))
@@ -90,7 +90,7 @@ prerun_push <- function(path, model_output = "model-output.rds") {
 }
 
 read_info_inputs <- function(path) {
-  model_output <- readRDS(path)
+  model_output <- naomi::read_hintr_output(path)
   read.table(text = model_output$info$inputs.csv, header = TRUE, sep = ",",
     stringsAsFactors = FALSE)
 }
