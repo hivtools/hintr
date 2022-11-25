@@ -4,14 +4,14 @@
 \alias{prerun_import}
 \title{Import prerun model results}
 \usage{
-prerun_import(prerun, path, model_output = "model-output.rds")
+prerun_import(prerun, path, model_output = "model-output.qs")
 }
 \arguments{
 \item{prerun}{Path to the prerun model store}
 
 \item{path}{Path to your results}
 
-\item{model_output}{Path, within \code{path} to your model output rds}
+\item{model_output}{Path, within \code{path} to your model output qs}
 }
 \description{
 Import prerun model results

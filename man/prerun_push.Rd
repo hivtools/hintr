@@ -4,12 +4,12 @@
 \alias{prerun_push}
 \title{Push prerun model results to naomi.dide.ic.ac.uk}
 \usage{
-prerun_push(path, model_output = "model-output.rds")
+prerun_push(path, model_output = "model-output.qs")
 }
 \arguments{
 \item{path}{Path to your results}
 
-\item{model_output}{Path, within \code{path} to your model output rds}
+\item{model_output}{Path, within \code{path} to your model output qs}
 }
 \description{
 Push prerun model results to naomi.dide.ic.ac.uk

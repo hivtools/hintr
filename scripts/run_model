@@ -8,9 +8,9 @@ Options:
   --model-payload=<model-payload>                 Path to model run payload.
   --calibrate-payload=<calibrate-payload>         Path to calibrate payload.
   --download-payload=<download-payload>           Path to spectrum download payload.
-  --model-output-path=<output-path>               Path to model output data RDS.
-  --calibrate-output-path=<calibrate-output-path> Path to calibrate output data RDS.
-  --calibrate-plot-path=<calibrate-plot-path>     Path to calibrate plot data RDS.
+  --model-output-path=<output-path>               Path to model output data qs.
+  --calibrate-output-path=<calibrate-output-path> Path to calibrate output data qs.
+  --calibrate-plot-path=<calibrate-plot-path>     Path to calibrate plot data qs.
   --spectrum-path=<spectrum-path>                 Path to spectrum zip download.
   --coarse-output-path=<coarse-output-path>       Path to summary zip download.
   --summary-report-path=<summary-report-path>     Path to summary report download.
