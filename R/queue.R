@@ -70,9 +70,10 @@ Queue <- R6::R6Class(
     submit_download = function(model_output, type, notes, state) {
       results_dir <- self$results_dir
       language <- traduire::translator()$language()
-      self$submit(quote(
+      self$submit(quote({
+        stop("The download errored.. ooops ¯\\_(ツ)_/¯")
         hintr:::download(model_output, type, results_dir, notes, state,
-                         language)),
+                         language)}),
         queue = QUEUE_CALIBRATE)
     },
 
