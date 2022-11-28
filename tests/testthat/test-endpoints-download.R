@@ -839,17 +839,3 @@ test_that("spectrum download is translated", {
   indicators <- read.csv(file.path(dest, INDICATORS_PATH))
   expect_true("Prévalence du VIH" %in% unique(indicators$indicator_label))
 })
-
-test_that("comparison report download errors for old model output", {
-  test_mock_model_available()
-  q <- test_queue_result(model = mock_model_v1.0.7,
-                         calibrate = mock_calibrate_v1.0.7)
-
-  ## Submit download request
-  submit <- endpoint_download_submit(q$queue)
-  submit_response <- submit$run(q$calibrate_id, "comparison")
-
-  expect_equal(submit_response$status_code, 500)
-  expect_equal(submit_response$value$errors[[1]]$detail, scalar(
-    "Model output out of date please re-run model and try again."))
-})

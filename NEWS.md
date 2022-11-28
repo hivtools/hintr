@@ -1,7 +1,3 @@
-# hintr 1.0.44
-
-* Fail early if comparison report output cannot be generated
-
 # hintr 1.0.41
 
 * Add country specific default values to all model and calibration options
