@@ -14,7 +14,7 @@ test_that("can get data for calibration plot", {
   expect_true(nrow(res$data) > 0)
   expect_equal(names(res$plottingMetadata), "barchart")
   expect_setequal(names(res$plottingMetadata$barchart),
-                  c("indicators", "filters", "defaults"))
+                  c("indicators", "filters", "defaults", "selections"))
 
   expect_setequal(names(res$plottingMetadata$barchart$indicators),
                   c("indicator", "value_column", "error_low_column",
@@ -32,9 +32,13 @@ test_that("can get data for calibration plot", {
   expect_equal(filters[[4]], scalar("age_group"))
   expect_equal(filters[[5]], scalar("source"))
 
-  expect_true(length(res$plottingMetadata$barchart$defaults) >= 5)
-  for (default in res$plottingMetadata$barchart$defaults) {
-    expect_setequal(names(default),
+  expect_setequal(names(res$plottingMetadata$barchart$defaults),
+                  c("indicator_id", "x_axis_id", "disaggregate_by_id",
+                    "selected_filter_options"))
+
+  expect_true(length(res$plottingMetadata$barchart$selections) >= 5)
+  for (selection in res$plottingMetadata$barchart$selections) {
+    expect_setequal(names(selection),
                     c("indicator_id", "x_axis_id", "disaggregate_by_id",
                       "selected_filter_options"))
   }

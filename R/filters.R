@@ -233,7 +233,7 @@ get_calibrate_barchart_defaults <- function(filters) {
   )
 }
 
-get_comparison_barchart_defaults <- function(output, filters) {
+get_comparison_barchart_selections <- function(output, filters) {
   area_default <- get_area_level_filter_option(output)
   list(
     list(

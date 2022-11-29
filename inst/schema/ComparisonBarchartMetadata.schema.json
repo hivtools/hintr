@@ -10,11 +10,12 @@
       "type": "array",
       "items": { "$ref": "Filter.schema.json" }
     },
-    "defaults": {
+    "defaults": { "$ref": "BarchartDefaults.schema.json" },
+    "selections": {
       "type": "array",
       "items": { "$ref": "BarchartDefaults.schema.json" }
     }
   },
   "additionalProperties": false,
-  "required": [ "indicators", "filters", "defaults" ]
+  "required": [ "indicators", "filters", "defaults", "selections" ]
 }
