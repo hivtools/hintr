@@ -234,17 +234,70 @@ get_calibrate_barchart_defaults <- function(filters) {
 }
 
 get_comparison_barchart_defaults <- function(output, filters) {
+  area_default <- get_area_level_filter_option(output)
   list(
-    indicator_id = scalar("prevalence"),
-    x_axis_id = scalar("age"),
-    disaggregate_by_id = scalar("source"),
-    selected_filter_options = list(
-      area = get_area_level_filter_option(output),
-      quarter = get_selected_mappings(filters, "quarter")[2],
-      sex = get_selected_mappings(filters, "sex")[1],
-      age = get_selected_mappings(filters, "age",
-                                  naomi::get_five_year_age_groups()),
-      source = get_selected_mappings(filters, "source")
+    list(
+      indicator_id = scalar("prevalence"),
+      x_axis_id = scalar("age"),
+      disaggregate_by_id = scalar("source"),
+      selected_filter_options = list(
+        area = area_default,
+        quarter = get_selected_mappings(filters, "quarter")[2],
+        sex = get_selected_mappings(filters, "sex")[1],
+        age = get_selected_mappings(filters, "age",
+                                    naomi::get_five_year_age_groups()),
+        source = get_selected_mappings(filters, "source")
+      )
+    ),
+    list(
+      indicator_id = scalar("art_coverage"),
+      x_axis_id = scalar("age"),
+      disaggregate_by_id = scalar("source"),
+      selected_filter_options = list(
+        area = area_default,
+        quarter = get_selected_mappings(filters, "quarter")[2],
+        sex = get_selected_mappings(filters, "sex")[1],
+        age = get_selected_mappings(filters, "age",
+                                    naomi::get_five_year_age_groups()),
+        source = get_selected_mappings(filters, "source")
+      )
+    ),
+    list(
+      indicator_id = scalar("art_current"),
+      x_axis_id = scalar("age"),
+      disaggregate_by_id = scalar("source"),
+      selected_filter_options = list(
+        area = area_default,
+        quarter = get_selected_mappings(filters, "quarter")[2],
+        sex = get_selected_mappings(filters, "sex")[1],
+        age = get_selected_mappings(filters, "age",
+                                    naomi::get_five_year_age_groups()),
+        source = get_selected_mappings(filters, "source")
+      )
+    ),
+    list(
+      indicator_id = scalar("anc_prevalence_age_matched"),
+      x_axis_id = scalar("age"),
+      disaggregate_by_id = scalar("source"),
+      selected_filter_options = list(
+        area = area_default,
+        quarter = get_selected_mappings(filters, "quarter")[2],
+        sex = get_selected_mappings(filters, "sex", "female"),
+        age = get_selected_mappings(filters, "age", "Y015_049"),
+        source = get_selected_mappings(filters, "source")
+      )
+    ),
+    list(
+      indicator_id = scalar("anc_art_coverage_age_matched"),
+      x_axis_id = scalar("age"),
+      disaggregate_by_id = scalar("source"),
+      selected_filter_options = list(
+        area =area_default,
+        quarter = get_selected_mappings(filters, "quarter")[2],
+        sex = get_selected_mappings(filters, "sex", "female"),
+        age = get_selected_mappings(filters, "age", "Y015_049"),
+        source = get_selected_mappings(filters, "source")
+      )
     )
   )
 }
