@@ -1078,9 +1078,12 @@ test_that("can get comparison plot data", {
   expect_equal(filters[[4]], scalar("age_group"))
   expect_equal(filters[[5]], scalar("source"))
 
-  expect_setequal(names(response_data$plottingMetadata$barchart$defaults),
-                  c("indicator_id", "x_axis_id", "disaggregate_by_id",
-                    "selected_filter_options"))
+  expect_true(length(response_data$plottingMetadata$barchart$defaults) >= 5)
+  for (default in response_data$plottingMetadata$barchart$defaults) {
+    expect_setequal(names(default),
+                    c("indicator_id", "x_axis_id", "disaggregate_by_id",
+                      "selected_filter_options"))
+  }
 })
 
 test_that("API can return comparison plotting data", {
@@ -1124,7 +1127,10 @@ test_that("API can return comparison plotting data", {
   expect_equal(filters[[4]], "age_group")
   expect_equal(filters[[5]], "source")
 
-  expect_setequal(names(response_data$plottingMetadata$barchart$defaults),
-                  c("indicator_id", "x_axis_id", "disaggregate_by_id",
-                    "selected_filter_options"))
+  expect_true(length(response_data$plottingMetadata$barchart$defaults) >= 5)
+  for (default in response_data$plottingMetadata$barchart$defaults) {
+    expect_setequal(names(default),
+                    c("indicator_id", "x_axis_id", "disaggregate_by_id",
+                      "selected_filter_options"))
+  }
 })

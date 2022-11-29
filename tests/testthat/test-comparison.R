@@ -32,9 +32,12 @@ test_that("can get data for calibration plot", {
   expect_equal(filters[[4]], scalar("age_group"))
   expect_equal(filters[[5]], scalar("source"))
 
-  expect_setequal(names(res$plottingMetadata$barchart$defaults),
-                  c("indicator_id", "x_axis_id", "disaggregate_by_id",
-                    "selected_filter_options"))
+  expect_true(length(res$plottingMetadata$barchart$defaults) >= 5)
+  for (default in res$plottingMetadata$barchart$defaults) {
+    expect_setequal(names(default),
+                    c("indicator_id", "x_axis_id", "disaggregate_by_id",
+                      "selected_filter_options"))
+  }
 
   expect_false(any(is.na(res$data$mean)))
 })
