@@ -13,6 +13,7 @@ input_response <- function(value, type, file) {
 }
 
 model_options <- function(input) {
+  Sys.sleep(120)
   input <- jsonlite::fromJSON(input)
   tryCatch({
     assert_file_exists(input$shape$path)
