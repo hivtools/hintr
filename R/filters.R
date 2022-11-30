@@ -240,7 +240,7 @@ get_comparison_barchart_selections <- function(output, filters) {
   all_sexes <- get_selected_mappings(filters, "sex")
   both <- get_selected_mappings(filters, "sex", "both")
   female <- get_selected_mappings(filters, "sex", "female")
-  first_quarter <- get_selected_mappings(filters, "quarter")[1]
+  survey_quarter <- get_selected_mappings(filters, "quarter")[2]
   source = get_selected_mappings(filters, "source")
   fifteen_to_49 <- get_selected_mappings(filters, "age", "Y015_049")
   list(
@@ -250,7 +250,7 @@ get_comparison_barchart_selections <- function(output, filters) {
       disaggregate_by_id = scalar("source"),
       selected_filter_options = list(
         area = area_default,
-        quarter = first_quarter,
+        quarter = survey_quarter,
         sex = both,
         age = five_year_age_groups,
         source = source
@@ -262,7 +262,7 @@ get_comparison_barchart_selections <- function(output, filters) {
       disaggregate_by_id = scalar("source"),
       selected_filter_options = list(
         area = area_default,
-        quarter = first_quarter,
+        quarter = survey_quarter,
         sex = both,
         age = five_year_age_groups,
         source = source
@@ -274,7 +274,7 @@ get_comparison_barchart_selections <- function(output, filters) {
       disaggregate_by_id = scalar("source"),
       selected_filter_options = list(
         area = area_default,
-        quarter = first_quarter,
+        quarter = survey_quarter,
         sex = all_sexes,
         age = get_selected_mappings(filters, "age", "Y015_999"),
         source = source
@@ -286,7 +286,7 @@ get_comparison_barchart_selections <- function(output, filters) {
       disaggregate_by_id = scalar("source"),
       selected_filter_options = list(
         area = area_default,
-        quarter = first_quarter,
+        quarter = survey_quarter,
         sex = female,
         age = fifteen_to_49,
         source = source
@@ -298,7 +298,7 @@ get_comparison_barchart_selections <- function(output, filters) {
       disaggregate_by_id = scalar("source"),
       selected_filter_options = list(
         area = area_default,
-        quarter = first_quarter,
+        quarter = survey_quarter,
         sex = female,
         age = fifteen_to_49,
         source = source
