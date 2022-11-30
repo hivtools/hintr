@@ -236,7 +236,7 @@ get_calibrate_barchart_defaults <- function(filters) {
 get_comparison_barchart_selections <- function(output, filters) {
   area_default <- get_area_level_filter_option(output)
   five_year_age_groups <- get_selected_mappings(
-    filters, "age",naomi::get_five_year_age_groups())
+    filters, "age", naomi::get_five_year_age_groups())
   all_sexes <- get_selected_mappings(filters, "sex")
   both <- get_selected_mappings(filters, "sex", "both")
   female <- get_selected_mappings(filters, "sex", "female")
