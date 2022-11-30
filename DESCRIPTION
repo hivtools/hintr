@@ -24,7 +24,7 @@ Imports:
     jsonlite (>= 1.2.2),
     lgr,
     naomi (>= 2.8.4),
-    naomi.options,
+    naomi.options (>= 0.1.3),
     porcelain (>= 0.1.8),
     R6,
     redux,
