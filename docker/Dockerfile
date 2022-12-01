@@ -30,7 +30,7 @@ COPY docker/bin /usr/local/bin/
 # container.
 #
 RUN install_remote \
-    mrc-ide/naomi.options@add-anchor-distcrict-advanced-option     
+    mrc-ide/naomi.options
 
 COPY . /src
 RUN R CMD INSTALL /src/naomi \
