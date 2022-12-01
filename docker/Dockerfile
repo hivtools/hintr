@@ -29,10 +29,8 @@ COPY docker/bin /usr/local/bin/
 # can hit rate limits as we cannot use a PAT when building the
 # container.
 #
-# RUN install_remote \
-#         mrc-ide/rrq \
-#         reside-ic/traduire \
-#         ropensci/jsonvalidate
+RUN install_remote \
+    mrc-ide/naomi.options
 
 COPY . /src
 RUN R CMD INSTALL /src/naomi \
