@@ -9,7 +9,8 @@ validate_baseline_input <- function(file_path, type) {
         "path": "%s",
         "hash": "12345",
         "filename": "original",
-        "fromADR": false
+        "fromADR": false,
+        "resource_url": "https://adr.unaids.org/file/123.csv"
       }
     }', type, file_path)
 }
@@ -24,7 +25,8 @@ model_options_input <- function(shape, survey, programme, anc) {
         "path": "%s",
         "hash": "12345",
         "filename": "original",
-        "fromADR": false
+        "fromADR": false,
+        "resource_url": "https://adr.unaids.org/file/123.csv"
       }', x)
     }
   }
@@ -64,7 +66,8 @@ validate_programme_survey_input <- function(file_path, type, shape,
         "path": "%s",
         "hash": "12345",
         "filename": "original",
-        "fromADR": false
+        "fromADR": false,
+        "resource_url": "https://adr.unaids.org/file/123.csv"
       },
       "shape": "%s",
       "pjnz": "%s"
@@ -79,13 +82,15 @@ input_time_series_request <- function(file_path, type, shape_path) {
           "path": "%s",
           "hash": "12345",
           "filename": "original",
-          "fromADR": false
+          "fromADR": false,
+          "resource_url": "https://adr.unaids.org/file/123.csv"
         },
         "shape": {
           "path": "%s",
           "hash": "6789",
           "filename": "shape_file",
-          "fromADR": false
+          "fromADR": false,
+          "resource_url": "https://adr.unaids.org/file/123.csv"
         }
       }
     }', type, file_path, shape_path)

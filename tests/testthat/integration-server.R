@@ -27,6 +27,7 @@ test_that("validate pjnz", {
                                  iso3 = "MWI"),
                      filename = "Malawi2019.PJNZ",
                      fromADR = FALSE,
+                     resource_url = "https://adr.unaids.org/file/123.csv",
                      filters = NULL)))
 })
 
@@ -43,6 +44,8 @@ test_that("validate shape", {
   expect_equal(response$errors, NULL)
   expect_equal(response$data$hash, "12345")
   expect_equal(response$data$fromADR, FALSE)
+  expect_equal(response$data$resource_url,
+               "https://adr.unaids.org/file/123.csv")
   expect_equal(response$data$filename, "original.geojson")
   expect_equal(response$data$type, "shape")
   expect_true(all(c("type", "features") %in% names(response$data$data)))
@@ -57,15 +60,16 @@ test_that("validate population", {
     body = httr::upload_file(payload,type = "application/json"),
     encode = "json")
   expect_equal(httr::status_code(r), 200)
-  expect_equal(response_from_json(r),
-               list(status = "success",
-                    errors = NULL,
-                    data = list(hash = "12345",
-                                type = "population",
-                                data = NULL,
-                                filename = "original.csv",
-                                fromADR = FALSE,
-                                filters = NULL)))
+  expect_equal(response_from_json(r), list(
+    status = "success",
+    errors = NULL,
+    data = list(hash = "12345",
+                type = "population",
+                data = NULL,
+                filename = "original.csv",
+                fromADR = FALSE,
+                resource_url = "https://adr.unaids.org/file/123.csv",
+                filters = NULL)))
 })
 
 test_that("validate programme", {
@@ -82,6 +86,8 @@ test_that("validate programme", {
   expect_equal(response$data$filename, "original.csv")
   expect_equal(response$data$type, "programme")
   expect_equal(response$data$fromADR, FALSE)
+  expect_equal(response$data$resource_url,
+               "https://adr.unaids.org/file/123.csv")
   expect_true(length(response$data$data) >= 500)
   expect_type(response$data$data[[1]]$art_current, "integer")
   expect_equal(names(response$data$filters),
@@ -106,6 +112,8 @@ test_that("validate ANC", {
   expect_equal(response$data$filename, "original.csv")
   expect_equal(response$data$type, "anc")
   expect_equal(response$data$fromADR, FALSE)
+  expect_equal(response$data$resource_url,
+               "https://adr.unaids.org/file/123.csv")
   expect_true(length(response$data$data) >= 200)
   expect_type(response$data$data[[1]]$anc_clients, "integer")
   expect_equal(names(response$data$filters), c("year", "indicators"))
@@ -128,6 +136,8 @@ test_that("validate survey", {
   expect_equal(response$data$filename, "original.csv")
   expect_equal(response$data$type, "survey")
   expect_equal(response$data$fromADR, FALSE)
+  expect_equal(response$data$resource_url,
+               "https://adr.unaids.org/file/123.csv")
   expect_true(length(response$data$data) >= 20000)
   expect_type(response$data$data[[1]]$estimate, "double")
   expect_equal(names(response$data$filters), c("age", "surveys", "indicators"))
