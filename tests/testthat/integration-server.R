@@ -44,8 +44,7 @@ test_that("validate shape", {
   expect_equal(response$errors, NULL)
   expect_equal(response$data$hash, "12345")
   expect_equal(response$data$fromADR, FALSE)
-  expect_equal(response$data$resource_url,
-               "https://adr.unaids.org/file/123.csv")
+  expect_equal(response$data$resource_url, NULL)
   expect_equal(response$data$filename, "original.geojson")
   expect_equal(response$data$type, "shape")
   expect_true(all(c("type", "features") %in% names(response$data$data)))
@@ -68,7 +67,7 @@ test_that("validate population", {
                 data = NULL,
                 filename = "original.csv",
                 fromADR = FALSE,
-                resource_url = "https://adr.unaids.org/file/123.csv",
+                resource_url = NULL,
                 filters = NULL)))
 })
 
@@ -86,8 +85,7 @@ test_that("validate programme", {
   expect_equal(response$data$filename, "original.csv")
   expect_equal(response$data$type, "programme")
   expect_equal(response$data$fromADR, FALSE)
-  expect_equal(response$data$resource_url,
-               "https://adr.unaids.org/file/123.csv")
+  expect_equal(response$data$resource_url, NULL)
   expect_true(length(response$data$data) >= 500)
   expect_type(response$data$data[[1]]$art_current, "integer")
   expect_equal(names(response$data$filters),
@@ -136,8 +134,7 @@ test_that("validate survey", {
   expect_equal(response$data$filename, "original.csv")
   expect_equal(response$data$type, "survey")
   expect_equal(response$data$fromADR, FALSE)
-  expect_equal(response$data$resource_url,
-               "https://adr.unaids.org/file/123.csv")
+  expect_equal(response$data$resource_url, NULL)
   expect_true(length(response$data$data) >= 20000)
   expect_type(response$data$data[[1]]$estimate, "double")
   expect_equal(names(response$data$filters), c("age", "surveys", "indicators"))
