@@ -80,7 +80,7 @@ test_that("endpoint_baseline_individual works", {
   expect_equal(body$data$filename, "Malawi2019.PJNZ")
   expect_equal(body$data$filters, NULL)
   expect_equal(body$data$fromADR, FALSE)
-  expect_equal(response$data$resource_url,
+  expect_equal(body$data$resource_url,
                "https://adr.unaids.org/file/123.csv")
 })
 
