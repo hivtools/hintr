@@ -1,6 +1,10 @@
-# hintr 1.1.0
+# hintr 1.1.1
 
 * Add fallback model and calibration options for unknown countries
+
+# hintr 1.0.1
+
+* Remove PJNZ file from survey and programme data validation
 
 # hintr 1.0.44
 

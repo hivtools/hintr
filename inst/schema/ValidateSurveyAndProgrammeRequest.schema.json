@@ -4,14 +4,12 @@
   "properties": {
     "type" : { "$ref": "InputType.schema.json" },
     "file" : { "$ref": "SessionFile.schema.json" },
-    "shape": { "$ref": "FilePath.schema.json" },
-    "pjnz": { "$ref": "FilePath.schema.json" }
+    "shape": { "$ref": "FilePath.schema.json" }
   },
   "additionalProperties": false,
   "required": [
     "type",
     "file",
-    "shape",
-    "pjnz"
+    "shape"
   ]
 }
