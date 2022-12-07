@@ -28,7 +28,7 @@ COPY docker/bin /usr/local/bin/
 # github. However, limt this (and prefer updating the drat) as this
 # can hit rate limits as we cannot use a PAT when building the
 # container.
-#
+ARG CACHEBUST=1 ## Force docker to run following steps and not use cache
 RUN install_remote \
     mrc-ide/naomi.options@add-fallback
 
