@@ -115,7 +115,7 @@ do_validate_population <- function(population) {
 #'
 #' @return An error if invalid.
 #' @keywords internal
-do_validate_programme <- function(programme, shape, pjnz, strict = TRUE) {
+do_validate_programme <- function(programme, shape, strict = TRUE) {
   assert_file_extension(programme, "csv")
   data <- read_csv(programme$path, header = TRUE)
   assert_single_country(data, "programme")
@@ -159,7 +159,7 @@ do_validate_programme <- function(programme, shape, pjnz, strict = TRUE) {
 #'
 #' @return An error if invalid.
 #' @keywords internal
-do_validate_anc <- function(anc, shape, pjnz, strict = TRUE) {
+do_validate_anc <- function(anc, shape, strict = TRUE) {
   assert_file_extension(anc, "csv")
   data <- as.data.frame(naomi::read_anc_testing(anc$path))
   assert_single_country(data, "anc")
@@ -203,7 +203,7 @@ do_validate_anc <- function(anc, shape, pjnz, strict = TRUE) {
 #'
 #' @return An error if invalid.
 #' @keywords internal
-do_validate_survey <- function(survey, shape, pjnz, strict = TRUE) {
+do_validate_survey <- function(survey, shape, strict = TRUE) {
   assert_file_extension(survey, "csv")
   data <- read_csv(survey$path, header = TRUE)
   assert_single_country(data, "survey")
