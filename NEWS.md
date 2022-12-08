@@ -1,3 +1,8 @@
+# hintr 1.1.2
+
+* Update fallback anc year to 2022
+* Remove stack trace from user display
+
 # hintr 1.1.1
 
 * Add fallback model and calibration options for unknown countries
