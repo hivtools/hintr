@@ -155,22 +155,22 @@ test_that("do_endpoint_model_options without programme data", {
   expect_equal(fallback$area_scope, scalar("MWI"))
 })
 
-test_that("do_endpoint_model_options fallback anc year2 to 2021 if in data", {
+test_that("do_endpoint_model_options fallback anc year2 to 2022 if in data", {
   shape <- file_object(file.path("testdata", "malawi.geojson"))
   survey <- file_object(file.path("testdata", "survey.csv"))
   art <- file_object(file.path("testdata", "programme.csv"))
   anc <- file_object(file.path("testdata", "anc.csv"))
 
   mock_get_controls_json <- mockery::mock('"{"test"}')
-  mock_get_years <- mockery::mock(c(2021, 2020, 2019))
+  mock_get_years <- mockery::mock(c(2022, 2021, 2020, 2019))
   with_mock("naomi.options::get_controls_json" = mock_get_controls_json,
             "hintr:::get_years" = mock_get_years, {
     json <- do_endpoint_model_options(shape, survey, art, anc)
     args <- mockery::mock_args(mock_get_controls_json)
   })
   fallback <- args[[1]][[4]]
-  expect_equal(fallback$anc_prevalence_year2, scalar("2021"))
-  expect_equal(fallback$anc_art_coverage_year2, scalar("2021"))
+  expect_equal(fallback$anc_prevalence_year2, scalar("2022"))
+  expect_equal(fallback$anc_art_coverage_year2, scalar("2022"))
   ## Year 1 defaults are NULL as survey year not in ANC years
   expect_equal(fallback$anc_prevalence_year1, scalar(""))
   expect_equal(fallback$anc_art_coverage_year1, scalar(""))

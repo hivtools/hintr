@@ -194,8 +194,6 @@ test_that("erroring model run returns useful messages", {
   expect_equal(error$data[[1]]$key, scalar("fake_key"))
 
   trace <- vapply(error$data[[1]]$trace, identity, character(1))
-  expect_true("rrq:::rrq_worker_main()" %in% trace)
-  expect_true("stop(\"test error\")" %in% trace)
   expect_match(trace[[1]], "^# [[:xdigit:]]+$")
 })
 
