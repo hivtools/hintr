@@ -4,6 +4,7 @@ input_response <- function(value, type, file) {
               data = value$data,
               filename = scalar(file$filename),
               fromADR = scalar(file$fromADR),
+              resource_url = scalar(file$resource_url),
               filters = value$filters)
   if (!is.null(value$warnings)) {
     ret$warnings <- warnings_scalar(value$warnings)
@@ -246,13 +247,15 @@ comparison_plot <- function(queue) {
                    "calendar_quarter", "indicator", "source", "mean",
                    "lower", "upper")]
     filters <- get_comparison_plot_filters(data)
+    selections <- get_comparison_barchart_selections(data, filters)
     list(
       data = data,
       plottingMetadata = list(
         barchart = list(
           indicators = get_barchart_metadata(data, "comparison"),
           filters = filters,
-          defaults = get_comparison_barchart_defaults(data, filters)
+          defaults = selections[[1]],
+          selections = selections
         )
       )
     )

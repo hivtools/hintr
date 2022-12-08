@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties" : {
+    "indicators" : {
+      "type": "array",
+      "items": { "$ref": "BarchartIndicator.schema.json" }
+    },
+    "filters" : {
+      "type": "array",
+      "items": { "$ref": "Filter.schema.json" }
+    },
+    "defaults": { "$ref": "BarchartDefaults.schema.json" },
+    "selections": {
+      "type": "array",
+      "items": { "$ref": "BarchartDefaults.schema.json" }
+    }
+  },
+  "additionalProperties": false,
+  "required": [ "indicators", "filters", "defaults", "selections" ]
+}

@@ -1,7 +1,11 @@
-# hintr 1.1.2
+# hintr 1.1.3
 
 * Update fallback anc year to 2022
 * Remove stack trace from user display
+
+# hintr 1.1.2
+
+* Add default selections for each indicator in comparison plot
 
 # hintr 1.1.1
 
