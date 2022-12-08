@@ -1,3 +1,7 @@
+# hintr 1.1.2
+
+* Add default selections for each indicator in comparison plot
+
 # hintr 1.1.1
 
 * Add fallback model and calibration options for unknown countries
