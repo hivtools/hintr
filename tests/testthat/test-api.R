@@ -1061,7 +1061,7 @@ test_that("can get comparison plot data", {
   expect_true(nrow(response_data$data) > 0)
   expect_equal(names(response_data$plottingMetadata), "barchart")
   expect_setequal(names(response_data$plottingMetadata$barchart),
-                  c("indicators", "filters", "defaults"))
+                  c("indicators", "filters", "defaults", "selections"))
 
   expect_setequal(names(response_data$plottingMetadata$barchart$indicators),
                   c("indicator", "value_column", "error_low_column",
@@ -1081,6 +1081,13 @@ test_that("can get comparison plot data", {
   expect_setequal(names(response_data$plottingMetadata$barchart$defaults),
                   c("indicator_id", "x_axis_id", "disaggregate_by_id",
                     "selected_filter_options"))
+
+  expect_true(length(response_data$plottingMetadata$barchart$selections) >= 5)
+  for (selection in response_data$plottingMetadata$barchart$selections) {
+    expect_setequal(names(selection),
+                    c("indicator_id", "x_axis_id", "disaggregate_by_id",
+                      "selected_filter_options"))
+  }
 })
 
 test_that("API can return comparison plotting data", {
@@ -1105,7 +1112,7 @@ test_that("API can return comparison plotting data", {
   expect_true(nrow(data) > 0)
   expect_equal(names(response_data$plottingMetadata), "barchart")
   expect_setequal(names(response_data$plottingMetadata$barchart),
-                  c("indicators", "filters", "defaults"))
+                  c("indicators", "filters", "defaults", "selections"))
 
   barchart_indicators <- do.call(
     rbind, response_data$plottingMetadata$barchart$indicators)
@@ -1127,4 +1134,11 @@ test_that("API can return comparison plotting data", {
   expect_setequal(names(response_data$plottingMetadata$barchart$defaults),
                   c("indicator_id", "x_axis_id", "disaggregate_by_id",
                     "selected_filter_options"))
+
+  expect_true(length(response_data$plottingMetadata$barchart$selections) >= 5)
+  for (selection in response_data$plottingMetadata$barchart$selections) {
+    expect_setequal(names(selection),
+                    c("indicator_id", "x_axis_id", "disaggregate_by_id",
+                      "selected_filter_options"))
+  }
 })

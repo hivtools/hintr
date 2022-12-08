@@ -233,18 +233,76 @@ get_calibrate_barchart_defaults <- function(filters) {
   )
 }
 
-get_comparison_barchart_defaults <- function(output, filters) {
+get_comparison_barchart_selections <- function(output, filters) {
+  area_default <- get_area_level_filter_option(output)
+  five_year_age_groups <- get_selected_mappings(
+    filters, "age", naomi::get_five_year_age_groups())
+  all_sexes <- get_selected_mappings(filters, "sex")
+  both <- get_selected_mappings(filters, "sex", "both")
+  female <- get_selected_mappings(filters, "sex", "female")
+  survey_quarter <- get_selected_mappings(filters, "quarter")[2]
+  source = get_selected_mappings(filters, "source")
+  fifteen_to_49 <- get_selected_mappings(filters, "age", "Y015_049")
   list(
-    indicator_id = scalar("prevalence"),
-    x_axis_id = scalar("age"),
-    disaggregate_by_id = scalar("source"),
-    selected_filter_options = list(
-      area = get_area_level_filter_option(output),
-      quarter = get_selected_mappings(filters, "quarter")[2],
-      sex = get_selected_mappings(filters, "sex")[1],
-      age = get_selected_mappings(filters, "age",
-                                  naomi::get_five_year_age_groups()),
-      source = get_selected_mappings(filters, "source")
+    list(
+      indicator_id = scalar("prevalence"),
+      x_axis_id = scalar("age"),
+      disaggregate_by_id = scalar("source"),
+      selected_filter_options = list(
+        area = area_default,
+        quarter = survey_quarter,
+        sex = both,
+        age = five_year_age_groups,
+        source = source
+      )
+    ),
+    list(
+      indicator_id = scalar("art_coverage"),
+      x_axis_id = scalar("age"),
+      disaggregate_by_id = scalar("source"),
+      selected_filter_options = list(
+        area = area_default,
+        quarter = survey_quarter,
+        sex = both,
+        age = five_year_age_groups,
+        source = source
+      )
+    ),
+    list(
+      indicator_id = scalar("art_current"),
+      x_axis_id = scalar("sex"),
+      disaggregate_by_id = scalar("source"),
+      selected_filter_options = list(
+        area = area_default,
+        quarter = survey_quarter,
+        sex = all_sexes,
+        age = get_selected_mappings(filters, "age", "Y015_999"),
+        source = source
+      )
+    ),
+    list(
+      indicator_id = scalar("anc_prevalence_age_matched"),
+      x_axis_id = scalar("sex"),
+      disaggregate_by_id = scalar("source"),
+      selected_filter_options = list(
+        area = area_default,
+        quarter = survey_quarter,
+        sex = female,
+        age = fifteen_to_49,
+        source = source
+      )
+    ),
+    list(
+      indicator_id = scalar("anc_art_coverage_age_matched"),
+      x_axis_id = scalar("sex"),
+      disaggregate_by_id = scalar("source"),
+      selected_filter_options = list(
+        area = area_default,
+        quarter = survey_quarter,
+        sex = female,
+        age = fifteen_to_49,
+        source = source
+      )
     )
   )
 }
