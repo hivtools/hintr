@@ -87,11 +87,9 @@ validate_survey_programme <- function(input, strict = TRUE) {
   tryCatch({
     shape <- file_object(input$shape)
     assert_file_exists(input$file$path)
-    pjnz <- file_object(input$pjnz)
-    assert_file_exists(pjnz$path)
     assert_file_exists(shape$path)
     input_response(
-      validate_func(input$file, shape, pjnz, strict), input$type, input$file)
+      validate_func(input$file, shape, strict), input$type, input$file)
   },
   error = function(e) {
     hintr_error(e$message, "INVALID_FILE")
