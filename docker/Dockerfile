@@ -28,7 +28,6 @@ COPY docker/bin /usr/local/bin/
 # github. However, limt this (and prefer updating the drat) as this
 # can hit rate limits as we cannot use a PAT when building the
 # container.
-#
 RUN install_remote \
     mrc-ide/naomi.options
 

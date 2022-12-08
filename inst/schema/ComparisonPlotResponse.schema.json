@@ -6,7 +6,7 @@
     "plottingMetadata": {
       "type": "object",
       "properties": {
-        "barchart": { "$ref": "BarchartMetadata.schema.json" }
+        "barchart": { "$ref": "ComparisonBarchartMetadata.schema.json" }
       },
       "additionalProperties": false,
       "required": [ "barchart" ]

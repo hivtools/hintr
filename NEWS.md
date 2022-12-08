@@ -1,3 +1,15 @@
+# hintr 1.1.2
+
+* Add default selections for each indicator in comparison plot
+
+# hintr 1.1.1
+
+* Add fallback model and calibration options for unknown countries
+
+# hintr 1.0.1
+
+* Remove PJNZ file from survey and programme data validation
+
 # hintr 1.0.44
 
 * Fail early if comparison report output cannot be generated

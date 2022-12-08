@@ -88,11 +88,9 @@ validate_survey_programme <- function(input, strict = TRUE) {
   tryCatch({
     shape <- file_object(input$shape)
     assert_file_exists(input$file$path)
-    pjnz <- file_object(input$pjnz)
-    assert_file_exists(pjnz$path)
     assert_file_exists(shape$path)
     input_response(
-      validate_func(input$file, shape, pjnz, strict), input$type, input$file)
+      validate_func(input$file, shape, strict), input$type, input$file)
   },
   error = function(e) {
     hintr_error(e$message, "INVALID_FILE")
@@ -249,13 +247,15 @@ comparison_plot <- function(queue) {
                    "calendar_quarter", "indicator", "source", "mean",
                    "lower", "upper")]
     filters <- get_comparison_plot_filters(data)
+    selections <- get_comparison_barchart_selections(data, filters)
     list(
       data = data,
       plottingMetadata = list(
         barchart = list(
           indicators = get_barchart_metadata(data, "comparison"),
           filters = filters,
-          defaults = get_comparison_barchart_defaults(data, filters)
+          defaults = selections[[1]],
+          selections = selections
         )
       )
     )
