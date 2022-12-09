@@ -41,3 +41,5 @@ steps:
   - label: ":rocket:"
     trigger: "naomi-staging-deploy"
     if: build.branch == 'master'
+    build:
+      message: "Triggered build"
