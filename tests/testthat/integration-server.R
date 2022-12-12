@@ -831,7 +831,7 @@ test_that("input time series can return plot data for anc", {
 })
 
 test_that("rehydrate", {
-  payload <- setup_reydrate_payload()
+  payload <- setup_rehydrate_payload()
 
   r <- server$request("POST",
                       "/rehydrate/submit",

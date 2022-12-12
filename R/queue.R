@@ -76,8 +76,14 @@ Queue <- R6::R6Class(
         queue = QUEUE_CALIBRATE)
     },
 
-    submit_rehydrate = function(output_zip) {
-      self$submit(quote(hintr:::rehydrate(output_zip, self$results_dir)),
+    submit_rehydrate_state = function(output_zip) {
+      self$submit(quote(hintr:::rehydrate_from_state(output_zip)),
+                  queue = QUEUE_CALIBRATE)
+    },
+
+    submit_rehydrate_files = function(hintr_output, fit_id, calibrate_id) {
+      self$submit(quote(hintr:::rehydrate_from_files(hintr_output, fit_id,
+                                                     calibrate_id)),
                   queue = QUEUE_CALIBRATE)
     },
 

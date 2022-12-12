@@ -249,7 +249,7 @@ setup_project_state_json <- function(version = NULL) {
   path
 }
 
-setup_reydrate_payload <- function(
+setup_rehydrate_payload <- function(
     path = system.file("output", "malawi_spectrum_download.zip",
                        package = "hintr")) {
   c('{"file":{',
