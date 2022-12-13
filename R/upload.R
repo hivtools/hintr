@@ -5,9 +5,11 @@ upload_input <- function(queue) {
       queue$uploads_dir,
       paste0(md5, ".", tools::file_ext(filename)))
     if (!file.exists(dest_path)) {
-      t <- tempfile()
+      tmpdir <- file.path(queue$uploads_dir, ".incoming")
+      dir.create(tmpdir, FALSE, TRUE)
+      t <- tempfile(tmpdir = tmpdir)
       writeBin(file, t)
-      file.copy(t, dest_path)
+      file.rename(t, dest_path)
     }
     list(
       path = scalar(dest_path),
