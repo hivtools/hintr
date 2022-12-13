@@ -62,6 +62,8 @@ test_that("endpoint_baseline_individual", {
   expect_equal(response$data$filename, scalar("Malawi2019.PJNZ"))
   expect_equal(response$data$filters, json_null())
   expect_equal(response$data$fromADR, scalar(FALSE))
+  expect_equal(response$data$resource_url,
+               scalar("https://adr.unaids.org/file/123.csv"))
 })
 
 test_that("endpoint_baseline_individual works", {
@@ -78,6 +80,8 @@ test_that("endpoint_baseline_individual works", {
   expect_equal(body$data$filename, "Malawi2019.PJNZ")
   expect_equal(body$data$filters, NULL)
   expect_equal(body$data$fromADR, FALSE)
+  expect_equal(body$data$resource_url,
+               "https://adr.unaids.org/file/123.csv")
 })
 
 test_that("endpoint_baseline_combined", {

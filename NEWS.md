@@ -1,3 +1,7 @@
+# hintr 1.1.5
+
+* Add ability to rehydrate from data instead of app state
+
 # hintr 1.1.2
 
 * Add default selections for each indicator in comparison plot

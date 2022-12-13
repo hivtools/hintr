@@ -4,6 +4,7 @@ input_response <- function(value, type, file) {
               data = value$data,
               filename = scalar(file$filename),
               fromADR = scalar(file$fromADR),
+              resource_url = scalar(file$resource_url),
               filters = value$filters)
   if (!is.null(value$warnings)) {
     ret$warnings <- warnings_scalar(value$warnings)

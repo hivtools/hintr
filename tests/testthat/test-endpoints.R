@@ -22,7 +22,8 @@ test_that("plumber api can be built", {
 
 test_that("input_response correctly formats data and validates it", {
   mock_validate <- mockery::mock(TRUE)
-  file <- list(path = "path", hash = "12345", filename = "original.pjnz", fromADR = FALSE)
+  file <- list(path = "path", hash = "12345", filename = "original.pjnz", fromADR = FALSE,
+               resource_url = "https://adr.unaids.org/file/123.pjnz")
   with_mock("hintr:::validate_json_schema" = mock_validate, {
     response <- input_response(list(data = list(country = scalar("Botswana")),
                                     filters = json_verbatim("null")),
@@ -41,6 +42,7 @@ test_that("input_response correctly formats data and validates it", {
     ),
     filename = "original.pjnz",
     fromADR = FALSE,
+    resource_url = "https://adr.unaids.org/file/123.pjnz",
     filters = NULL
   )
   expect_equal(jsonlite::fromJSON(args[[1]]), expected_data)
