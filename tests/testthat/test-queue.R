@@ -175,3 +175,7 @@ test_that("calibrate gets run before model running", {
                c("COMPLETE", "ERROR"))
 })
 
+test_that("queue has handle on uploads dir", {
+  queue <- Queue$new(workers = 0, uploads_dir = tempdir())
+  expect_equal(queue$uploads_dir, tempdir())
+})

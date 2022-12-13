@@ -6,7 +6,8 @@ Options:
 --workers=N         Number of workers to spawn [default: 2]
 --port=PORT         Port to use [default: 8888]
 --results-dir=PATH  Directory to store model results in
---prerun-dir=PATH   Directory to find prerun results in"
+--prerun-dir=PATH   Directory to find prerun results in
+--uploads-dir=PATH  Directory to find uploaded fiels in"
 
   validate_path <- function(path) {
     if (is.null(path)) {
@@ -20,13 +21,15 @@ Options:
        queue_id = dat$queue_id,
        workers = as.integer(dat$workers),
        results_dir = validate_path(dat[["results_dir"]]),
-       prerun_dir = validate_path(dat[["prerun_dir"]]))
+       prerun_dir = validate_path(dat[["prerun_dir"]]),
+       uploads_dir = validate_path(dat[["uploads_dir"]]))
 }
 
 main_api <- function(args = commandArgs(TRUE)) {
   # nocov start
   dat <- main_api_args(args)
-  api <- api(dat$queue_id, dat$workers, dat$results_dir, dat$prerun_dir)
+  api <- api(dat$queue_id, dat$workers, dat$results_dir, dat$prerun_dir,
+             dat$uploads_dir)
   api$run(host = "0.0.0.0", port = dat$port)
   # nocov end
 }
