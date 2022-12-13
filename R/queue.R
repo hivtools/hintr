@@ -7,11 +7,13 @@ Queue <- R6::R6Class(
     queue = NULL,
     results_dir = NULL,
     prerun_dir = NULL,
+    uploads_dir = NULL,
 
     initialize = function(queue_id = NULL, workers = 2,
                           cleanup_on_exit = workers > 0,
                           results_dir = tempdir(),
                           prerun_dir = NULL,
+                          uploads_dir = NULL,
                           timeout = Inf) {
       self$cleanup_on_exit <- cleanup_on_exit
       self$results_dir <- results_dir
@@ -33,6 +35,7 @@ Queue <- R6::R6Class(
       set_cache(queue_id)
 
       self$prerun_dir <- prerun_dir
+      self$uploads_dir <- uploads_dir
     },
 
     start = function(workers, timeout) {
@@ -82,8 +85,10 @@ Queue <- R6::R6Class(
     },
 
     submit_rehydrate_files = function(hintr_output, fit_id, calibrate_id) {
+      uploads_dir <- self$uploads_dir
       self$submit(quote(hintr:::rehydrate_from_files(hintr_output, fit_id,
-                                                     calibrate_id)),
+                                                     calibrate_id,
+                                                     uploads_dir)),
                   queue = QUEUE_CALIBRATE)
     },
 

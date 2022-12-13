@@ -138,10 +138,12 @@ test_that("rehydrate from files works", {
   test_mock_model_available()
   q <- test_queue_result()
 
+  rehydrate <- build_test_rehydrate()
   hintr_output <- q$queue$result(q$calibrate_id)
   output <- rehydrate_from_files(hintr_output,
                                  q$model_run_id,
-                                 q$calibrate_id)
+                                 q$calibrate_id,
+                                 rehydrate$uploads_dir)
 
   expect_equal(output$notes, scalar(""))
   state <- output$state
@@ -152,7 +154,7 @@ test_that("rehydrate from files works", {
     c("pjnz", "population", "shape", "survey", "programme", "anc"))
   for (data in state$datasets) {
     expect_setequal(names(data), c("path", "filename"))
-    expect_match(data$path, "uploads/[A-Z0-9]+.[A-Za-z]+")
+    expect_match(data$path, paste0(rehydrate$uploads_dir, "/\\w+"))
   }
 
   ## Model fit
@@ -181,9 +183,10 @@ test_that("rehydrate endpoint from data returns json", {
   q <- test_queue_result(workers = 1)
 
   ## Submit rehydrate request
-  payload <- setup_rehydrate_payload(
-    file.path("testdata", "malawi_rehydrate.zip"))
+  rehydrate <- build_test_rehydrate()
+  q <- test_queue_result(uploads_dir = rehydrate$uploads_dir)
   submit <- endpoint_rehydrate_submit(q$queue)
+  payload <- setup_rehydrate_payload(rehydrate$rehydrate_zip)
   submit_response <- submit$run(payload)
 
   expect_equal(submit_response$status_code, 200)
@@ -220,7 +223,7 @@ test_that("rehydrate endpoint from data returns json", {
     c("pjnz", "population", "shape", "survey", "programme", "anc"))
   for (data in state$datasets) {
     expect_setequal(names(data), c("path", "filename"))
-    expect_match(data$path, "uploads/[A-Z0-9]{32}.[a-z]+")
+    expect_match(data$path, paste0(rehydrate$uploads_dir, "/\\w+"))
   }
 
   ## Model fit
@@ -234,7 +237,7 @@ test_that("rehydrate endpoint from data returns json", {
 
   ## Calibration
   expect_equal(state$calibrate$options$spectrum_plhiv_calibration_level,
-               scalar("subnational"))
+               scalar("none"))
   calibrate <- q$queue$result(state$calibrate$id)
   expect_s3_class(calibrate, "hintr_output")
   expect_true(file.exists(calibrate$plot_data_path))
@@ -248,12 +251,13 @@ test_that("rehydrate endpoint from data returns json", {
 test_that("api can rehydrate", {
   test_redis_available()
   test_mock_model_available()
-  q <- test_queue_result()
+
+  rehydrate <- build_test_rehydrate()
+  q <- test_queue_result(uploads_dir = rehydrate$uploads_dir)
   api <- api_build(q$queue)
 
   ## Submit rehydrate request
-  payload <- setup_rehydrate_payload(
-    file.path("testdata", "malawi_rehydrate.zip"))
+  payload <- setup_rehydrate_payload(rehydrate$rehydrate_zip)
   submit <- api$request("POST", "/rehydrate/submit", body = payload)
   expect_equal(submit$status, 200)
   submit_body <- jsonlite::fromJSON(submit$body)
@@ -290,7 +294,7 @@ test_that("api can rehydrate", {
     c("pjnz", "population", "shape", "survey", "programme", "anc"))
   for (data in state$datasets) {
     expect_setequal(names(data), c("path", "filename"))
-    expect_match(data$path, "uploads/[A-Z0-9]{32}.[a-z]+")
+    expect_match(data$path, paste0(rehydrate$uploads_dir, "/\\w+"))
   }
 
   ## Model fit
@@ -304,7 +308,7 @@ test_that("api can rehydrate", {
 
   ## Calibration
   expect_equal(state$calibrate$options$spectrum_plhiv_calibration_level,
-               "subnational")
+               "none")
   calibrate <- q$queue$result(state$calibrate$id)
   expect_s3_class(calibrate, "hintr_output")
   expect_true(file.exists(calibrate$plot_data_path))
@@ -313,4 +317,21 @@ test_that("api can rehydrate", {
   ## Version
   expect_setequal(names(state$version),
                   c("hintr", "naomi", "rrq", "traduire"))
+})
+
+test_that("rehydrate from files errors if input missing", {
+  test_mock_model_available()
+  q <- test_queue_result()
+  t <- tempfile()
+  dir.create(t)
+
+  hintr_output <- q$queue$result(q$calibrate_id)
+  expect_error(
+    rehydrate_from_files(hintr_output,
+                         q$model_run_id,
+                         q$calibrate_id,
+                         t),
+    paste0("Cannot load from this zip file, input file 'Malawi2019.PJNZ'",
+           " with hash 'a123' is missing.")
+  )
 })

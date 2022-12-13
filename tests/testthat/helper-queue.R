@@ -50,8 +50,10 @@ create_blocking_worker <- function(queue_id, worker_name = NULL) {
 }
 
 test_queue_result <- function(model = mock_model, calibrate = mock_calibrate,
-                              clone_output = TRUE, workers = 1) {
-  queue <- Queue$new(workers = workers, timeout = 300)
+                              clone_output = TRUE, workers = 1,
+                              uploads_dir = NULL) {
+  queue <- Queue$new(workers = workers, timeout = 300,
+                     uploads_dir = uploads_dir)
   withr::defer_parent({
     message("cleaning up workers")
     queue$cleanup()
@@ -85,6 +87,25 @@ test_queue_result <- function(model = mock_model, calibrate = mock_calibrate,
     queue = queue,
     model_run_id = model_run_id,
     calibrate_id = calibrate_id
+  )
+}
+
+build_test_rehydrate <- function(calibrate_output = mock_calibrate) {
+  rehydrate_zip <- naomi::save_rehydrate_zip(calibrate_output,
+                                             hash_filenames = FALSE)
+
+  ## Copy input files into place
+  t <- tempfile()
+  dir.create(t)
+  data <- c("testdata/Malawi2019.PJNZ", "testdata/population.csv",
+            "testdata/malawi.geojson", "testdata/programme.csv",
+            "testdata/anc.csv", "testdata/survey.csv")
+  # dest_names <- paste0(toupper(tools::md5sum(data)), ".", tools::file_ext(data))
+  file.copy(data, t)
+
+  list(
+    uploads_dir = t,
+    rehydrate_zip = rehydrate_zip
   )
 }
 

@@ -48,10 +48,11 @@ rehydrate_from_state <- function(output_zip) {
   )
 }
 
-rehydrate_from_files <- function(hintr_output, fit_id, calibrate_id) {
+rehydrate_from_files <- function(hintr_output, fit_id, calibrate_id,
+                                 uploads_dir) {
   output <- naomi::read_hintr_output(hintr_output$model_output_path)
 
-  inputs <- rehydrate_inputs(output)
+  inputs <- rehydrate_inputs(output, uploads_dir)
   fit <- rehydrate_fit(fit_id, output)
   calibrate <- rehydrate_calibrate(calibrate_id, output)
   version <- rehydrate_version(hintr_output$version)
@@ -69,7 +70,7 @@ rehydrate_from_files <- function(hintr_output, fit_id, calibrate_id) {
   )
 }
 
-rehydrate_inputs <- function(output) {
+rehydrate_inputs <- function(output, uploads_dir) {
   ## Build the inputs JSON to look like the format used by the web app
   ## This is a bit hacky but we are limited atm because the output zip
   ## does not include input files yet
@@ -79,10 +80,16 @@ rehydrate_inputs <- function(output) {
   inputs <-  read_csv(output$info$inputs.csv)
   rehydrated <- lapply(seq_len(nrow(inputs)), function(row_no) {
     row <- inputs[row_no, ]
+    filename <- row$filename
+    path <- file.path(uploads_dir, filename)
+    if (!file.exists(path)) {
+      stop(t_("REHYDRATE_INPUT_MISSING",
+              list(filename = filename,
+                   hash = row$md5sum)))
+    }
     list(
-      path = scalar(paste0(file.path("uploads", toupper(row$md5sum)),
-                           ".", tools::file_ext(row$filename))),
-      filename = scalar(row$filename)
+      path = scalar(path),
+      filename = scalar(filename)
     )
   })
   files <- inputs$role
