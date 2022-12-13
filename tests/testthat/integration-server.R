@@ -1,7 +1,9 @@
 context("server")
 
+rehydrate <- build_test_rehydrate()
 server <- porcelain::porcelain_background$new(
-  api, args = list(queue_id = paste0("hintr:", ids::random_id())))
+  api, args = list(queue_id = paste0("hintr:", ids::random_id()),
+                   uploads_dir = rehydrate$uploads_dir))
 server$start()
 
 test_that("Root", {
@@ -874,4 +876,42 @@ test_that("rehydrate", {
     names(response$data$state$datasets),
     c("pjnz", "population", "shape", "survey", "programme", "anc"))
   expect_match(response$data$notes, "These are my project notes")
+})
+
+test_that("rehydrate from files", {
+  payload <- setup_rehydrate_payload(rehydrate$rehydrate_zip)
+
+  r <- server$request("POST",
+                      "/rehydrate/submit",
+                      body = payload,
+                      encode = "json",
+                      httr::content_type_json())
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+  expect_equal(response$errors, NULL)
+  expect_equal(names(response$data), c("id"))
+  id <- response$data$id
+
+  ## Get the status
+  testthat::try_again(10, {
+    Sys.sleep(1)
+    r <- server$request("GET", paste0("/rehydrate/status/", id))
+    expect_equal(httr::status_code(r), 200)
+    response <- response_from_json(r)
+    expect_equal(response$status, "success")
+    expect_equal(response$data$status, "COMPLETE")
+  })
+
+  ## Result
+  r <- server$request("GET", paste0("/rehydrate/result/", id))
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+  expect_equal(response$errors, NULL)
+  expect_setequal(names(response$data$state),
+                  c("datasets", "model_fit", "calibrate", "version"))
+  expect_setequal(
+    names(response$data$state$datasets),
+    c("pjnz", "population", "shape", "survey", "programme", "anc"))
 })
