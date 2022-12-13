@@ -87,13 +87,19 @@ rehydrate_inputs <- function(output, uploads_dir) {
               list(filename = filename,
                    hash = row$md5sum)))
     }
+    ## web app expects path like as uploads/file_name.csv
+    ## if leading / is included then it takes "uploads" as the filename and
+    ## errors
+    if (substring(path, 1, 1) == "/") {
+      path <- substring(path, 2)
+    }
     list(
       path = scalar(path),
       filename = scalar(filename)
     )
   })
   files <- inputs$role
-  ## Map from names used by Naomi to names used by interface
+  ## Map from names used by Naomi to names used by web interface
   files[files == "art_number"] <- "programme"
   files[files == "anc_testing"] <- "anc"
   names(rehydrated) <- files

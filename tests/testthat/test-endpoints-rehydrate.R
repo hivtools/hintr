@@ -154,7 +154,8 @@ test_that("rehydrate from files works", {
     c("pjnz", "population", "shape", "survey", "programme", "anc"))
   for (data in state$datasets) {
     expect_setequal(names(data), c("path", "filename"))
-    expect_match(data$path, paste0(rehydrate$uploads_dir, "/\\w+"))
+    expect_match(data$path,
+                 paste0(substring(rehydrate$uploads_dir, 2), "/\\w+"))
   }
 
   ## Model fit
@@ -223,7 +224,8 @@ test_that("rehydrate endpoint from data returns json", {
     c("pjnz", "population", "shape", "survey", "programme", "anc"))
   for (data in state$datasets) {
     expect_setequal(names(data), c("path", "filename"))
-    expect_match(data$path, paste0(rehydrate$uploads_dir, "/\\w+"))
+    expect_match(data$path,
+                 paste0(substring(rehydrate$uploads_dir, 2), "/\\w+"))
   }
 
   ## Model fit
@@ -294,7 +296,8 @@ test_that("api can rehydrate", {
     c("pjnz", "population", "shape", "survey", "programme", "anc"))
   for (data in state$datasets) {
     expect_setequal(names(data), c("path", "filename"))
-    expect_match(data$path, paste0(rehydrate$uploads_dir, "/\\w+"))
+    expect_match(data$path,
+                 paste0(substring(rehydrate$uploads_dir, 2), "/\\w+"))
   }
 
   ## Model fit
