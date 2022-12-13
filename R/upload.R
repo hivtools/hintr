@@ -1,8 +1,8 @@
-upload_input <- function(queue) {
+upload_file <- function(dir) {
   function(file, filename) {
     md5 <- toupper(digest::digest(file, algo = "md5"))
     dest_path <- file.path(
-      queue$uploads_dir,
+      dir,
       paste0(md5, ".", tools::file_ext(filename)))
     if (!file.exists(dest_path)) {
       t <- tempfile()
