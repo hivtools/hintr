@@ -33,7 +33,7 @@ test_that("api can upload input files", {
   api <- api_build(q)
 
   file <- "col1,col2\nval1,val2"
-  res <- api$request("POST", "/upload/input/survey_data.csv",
+  res <- api$request("POST", "/internal/upload/input/survey_data.csv",
                      body = charToRaw(file))
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body, simplifyVector = FALSE)
@@ -46,7 +46,7 @@ test_that("api can upload input files", {
   expect_length(list.files(uploads_dir), 1)
 
   ## Uploading again
-  res2 <- api$request("POST", "/upload/input/survey_data.csv",
+  res2 <- api$request("POST", "/internal/upload/input/survey_data.csv",
                       body = charToRaw(file))
 
   expect_equal(res, res2)

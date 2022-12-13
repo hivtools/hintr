@@ -373,7 +373,7 @@ endpoint_upload_input <- function(queue) {
   response <- porcelain::porcelain_returning_json(
     "SessionFile.schema", schema_root())
   porcelain::porcelain_endpoint$new("POST",
-                                    "/upload/input/<filename>",
+                                    "/internal/upload/input/<filename>",
                                     upload_file(queue$uploads_dir),
                                     input,
                                     returning = response)
@@ -384,7 +384,7 @@ endpoint_upload_output <- function(queue) {
   response <- porcelain::porcelain_returning_json(
     "SessionFile.schema", schema_root())
   porcelain::porcelain_endpoint$new("POST",
-                                    "/upload/output/<filename>",
+                                    "/internal/upload/output/<filename>",
                                     upload_file(queue$results_dir),
                                     input,
                                     returning = response)
