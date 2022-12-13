@@ -60,9 +60,9 @@ api_postserialize <- function(data, req, res, value) {
 #' @export
 api <- function(queue_id = NULL, workers = 2,
                 results_dir = tempdir(), prerun_dir = NULL,
-                log_level = "info") {
+                uploads_dir = NULL, log_level = "info") {
   queue <- Queue$new(queue_id, workers, results_dir = results_dir,
-                     prerun_dir = prerun_dir)
+                     prerun_dir = prerun_dir, uploads_dir = uploads_dir)
   queue$queue$worker_delete_exited()
   logger <- porcelain::porcelain_logger(log_level)
   api_build(queue, logger = logger)
