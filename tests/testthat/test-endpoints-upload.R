@@ -90,7 +90,7 @@ test_that("api can upload output files", {
   api <- api_build(q)
 
   file <- "col1,col2\nval1,val2"
-  res <- api$request("POST", "/upload/output/survey_data.csv",
+  res <- api$request("POST", "/internal/upload/output/survey_data.csv",
                      body = charToRaw(file))
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body, simplifyVector = FALSE)
@@ -103,7 +103,7 @@ test_that("api can upload output files", {
   expect_length(list.files(results_dir), 1)
 
   ## Uploading again
-  res2 <- api$request("POST", "/upload/output/survey_data.csv",
+  res2 <- api$request("POST", "/internal/upload/output/survey_data.csv",
                       body = charToRaw(file))
 
   expect_equal(res, res2)
@@ -111,3 +111,4 @@ test_that("api can upload output files", {
   ## File has not been uploaded
   expect_length(list.files(results_dir), 1)
 })
+
