@@ -29,6 +29,7 @@ api_build <- function(queue, validate = FALSE, logger = NULL) {
   api$handle(endpoint_rehydrate_status(queue))
   api$handle(endpoint_rehydrate_result(queue))
   api$handle(endpoint_upload_input(queue))
+  api$handle(endpoint_upload_output(queue))
   api$handle(endpoint_hintr_version())
   api$handle(endpoint_hintr_worker_status(queue))
   api$handle(endpoint_hintr_stop(queue))
@@ -61,9 +62,9 @@ api_postserialize <- function(data, req, res, value) {
 #' @export
 api <- function(queue_id = NULL, workers = 2,
                 results_dir = tempdir(), prerun_dir = NULL,
-                uploads_dir = NULL, log_level = "info") {
+                inputs_dir = NULL, log_level = "info") {
   queue <- Queue$new(queue_id, workers, results_dir = results_dir,
-                     prerun_dir = prerun_dir, uploads_dir = uploads_dir)
+                     prerun_dir = prerun_dir, inputs_dir = inputs_dir)
   queue$queue$worker_delete_exited()
   logger <- porcelain::porcelain_logger(log_level)
   api_build(queue, logger = logger)
@@ -367,14 +368,24 @@ endpoint_adr_metadata <- function(queue) {
                                     returning = response)
 }
 
-
 endpoint_upload_input <- function(queue) {
   input <- porcelain::porcelain_input_body_binary("file")
   response <- porcelain::porcelain_returning_json(
     "SessionFile.schema", schema_root())
   porcelain::porcelain_endpoint$new("POST",
-                                    "internal/upload/input/<filename>",
-                                    upload_input(queue),
+                                    "/internal/upload/input/<filename>",
+                                    upload_file(queue$inputs_dir),
+                                    input,
+                                    returning = response)
+}
+
+endpoint_upload_output <- function(queue) {
+  input <- porcelain::porcelain_input_body_binary("file")
+  response <- porcelain::porcelain_returning_json(
+    "SessionFile.schema", schema_root())
+  porcelain::porcelain_endpoint$new("POST",
+                                    "/internal/upload/result/<filename>",
+                                    upload_file(queue$results_dir),
                                     input,
                                     returning = response)
 }

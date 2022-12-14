@@ -19,7 +19,7 @@ test_that("plumber api can be built", {
   expect_setequal(names(api$routes$rehydrate), c("submit", "status", "result"))
   expect_equal(names(api$routes$comparison), "plot")
   expect_equal(names(api$routes$internal), "upload")
-  expect_equal(names(api$routes$internal$upload), "input")
+  expect_setequal(names(api$routes$internal$upload), c("input", "result"))
 })
 
 test_that("input_response correctly formats data and validates it", {
