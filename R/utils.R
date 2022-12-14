@@ -137,3 +137,26 @@ file_exists <- function(file) {
   !is.null(file) && file.exists(file)
 }
 
+assert_files_exist <- function(files) {
+  for (file in files) {
+    if (!file_exists(file)) {
+      stop(sprintf("File %s does not exist", file))
+    }
+  }
+  invisible(TRUE)
+}
+
+assert_names <- function(items, required, optional,
+                         name = deparse(substitute(items))) {
+  missing <- !(required %in% names(items))
+  if (any(missing)) {
+    missing <- paste(required[missing], collapse = ", ")
+    stop(sprintf("Required item(s) %s are missing from %s", missing, name))
+  }
+  additional <- !(names(items) %in% c(required, optional))
+  if (any(additional)) {
+    additional <- paste(names(items)[additional], collapse = ", ")
+    stop(sprintf("Unknown item(s) %s are included in %s", additional, name))
+  }
+  invisible(TRUE)
+}
