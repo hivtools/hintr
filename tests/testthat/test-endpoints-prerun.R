@@ -41,6 +41,8 @@ test_that("prerun endpoint creates outputs and returns state", {
   ## Version
   expect_setequal(names(state$version),
                   c("hintr", "naomi", "rrq", "traduire"))
+  expect_equal(state$version$naomi,
+               scalar(as.character(packageVersion("naomi"))))
 })
 
 test_that("api can call prerun endpoint", {
@@ -88,6 +90,8 @@ test_that("api can call prerun endpoint", {
   ## Version
   expect_setequal(names(state$version),
                   c("hintr", "naomi", "rrq", "traduire"))
+  expect_equal(state$version$naomi,
+               as.character(packageVersion("naomi")))
 })
 
 test_that("prerun endpoint errors if file missing", {

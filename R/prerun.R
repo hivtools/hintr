@@ -141,15 +141,15 @@ prerun <- function(queue) {
 prerun_build_state <- function(queue, inputs, model_fit_output,
                                calibrate_output) {
   output <- naomi::read_hintr_output(calibrate_output$model_output_path)
-  browser()
   model_fit_options <- yaml::read_yaml(text = output$info$options.yml)
   calibration_options <- yaml::read_yaml(text =
                                            output$info$calibration_options.yml)
+  packages <- read.csv(text = output$info$packages.csv)
 
   inputs <- build_state_inputs(inputs)
   fit <- build_state_output(queue, model_fit_output, model_fit_options)
   calibrate <- build_state_output(queue, calibrate_output, calibration_options)
-  version <- build_state_version(hintr_output$version)
+  version <- build_state_version(packages[packages$name == "naomi", "version"])
   state <- list(
     datasets = inputs,
     model_fit = fit,

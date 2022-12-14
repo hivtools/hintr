@@ -158,4 +158,6 @@ test_that("prerun returns project state", {
   ## Version
   expect_setequal(names(state$version),
                   c("hintr", "naomi", "rrq", "traduire"))
+  expect_equal(state$version$naomi,
+               scalar(as.character(packageVersion("naomi"))))
 })
