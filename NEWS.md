@@ -1,3 +1,7 @@
+# hintr 1.1.6
+
+* Add endpoint `/internal/prerun` to run a prerun which builds state JSON from input and output files
+
 # hintr 1.1.2
 
 * Add default selections for each indicator in comparison plot
