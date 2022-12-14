@@ -21,6 +21,7 @@ Imports:
     geojsonio (>= 0.8.0),
     ids,
     jsonlite (>= 1.2.2),
+    lgr,
     naomi (>= 2.8.7),
     naomi.options (>= 1.0.0),
     porcelain (>= 0.1.8),
