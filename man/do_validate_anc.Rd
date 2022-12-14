@@ -4,7 +4,7 @@
 \alias{do_validate_anc}
 \title{Validate ANC data file.}
 \usage{
-do_validate_anc(anc, shape, pjnz, strict = TRUE)
+do_validate_anc(anc, shape, strict = TRUE)
 }
 \arguments{
 \item{anc}{Path to input population file.}
@@ -12,11 +12,11 @@ do_validate_anc(anc, shape, pjnz, strict = TRUE)
 \item{shape}{A file object (path, hash, filename) corresponding to
 the input shape file.}
 
-\item{pjnz}{A file object (path, hash, filename) corresponding to
-the input PJNZ file.}
-
 \item{strict}{If FALSE then run less stringent validation rules, used
 for data exploration mode.}
+
+\item{pjnz}{A file object (path, hash, filename) corresponding to
+the input PJNZ file.}
 }
 \value{
 An error if invalid.
