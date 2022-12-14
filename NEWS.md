@@ -1,3 +1,7 @@
+# hintr 1.1.8
+
+* Add `hintr_prerun` function which takes model inputs and outputs, saves them onto the server and then returns output zip with state JSON which can be used to rehydrate model outputs
+
 # hintr 1.1.7
 
 * Remove `prerun_import` and `prerun_push` functions, these are going to be replaced with a more transparent prerun method
