@@ -1,3 +1,7 @@
+# hintr 1.1.7
+
+* Remove `prerun_import` and `prerun_push` functions, these are going to be replaced with a more transparent prerun method
+
 # hintr 1.1.6
 
 * Add endpoint `/internal/prerun` to run a prerun which builds state JSON from input and output files

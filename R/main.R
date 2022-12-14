@@ -21,15 +21,13 @@ Options:
        queue_id = dat$queue_id,
        workers = as.integer(dat$workers),
        results_dir = validate_path(dat[["results_dir"]]),
-       prerun_dir = validate_path(dat[["prerun_dir"]]),
        inputs_dir = validate_path(dat[["inputs_dir"]]))
 }
 
 main_api <- function(args = commandArgs(TRUE)) {
   # nocov start
   dat <- main_api_args(args)
-  api <- api(dat$queue_id, dat$workers, dat$results_dir, dat$prerun_dir,
-             dat$inputs_dir)
+  api <- api(dat$queue_id, dat$workers, dat$results_dir, dat$inputs_dir)
   api$run(host = "0.0.0.0", port = dat$port)
   # nocov end
 }
@@ -57,17 +55,6 @@ main_worker <- function(args = commandArgs(TRUE)) {
   worker$loop()
   invisible(TRUE)
   # nocov end
-}
-
-main_import_prerun <- function(args = commandArgs(TRUE)) {
-  usage <- "Usage:
-  hintr-import-prerun <prerun> <path> [options]
-
-Options:
---model-output=PATH    Path to model output file [default: model-output.qs]"
-  args <- docopt_parse(usage, args)
-  h <- prerun_import(args$prerun, args$path, args$model_output)
-  message(sprintf("Imported data as '%s'", h))
 }
 
 docopt_parse <- function(usage, args) {
