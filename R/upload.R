@@ -18,5 +18,5 @@ upload_file <- function(dir) {
 }
 
 to_server_path <- function(root_dir, md5, filename) {
-  file.path(dir, paste0(md5, ".", tools::file_ext(filename)))
+  file.path(root_dir, paste0(md5, ".", tools::file_ext(filename)))
 }
