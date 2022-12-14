@@ -89,12 +89,12 @@ test_queue_result <- function(model = mock_model, calibrate = mock_calibrate,
 }
 
 setup_prerun_queue <- function() {
-  uploads_dir <- tempfile()
-  dir.create(uploads_dir)
+  inputs_dir <- tempfile()
+  dir.create(inputs_dir)
   data <- c("testdata/Malawi2019.PJNZ", "testdata/population.csv",
             "testdata/malawi.geojson", "testdata/programme.csv",
             "testdata/anc.csv", "testdata/survey.csv")
-  file.copy(data, uploads_dir)
+  file.copy(data, inputs_dir)
 
   output_dir <- tempfile()
   dir.create(output_dir)
@@ -111,12 +111,12 @@ setup_prerun_queue <- function() {
 
   payload <- list(
     inputs = list(
-      pjnz = as_file("Malawi2019.PJNZ", uploads_dir),
-      population = as_file("population.csv", uploads_dir),
-      shape = as_file("malawi.geojson", uploads_dir),
-      survey = as_file("survey.csv", uploads_dir),
-      programme = as_file("programme.csv", uploads_dir),
-      anc = as_file("anc.csv", uploads_dir)
+      pjnz = as_file("Malawi2019.PJNZ", inputs_dir),
+      population = as_file("population.csv", inputs_dir),
+      shape = as_file("malawi.geojson", inputs_dir),
+      survey = as_file("survey.csv", inputs_dir),
+      programme = as_file("programme.csv", inputs_dir),
+      anc = as_file("anc.csv", inputs_dir)
     ),
     outputs = list(
       fit_model_output = as_file(basename(mock_model$model_output_path),
@@ -130,7 +130,7 @@ setup_prerun_queue <- function() {
 
   list(
     queue = Queue$new(workers = 0,
-                      uploads_dir = uploads_dir,
+                      inputs_dir = inputs_dir,
                       results_dir = output_dir),
     payload = jsonlite::toJSON(payload)
   )

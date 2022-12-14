@@ -141,6 +141,7 @@ prerun <- function(queue) {
 prerun_build_state <- function(queue, inputs, model_fit_output,
                                calibrate_output) {
   output <- naomi::read_hintr_output(calibrate_output$model_output_path)
+  browser()
   model_fit_options <- yaml::read_yaml(text = output$info$options.yml)
   calibration_options <- yaml::read_yaml(text =
                                            output$info$calibration_options.yml)

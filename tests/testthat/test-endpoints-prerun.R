@@ -17,7 +17,7 @@ test_that("prerun endpoint creates outputs and returns state", {
   for (data in state$datasets) {
     expect_setequal(names(data), c("path", "filename"))
     expect_match(data$path,
-                 paste0(substring(prerun_setup$queue$uploads_dir, 2), "/\\w+"))
+                 paste0(substring(prerun_setup$queue$inputs_dir, 2), "/\\w+"))
   }
 
   ## Model fit
@@ -64,7 +64,7 @@ test_that("api can call prerun endpoint", {
   for (data in state$datasets) {
     expect_setequal(names(data), c("path", "filename"))
     expect_match(data$path,
-                 paste0(substring(prerun_setup$queue$uploads_dir, 2), "/\\w+"))
+                 paste0(substring(prerun_setup$queue$inputs_dir, 2), "/\\w+"))
   }
 
   ## Model fit
@@ -92,7 +92,7 @@ test_that("api can call prerun endpoint", {
 
 test_that("prerun endpoint errors if file missing", {
   prerun_setup <- setup_prerun_queue()
-  unlink(list.files(prerun_setup$queue$uploads_dir, full.names = TRUE)[[1]])
+  unlink(list.files(prerun_setup$queue$inputs_dir, full.names = TRUE)[[1]])
   prerun <- endpoint_prerun(prerun_setup$queue)
   res <- prerun$run(prerun_setup$payload)
 

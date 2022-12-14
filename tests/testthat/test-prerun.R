@@ -134,7 +134,7 @@ test_that("prerun returns project state", {
   for (data in state$datasets) {
     expect_setequal(names(data), c("path", "filename"))
     expect_match(data$path,
-                 paste0(substring(prerun_setup$queue$uploads_dir, 2), "/\\w+"))
+                 paste0(substring(prerun_setup$queue$inputs_dir, 2), "/\\w+"))
   }
 
   ## Model fit
