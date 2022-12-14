@@ -88,6 +88,55 @@ test_queue_result <- function(model = mock_model, calibrate = mock_calibrate,
   )
 }
 
+setup_prerun_queue <- function() {
+  uploads_dir <- tempfile()
+  dir.create(uploads_dir)
+  data <- c("testdata/Malawi2019.PJNZ", "testdata/population.csv",
+            "testdata/malawi.geojson", "testdata/programme.csv",
+            "testdata/anc.csv", "testdata/survey.csv")
+  file.copy(data, uploads_dir)
+
+  output_dir <- tempfile()
+  dir.create(output_dir)
+  data <- c(mock_model$model_output_path, mock_calibrate$plot_data_path,
+            mock_calibrate$model_output_path)
+  file.copy(data, output_dir)
+
+  as_file <- function(filename, dir) {
+    list(
+      path = scalar(file.path(dir, filename)),
+      filename = scalar(filename)
+    )
+  }
+
+  payload <- list(
+    inputs = list(
+      pjnz = as_file("Malawi2019.PJNZ", uploads_dir),
+      population = as_file("population.csv", uploads_dir),
+      shape = as_file("malawi.geojson", uploads_dir),
+      survey = as_file("survey.csv", uploads_dir),
+      programme = as_file("programme.csv", uploads_dir),
+      anc = as_file("anc.csv", uploads_dir)
+    ),
+    outputs = list(
+      fit_model_output = as_file(basename(mock_model$model_output_path),
+                                 output_dir),
+      calibrate_plot_data = as_file(basename(mock_calibrate$plot_data_path),
+                                    output_dir),
+      calibrate_model_output = as_file(
+        basename(mock_calibrate$model_output_path), output_dir)
+    )
+  )
+
+  list(
+    queue = Queue$new(workers = 0,
+                      uploads_dir = uploads_dir,
+                      results_dir = output_dir),
+    payload = jsonlite::toJSON(payload)
+  )
+}
+
+
 response_from_json <- function(x) {
   jsonlite::parse_json(httr::content(x, "text", encoding = "UTF-8"))
 }
