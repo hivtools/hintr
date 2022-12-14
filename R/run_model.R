@@ -46,7 +46,7 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
     output <- list(
       plot_data_path = NULL,
       model_output_path = system_file("output", "malawi_model_output.qs"),
-      version = packageVersion("naomi"),
+      version = utils::packageVersion("naomi"),
       warnings = list(
         list(
           text = scalar(paste0("Zero population input for 8 population ",

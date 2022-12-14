@@ -57,6 +57,7 @@ api_postserialize <- function(data, req, res, value) {
 #' @param workers Number of workers to spawn
 #' @param results_dir The dir for results to be saved to
 #' @param prerun_dir The directory to store prerun results
+#' @param inputs_dir THe directory where input files are stored
 #' @param log_level The "lgr" log level to use
 #'
 #' @return Running API
