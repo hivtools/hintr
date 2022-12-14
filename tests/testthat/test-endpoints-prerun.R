@@ -96,8 +96,9 @@ test_that("api can call prerun endpoint", {
 
 test_that("prerun endpoint errors if file missing", {
   prerun_setup <- setup_prerun_queue()
-  removed <- list.files(prerun_setup$queue$inputs_dir, full.names = TRUE)[[1]]
-  unlink(removed)
+  files <- list.files(prerun_setup$queue$inputs_dir, full.names = TRUE)
+  remove <- files[basename(files) == "anc.csv"]
+  unlink(remove)
   prerun <- endpoint_prerun(prerun_setup$queue)
   res <- prerun$run(prerun_setup$payload)
 
@@ -105,7 +106,7 @@ test_that("prerun endpoint errors if file missing", {
   expect_equal(res$value$errors[[1]]$error,
                scalar("PRERUN_MISSING_FILES"))
   expect_equal(res$value$errors[[1]]$detail, scalar(sprintf(paste0(
-    "File 'anc' at path '%s' with original name 'anc.csv' does not exist. ",
+    "File 'anc' at path '%s' with original name '%s' does not exist. ",
     "Make sure to upload it first with '/internal/upload/*' endpoints."),
-    removed)))
+    remove, basename(remove))))
 })

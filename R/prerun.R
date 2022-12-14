@@ -32,7 +32,7 @@ prerun_build_state <- function(queue, inputs, model_fit_output,
   model_fit_options <- yaml::read_yaml(text = output$info$options.yml)
   calibration_options <- yaml::read_yaml(text =
                                            output$info$calibration_options.yml)
-  packages <- read.csv(text = output$info$packages.csv)
+  packages <- utils::read.csv(text = output$info$packages.csv)
 
   inputs <- build_state_inputs(inputs)
   fit <- build_state_output(queue, model_fit_output, model_fit_options)

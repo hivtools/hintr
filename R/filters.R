@@ -394,10 +394,7 @@ get_region_filters <- function(json) {
         x$properties[[name]] %||% default, default)
     },
     error = function(e) {
-      expected_type <- typeof(default)
-      if (expected_type == "double") {
-        expected_type <- "numeric"
-      }
+      expected_type <- class(default)
       stop(t_("FILTERS_INCORRECT_TYPE",
               list(name = name, type = expected_type)))
     })
