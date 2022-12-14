@@ -104,8 +104,4 @@ test_that("prerun endpoint errors if file missing", {
   expect_equal(res$status_code, 400)
   expect_equal(res$value$errors[[1]]$error,
                scalar("PRERUN_MISSING_FILES"))
-  expect_equal(res$value$errors[[1]]$detail, scalar(sprintf(paste0(
-    "File 'anc' at path '%s' with original name 'anc.csv' does not exist. ",
-    "Make sure to upload it first with '/internal/upload/*' endpoints."),
-    removed)))
 })
