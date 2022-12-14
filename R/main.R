@@ -7,7 +7,7 @@ Options:
 --port=PORT         Port to use [default: 8888]
 --results-dir=PATH  Directory to store model results in
 --prerun-dir=PATH   Directory to find prerun results in
---uploads-dir=PATH  Directory to find uploaded fiels in"
+--inputs-dir=PATH   Directory to find input files in"
 
   validate_path <- function(path) {
     if (is.null(path)) {
@@ -22,14 +22,14 @@ Options:
        workers = as.integer(dat$workers),
        results_dir = validate_path(dat[["results_dir"]]),
        prerun_dir = validate_path(dat[["prerun_dir"]]),
-       uploads_dir = validate_path(dat[["uploads_dir"]]))
+       inputs_dir = validate_path(dat[["inputs_dir"]]))
 }
 
 main_api <- function(args = commandArgs(TRUE)) {
   # nocov start
   dat <- main_api_args(args)
   api <- api(dat$queue_id, dat$workers, dat$results_dir, dat$prerun_dir,
-             dat$uploads_dir)
+             dat$inputs_dir)
   api$run(host = "0.0.0.0", port = dat$port)
   # nocov end
 }
