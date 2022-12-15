@@ -1,5 +1,4 @@
-run_model <- function(data, options, path_results, path_prerun = NULL,
-                      language = NULL) {
+run_model <- function(data, options, path_results, language = NULL) {
   if (!is.null(language)) {
     reset_hintr <- traduire::translator_set_language(language)
     reset_naomi <-
@@ -56,16 +55,6 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
       ))
     class(output) <- "hintr_output"
     return(output)
-  }
-
-  if (!is.null(path_prerun)) {
-    p <- PrerunModelResults$new(path_prerun)
-    data <- naomi:::format_data_input(data)
-    inputs <- naomi:::naomi_info_input(data)
-    if (p$exists(inputs)) {
-      message("Found prerun model results")
-      return(p$get(inputs))
-    }
   }
 
   path_results <- normalizePath(path_results, mustWork = TRUE)
