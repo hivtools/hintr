@@ -152,8 +152,8 @@ prerun_build_state <- function(queue, inputs, model_fit_output,
   inputs <- build_state_inputs(inputs)
   fit <- build_state_output(queue, model_fit_output, model_fit_options)
   calibrate <- build_state_output(queue, calibrate_output, calibration_options)
-  version <- build_state_version(packages[packages$name == "naomi", "version"])
-  state <- list(
+  version <- build_state_version(packages$version[packages$name == "naomi"])
+  list(
     datasets = inputs,
     model_fit = fit,
     calibrate = calibrate,
@@ -166,9 +166,7 @@ build_state_inputs <- function(inputs) {
     ## web app expects path like as uploads/file_name.csv
     ## if leading / is included then it takes "uploads" as the filename and
     ## errors
-    if (substring(input$path, 1, 1) == "/") {
-      path <- substring(input$path, 2)
-    }
+    path <- sub("^/", "", input$path)
     list(
       path = scalar(path),
       filename = scalar(input$filename)
@@ -197,6 +195,6 @@ create_result <- function(queue, result) {
 
 build_state_version <- function(naomi_version) {
   version <- cfg$version_info
-  version$naomi <- scalar(as.character(naomi_version))
+  version$naomi <- scalar(naomi_version)
   version
 }
