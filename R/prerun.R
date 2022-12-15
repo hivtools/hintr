@@ -1,3 +1,24 @@
+#' Prepare a prerun
+#'
+#' This will take all model files and upload to a specified server and
+#' output the model output zip which can be saved into the ADR or
+#' uploaded into the Naomi app to view plots of model outputs.
+#'
+#' Can use this for countries which cannot get a fit to work via the app
+#' you can prepare a model fit locally and then upload those outputs into
+#' the app.
+#'
+#' @param inputs The model inputs, a named list of file paths including
+#'   pjnz, shape, population, survey and optionally programme and anc.
+#' @param model_output The `hintr_output` object from model fit
+#' @param calibrate_output The `hintr_output` object from calibration
+#' @param server The server URL to upload files to
+#' @param port The port the API is running on
+#' @param output_zip_path The path to save the output zip at, will use
+#'   a tempfile by default
+#'
+#' @return Path to the generated output zip
+#' @export
 hintr_prerun <- function(inputs, model_output, calibrate_output,
                          server = "https://naomi.unaids.org",
                          port = "8888",
