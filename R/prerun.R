@@ -2,17 +2,20 @@ prerun <- function(queue) {
   function(input) {
     files <- jsonlite::fromJSON(input, simplifyVector = FALSE)
     all_files <- c(files$inputs, files$outputs)
-    lapply(c(names(all_files)), function(name) {
-      file <- all_files[[name]]
-      if (!file.exists(file$path)) {
-        hintr_error(sprintf(paste0(
-          "File '%s' at path '%s' with original name '%s' ",
-          "does not exist. Make sure to upload it first ",
-          "with '/internal/upload/*' endpoints."),
-          name, file$path, file$filename),
-          "PRERUN_MISSING_FILES")
-      }
-    })
+    paths <- vapply(all_files, "[[", character(1), "path")
+    missing_files <- all_files[!file.exists(paths)]
+    if (length(missing_files) > 0) {
+      msg <- vapply(names(missing_files), function(name) {
+        file <- missing_files[[name]]
+        sprintf(
+          "File '%s' at path '%s' with original name '%s' does not exist.",
+          name, file$path, file$filename)
+      }, character(1))
+      hintr_error(paste0(
+        paste(msg, collapse = "\n"), "\n",
+        "Make sure to upload them first with '/internal/upload/*' endpoints."),
+        "PRERUN_MISSING_FILES")
+    }
 
     model_fit_output <- naomi:::build_hintr_output(
       NULL,
@@ -37,8 +40,8 @@ prerun_build_state <- function(queue, inputs, model_fit_output,
   inputs <- build_state_inputs(inputs)
   fit <- build_state_output(queue, model_fit_output, model_fit_options)
   calibrate <- build_state_output(queue, calibrate_output, calibration_options)
-  version <- build_state_version(packages[packages$name == "naomi", "version"])
-  state <- list(
+  version <- build_state_version(packages$version[packages$name == "naomi"])
+  list(
     datasets = inputs,
     model_fit = fit,
     calibrate = calibrate,
@@ -51,9 +54,7 @@ build_state_inputs <- function(inputs) {
     ## web app expects path like as uploads/file_name.csv
     ## if leading / is included then it takes "uploads" as the filename and
     ## errors
-    if (substring(input$path, 1, 1) == "/") {
-      path <- substring(input$path, 2)
-    }
+    path <- sub("^/", "", input$path)
     list(
       path = scalar(path),
       filename = scalar(input$filename)
@@ -82,6 +83,6 @@ create_result <- function(queue, result) {
 
 build_state_version <- function(naomi_version) {
   version <- cfg$version_info
-  version$naomi <- scalar(as.character(naomi_version))
+  version$naomi <- scalar(naomi_version)
   version
 }
