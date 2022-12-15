@@ -8,7 +8,7 @@ test_that("can upload input files", {
   res <- endpoint$run(charToRaw(file), "survey_data.csv")
 
   expect_equal(res$status_code, 200)
-  expect_null(res$error)
+  expect_null(res$errors)
   expect_equal(res$data$filename, scalar("survey_data.csv"))
   expect_match(res$data$hash, "[A-Z0-9]{32}")
   expect_match(res$data$path, paste0(inputs_dir, "/[A-Z0-9]{32}.csv"))
@@ -65,7 +65,7 @@ test_that("can upload output files", {
   res <- endpoint$run(charToRaw(file), "survey_data.csv")
 
   expect_equal(res$status_code, 200)
-  expect_null(res$error)
+  expect_null(res$errors)
   expect_equal(res$data$filename, scalar("survey_data.csv"))
   expect_match(res$data$hash, "[A-Z0-9]{32}")
   expect_match(res$data$path, paste0(results_dir, "/[A-Z0-9]{32}.csv"))

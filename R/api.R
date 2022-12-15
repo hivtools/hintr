@@ -30,6 +30,7 @@ api_build <- function(queue, validate = FALSE, logger = NULL) {
   api$handle(endpoint_rehydrate_result(queue))
   api$handle(endpoint_upload_input(queue))
   api$handle(endpoint_upload_output(queue))
+  api$handle(endpoint_prerun(queue))
   api$handle(endpoint_hintr_version())
   api$handle(endpoint_hintr_worker_status(queue))
   api$handle(endpoint_hintr_stop(queue))
@@ -56,6 +57,7 @@ api_postserialize <- function(data, req, res, value) {
 #' @param workers Number of workers to spawn
 #' @param results_dir The dir for results to be saved to
 #' @param prerun_dir The directory to store prerun results
+#' @param inputs_dir THe directory where input files are stored
 #' @param log_level The "lgr" log level to use
 #'
 #' @return Running API
@@ -386,6 +388,19 @@ endpoint_upload_output <- function(queue) {
   porcelain::porcelain_endpoint$new("POST",
                                     "/internal/upload/result/<filename>",
                                     upload_file(queue$results_dir),
+                                    input,
+                                    returning = response)
+}
+
+endpoint_prerun <- function(queue) {
+  input <- porcelain::porcelain_input_body_json("input",
+                                                "PrerunRequest.schema",
+                                                schema_root())
+  response <- porcelain::porcelain_returning_json(
+    "ProjectState.schema.json", schema_root())
+  porcelain::porcelain_endpoint$new("POST",
+                                    "/internal/prerun",
+                                    prerun(queue),
                                     input,
                                     returning = response)
 }
