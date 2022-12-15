@@ -114,17 +114,20 @@ prerun <- function(queue) {
   function(input) {
     files <- jsonlite::fromJSON(input, simplifyVector = FALSE)
     all_files <- c(files$inputs, files$outputs)
-    lapply(c(names(all_files)), function(name) {
-      file <- all_files[[name]]
-      if (!file.exists(file$path)) {
-        hintr_error(sprintf(paste0(
-          "File '%s' at path '%s' with original name '%s' ",
-          "does not exist. Make sure to upload it first ",
-          "with '/internal/upload/*' endpoints."),
-          name, file$path, file$filename),
-          "PRERUN_MISSING_FILES")
-      }
-    })
+    paths <- vapply(all_files, "[[", character(1), "path")
+    missing_files <- all_files[!file.exists(paths)]
+    if (length(missing_files) > 0) {
+      msg <- vapply(names(missing_files), function(name) {
+        file <- missing_files[[name]]
+        sprintf(
+          "File '%s' at path '%s' with original name '%s' does not exist.",
+          name, file$path, file$filename)
+      }, character(1))
+      hintr_error(paste0(
+        paste(msg, collapse = "\n"), "\n",
+        "Make sure to upload them first with '/internal/upload/*' endpoints."),
+        "PRERUN_MISSING_FILES")
+    }
 
     model_fit_output <- naomi:::build_hintr_output(
       NULL,
