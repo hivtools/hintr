@@ -22,7 +22,7 @@
 #' @return Path to the generated output zip
 #' @export
 hintr_submit_prerun <- function(inputs, model_output, calibrate_output,
-                                server = "https://naomi.unaids.org",
+                                server = "http://naomi.unaids.org",
                                 port = "8888",
                                 output_zip_path = tempfile(fileext = ".zip")) {
   if (!naomi:::is_hintr_output(model_output)) {
