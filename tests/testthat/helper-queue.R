@@ -88,6 +88,15 @@ test_queue_result <- function(model = mock_model, calibrate = mock_calibrate,
   )
 }
 
+prerun_inputs <- list(
+  pjnz = "testdata/Malawi2019.PJNZ",
+  population = "testdata/population.csv",
+  shape = "testdata/malawi.geojson",
+  programme = "testdata/programme.csv",
+  anc = "testdata/anc.csv",
+  survey = "testdata/survey.csv"
+)
+
 setup_prerun_queue <- function() {
   inputs_dir <- tempfile()
   dir.create(inputs_dir)

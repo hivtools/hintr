@@ -1,3 +1,93 @@
+#' Submit a prerun to the web app
+#'
+#' This requires VPN or RDP access to work.
+#'
+#' This will take all model files and upload to a specified server and
+#' output the model output zip which can be saved into the ADR or
+#' uploaded into the Naomi app to view plots of model outputs.
+#'
+#' Can use this for countries which cannot get a fit to work via the app
+#' you can prepare a model fit locally and then upload those outputs into
+#' the app.
+#'
+#' @param inputs The model inputs, a named list of file paths including
+#'   pjnz, shape, population, survey and optionally programme and anc.
+#' @param model_output The `hintr_output` object from model fit
+#' @param calibrate_output The `hintr_output` object from calibration
+#' @param server The server URL to upload files to
+#' @param port The port the API is running on
+#' @param output_zip_path The path to save the output zip at, will use
+#'   a tempfile by default
+#'
+#' @return Path to the generated output zip
+#' @export
+hintr_submit_prerun <- function(inputs, model_output, calibrate_output,
+                                server = "http://naomi.unaids.org",
+                                port = "8888",
+                                output_zip_path = tempfile(fileext = ".zip")) {
+  if (!naomi:::is_hintr_output(model_output)) {
+    stop("Model output must be hintr_output object")
+  }
+  if (!naomi:::is_hintr_output(calibrate_output)) {
+    stop("Calibrate output must be hintr_output object")
+  }
+  required <- c("pjnz", "shape", "population", "survey")
+  optional <- c("programme", "anc")
+  assert_names(inputs, required, optional)
+  assert_files_exist(inputs)
+
+  if (!is.null(port)) {
+    url <- paste0(server, ":", port)
+  } else {
+    url <- server
+  }
+
+  uploaded_inputs <- lapply(names(inputs), function(name) {
+    message(sprintf("Uploading input %s", name))
+    input <- inputs[[name]]
+    filename <- basename(input)
+    res <- httr::POST(paste0(url, "/internal/upload/input/", filename),
+                      body = httr::upload_file(input,
+                                               "application/octet-stream"))
+    httr::stop_for_status(res)
+    httr::content(res)$data
+  })
+  names(uploaded_inputs) <- names(inputs)
+
+  output_upload <- setNames(
+    c(model_output$model_output_path, calibrate_output$plot_data_path,
+      calibrate_output$model_output_path),
+    c("fit_model_output", "calibrate_plot_data", "calibrate_model_output"))
+  uploaded_outputs <- lapply(names(output_upload), function(name) {
+    message(sprintf("Uploading output %s", name))
+    output <- output_upload[[name]]
+    filename <- basename(output)
+    res <- httr::POST(paste0(url, "/internal/upload/result/", filename),
+                      body = httr::upload_file(output,
+                                               "application/octet-stream"))
+    httr::stop_for_status(res)
+    httr::content(res)$data
+  })
+  names(uploaded_outputs) <- names(output_upload)
+
+  message("File uploads complete, building state")
+  prerun_body <- list(
+    inputs = recursive_scalar(uploaded_inputs),
+    outputs = recursive_scalar(uploaded_outputs)
+  )
+  res <- httr::POST(paste0(url, "/internal/prerun"),
+                    body = prerun_body,
+                    encode = "json")
+  httr::stop_for_status(res)
+  state <- httr::content(res)$data
+
+  message("Creating model output zip")
+  out <- naomi::hintr_prepare_spectrum_download(calibrate_output,
+                                                output_zip_path)
+  add_state_json(out$path, jsonlite::toJSON(recursive_scalar(state)))
+  out$path
+}
+
 prerun <- function(queue) {
   function(input) {
     files <- jsonlite::fromJSON(input, simplifyVector = FALSE)
