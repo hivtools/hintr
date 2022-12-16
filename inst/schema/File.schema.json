@@ -5,6 +5,6 @@
     "path": { "$ref": "FilePath.schema.json" },
     "filename": { "type": "string" }
   },
-  "additionalProperties": true,
+  "additionalProperties": false,
   "required": [ "path", "filename" ]
 }

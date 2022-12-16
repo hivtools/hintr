@@ -10,7 +10,6 @@ test_that("can upload input files", {
   expect_equal(res$status_code, 200)
   expect_null(res$errors)
   expect_equal(res$data$filename, scalar("survey_data.csv"))
-  expect_match(res$data$hash, "[A-Z0-9]{32}")
   expect_match(res$data$path, paste0(inputs_dir, "/[A-Z0-9]{32}.csv"))
 
   ## file has been uploaded
@@ -39,7 +38,6 @@ test_that("api can upload input files", {
   body <- jsonlite::fromJSON(res$body, simplifyVector = FALSE)
   expect_null(body$error)
   expect_equal(body$data$filename, "survey_data.csv")
-  expect_match(body$data$hash, "[A-Z0-9]{32}")
   expect_match(body$data$path, paste0(inputs_dir, "/[A-Z0-9]{32}.csv"))
 
   ## file has been uploaded
@@ -67,7 +65,6 @@ test_that("can upload output files", {
   expect_equal(res$status_code, 200)
   expect_null(res$errors)
   expect_equal(res$data$filename, scalar("survey_data.csv"))
-  expect_match(res$data$hash, "[A-Z0-9]{32}")
   expect_match(res$data$path, paste0(results_dir, "/[A-Z0-9]{32}.csv"))
 
   ## file has been uploaded
@@ -96,7 +93,6 @@ test_that("api can upload output files", {
   body <- jsonlite::fromJSON(res$body, simplifyVector = FALSE)
   expect_null(body$error)
   expect_equal(body$data$filename, "survey_data.csv")
-  expect_match(body$data$hash, "[A-Z0-9]{32}")
   expect_match(body$data$path, paste0(results_dir, "/[A-Z0-9]{32}.csv"))
 
   ## file has been uploaded

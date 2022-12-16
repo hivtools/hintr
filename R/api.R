@@ -373,7 +373,7 @@ endpoint_adr_metadata <- function(queue) {
 endpoint_upload_input <- function(queue) {
   input <- porcelain::porcelain_input_body_binary("file")
   response <- porcelain::porcelain_returning_json(
-    "SessionFile.schema", schema_root())
+    "File.schema", schema_root())
   porcelain::porcelain_endpoint$new("POST",
                                     "/internal/upload/input/<filename>",
                                     upload_file(queue$inputs_dir),
@@ -384,7 +384,7 @@ endpoint_upload_input <- function(queue) {
 endpoint_upload_output <- function(queue) {
   input <- porcelain::porcelain_input_body_binary("file")
   response <- porcelain::porcelain_returning_json(
-    "SessionFile.schema", schema_root())
+    "File.schema", schema_root())
   porcelain::porcelain_endpoint$new("POST",
                                     "/internal/upload/result/<filename>",
                                     upload_file(queue$results_dir),

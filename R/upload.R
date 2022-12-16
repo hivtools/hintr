@@ -11,8 +11,7 @@ upload_file <- function(dir) {
     }
     list(
       path = scalar(dest_path),
-      filename = scalar(filename),
-      hash = scalar(md5)
+      filename = scalar(filename)
     )
   }
 }
