@@ -69,7 +69,7 @@ hintr_submit_prerun <- function(inputs, model_output, calibrate_output,
   })
   names(uploaded_outputs) <- names(output_upload)
 
-  message("File uploads complete, building prerun")
+  message("File uploads complete, building state")
   prerun_body <- list(
     inputs = recursive_scalar(uploaded_inputs),
     outputs = recursive_scalar(uploaded_outputs)
@@ -80,6 +80,7 @@ hintr_submit_prerun <- function(inputs, model_output, calibrate_output,
   httr::stop_for_status(res)
   state <- httr::content(res)$data
 
+  message("Creating model outptu zip")
   out <- naomi::hintr_prepare_spectrum_download(calibrate_output,
                                                 output_zip_path)
   add_state_json(out$path, jsonlite::toJSON(recursive_scalar(state)))
