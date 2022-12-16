@@ -1,4 +1,6 @@
-#' Prepare a prerun
+#' Submit a prerun to the web app
+#'
+#' This requires VPN or RDP access to work.
 #'
 #' This will take all model files and upload to a specified server and
 #' output the model output zip which can be saved into the ADR or
@@ -19,10 +21,10 @@
 #'
 #' @return Path to the generated output zip
 #' @export
-hintr_prerun <- function(inputs, model_output, calibrate_output,
-                         server = "https://naomi.unaids.org",
-                         port = "8888",
-                         output_zip_path = tempfile(fileext = ".zip")) {
+hintr_submit_prerun <- function(inputs, model_output, calibrate_output,
+                                server = "https://naomi.unaids.org",
+                                port = "8888",
+                                output_zip_path = tempfile(fileext = ".zip")) {
   if (!naomi:::is_hintr_output(model_output)) {
     stop("Model output must be hintr_output object")
   }

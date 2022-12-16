@@ -42,22 +42,22 @@ test_that("prerun returns project state", {
                scalar(as.character(packageVersion("naomi"))))
 })
 
-test_that("hintr_prerun fails if invalid object used", {
-  expect_error(hintr_prerun(NULL, NULL, NULL),
+test_that("hintr_submit_prerun fails if invalid object used", {
+  expect_error(hintr_submit_prerun(NULL, NULL, NULL),
                "Model output must be hintr_output object")
-  expect_error(hintr_prerun(NULL, mock_model, NULL),
+  expect_error(hintr_submit_prerun(NULL, mock_model, NULL),
                "Calibrate output must be hintr_output object")
 })
 
 test_that("error returned if httr request fails", {
   expect_error(
-    hintr_prerun(prerun_inputs, mock_model, mock_calibrate,
-                 "https://example.com", port = NULL),
+    hintr_submit_prerun(prerun_inputs, mock_model, mock_calibrate,
+                        "https://example.com", port = NULL),
     "Not Found (HTTP 404)",
     fixed = TRUE)
 })
 
-test_that("hintr_prerun uploads files and returns output zip", {
+test_that("hintr_submit_prerun uploads files and returns output zip", {
   test_redis_available()
   inputs_dir <- tempfile()
   dir.create(inputs_dir)
@@ -74,9 +74,9 @@ test_that("hintr_prerun uploads files and returns output zip", {
   existing_outputs <- length(list.files(results_dir))
 
   t <- tempfile(fileext = ".zip")
-  out <- hintr_prerun(prerun_inputs, mock_model, mock_calibrate,
-                      "http://localhost", port = server$port,
-                      output_zip_path = t)
+  out <- hintr_submit_prerun(prerun_inputs, mock_model, mock_calibrate,
+                             "http://localhost", port = server$port,
+                             output_zip_path = t)
   expect_equal(out, t)
 
   expect_equal(length(list.files(inputs_dir)) - existing_inputs, 6)
