@@ -52,6 +52,7 @@ hintr_submit_prerun <- function(inputs, model_output, calibrate_output,
     httr::stop_for_status(res)
     httr::content(res)$data
   })
+  names(uploaded_inputs) <- names(inputs)
 
   output_upload <- setNames(
     c(model_output$model_output_path, calibrate_output$plot_data_path,
@@ -74,13 +75,14 @@ hintr_submit_prerun <- function(inputs, model_output, calibrate_output,
     inputs = recursive_scalar(uploaded_inputs),
     outputs = recursive_scalar(uploaded_outputs)
   )
+  browser()
   res <- httr::POST(paste0(url, "/internal/prerun"),
                     body = prerun_body,
                     encode = "json")
   httr::stop_for_status(res)
   state <- httr::content(res)$data
 
-  message("Creating model outptu zip")
+  message("Creating model output zip")
   out <- naomi::hintr_prepare_spectrum_download(calibrate_output,
                                                 output_zip_path)
   add_state_json(out$path, jsonlite::toJSON(recursive_scalar(state)))
