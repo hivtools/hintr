@@ -42,7 +42,9 @@ hintr_submit_prerun <- function(inputs, model_output, calibrate_output,
     url <- server
   }
 
-  uploaded_inputs <- lapply(inputs, function(input) {
+  uploaded_inputs <- lapply(names(inputs), function(name) {
+    message(sprintf("Uploading input %s", name))
+    input <- inputs[[name]]
     filename <- basename(input)
     res <- httr::POST(paste0(url, "/internal/upload/input/", filename),
                       body = httr::upload_file(input,
@@ -51,10 +53,13 @@ hintr_submit_prerun <- function(inputs, model_output, calibrate_output,
     httr::content(res)$data
   })
 
-  output_upload <- c(model_output$model_output_path,
-                     calibrate_output$plot_data_path,
-                     calibrate_output$model_output_path)
-  uploaded_outputs <- lapply(output_upload, function(output) {
+  output_upload <- setNames(
+    c(model_output$model_output_path, calibrate_output$plot_data_path,
+      calibrate_output$model_output_path),
+    c("fit_model_output", "calibrate_plot_data", "calibrate_model_output"))
+  uploaded_outputs <- lapply(names(output_upload), function(name) {
+    message(sprintf("Uploading output %s", name))
+    output <- output_upload[[name]]
     filename <- basename(output)
     res <- httr::POST(paste0(url, "/internal/upload/result/", filename),
                       body = httr::upload_file(output,
@@ -62,10 +67,9 @@ hintr_submit_prerun <- function(inputs, model_output, calibrate_output,
     httr::stop_for_status(res)
     httr::content(res)$data
   })
-  names(uploaded_outputs) <- c("fit_model_output",
-                               "calibrate_plot_data",
-                               "calibrate_model_output")
+  names(uploaded_outputs) <- names(output_upload)
 
+  message("File uploads complete, building prerun")
   prerun_body <- list(
     inputs = recursive_scalar(uploaded_inputs),
     outputs = recursive_scalar(uploaded_outputs)
