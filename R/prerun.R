@@ -75,7 +75,6 @@ hintr_submit_prerun <- function(inputs, model_output, calibrate_output,
     inputs = recursive_scalar(uploaded_inputs),
     outputs = recursive_scalar(uploaded_outputs)
   )
-  browser()
   res <- httr::POST(paste0(url, "/internal/prerun"),
                     body = prerun_body,
                     encode = "json")
