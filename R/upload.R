@@ -1,6 +1,6 @@
 upload_file <- function(dir) {
   function(file, filename) {
-    md5 <- toupper(digest::digest(file, algo = "md5"))
+    md5 <- toupper(digest::digest(file, algo = "md5", serialize = FALSE))
     dest_path <- to_server_path(dir, md5, filename)
     if (!file.exists(dest_path)) {
       tmpdir <- file.path(dir, ".incoming")
