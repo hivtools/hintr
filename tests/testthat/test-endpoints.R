@@ -234,9 +234,9 @@ test_that("404 handler", {
   req <- list(REQUEST_METHOD = "POST",
               PATH_INFO = "/my/path")
   ans <- hintr_404_handler(req, res)
-  expect_is(ans, "list") # not json
+  expect_type(ans, "list") # not json
   expect_equal(ans$status, scalar("failure"))
-  expect_is(ans$errors[[1]]$key, "scalar")
+  expect_s3_class(ans$errors[[1]]$key, "scalar")
   expect_match(ans$errors[[1]]$key, "^[a-z]{5}-[a-z]{5}-[a-z]{5}$")
   # key is randomly generated - remove to compare rest
   ans$errors[[1]]$key <- NULL

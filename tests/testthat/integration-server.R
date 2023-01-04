@@ -644,7 +644,7 @@ test_that("can quit", {
   r <- tryCatch(
     httr::POST(paste0(server$url, "/hintr/stop")),
     error = identity)
-  expect_is(r, "error")
+  expect_type(r, "error")
 
   ## Sleep to give time for process to be killed before checking
   Sys.sleep(2)
@@ -735,7 +735,7 @@ test_that("crashed worker can be detected", {
                "MODEL_RUN_FAILED")
   expect_equal(dat$errors[[1]]$detail,
                "Worker has crashed - error details are unavailable")
-  expect_is(dat$errors[[1]]$key, "character")
+  expect_type(dat$errors[[1]]$key, "character")
 })
 
 test_that("model run can be cancelled", {
