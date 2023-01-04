@@ -3,6 +3,7 @@
 ^LICENSE\.md$
 ^\.travis\.yml$
 ^\.hadolint\.yml$
+^\.lintr$
 ^codecov\.yml$
 ^example$
 ^docker$

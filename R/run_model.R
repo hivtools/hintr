@@ -1,5 +1,4 @@
-run_model <- function(data, options, path_results, path_prerun = NULL,
-                      language = NULL) {
+run_model <- function(data, options, path_results, language = NULL) {
   if (!is.null(language)) {
     reset_hintr <- traduire::translator_set_language(language)
     reset_naomi <-
@@ -46,7 +45,7 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
     output <- list(
       plot_data_path = NULL,
       model_output_path = system_file("output", "malawi_model_output.qs"),
-      version = packageVersion("naomi"),
+      version = utils::packageVersion("naomi"),
       warnings = list(
         list(
           text = scalar(paste0("Zero population input for 8 population ",
@@ -56,16 +55,6 @@ run_model <- function(data, options, path_results, path_prerun = NULL,
       ))
     class(output) <- "hintr_output"
     return(output)
-  }
-
-  if (!is.null(path_prerun)) {
-    p <- PrerunModelResults$new(path_prerun)
-    data <- naomi:::format_data_input(data)
-    inputs <- naomi:::naomi_info_input(data)
-    if (p$exists(inputs)) {
-      message("Found prerun model results")
-      return(p$get(inputs))
-    }
   }
 
   path_results <- normalizePath(path_results, mustWork = TRUE)

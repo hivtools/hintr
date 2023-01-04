@@ -1,8 +1,21 @@
-# hintr 1.1.3
+# hintr 1.1.9
 
 * Update fallback anc year to 2022
 * Remove stack trace from user display
 * Return `job_id` in error response if error originated from async job
+
+# hintr 1.1.8
+
+* Add `hintr_prerun` function which takes model inputs and outputs, saves them onto the server and then returns output zip with state JSON which can be used to rehydrate model outputs
+
+# hintr 1.1.7
+
+* Remove `prerun_import` and `prerun_push` functions, these are going to be replaced with a more transparent prerun method
+
+# hintr 1.1.6
+
+* Add endpoint `/internal/prerun` to run a prerun which builds state JSON from input and output files
+>>>>>>> master
 
 # hintr 1.1.2
 

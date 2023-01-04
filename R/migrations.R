@@ -14,7 +14,7 @@ run_migration <- function(queue, output_dir, dry_run = FALSE) {
   summary_path <- file.path(output_dir, "summary.csv")
   message(sprintf("Saving summary csv %s", summary_path))
   output_path <- file.path(output_dir, "output.qs")
-  write.csv(summary, summary_path, row.names = FALSE)
+  utils::write.csv(summary, summary_path, row.names = FALSE)
   message(sprintf("Saving output qs %s", output_path))
   qs::qsave(migrations, output_path, preset = "fast")
   migrations

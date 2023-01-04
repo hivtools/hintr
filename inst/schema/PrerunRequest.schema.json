@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "inputs": { "$ref": "InputDatasets.schema.json" },
+    "outputs": {
+      "type": "object",
+      "properties": {
+        "fit_model_output": { "$ref": "File.schema.json" },
+        "calibrate_plot_data": { "$ref": "File.schema.json" },
+        "calibrate_model_output": { "$ref": "File.schema.json" }
+      },
+      "additionalProperties": false,
+      "required": [
+        "fit_model_output",
+        "calibrate_plot_data",
+        "calibrate_model_output"
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "required": [ "inputs", "outputs" ]
+}
+
