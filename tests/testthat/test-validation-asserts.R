@@ -1,5 +1,3 @@
-context("validation-asserts")
-
 test_that("assert fails if more than once country in json", {
   shape <- file_object(file.path("testdata", "malawi.geojson"))
   json <- hintr_geojson_read(shape)

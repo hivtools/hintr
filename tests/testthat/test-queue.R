@@ -1,5 +1,3 @@
-context("queue")
-
 test_that("queue works as intended", {
   test_redis_available()
   test_mock_model_available()

@@ -1,5 +1,3 @@
-context("model-options")
-
 test_that("do_endpoint_model_options correctly builds options and fallbacks", {
   shape <- file_object(file.path("testdata", "malawi.geojson"))
   survey <- file_object(file.path("testdata", "survey.csv"))

@@ -1,5 +1,3 @@
-context("main")
-
 test_that("main_api_args", {
   default <- main_api_args(c())
   expect_equal(default$port, 8888)

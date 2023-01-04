@@ -1,5 +1,3 @@
-context("migrations")
-
 test_that("single task can be migrated", {
   test_mock_model_available()
   q <- test_queue_result(model = mock_model_v0.1.38,

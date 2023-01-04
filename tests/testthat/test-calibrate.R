@@ -1,5 +1,3 @@
-context("calibrate")
-
 test_that("calibration can be run", {
   test_mock_model_available()
 

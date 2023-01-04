@@ -1,5 +1,3 @@
-context("filters")
-
 test_that("get_age_label correctly maps to label and returns useful error", {
   expect_equivalent(get_age_labels("Y050_054"), data_frame(age_group = "Y050_054",
                                                            age_group_label = "50-54",

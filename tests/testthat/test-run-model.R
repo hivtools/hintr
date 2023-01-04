@@ -1,5 +1,3 @@
-context("run-model")
-
 test_that("model can be run & calibrated and filters extracted", {
   test_mock_model_available()
   res <- process_result(mock_calibrate)

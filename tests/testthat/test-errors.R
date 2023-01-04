@@ -1,5 +1,3 @@
-context("errors")
-
 test_that("validate errors", {
   path <- system_file("schema/Response.schema.json")
   v <- jsonvalidate::json_validator(path, "ajv")

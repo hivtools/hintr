@@ -1,5 +1,3 @@
-context("metadata")
-
 test_that("can build metadata response", {
   metadata <- do_plotting_metadata("MWI")
   expect_true(all(names(metadata) %in%

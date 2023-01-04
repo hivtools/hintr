@@ -1,5 +1,3 @@
-context("endpoints")
-
 test_that("plumber api can be built", {
   api <- api_build(NULL)
   expect_s3_class(api, "Plumber")

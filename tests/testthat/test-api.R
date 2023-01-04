@@ -1,5 +1,3 @@
-context("api")
-
 test_that("don't change language if not asked to", {
   data <- new.env()
   tr <- hintr_translator()

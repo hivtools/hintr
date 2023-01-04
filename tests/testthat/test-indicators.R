@@ -1,5 +1,3 @@
-context("indicators")
-
 test_that("can get filtered data for indicator", {
   data <- read_csv(file.path("testdata", "survey.csv"))
   metadata <- naomi::get_metadata()

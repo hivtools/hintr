@@ -1,5 +1,3 @@
-context("server")
-
 server <- porcelain::porcelain_background$new(
   api, args = list(queue_id = paste0("hintr:", ids::random_id())))
 server$start()
