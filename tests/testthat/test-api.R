@@ -557,7 +557,7 @@ test_that("erroring model run returns useful messages", {
   expect_equal(body$errors[1, "error"], "MODEL_RUN_FAILED")
   expect_equal(body$errors[1, "detail"], "test error")
   expect_equal(body$errors[1, "key"], "fake_key")
-  expect_match(body$errors[1, "trace"][[1]], "^# [[:xdigit:]]+$")
+  expect_match(body$errors[1, "job_id"][[1]], "^[[:xdigit:]]+$")
 })
 
 test_that("endpoint_model_calibrate_options", {

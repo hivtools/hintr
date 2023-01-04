@@ -2,8 +2,8 @@
 ##'
 ##' @title Get debug output from naomi
 ##'
-##' @param id The model run id to download. This will be printed at
-##'   the top of the stack trace.
+##' @param id The model run id to download. This will be printed below the
+##'   error message.
 ##'
 ##' @param server The url of the server.  The default is to use the
 ##'   production naomi/hint/hintr instance. It is not possible to use

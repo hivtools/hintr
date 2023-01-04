@@ -5,12 +5,7 @@
     "error" : { "$ref": "ErrorCode.schema.json" },
     "detail" : { "type": ["string", "null"] },
     "key": { "type": "string" },
-    "trace": {
-      "type": "array",
-      "items": {
-        "type": "string"
-       }
-    }
+    "job_id": { "type": "string" }
   },
   "additionalProperties": true,
   "required": [ "error", "detail" ]

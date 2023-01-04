@@ -188,13 +188,11 @@ test_that("erroring model run returns useful messages", {
   })
 
   expect_equal(error$status_code, 400)
-  expect_equal(names(error$data[[1]]), c("error", "detail", "key", "trace"))
+  expect_equal(names(error$data[[1]]), c("error", "detail", "key", "job_id"))
   expect_equal(error$data[[1]]$error, scalar("MODEL_RUN_FAILED"))
   expect_equal(error$data[[1]]$detail, scalar("test error"))
   expect_equal(error$data[[1]]$key, scalar("fake_key"))
-
-  trace <- vapply(error$data[[1]]$trace, identity, character(1))
-  expect_match(trace[[1]], "^# [[:xdigit:]]+$")
+  expect_match(error$data[[1]]$job_id, "^[[:xdigit:]]+$")
 })
 
 test_that("model run can be cancelled", {
