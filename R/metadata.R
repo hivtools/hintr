@@ -7,7 +7,7 @@ do_plotting_metadata <- function(iso3) {
 }
 
 get_plotting_metadata <- function(...) {
-  naomi::get_plotting_metadat(...)
+  naomi::get_plotting_metadata(...)
 }
 
 build_data_type_metadata <- function(metadata) {
