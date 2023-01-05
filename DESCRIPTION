@@ -39,6 +39,7 @@ Suggests:
     covr,
     httr,
     jsonvalidate,
+    mockr,
     mockery,
     ps,
     redux,

@@ -164,7 +164,7 @@ test_that("model calibration fails is version out of date", {
                                "naomi": "0.0.15",
                                "rrq": "0.2.1"
                                }')
-  with_mock("hintr:::verify_result_available" = mock_verify_result_available, {
+  with_mock(verify_result_available = mock_verify_result_available, {
     calibrate <- submit_calibrate(queue)
     error <- expect_error(calibrate("id", readLines(path)))
   })

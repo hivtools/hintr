@@ -29,11 +29,12 @@ hintr_init_traduire <- function() {
   namespaces <- "translation"
   traduire::translator_register(resources = NULL,
                                 language = languages[[1]],
-                                default_namspace = namespaces[[1]],
+                                default_namespace = namespaces[[1]],
                                 resource_pattern = pattern,
                                 namespaces = namespaces,
                                 languages = languages,
-                                fallback = "en")
+                                fallback = "en",
+                                name = "hintr")
 }
 
 hintr_translator_unregister <- function() {
