@@ -32,4 +32,4 @@ docker run --rm -it --network=$NAME_NETWORK \
        --entrypoint sh \
        --name $NAME_HINTR_TESTS \
        $TAG_HINTR_TESTS \
-       test_self
+       -c "test_self"
