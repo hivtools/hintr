@@ -25,7 +25,7 @@ test_that("input_response correctly formats data and validates it", {
   mock_validate <- mockery::mock(TRUE)
   file <- list(path = "path", hash = "12345", filename = "original.pjnz", fromADR = FALSE,
                resource_url = "https://adr.unaids.org/file/123.pjnz")
-  with_mock("hintr:::validate_json_schema" = mock_validate, {
+  with_mock(validate_json_schema = mock_validate, {
     response <- input_response(list(data = list(country = scalar("Botswana")),
                                     filters = json_verbatim("null")),
                                "pjnz",

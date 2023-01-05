@@ -179,17 +179,14 @@ test_that("erroring model run returns useful messages", {
   expect_equal(status$id, response$id)
 
   # Get the result
-  mock_id <- mockery::mock(scalar("fake_key"), cycle = TRUE)
-  with_mock("ids::proquint" = mock_id, {
-    get_model_result <- model_result(queue)
-    error <- expect_error(get_model_result(response$id))
-  })
+  get_model_result <- model_result(queue)
+  error <- expect_error(get_model_result(response$id))
 
   expect_equal(error$status_code, 400)
   expect_equal(names(error$data[[1]]), c("error", "detail", "key", "trace"))
   expect_equal(error$data[[1]]$error, scalar("MODEL_RUN_FAILED"))
   expect_equal(error$data[[1]]$detail, scalar("test error"))
-  expect_equal(error$data[[1]]$key, scalar("fake_key"))
+  expect_match(error$data[[1]]$key, "\\w-\\w-\\w")
 
   trace <- vapply(error$data[[1]]$trace, identity, character(1))
   expect_true("rrq:::rrq_worker_main()" %in% trace)

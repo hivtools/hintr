@@ -57,6 +57,10 @@ main_worker <- function(args = commandArgs(TRUE)) {
   # nocov end
 }
 
+rrq_worker_from_config <- function(...) {
+  rrq::rrq_worker_from_config(...)
+}
+
 docopt_parse <- function(usage, args) {
   dat <- docopt::docopt(usage, args)
   names(dat) <- gsub("-", "_", names(dat), fixed = TRUE)

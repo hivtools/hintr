@@ -33,8 +33,7 @@ hintr_init_traduire <- function() {
                                 resource_pattern = pattern,
                                 namespaces = namespaces,
                                 languages = languages,
-                                fallback = "en",
-                                name = "hintr")
+                                fallback = "en")
 }
 
 hintr_translator_unregister <- function() {

@@ -11,7 +11,7 @@ test_that("endpoint_validate_baseline_combined returns error on invalid data", {
                                        file.path("testdata", "malawi.geojson"),
                                        file.path("testdata", "population.csv"))
   mock_read_iso3 <- mockery::mock("BLZ")
-  with_mock("hintr:::read_iso3" = mock_read_iso3, {
+  with_mock(read_iso3 = mock_read_iso3, {
     error <- expect_error(validate_baseline_combined(input))
   })
   expect_equal(error$data[[1]]$error, scalar("INVALID_BASELINE"))
@@ -56,7 +56,7 @@ test_that("validation errors if spectrum region codes mismatch", {
     file.path("testdata", "malawi.geojson"),
     NULL)
   mock_read_iso3 <- mockery::mock("ZMB")
-  with_mock("hintr:::read_iso3" = mock_read_iso3, {
+  with_mock(read_iso3 = mock_read_iso3, {
     error <- expect_error(validate_baseline_combined(input))
   })
   expect_equal(error$data[[1]]$error, scalar("INVALID_BASELINE"))

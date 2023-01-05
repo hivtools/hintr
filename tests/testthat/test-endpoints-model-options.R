@@ -203,7 +203,7 @@ test_that("endpoint_model_options_validate validates options", {
       )
     )
   ))
-  with_mock("naomi::validate_model_options" = mock_validate_model_options, {
+  with_mock(validate_model_options = mock_validate_model_options, {
     response <- model_options_validate(input)
   })
 
@@ -229,7 +229,7 @@ test_that("invalid model options returns error", {
   }'
 
   mock_validate_model_options <- mockery::mock(stop("Invalid options"))
-  with_mock("naomi:::validate_model_options" = mock_validate_model_options, {
+  with_mock(validate_model_options = mock_validate_model_options, {
     error <- expect_error(model_options_validate(input))
   })
 
@@ -247,7 +247,7 @@ test_that("can get calibration options", {
 
 test_that("failing to get calibration options throws hintr error", {
   mock_calibration_options <- mockery::mock(stop("Failed to get options"))
-  with_mock("naomi.options::get_controls_json" = mock_calibration_options, {
+  with_mock(get_controls_json = mock_calibration_options, {
     error <- expect_error(calibration_options("MWI"))
   })
   expect_equal(error$data[[1]]$error, scalar("INVALID_CALIBRATION_OPTIONS"))
