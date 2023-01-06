@@ -54,16 +54,15 @@ test_that("all tasks can be migrated", {
   ## Get 3 task results, 1 mock run, 1 mock calibrate, 1 run, 1 calibrate
   q <- test_queue_result(model = mock_model_v0.1.38,
                          calibrate = mock_model_v0.1.38)
-  model_payload <- setup_payload_submit()
+  model_payload <- setup_payload_submit(test_path("testdata"))
   model_submit <- submit_model(q$queue)
-  run_response <- model_submit(readLines(model_payload))
+  run_response <- model_submit(model_payload)
   expect_true("id" %in% names(run_response))
   result <- q$queue$queue$task_wait(run_response$id)
 
   calibrate_payload <- setup_payload_calibrate()
   model_calibrate <- submit_calibrate(q$queue)
-  calibrate_response <- model_calibrate(run_response$id,
-                                        readLines(calibrate_payload))
+  calibrate_response <- model_calibrate(run_response$id, calibrate_payload)
   expect_true("id" %in% names(calibrate_response))
   result <- q$queue$queue$task_wait(calibrate_response$id)
 
@@ -112,9 +111,9 @@ test_that("only completed tasks are migrated", {
   test_mock_model_available()
   ## Setup errored model run
   queue <- MockQueue$new()
-  path <- setup_payload_submit()
+  payload <- setup_payload_submit(test_path("testdata"))
   model_submit <- submit_model(queue)
-  response <- model_submit(readLines(path))
+  response <- model_submit(payload)
   expect_true("id" %in% names(response))
   out <- queue$queue$task_wait(response$id)
 
@@ -130,16 +129,15 @@ test_that("migration can be run in dry-run mode", {
   ## Get 3 task results, 1 mock run, 1 mock calibrate, 1 run, 1 calibrate
   q <- test_queue_result(model = mock_model_v0.1.38,
                          calibrate = mock_model_v0.1.38)
-  model_payload <- setup_payload_submit()
+  model_payload <- setup_payload_submit(test_path("testdata"))
   model_submit <- submit_model(q$queue)
-  run_response <- model_submit(readLines(model_payload))
+  run_response <- model_submit(model_payload)
   expect_true("id" %in% names(run_response))
   result <- q$queue$queue$task_wait(run_response$id)
 
   calibrate_payload <- setup_payload_calibrate()
   model_calibrate <- submit_calibrate(q$queue)
-  calibrate_response <- model_calibrate(run_response$id,
-                                        readLines(calibrate_payload))
+  calibrate_response <- model_calibrate(run_response$id, calibrate_payload)
   expect_true("id" %in% names(calibrate_response))
   result <- q$queue$queue$task_wait(calibrate_response$id)
 

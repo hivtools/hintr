@@ -180,14 +180,3 @@ wait_status <- function(t, obj, timeout = 2, time_poll = 0.05,
   }
   stop(sprintf("Did not change status from %s in time", status))
 }
-
-setup_project_state_json <- function(version = NULL) {
-  path <- tempfile()
-  if (is.null(version)) {
-    version <- to_json(cfg$version_info)
-  }
-  payload <- readLines("json/spectrum_download_state_response.json")
-  payload <- gsub("<version_info>", version, payload, fixed = TRUE)
-  writeLines(payload, path)
-  path
-}

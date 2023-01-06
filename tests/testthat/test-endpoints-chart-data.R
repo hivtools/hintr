@@ -1,8 +1,8 @@
 test_that("input time series works with programme/art data", {
-  input <- input_time_series_request(
-    test_path("testdata", "programme.csv"),
-    "programme",
-    test_path("testdata", "malawi.geojson"))
+  input <- setup_payload_input_time_series(
+    test_path("testdata"),
+    "programme.csv",
+    "programme")
   out <- input_time_series("programme", input)
 
   expect_equal(names(out), c("data", "metadata", "warnings"))
@@ -12,10 +12,10 @@ test_that("input time series works with programme/art data", {
 })
 
 test_that("input time series works with anc data", {
-  input <- input_time_series_request(
-    file.path("testdata", "anc.csv"),
-    "anc",
-    file.path("testdata", "malawi.geojson"))
+  input <- setup_payload_input_time_series(
+    test_path("testdata"),
+    "anc.csv",
+    "anc")
   out <- input_time_series("anc", input)
 
   expect_equal(names(out), c("data", "metadata", "warnings"))
@@ -25,10 +25,10 @@ test_that("input time series works with anc data", {
 })
 
 test_that("input time series works if both anc and programme are provided", {
-  input_json <- input_time_series_request(
-    file.path("testdata", "anc.csv"),
-    "anc",
-    file.path("testdata", "malawi.geojson"))
+  input_json <- setup_payload_input_time_series(
+    test_path("testdata"),
+    "anc.csv",
+    "anc")
   input <- jsonlite::fromJSON(input_json)
   input$data$programme <- list(
     path = file.path("testdata", "programme.csv"),
@@ -46,30 +46,30 @@ test_that("input time series works if both anc and programme are provided", {
 })
 
 test_that("input_time_series throws error if unknown file type", {
-  input <- input_time_series_request(
-    file.path("testdata", "survey.csv"),
-    "survey",
-    file.path("testdata", "malawi.geojson"))
+  input <- setup_payload_input_time_series(
+    test_path("testdata"),
+    "survey.csv",
+    "survey")
   expect_error(input_time_series("survey", input), paste0(
     "Time series data can only be returned for programme or anc,",
     " received 'survey'."))
 })
 
 test_that("input_time_series catches unexpected errors", {
-  input <- input_time_series_request(
-    file.path("testdata", "unknown.csv"),
-    "anc",
-    file.path("testdata", "malawi.geojson"))
+  input <- setup_payload_input_time_series(
+    test_path("testdata"),
+    "unknown.csv",
+    "anc")
   error <- expect_error(input_time_series("anc", input))
   expect_equal(error$data[[1]]$error, scalar("FAILED_TO_GENERATE_TIME_SERIES"))
 })
 
 test_that("endpoint_input_time_series_plot works with programme data", {
   endpoint <- endpoint_input_time_series_plot()
-  input <- input_time_series_request(
-    file.path("testdata", "programme.csv"),
-    "programme",
-    file.path("testdata", "malawi.geojson"))
+  input <- setup_payload_input_time_series(
+    test_path("testdata"),
+    "programme.csv",
+    "programme")
   res <- endpoint$run("programme", input)
   expect_equal(res$status_code, 200)
   body <- jsonlite::fromJSON(res$body)
@@ -83,10 +83,10 @@ test_that("endpoint_input_time_series_plot works with programme data", {
 
 test_that("endpoint_input_time_series_plot works without vls indicators", {
   endpoint <- endpoint_input_time_series_plot()
-  input <- input_time_series_request(
-    file.path("testdata", "programme_no_vls.csv"),
-    "programme",
-    file.path("testdata", "malawi.geojson"))
+  input <- setup_payload_input_time_series(
+    test_path("testdata"),
+    "programme_no_vls.csv",
+    "programme")
   res <- endpoint$run("programme", input)
   expect_equal(res$status_code, 200)
   body <- jsonlite::fromJSON(res$body)
@@ -100,10 +100,10 @@ test_that("endpoint_input_time_series_plot works without vls indicators", {
 
 test_that("endpoint_input_time_series_plot works with anc data", {
   endpoint <- endpoint_input_time_series_plot()
-  input <- input_time_series_request(
-    file.path("testdata", "anc.csv"),
-    "anc",
-    file.path("testdata", "malawi.geojson"))
+  input <- setup_payload_input_time_series(
+    test_path("testdata"),
+    "anc.csv",
+    "anc")
   res <- endpoint$run("anc", input)
   expect_equal(res$status_code, 200)
   body <- jsonlite::fromJSON(res$body)
@@ -119,10 +119,10 @@ test_that("api can return input time series data for programme/art", {
   test_redis_available()
   queue <- test_queue(workers = 0)
   api <- api_build(queue, validate = TRUE)
-  input <- input_time_series_request(
-    file.path("testdata", "programme.csv"),
-    "programme",
-    file.path("testdata", "malawi.geojson"))
+  input <- setup_payload_input_time_series(
+    test_path("testdata"),
+    "programme.csv",
+    "programme")
   res <- api$request("POST", "/chart-data/input-time-series/programme",
                      body = input)
   expect_equal(res$status, 200)
@@ -139,10 +139,10 @@ test_that("api can return input time series data for anc", {
   test_redis_available()
   queue <- test_queue(workers = 0)
   api <- api_build(queue)
-  input <- input_time_series_request(
-    file.path("testdata", "anc.csv"),
-    "anc",
-    file.path("testdata", "malawi.geojson"))
+  input <- setup_payload_input_time_series(
+    test_path("testdata"),
+    "anc.csv",
+    "anc")
   res <- api$request("POST", "/chart-data/input-time-series/anc",
                      body = input)
   expect_equal(res$status, 200)
@@ -156,10 +156,10 @@ test_that("api can return input time series data for anc", {
 })
 
 test_that("input time series returns warnings programme data", {
-  input <- input_time_series_request(
-    file.path("testdata", "programme.csv"),
-    "programme",
-    file.path("testdata", "malawi.geojson"))
+  input <- setup_payload_input_time_series(
+    test_path("testdata"),
+    "programme.csv",
+    "programme")
   out <- input_time_series("programme", input)
 
   expect_equal(names(out), c("data", "metadata", "warnings"))
@@ -167,10 +167,10 @@ test_that("input time series returns warnings programme data", {
 })
 
 test_that("input time series returns warnings anc data", {
-  input <- input_time_series_request(
-    file.path("testdata", "anc.csv"),
-    "anc",
-    file.path("testdata", "malawi.geojson"))
+  input <- setup_payload_input_time_series(
+    test_path("testdata"),
+    "anc.csv",
+    "anc")
   out <- input_time_series("anc", input)
 
   expect_equal(names(out), c("data", "metadata", "warnings"))

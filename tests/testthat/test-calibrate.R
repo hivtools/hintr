@@ -4,8 +4,8 @@ test_that("calibration can be run", {
   model_output <- clone_model_output(mock_model)
 
   ## Calibrate the result
-  path <- setup_payload_calibrate()
-  calibration_options <- jsonlite::fromJSON(path)$options
+  payload <- setup_payload_calibrate()
+  calibration_options <- jsonlite::fromJSON(payload)$options
 
   calibrated_result <- run_calibrate(model_output, calibration_options,
                                      tempdir())
@@ -32,9 +32,9 @@ test_that("can calibrate a model result", {
   q <- test_queue_result()
 
   ## Calibrate the result
-  path <- setup_payload_calibrate()
+  payload <- setup_payload_calibrate()
   calibrate <- submit_calibrate(q$queue)
-  res <- calibrate(q$model_run_id, readLines(path))
+  res <- calibrate(q$model_run_id, payload)
   expect_equal(names(res), "id")
   expect_true(!is.null(res$id))
 
@@ -159,15 +159,15 @@ test_that("model calibration fails is version out of date", {
   mock_verify_result_available <- mockery::mock(TRUE)
 
   ## Calibrate the result
-  path <- setup_payload_calibrate('{
-                               "hintr": "0.0.12",
-                               "naomi": "0.0.15",
-                               "rrq": "0.2.1"
-                               }')
+  payload <- setup_payload_calibrate('{
+                                       "hintr": "0.0.12",
+                                       "naomi": "0.0.15",
+                                       "rrq": "0.2.1"
+                                     }')
   calibrate <- submit_calibrate(queue)
   mockery::stub(calibrate, "verify_result_available",
                 mock_verify_result_available)
-  error <- expect_error(calibrate("id", readLines(path)))
+  error <- expect_error(calibrate("id", payload))
 
   expect_equal(error$data[[1]]$error, scalar("VERSION_OUT_OF_DATE"))
   expect_equal(error$data[[1]]$detail, scalar(

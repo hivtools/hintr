@@ -10,5 +10,5 @@
     "spectrum_aware_calibration_strat": "sex_age_coarse",
     "calibrate_method": "logistic"
   },
-  "version": <version_info>
+  "version": "<+version_info+>"
 }

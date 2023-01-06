@@ -12,10 +12,10 @@ test_that("Debug endpoint returns debug information", {
   test_mock_model_available()
 
   ## Start the model running
-  path <- setup_payload_submit()
+  payload <- setup_payload_submit(test_path("testdata"))
   queue <- test_queue(workers = 1)
   model_submit <- submit_model(queue)
-  response <- model_submit(readLines(path))
+  response <- model_submit(payload)
   expect_true("id" %in% names(response))
   id <- response$id
 
@@ -48,8 +48,8 @@ test_that("Debug endpoint returns debug information for calibrate", {
   q <- test_queue_result()
 
   submit <- endpoint_model_calibrate_submit(q$queue)
-  path <- setup_payload_calibrate()
-  submit_response <- submit$run(q$model_run_id, readLines(path))
+  payload <- setup_payload_calibrate()
+  submit_response <- submit$run(q$model_run_id, payload)
   id <- submit_response$data$id
 
   expect_equal(submit_response$status_code, 200)
