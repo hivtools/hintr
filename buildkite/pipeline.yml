@@ -7,6 +7,8 @@ steps:
   - label: ":hammer: Unit tests"
     command: docker/test_check
     key: "unit-tests"
+    agents:
+      queue: "browser-test"
 
   - label: ":hammer_and_pick: Integration tests"
     command: docker/test_integration
