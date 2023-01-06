@@ -254,7 +254,7 @@ test_that("download returns useful error if model run fails", {
   test_mock_model_available()
 
   ## Create a population file which deliberately will cause an error
-  path <- setup_submit_payload()
+  path <- setup_payload_submit()
   payload <- readLines(path)
   payload <- jsonlite::read_json(path)
   pop <- read.csv(payload$data$population$path)
@@ -314,7 +314,7 @@ test_that("download fails with old model run result", {
 
 test_that("trying to download result for errored model run returns error", {
   queue <- MockQueue$new(workers = 1)
-  path <- setup_submit_payload()
+  path <- setup_payload_submit()
   model_submit <- submit_model(queue)
   response <- model_submit(readLines(path))
   expect_true("id" %in% names(response))
@@ -464,7 +464,7 @@ test_that("spectrum download can include notes", {
 
   ## Submit download request
   submit <- endpoint_download_submit(q$queue)
-  path <- setup_download_request_payload(include_state = FALSE)
+  path <- setup_payload_download_request(include_state = FALSE)
   submit_response <- submit$run(q$calibrate_id, "spectrum", readLines(path))
 
   expect_equal(submit_response$status_code, 200)
@@ -522,7 +522,7 @@ test_that("api: spectrum download can include notes", {
   api <- api_build(q$queue)
 
   ## Submit download request
-  path <- setup_download_request_payload(include_state = FALSE)
+  path <- setup_payload_download_request(include_state = FALSE)
   submit <- api$request("POST",
                         paste0("/download/submit/spectrum/", q$calibrate_id),
                         body = readLines(path))
@@ -576,7 +576,7 @@ test_that("sending notes to non-spectrum download doesn't fail", {
 
   ## Submit download request
   submit <- endpoint_download_submit(q$queue)
-  path <- setup_download_request_payload(include_state = FALSE)
+  path <- setup_payload_download_request(include_state = FALSE)
   submit_response <- submit$run(q$calibrate_id, "summary", readLines(path))
 
   expect_equal(submit_response$status_code, 200)
@@ -607,7 +607,7 @@ test_that("spectrum download can include project state", {
 
   ## Submit download request
   submit <- endpoint_download_submit(q$queue)
-  path <- setup_download_request_payload(include_notes = FALSE)
+  path <- setup_payload_download_request(include_notes = FALSE)
   submit_response <- submit$run(q$calibrate_id, "spectrum", readLines(path))
 
   expect_equal(submit_response$status_code, 200)
@@ -651,7 +651,7 @@ test_that("api: spectrum download can include project state", {
   api <- api_build(q$queue)
 
   ## Submit download request
-  path <- setup_download_request_payload(include_notes = FALSE)
+  path <- setup_payload_download_request(include_notes = FALSE)
   submit <- api$request("POST",
                         paste0("/download/submit/spectrum/", q$calibrate_id),
                         body = readLines(path))
@@ -692,7 +692,7 @@ test_that("api: spectrum download can include notes and state", {
   api <- api_build(q$queue)
 
   ## Submit download request
-  path <- setup_download_request_payload()
+  path <- setup_payload_download_request()
   submit <- api$request("POST",
                         paste0("/download/submit/spectrum/", q$calibrate_id),
                         body = readLines(path))
@@ -753,7 +753,7 @@ test_that("api: programme and anc files are optional in spectrum download", {
   api <- api_build(q$queue)
 
   ## Prepare body without anc or programme
-  path <- setup_download_request_payload(include_notes = FALSE)
+  path <- setup_payload_download_request(include_notes = FALSE)
   json <- jsonlite::read_json(path, simplifyVector = FALSE)
   json$state$datasets$programme <- NULL
   json$state$datasets$anc <- NULL

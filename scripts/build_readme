@@ -11,7 +11,7 @@ setup <- function() {
                                 network = nw, detach = TRUE, rm = TRUE)
 
   url <- "http://localhost:8888"
-  for (i in seq_len(5)) {
+  for (i in seq_len(10)) {
     message("Attempt ", i)
     ok <- tryCatch({
       httr::stop_for_status(httr::GET(url))
@@ -118,7 +118,7 @@ process <- function() {
 
 main <- function() {
   cleanup <- setup()
-  on.exit(cleanup())
+  #on.exit(cleanup())
   process()
 }
 

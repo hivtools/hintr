@@ -3,7 +3,7 @@ test_that("endpoint model run queues a model run", {
   test_mock_model_available()
 
   ## Setup payload
-  path <- setup_submit_payload()
+  path <- setup_payload_submit()
 
   ## Call the endpoint
   queue <- test_queue(workers = 1)
@@ -47,7 +47,7 @@ test_that("endpoint model run queues a model run", {
 test_that("endpoint_run_model returns error if queueing fails", {
   test_redis_available()
   ## Create request data
-  path <- setup_submit_payload()
+  path <- setup_payload_submit()
 
   ## Create mocks
   queue <- test_queue()
@@ -67,7 +67,7 @@ test_that("running model with old version throws an error", {
   test_redis_available()
 
   ## Setup payload
-  path <- setup_submit_payload('{
+  path <- setup_payload_submit('{
                                "hintr": "0.0.12",
                                "naomi": "0.0.15",
                                "rrq": "0.2.1"
@@ -143,7 +143,7 @@ test_that("querying for result of incomplete jobs returns useful error", {
   test_redis_available()
   test_mock_model_available()
 
-  path <- setup_submit_payload()
+  path <- setup_payload_submit()
   queue <- test_queue(workers = 1)
   model_submit <- submit_model(queue)
   response <- model_submit(readLines(path))
@@ -164,7 +164,7 @@ test_that("erroring model run returns useful messages", {
 
   ## Call the endpoint
   queue <- MockQueue$new()
-  path <- setup_submit_payload()
+  path <- setup_payload_submit()
   model_submit <- submit_model(queue)
   response <- model_submit(readLines(path))
   expect_true("id" %in% names(response))
@@ -199,7 +199,7 @@ test_that("model run can be cancelled", {
   test_mock_model_available()
 
   ## Start the model running
-  path <- setup_submit_payload()
+  path <- setup_payload_submit()
   queue <- test_queue(workers = 1)
   model_submit <- submit_model(queue)
   response <- model_submit(readLines(path))
@@ -242,7 +242,7 @@ test_that("translation of progress", {
   test_redis_available()
   test_mock_model_available()
 
-  path <- setup_submit_payload()
+  path <- setup_payload_submit()
   queue <- test_queue(workers = 1)
   model_submit <- submit_model(queue)
   get_status <- queue_status(queue)
@@ -270,7 +270,7 @@ test_that("error messages from naomi are translated", {
 
   model_submit <- submit_model(queue)
   ## Create a population file which deliberately will cause an error
-  path <- setup_submit_payload()
+  path <- setup_payload_submit()
   payload <- readLines(path)
   payload <- jsonlite::read_json(path)
   pop <- read.csv(payload$data$population$path)

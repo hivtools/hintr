@@ -72,7 +72,7 @@ test_that("can convert list to data frame", {
 })
 
 test_that("notes can be formatted", {
-  notes <- jsonlite::read_json(setup_download_request_payload())
+  notes <- jsonlite::read_json(setup_payload_download_request())
   formatted <- format_notes(notes$notes)
   expect_equal(formatted, paste0(c(
     "Project notes:",

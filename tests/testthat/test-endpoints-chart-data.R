@@ -1,8 +1,8 @@
 test_that("input time series works with programme/art data", {
   input <- input_time_series_request(
-    file.path("testdata", "programme.csv"),
+    test_path("testdata", "programme.csv"),
     "programme",
-    file.path("testdata", "malawi.geojson"))
+    test_path("testdata", "malawi.geojson"))
   out <- input_time_series("programme", input)
 
   expect_equal(names(out), c("data", "metadata", "warnings"))

@@ -208,7 +208,8 @@ test_that("filters not returned if indicator missing from input data", {
 
 test_that("endpoint_validate_survey_programme programme", {
   endpoint <- endpoint_validate_survey_programme()
-  response <- endpoint$run(readLines("payload/validate_programme_payload.json"))
+  response <- endpoint$run(readLines(
+    system_file("payload", "validate_programme_payload.json")))
 
   expect_equal(response$status_code, 200)
   expect_null(response$error)
@@ -225,9 +226,9 @@ test_that("endpoint_validate_survey_programme works with programme data", {
   test_redis_available()
   queue <- test_queue(workers = 0)
   api <- api_build(queue)
-  res <- api$request("POST", "/validate/survey-and-programme",
-                     body =
-                       readLines("payload/validate_programme_payload.json"))
+  res <- api$request(
+    "POST", "/validate/survey-and-programme",
+    body = readLines(system_file("payload", "validate_programme_payload.json")))
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body)
   expect_equal(body$status, "success")
@@ -243,7 +244,8 @@ test_that("endpoint_validate_survey_programme works with programme data", {
 
 test_that("endpoint_validate_survey_programme anc", {
   endpoint <- endpoint_validate_survey_programme()
-  response <- endpoint$run(readLines("payload/validate_anc_payload.json"))
+  response <- endpoint$run(readLines(
+    system_file("payload", "validate_anc_payload.json")))
 
   expect_equal(response$status_code, 200)
   expect_null(response$error)
@@ -261,8 +263,9 @@ test_that("endpoint_validate_survey_programme works with anc data", {
   test_redis_available()
   queue <- test_queue(workers = 0)
   api <- api_build(queue)
-  res <- api$request("POST", "/validate/survey-and-programme",
-                     body = readLines("payload/validate_anc_payload.json"))
+  res <- api$request(
+    "POST", "/validate/survey-and-programme",
+    body = readLines(system_file("payload", "validate_anc_payload.json")))
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body)
   expect_equal(body$status, "success")
@@ -279,7 +282,8 @@ test_that("endpoint_validate_survey_programme works with anc data", {
 
 test_that("endpoint_validate_survey_programme survey", {
   endpoint <- endpoint_validate_survey_programme()
-  response <- endpoint$run(readLines("payload/validate_survey_payload.json"))
+  response <- endpoint$run(readLines(
+    system_file("payload", "validate_survey_payload.json")))
 
   expect_equal(response$status_code, 200)
   expect_null(response$error)
@@ -295,8 +299,9 @@ test_that("endpoint_validate_survey_programme works with survey data", {
   test_redis_available()
   queue <- test_queue(workers = 0)
   api <- api_build(queue)
-  res <- api$request("POST", "/validate/survey-and-programme",
-                     body = readLines("payload/validate_survey_payload.json"))
+  res <- api$request(
+    "POST", "/validate/survey-and-programme",
+    body = readLines(system_file("payload", "validate_survey_payload.json")))
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body)
   expect_equal(body$status, "success")

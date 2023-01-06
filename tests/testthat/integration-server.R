@@ -9,7 +9,7 @@ test_that("Root", {
 })
 
 test_that("validate pjnz", {
-  payload <- file.path("payload", "validate_pjnz_payload.json")
+  payload <- system_file("payload", "validate_pjnz_payload.json")
   r <- server$request(
     "POST", "/validate/baseline-individual",
     body = httr::upload_file(payload, type = "application/json"),
@@ -30,7 +30,7 @@ test_that("validate pjnz", {
 })
 
 test_that("validate shape", {
-  payload <- file.path("payload", "validate_shape_payload.json")
+  payload <- system_file("payload", "validate_shape_payload.json")
   r <- server$request(
     "POST", "/validate/baseline-individual",
     body = httr::upload_file(payload, type = "application/json"),
@@ -51,7 +51,7 @@ test_that("validate shape", {
 })
 
 test_that("validate population", {
-  payload <- file.path("payload", "validate_population_payload.json")
+  payload <- system_file("payload", "validate_population_payload.json")
   r <- server$request(
     "POST", "/validate/baseline-individual",
     body = httr::upload_file(payload,type = "application/json"),
@@ -70,7 +70,7 @@ test_that("validate population", {
 })
 
 test_that("validate programme", {
-  payload <- file.path("payload", "validate_programme_payload.json")
+  payload <- system_file("payload", "validate_programme_payload.json")
   r <- server$request(
     "POST", "/validate/survey-and-programme",
     body = httr::upload_file(payload, type = "application/json"),
@@ -95,7 +95,7 @@ test_that("validate programme", {
 })
 
 test_that("validate ANC", {
-  payload <- file.path("payload", "validate_anc_payload.json")
+  payload <- system_file("payload", "validate_anc_payload.json")
   r <- server$request(
     "POST", "/validate/survey-and-programme",
     body = httr::upload_file(payload, type = "application/json"),
@@ -119,7 +119,7 @@ test_that("validate ANC", {
 })
 
 test_that("validate survey", {
-  payload <- file.path("payload", "validate_survey_payload.json")
+  payload <- system_file("payload", "validate_survey_payload.json")
   r <- server$request(
     "POST", "/validate/survey-and-programme",
     body = httr::upload_file(payload, type = "application/json"),
@@ -143,7 +143,7 @@ test_that("validate survey", {
 })
 
 test_that("validate baseline", {
-  payload <- file.path("payload", "validate_baseline_payload.json")
+  payload <- system_file("payload", "validate_baseline_payload.json")
   r <- server$request(
     "POST", "/validate/baseline-combined",
     body = httr::upload_file(payload, type = "application/json"),
@@ -157,7 +157,7 @@ test_that("validate baseline", {
 
 test_that("model interactions", {
   test_mock_model_available()
-  payload <- setup_submit_payload()
+  payload <- setup_payload_submit()
 
   ## Submit a model run
   r <- server$request(
@@ -220,7 +220,7 @@ test_that("model interactions", {
 })
 
 test_that("real model can be run & calibrated by API", {
-  payload <- setup_submit_payload()
+  payload <- setup_payload_submit()
   ## Results can be stored in specified results directory
   results_dir <- tempfile("results")
   dir.create(results_dir)
@@ -282,7 +282,7 @@ test_that("real model can be run & calibrated by API", {
   expect_true(response$data$complete)
 
   ## Calibrate submit
-  payload <- setup_calibrate_payload()
+  payload <- setup_payload_calibrate()
   r <- test_server$request(
     "POST",  paste0("/calibrate/submit/", id),
     body = httr::upload_file(payload, type = "application/json"),
@@ -370,7 +370,7 @@ test_that("default plotting metadata is exposed", {
 })
 
 test_that("model run options are exposed", {
-  options <- file.path("payload", "model_run_options_payload.json")
+  options <- system_file("payload", "model_run_options_payload.json")
   r <- server$request(
     "POST", "/model/options",
     body = httr::upload_file(options, type = "application/json"),
@@ -476,7 +476,7 @@ test_that("model run options are exposed", {
 })
 
 test_that("model options can be validated", {
-  payload <- "payload/validate_options_payload.json"
+  payload <- system_file("payload", "validate_options_payload.json")
 
   r <- server$request(
     "POST", "/validate/options",
@@ -520,7 +520,7 @@ test_that("worker information is returned", {
 
 test_that("download streams bytes", {
   test_mock_model_available()
-  payload <- setup_submit_payload()
+  payload <- setup_payload_submit()
 
   ## Run a model
   r <- server$request(
@@ -545,7 +545,7 @@ test_that("download streams bytes", {
   })
 
   ## Calibrate submit
-  payload <- setup_calibrate_payload()
+  payload <- setup_payload_calibrate()
   r <- server$request(
     "POST",  paste0("/calibrate/submit/", model_fit_id),
     body = httr::upload_file(payload, type = "application/json"),
@@ -690,7 +690,7 @@ test_that("crashed worker can be detected", {
   test_server$start()
 
   ## Submit a model run
-  payload <- setup_submit_payload()
+  payload <- setup_payload_submit()
   r <- test_server$request(
     "POST", "/model/submit",
     body = httr::upload_file(payload, type = "application/json"),
@@ -740,7 +740,7 @@ test_that("crashed worker can be detected", {
 
 test_that("model run can be cancelled", {
   test_mock_model_available()
-  payload <- setup_submit_payload()
+  payload <- setup_payload_submit()
 
   ## Submit a model run
   r <- server$request(
@@ -779,7 +779,7 @@ test_that("model run can be cancelled", {
 
 test_that("endpoint_model_submit can be run without anc or programme data", {
   test_mock_model_available()
-  payload <- setup_submit_payload(include_anc_art = FALSE)
+  payload <- setup_payload_submit(include_anc_art = FALSE)
 
   ## Run a model
   r <- server$request(
