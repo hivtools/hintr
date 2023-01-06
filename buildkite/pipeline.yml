@@ -20,6 +20,8 @@ steps:
 
   - label: ":codecov: Codecov"
     command: docker/coverage
+    agents:
+      queue: "browser-test"
 
   - label: ":shipit: Push images"
     command: docker/push
