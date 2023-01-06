@@ -237,7 +237,7 @@ test_that("real model can be run & calibrated by API", {
   controller <- rrq::rrq_controller$new(queue_id = queue_id)
   res <- controller$message_send_and_wait("EVAL",
                                           "Sys.getenv('USE_MOCK_MODEL')")
-  expect_equivalent(res, c("false", "false"))
+  expect_equal(res, c("false", "false"), ignore_attr = TRUE)
 
   ## Submit a model run
   r <- test_server$request(
@@ -515,7 +515,7 @@ test_that("worker information is returned", {
   response <- response_from_json(r)
   expect_equal(response$status, "success")
   expect_match(names(response$data), "^[a-z]+_[a-z]+_[12]$")
-  expect_equivalent(response$data, list("IDLE", "IDLE"))
+  expect_equal(response$data, list("IDLE", "IDLE"), ignore_attr = TRUE)
 })
 
 test_that("download streams bytes", {

@@ -186,7 +186,7 @@ test_that("erroring model run returns useful messages", {
   expect_equal(names(error$data[[1]]), c("error", "detail", "key", "trace"))
   expect_equal(error$data[[1]]$error, scalar("MODEL_RUN_FAILED"))
   expect_equal(error$data[[1]]$detail, scalar("test error"))
-  expect_match(error$data[[1]]$key, "\\w-\\w-\\w")
+  expect_match(error$data[[1]]$key, "\\w+-\\w+-\\w+")
 
   trace <- vapply(error$data[[1]]$trace, identity, character(1))
   expect_true("rrq:::rrq_worker_main()" %in% trace)
@@ -308,7 +308,7 @@ test_that("failed cancel sends reasonable message", {
   expect_equal(error$data[[1]]$error, scalar("FAILED_TO_CANCEL"))
   expect_match(error$data[[1]]$detail,
                scalar("Task [[:xdigit:]]+ is not cancelable \\(MISSING\\)"))
-  expect_is(error$data[[1]]$key, "character")
+  expect_type(error$data[[1]]$key, "character")
   expect_equal(error$status_code, 400)
 })
 

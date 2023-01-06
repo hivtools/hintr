@@ -39,3 +39,4 @@ test_that("main worker can create a calibrate only worker", {
   expect_equal(args[[1]], "queue_id")
   expect_equal(args$worker_config, "calibrate_only")
 })
+

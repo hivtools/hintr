@@ -731,7 +731,7 @@ test_that("endpoint_hintr_version works", {
   endpoint <- endpoint_hintr_version()
   response <- endpoint$run()
 
-  expect_is(response$data, "list")
+  expect_type(response$data, "list")
   expect_setequal(names(response$data), c("hintr", "naomi", "rrq", "traduire"))
   expect_equal(response$data$rrq, scalar(as.character(packageVersion("rrq"))))
 })
@@ -745,7 +745,7 @@ test_that("api can call endpoint_hintr_version", {
   expect_equal(res$status, 200)
   response <- jsonlite::fromJSON(res$body)
 
-  expect_is(response$data, "list")
+  expect_type(response$data, "list")
   expect_setequal(names(response$data), c("hintr", "naomi", "rrq", "traduire"))
   expect_equal(response$data$rrq, as.character(packageVersion("rrq")))
 })
