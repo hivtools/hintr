@@ -237,7 +237,7 @@ test_that("real model can be run & calibrated by API", {
   controller <- rrq::rrq_controller$new(queue_id = queue_id)
   res <- controller$message_send_and_wait("EVAL",
                                           "Sys.getenv('USE_MOCK_MODEL')")
-  expect_equal(res, c("false", "false"), ignore_attr = TRUE)
+  expect_equal(res, list("false", "false"), ignore_attr = TRUE)
 
   ## Submit a model run
   r <- test_server$request(
