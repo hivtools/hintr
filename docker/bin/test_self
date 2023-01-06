@@ -9,4 +9,4 @@ echo "--- Checking package :checkered_flag:"
 
 echo "--- Testing package :test_tube:"
 R CMD INSTALL hintr_$VERSION.tar.gz
-Rscript -e 'testthat::test_local("src", reporter = testthat::ParallelProgressReporter$new())'
+Rscript -e 'testthat::test_local("/src", reporter = testthat::ParallelProgressReporter$new())'
