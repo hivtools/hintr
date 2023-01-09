@@ -28,6 +28,7 @@ docker run --rm --network=$NAME_NETWORK \
        -e VALIDATE_JSON_SCHEMAS=true \
        -e USE_MOCK_MODEL=true \
        -e _R_CHECK_CRAN_INCOMING_=FALSE \
+       -e TESTTHAT_CPUS=4 \
        -e CODECOV_TOKEN \
        --entrypoint Rscript \
        --name $NAME_HINTR_TESTS \
