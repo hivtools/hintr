@@ -271,7 +271,7 @@ test_that("error messages from naomi are translated", {
   model_submit <- submit_model(queue)
   ## Create a population file which deliberately will cause an error
   payload <- setup_payload_submit(test_path("testdata"))
-  payload <- jsonlite::read_json(path)
+  payload <- jsonlite::fromJSON(payload)
   pop <- read.csv(payload$data$population$path)
   pop$sex <- NULL
   t <- tempfile()

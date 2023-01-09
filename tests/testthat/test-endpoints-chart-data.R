@@ -58,7 +58,7 @@ test_that("input_time_series throws error if unknown file type", {
 test_that("input_time_series catches unexpected errors", {
   input <- setup_payload_input_time_series(
     test_path("testdata"),
-    "unknown.csv",
+    "malawi.geojson",
     "anc")
   error <- expect_error(input_time_series("anc", input))
   expect_equal(error$data[[1]]$error, scalar("FAILED_TO_GENERATE_TIME_SERIES"))

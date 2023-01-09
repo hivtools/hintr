@@ -228,7 +228,7 @@ test_that("endpoint_validate_survey_programme works with programme data", {
   api <- api_build(queue)
   res <- api$request(
     "POST", "/validate/survey-and-programme",
-    body = setup_payload_validate_programme(test_path("payload")))
+    body = setup_payload_validate_programme(test_path("testdata")))
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body)
   expect_equal(body$status, "success")
