@@ -243,7 +243,7 @@ setup_payload_download_request <- function(version = NULL,
                  '"state":',
                  state_payload)
   }
-  paste(c(payload, "}"), collapse = "\n")
+  to_json(json_verbatim(c(payload, "}")))
 }
 
 setup_payload_rehydrate <- function(
