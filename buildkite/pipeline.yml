@@ -7,6 +7,8 @@ steps:
   - label: ":hammer: Unit tests"
     command: docker/test_check
     key: "unit-tests"
+    agents:
+      queue: "parallel"
 
   - label: ":hammer_and_pick: Integration tests"
     command: docker/test_integration
@@ -18,6 +20,8 @@ steps:
 
   - label: ":codecov: Codecov"
     command: docker/coverage
+    agents:
+      queue: "parallel"
 
   - label: ":shipit: Push images"
     command: docker/push

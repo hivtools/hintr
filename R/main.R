@@ -58,7 +58,9 @@ main_worker <- function(args = commandArgs(TRUE)) {
 }
 
 rrq_worker_from_config <- function(...) {
+  # nocov start
   rrq::rrq_worker_from_config(...)
+  # nocov end
 }
 
 docopt_parse <- function(usage, args) {
