@@ -4,7 +4,7 @@ setup <- function() {
   nw <- docker$network$create("hintr_nw")
   redis <- docker$container$run("redis", name = "redis",
                                 network = nw, detach = TRUE, rm = TRUE)
-  hintr <- docker$container$run("mrcide/hintr:master", name = "hintr",
+  hintr <- docker$container$run("mrcide/hintr:29c2b61", name = "hintr",
                                 ports = "8888:8888",
                                 env = c(REDIS_URL = "redis://redis:6379",
                                         USE_MOCK_MODEL = "true"),
@@ -26,18 +26,44 @@ setup <- function() {
     stop("Failed to bring up server in time")
   }
 
-  function() {
-    hintr$kill()
-    redis$kill()
-    nw$remove()
-  }
+  list(
+    containers = list(
+      hintr = hintr,
+      redis = redis
+    ),
+    cleanup = function() {
+      hintr$kill()
+      redis$kill()
+      nw$remove()
+    }
+  )
 }
 
-run_command <- function(x, env) {
-  cmd <- paste("curl -s", glue::glue(x$command, .envir = env))
-  x$output <- system(cmd, intern = TRUE)
+run_command <- function(x, env, containers) {
+  data_cmd <- ""
+  if (!is.null(x$data)) {
+    data <- containers$hintr$exec(cmd = c("Rscript", "-e", x$data),
+                                  working_dir = "/src", stderr = FALSE,
+                                  stream = FALSE)
+    if (data$exit_code != 0) {
+      stop("Failed to prepare input data ", data$output)
+    }
+    data_cmd <- paste("--data", format_input_data(as.character(data$output)))
+    cmd <- paste0("curl -s ", data_cmd,
+                 glue::glue(x$command, .envir = env, .trim = FALSE))
+  } else {
+    cmd <- paste("curl -s", glue::glue(x$command, .envir = env))
+  }
+  x$cmd <- cmd
+  x$output <- system(x$cmd, intern = TRUE)
   if (x$format == "json") {
     parsed <- jsonlite::fromJSON(x$output)
+    if (!is.null(parsed$errors)) {
+      stop(parsed$errors)
+    }
+    if (parsed$status != "success") {
+      stop(paste(parsed$errors$error, parsed$errors$detail))
+    }
   } else {
     parsed <- x$output
   }
@@ -73,21 +99,21 @@ pretty_truncate <- function(x, format = "json", max = 20) {
   str
 }
 
-pretty_command <- function(x, width = 55) {
-  x <- paste("$ curl", x)
-  if (nchar(x) > width) {
-    x <- strwrap(x, exdent = 4, width = width)
-    i <- seq_len(length(x) - 1)
-    x[i] <- paste(x[i], "\\")
-  }
+pretty_command <- function(x, width = 80) {
+  x <- paste("$", x)
+  x <- strsplit(x, "\n")[[1]]
   x
+}
+
+format_input_data <- function(data) {
+  paste0("'", glue::trim(jsonlite::prettify(data)), "' \\\n")
 }
 
 render <- function(x) {
   c(x$comment,
     "",
     "```",
-    pretty_command(x$command),
+    pretty_command(x$cmd),
     "```",
     "",
     "```json",
@@ -95,7 +121,7 @@ render <- function(x) {
     "```")
 }
 
-process <- function() {
+process <- function(containers) {
   env <- new.env()
   dat <- yaml::read_yaml("README.yml")
   for (i in seq_along(dat)) {
@@ -103,7 +129,7 @@ process <- function() {
     if (is.null(dat[[i]]$format)) {
       dat[[i]]$format <- "json"
     }
-    dat[[i]] <- run_command(dat[[i]], env)
+    dat[[i]] <- run_command(dat[[i]], env, containers)
   }
   res <- lapply(dat, render)
 
@@ -117,9 +143,9 @@ process <- function() {
 }
 
 main <- function() {
-  cleanup <- setup()
-  #on.exit(cleanup())
-  process()
+  setup <- setup()
+  on.exit(setup$cleanup())
+  process(setup$containers)
 }
 
 if (!interactive()) {
