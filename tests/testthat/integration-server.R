@@ -370,7 +370,7 @@ test_that("default plotting metadata is exposed", {
 })
 
 test_that("model run options are exposed", {
-  options <- setup_payload_model_options(test_path("testdata"))
+  payload <- setup_payload_model_options(test_path("testdata"))
   r <- server$request(
     "POST", "/model/options",
     body = payload,
@@ -837,7 +837,7 @@ test_that("input time series can return plot data for anc", {
 })
 
 test_that("rehydrate", {
-  payload <- setup_reydrate_payload()
+  payload <- setup_rehydrate_payload()
 
   r <- server$request("POST",
                       "/rehydrate/submit",
