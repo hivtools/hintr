@@ -268,6 +268,7 @@ verify_result_available <- function(queue, id, version = NULL) {
     result <- queue$result(id)
     naomi:::assert_model_output_version(result, version = version)
   } else if (task_status == "ERROR") {
+    result <- queue$result(id)
     hintr_error(result$message, "MODEL_RUN_FAILED", job_id = scalar(id))
   } else if (task_status == "DIED") {
     hintr_error(t_("MODEL_RESULT_CRASH"), "MODEL_RUN_FAILED")
