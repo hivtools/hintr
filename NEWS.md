@@ -15,7 +15,6 @@
 # hintr 1.1.6
 
 * Add endpoint `/internal/prerun` to run a prerun which builds state JSON from input and output files
->>>>>>> master
 
 # hintr 1.1.2
 
