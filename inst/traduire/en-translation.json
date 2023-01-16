@@ -23,6 +23,7 @@
     "PJNZ_INVALID_ZIP": "Zip contains no PJNZ files",
     "RUN_MODEL_MOCK_START": "Started mock model",
     "RUN_MODEL_MOCK_FINISH": "Finished mock model",
+    "MOCK_MODEL_ERROR": "Mock model has errored because option '{{option}}' is TRUE",
     "INPUTS_PJNZ_ZIP_MIXED": "Zip contains PJNZs for mixed countries, got {{countries}}",
     "INPUTS_PJNZ_ZIP_REGION0": "Zip contains {{count}} PJNZ files with spectrum region code 0. Should be max 1 PJNZ with spectrum region code 0 got:\n{{err}}",
     "VALIDATION_COLUMN_NAMES": "Data missing column {{missing}}.",

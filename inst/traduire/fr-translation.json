@@ -23,6 +23,7 @@
     "PJNZ_INVALID_ZIP": "Le zip ne contient aucun fichier PJNZ",
     "RUN_MODEL_MOCK_START": "Maquette commencée",
     "RUN_MODEL_MOCK_FINISH": "Maquette terminée",
+    "MOCK_MODEL_ERROR": "Le modèle fantaisie s'est trompé car l'option '{{option}}' est TRUE",
     "INPUTS_PJNZ_ZIP_MIXED": "Le Zip contient des PJNZ pour différents pays, il s’agit de {{countries}}",
     "INPUTS_PJNZ_ZIP_REGION0": "Le Zip contient {{count}} fichiers PJNZ avec le code de région de Spectrum 0. Il doit exister au maximum 1 PJNZ avec le code de région de Spectrum 0 et nous en avons :\n{{err}}",
     "VALIDATION_COLUMN_NAMES": "Colonne de données manquantes {{missing}}.",
