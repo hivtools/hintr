@@ -292,6 +292,6 @@ test_that("mock model can be forced to error", {
   )
   expect_error(
     run_model(data, options, tempdir()),
-    "Mock model has errored because options 'mock_model_trigger_error' is TRUE"
+    "Mock model has errored because option 'mock_model_trigger_error' is TRUE"
   )
 })
