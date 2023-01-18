@@ -39,6 +39,7 @@ Suggests:
     covr,
     httr,
     jsonvalidate,
+    mockr,
     mockery,
     ps,
     redux,
@@ -47,4 +48,7 @@ Suggests:
     withr
 Remotes:
     mrc-ide/geojsonio,
-    mrc-ide/rrq
+    mrc-ide/rrq,
+    mrc-ide/mockr
+Config/testthat/edition: 3
+Config/testthat/parallel: true

@@ -50,10 +50,16 @@ main_worker <- function(args = commandArgs(TRUE)) {
   if (args$calibrate_only) {
     worker_config <- "calibrate_only"
   }
-  worker <- rrq::rrq_worker_from_config(hintr_queue_id(args$queue_id, TRUE),
-                                        worker_config = worker_config)
+  worker <- rrq_worker_from_config(hintr_queue_id(args$queue_id, TRUE),
+                                    worker_config = worker_config)
   worker$loop()
   invisible(TRUE)
+  # nocov end
+}
+
+rrq_worker_from_config <- function(...) {
+  # nocov start
+  rrq::rrq_worker_from_config(...)
   # nocov end
 }
 

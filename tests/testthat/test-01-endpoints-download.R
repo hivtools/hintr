@@ -1,6 +1,3 @@
-context("endpoints-download")
-
-
 test_that("spectrum download returns bytes", {
   test_mock_model_available()
   q <- test_queue_result()

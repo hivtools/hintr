@@ -1,5 +1,3 @@
-context("utils")
-
 test_that("can check for empty", {
   expect_true(is_empty(NULL))
   expect_true(is_empty(NA))

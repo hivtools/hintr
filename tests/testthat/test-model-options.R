@@ -1,5 +1,3 @@
-context("model-options")
-
 test_that("do_endpoint_model_options correctly builds options and fallbacks", {
   shape <- file_object(file.path("testdata", "malawi.geojson"))
   survey <- file_object(file.path("testdata", "survey.csv"))
@@ -7,7 +5,7 @@ test_that("do_endpoint_model_options correctly builds options and fallbacks", {
   anc <- file_object(file.path("testdata", "anc.csv"))
 
   mock_get_controls_json <- mockery::mock('"{"test"}')
-  with_mock("naomi.options::get_controls_json" = mock_get_controls_json,  {
+  with_mock(get_controls_json = mock_get_controls_json,  {
     json <- do_endpoint_model_options(shape, survey, art, anc)
     args <- mockery::mock_args(mock_get_controls_json)
   })
@@ -95,7 +93,7 @@ test_that("do_endpoint_model_options without programme data", {
   survey <- file_object(file.path("testdata", "survey.csv"))
 
   mock_get_controls_json <- mockery::mock('"{"test"}')
-  with_mock("naomi.options::get_controls_json" = mock_get_controls_json,  {
+  with_mock(get_controls_json = mock_get_controls_json,  {
     json <- do_endpoint_model_options(shape, survey, NULL, NULL)
     args <- mockery::mock_args(mock_get_controls_json)
   })
@@ -163,8 +161,8 @@ test_that("do_endpoint_model_options fallback anc year2 to 2021 if in data", {
 
   mock_get_controls_json <- mockery::mock('"{"test"}')
   mock_get_years <- mockery::mock(c(2021, 2020, 2019))
-  with_mock("naomi.options::get_controls_json" = mock_get_controls_json,
-            "hintr:::get_years" = mock_get_years, {
+  with_mock(get_controls_json = mock_get_controls_json,
+            get_years = mock_get_years, {
     json <- do_endpoint_model_options(shape, survey, art, anc)
     args <- mockery::mock_args(mock_get_controls_json)
   })
@@ -357,7 +355,7 @@ test_that("model options work when survey_mid_calendar_quarter missing", {
   survey$path <- t
 
   mock_get_controls_json <- mockery::mock('"{"test"}')
-  with_mock("naomi.options::get_controls_json" = mock_get_controls_json,  {
+  with_mock(get_controls_json = mock_get_controls_json,  {
     json <- do_endpoint_model_options(shape, survey, art, anc)
     args <- mockery::mock_args(mock_get_controls_json)
   })

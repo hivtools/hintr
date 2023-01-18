@@ -63,7 +63,7 @@ test_queue_result <- function(model = mock_model, calibrate = mock_calibrate,
     } else {
       model <- clone_model_output(model)
       calibrate <- clone_model_output(calibrate)
-      if (model$version == packageVersion("naomi")) {
+      if (model$version == utils::packageVersion("naomi")) {
         calibrate$warnings <- list(
           list(
             text = "ART coverage greater than 100% for 10 age groups",

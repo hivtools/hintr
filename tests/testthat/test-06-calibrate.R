@@ -1,5 +1,3 @@
-context("calibrate")
-
 test_that("calibration can be run", {
   test_mock_model_available()
 
@@ -166,10 +164,10 @@ test_that("model calibration fails is version out of date", {
                                "naomi": "0.0.15",
                                "rrq": "0.2.1"
                                }')
-  with_mock("hintr:::verify_result_available" = mock_verify_result_available, {
-    calibrate <- submit_calibrate(queue)
-    error <- expect_error(calibrate("id", readLines(path)))
-  })
+  calibrate <- submit_calibrate(queue)
+  mockery::stub(calibrate, "verify_result_available",
+                mock_verify_result_available)
+  error <- expect_error(calibrate("id", readLines(path)))
 
   expect_equal(error$data[[1]]$error, scalar("VERSION_OUT_OF_DATE"))
   expect_equal(error$data[[1]]$detail, scalar(

@@ -1,5 +1,3 @@
-context("logging")
-
 test_that("Can log verbosely", {
   tmp <- tempfile()
   on.exit(unlink(tmp))

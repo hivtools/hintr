@@ -1,5 +1,3 @@
-context("validate-json")
-
 test_that("schema validation can be turned off", {
   withr::with_envvar(list(VALIDATE_JSON_SCHEMAS = "true"), {
     expect_true(validate_schemas())
