@@ -29,7 +29,7 @@ docker run --rm -it --network=$NAME_NETWORK \
        -e PORCELAIN_VALIDATE=true \
        -e USE_MOCK_MODEL=true \
        -e _R_CHECK_CRAN_INCOMING_=FALSE \
-       -e TESTTHAT_CPUS=4 \
+       -e TESTTHAT_CPUS=$NUM_CORES \
        --entrypoint sh \
        --name $NAME_HINTR_TESTS \
        $TAG_HINTR_TESTS \
