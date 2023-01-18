@@ -54,7 +54,7 @@ hintr_submit_prerun <- function(inputs, model_output, calibrate_output,
   })
   names(uploaded_inputs) <- names(inputs)
 
-  output_upload <- setNames(
+  output_upload <- stats::setNames(
     c(model_output$model_output_path, calibrate_output$plot_data_path,
       calibrate_output$model_output_path),
     c("fit_model_output", "calibrate_plot_data", "calibrate_model_output"))

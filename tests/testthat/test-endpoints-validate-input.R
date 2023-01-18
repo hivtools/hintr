@@ -1,5 +1,3 @@
-context("endpoints-validate")
-
 test_that("validate_baseline correctly validates data", {
   input <- validate_baseline_input(file.path("testdata", "Botswana2018.PJNZ"),
                                    "pjnz")
@@ -35,7 +33,7 @@ test_that("endpoint_validate_baseline validates the data in the response", {
   input <- validate_baseline_input(file.path("testdata", "Botswana2018.PJNZ"),
                                    "pjnz")
   mock_validate_json_schema <- mockery::mock(TRUE, cycle = TRUE)
-  with_mock("hintr:::validate_json_schema" = mock_validate_json_schema, {
+  with_mock(validate_json_schema = mock_validate_json_schema, {
     response <- validate_baseline(input)
   })
 
@@ -85,7 +83,7 @@ test_that("error thrown if more than 1 country with a 0 spectrum region code", {
               "zmb_all_pjnz_extract.zip"),
     "pjnz")
   mock_region_code <- mockery::mock(0, cycle = TRUE)
-  with_mock("naomi::read_spectrum_region_code" = mock_region_code, {
+  with_mock(read_spectrum_region_code = mock_region_code, {
     error <- expect_error(validate_baseline(input))
   })
   expect_equal(error$data[[1]]$error, scalar("INVALID_FILE"))

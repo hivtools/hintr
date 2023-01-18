@@ -1,5 +1,3 @@
-context("api")
-
 test_that("don't change language if not asked to", {
   data <- new.env()
   tr <- hintr_translator()
@@ -557,10 +555,7 @@ test_that("erroring model run returns useful messages", {
   expect_true(!is.null(body$data$id))
 
   out <- queue$queue$task_wait(body$data$id)
-  mock_id <- mockery::mock(scalar("fake_key"), cycle = TRUE)
-  with_mock("ids::proquint" = mock_id, {
-    res <- api$request("GET", sprintf("/model/result/%s", body$data$id))
-  })
+  res <- api$request("GET", sprintf("/model/result/%s", body$data$id))
   expect_equal(res$status, 400)
   body <- jsonlite::fromJSON(res$body)
 
@@ -569,7 +564,7 @@ test_that("erroring model run returns useful messages", {
   expect_true(nrow(body$errors) == 1)
   expect_equal(body$errors[1, "error"], "MODEL_RUN_FAILED")
   expect_equal(body$errors[1, "detail"], "test error")
-  expect_equal(body$errors[1, "key"], "fake_key")
+  expect_match(body$errors[1, "key"], "\\w+-\\w+-\\w+")
   expect_true("rrq:::rrq_worker_main()" %in% body$errors[1, "trace"][[1]])
 })
 
@@ -749,7 +744,7 @@ test_that("endpoint_hintr_version works", {
   endpoint <- endpoint_hintr_version()
   response <- endpoint$run()
 
-  expect_is(response$data, "list")
+  expect_type(response$data, "list")
   expect_setequal(names(response$data), c("hintr", "naomi", "rrq", "traduire"))
   expect_equal(response$data$rrq, scalar(as.character(packageVersion("rrq"))))
 })
@@ -763,7 +758,7 @@ test_that("api can call endpoint_hintr_version", {
   expect_equal(res$status, 200)
   response <- jsonlite::fromJSON(res$body)
 
-  expect_is(response$data, "list")
+  expect_type(response$data, "list")
   expect_setequal(names(response$data), c("hintr", "naomi", "rrq", "traduire"))
   expect_equal(response$data$rrq, as.character(packageVersion("rrq")))
 })
@@ -807,7 +802,7 @@ test_that("api can call endpoint_hintr_stop", {
 
   queue <- test_queue()
   mock_hintr_stop <- mockery::mock(function() NULL)
-  with_mock("hintr:::hintr_stop" = mock_hintr_stop, {
+  with_mock(hintr_stop = mock_hintr_stop, {
     api <- api_build(queue)
     res <- api$request("POST", "/hintr/stop")
   })

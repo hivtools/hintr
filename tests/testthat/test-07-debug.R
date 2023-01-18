@@ -33,7 +33,7 @@ test_that("Debug endpoint returns debug information", {
   ## Smoke test options are passed through
   expect_true(length(info$objects$options) > 25)
   expect_true(list(area_scope = "MWI") %in% info$objects$options)
-  expect_is(info$sessionInfo, "sessionInfo")
+  expect_s3_class(info$sessionInfo, "sessionInfo")
   expect_equal(names(info$objects$data),
                c("pjnz", "shape", "population", "survey", "programme", "anc"))
   expect_equal(names(info$objects$data$pjnz), c("path", "hash", "filename"))
@@ -73,9 +73,9 @@ test_that("Debug endpoint returns debug information for calibrate", {
     c("data.rds", "files"))
   info <- readRDS(file.path(dest, id, "data.rds"))
 
-  expect_is(info$objects$model_output, "hintr_output")
+  expect_s3_class(info$objects$model_output, "hintr_output")
   expect_true(length(info$objects$calibration_options) > 5)
-  expect_is(info$sessionInfo, "sessionInfo")
+  expect_s3_class(info$sessionInfo, "sessionInfo")
   expect_equal(info$objects$model_output$model_output_path,
                dir(file.path(dest, id, "files")))
   expect_null(info$objects$model_output$plot_data_path)
@@ -110,9 +110,9 @@ test_that("Debug endpoint returns debug information for download", {
     c("data.rds", "files"))
   info <- readRDS(file.path(dest, id, "data.rds"))
 
-  expect_is(info$objects$model_output, "hintr_output")
+  expect_s3_class(info$objects$model_output, "hintr_output")
   expect_equal(info$objects$type, "spectrum")
-  expect_is(info$sessionInfo, "sessionInfo")
+  expect_s3_class(info$sessionInfo, "sessionInfo")
   files <- c(info$objects$model_output$model_output_path,
              info$objects$model_output$plot_data_path)
   expect_setequal(files, dir(file.path(dest, id, "files")))

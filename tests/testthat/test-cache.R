@@ -1,5 +1,3 @@
-context("cache")
-
 test_that("with_cache does not call target expression on cache hit", {
   cache <- new_cache()
   key <- "aaa"

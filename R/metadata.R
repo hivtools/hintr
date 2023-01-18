@@ -1,9 +1,13 @@
 do_plotting_metadata <- function(iso3) {
-  metadata <- naomi::get_plotting_metadata(iso3)
+  metadata <- get_plotting_metadata(iso3)
   metadata <- metadata[metadata$data_type %in%
                          c("survey", "anc", "output", "programme"), ]
   metadata <- metadata[order(metadata$indicator_sort_order), ]
   lapply(split(metadata, metadata$data_type), build_data_type_metadata)
+}
+
+get_plotting_metadata <- function(...) {
+  naomi::get_plotting_metadata(...)
 }
 
 build_data_type_metadata <- function(metadata) {
@@ -53,7 +57,7 @@ get_barchart_metadata <- function(output, data_type = "output") {
 
 get_choropleth_metadata <- function(output) {
   iso3 <- get_country_iso3(output$area_id)
-  metadata <- naomi::get_plotting_metadata(iso3)
+  metadata <- get_plotting_metadata(iso3)
   metadata <- metadata[
     metadata$data_type == "output" & metadata$plot_type == "choropleth",
     c("indicator", "value_column", "error_low_column", "error_high_column",

@@ -1,5 +1,3 @@
-context("adr-metadata")
-
 test_that("can return upload metadata for ADR spectrum", {
   test_mock_model_available()
   q <- test_queue_result()

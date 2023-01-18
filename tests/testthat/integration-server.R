@@ -1,5 +1,3 @@
-context("server")
-
 server <- porcelain::porcelain_background$new(
   api, args = list(queue_id = paste0("hintr:", ids::random_id())))
 server$start()
@@ -239,7 +237,7 @@ test_that("real model can be run & calibrated by API", {
   controller <- rrq::rrq_controller$new(queue_id = queue_id)
   res <- controller$message_send_and_wait("EVAL",
                                           "Sys.getenv('USE_MOCK_MODEL')")
-  expect_equivalent(res, c("false", "false"))
+  expect_equal(res, list("false", "false"), ignore_attr = TRUE)
 
   ## Submit a model run
   r <- test_server$request(
@@ -523,7 +521,7 @@ test_that("worker information is returned", {
   response <- response_from_json(r)
   expect_equal(response$status, "success")
   expect_match(names(response$data), "^[a-z]+_[a-z]+_[12]$")
-  expect_equivalent(response$data, list("IDLE", "IDLE"))
+  expect_equal(response$data, list("IDLE", "IDLE"), ignore_attr = TRUE)
 })
 
 test_that("download streams bytes", {
@@ -652,7 +650,7 @@ test_that("can quit", {
   r <- tryCatch(
     httr::POST(paste0(server$url, "/hintr/stop")),
     error = identity)
-  expect_is(r, "error")
+  expect_type(r, "error")
 
   ## Sleep to give time for process to be killed before checking
   Sys.sleep(2)
@@ -743,7 +741,7 @@ test_that("crashed worker can be detected", {
                "MODEL_RUN_FAILED")
   expect_equal(dat$errors[[1]]$detail,
                "Worker has crashed - error details are unavailable")
-  expect_is(dat$errors[[1]]$key, "character")
+  expect_type(dat$errors[[1]]$key, "character")
 })
 
 test_that("model run can be cancelled", {

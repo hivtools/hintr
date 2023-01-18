@@ -1,5 +1,3 @@
-context("run-model")
-
 test_that("model can be run & calibrated and filters extracted", {
   test_mock_model_available()
   res <- process_result(mock_calibrate)
@@ -79,7 +77,8 @@ test_that("model without national level results can be processed", {
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
   expect_true(nrow(res$data) > 84042)
-  expect_equivalent(as.data.frame(res$data)[1, "area_id"], "MWI_1_1_demo")
+  expect_equal(as.data.frame(res$data)[1, "area_id"], "MWI_1_1_demo",
+               ignore_attr = TRUE)
   expect_equal(names(res$plottingMetadata), c("barchart", "choropleth"))
   barchart <- res$plottingMetadata$barchart
   expect_equal(names(barchart), c("indicators", "filters", "defaults"))
