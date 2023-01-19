@@ -24,6 +24,11 @@ run_model <- function(data, options, path_results, language = NULL) {
       )
     )
 
+    if (!is.null(options$mock_model_trigger_error) &&
+        options$mock_model_trigger_error == "true") {
+      stop(t_("MOCK_MODEL_ERROR", list(option = "mock_model_trigger_error")))
+    }
+
     signalCondition(structure(progress_start,
                               class = c("progress", "condition")))
     Sys.sleep(5)
