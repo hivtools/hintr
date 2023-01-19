@@ -120,7 +120,7 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
     )
   }
 
-  options <- naomi.options::get_controls_json(
+  options <- get_controls_json(
     "model", iso3, options, values,
     config = list(include_art = has_art,
                   include_anc = has_anc,
