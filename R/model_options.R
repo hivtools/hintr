@@ -100,9 +100,32 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
     anc_art_coverage_year2 = anc_year2_default
   )
 
-  get_controls_json("model", iso3, options, values,
-                    config = list(include_art = has_art,
-                                  include_anc = has_anc))
+  additional_control_groups <- NULL
+  if (use_mock_model()) {
+    additional_control_groups <- list(
+      list(
+        label = "Trigger mock model error",
+        controls = list(
+          list(
+            name = "mock_model_trigger_error",
+            type = "select",
+            help_text = "Set TRUE to force the model fit to error",
+            required = TRUE,
+            options = list(list(id = "true", label = "Yes"),
+                           list(id = "false", label = "No")),
+            value = "false"
+          )
+        )
+      )
+    )
+  }
+
+  options <- get_controls_json(
+    "model", iso3, options, values,
+    config = list(include_art = has_art,
+                  include_anc = has_anc,
+                  additional_control_groups = additional_control_groups))
+  options
 }
 
 get_level_options <- function(json) {
