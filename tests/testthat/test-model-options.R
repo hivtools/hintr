@@ -1,8 +1,8 @@
 test_that("do_endpoint_model_options correctly builds options and fallbacks", {
-  shape <- file_object(file.path("testdata", "malawi.geojson"))
-  survey <- file_object(file.path("testdata", "survey.csv"))
-  art <- file_object(file.path("testdata", "programme.csv"))
-  anc <- file_object(file.path("testdata", "anc.csv"))
+  shape <- file_object(test_path("testdata", "malawi.geojson"))
+  survey <- file_object(test_path("testdata", "survey.csv"))
+  art <- file_object(test_path("testdata", "programme.csv"))
+  anc <- file_object(test_path("testdata", "anc.csv"))
 
   mock_get_controls_json <- mockery::mock('"{"test"}')
   with_mock(get_controls_json = mock_get_controls_json,  {
