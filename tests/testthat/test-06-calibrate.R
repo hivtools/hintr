@@ -23,8 +23,8 @@ test_that("calibrate can set language", {
   ## With french translation
   expect_error(run_calibrate(model_output, list(opt = "options"), tempdir(),
                              language = "fr"),
-               paste0("La sortie du modèle n'est pas à jour. Veuillez ",
-                      "relancer le modèle et réessayer."))
+               paste0("La sortie du modèle est obsolète, ",
+                      "veuillez relancer le modèle et réessayer."))
 })
 
 test_that("can calibrate a model result", {
