@@ -254,7 +254,7 @@ test_that("download returns useful error if model run fails", {
   test_mock_model_available()
 
   ## Create a population file which deliberately will cause an error
-  payload <- setup_payload_submit(test_path("testdata"))
+  payload <- setup_payload_submit()
   payload <- jsonlite::fromJSON(payload)
   pop <- read.csv(payload$data$population$path)
   pop$sex <- NULL
@@ -314,7 +314,7 @@ test_that("download fails with old model run result", {
 
 test_that("trying to download result for errored model run returns error", {
   queue <- MockQueue$new(workers = 1)
-  payload <- setup_payload_submit(test_path("testdata"))
+  payload <- setup_payload_submit()
   model_submit <- submit_model(queue)
   response <- model_submit(payload)
   expect_true("id" %in% names(response))

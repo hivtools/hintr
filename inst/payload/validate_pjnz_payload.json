@@ -1,7 +1,7 @@
 {
   "type": "pjnz",
   "file": {
-    "path": "<+pjnz+>",
+    "path": "testdata/Malawi2019.PJNZ",
     "filename": "Malawi2019.PJNZ",
     "hash": "12345",
     "fromADR": false,

@@ -1,6 +1,8 @@
-server <- porcelain::porcelain_background$new(
-  api, args = list(queue_id = paste0("hintr:", ids::random_id())))
-server$start()
+withr::with_dir(testthat::test_path(), {
+  server <- porcelain::porcelain_background$new(
+    api, args = list(queue_id = paste0("hintr:", ids::random_id())))
+  server$start()
+})
 
 test_that("Root", {
   r <- server$request("GET", "/")
@@ -9,7 +11,7 @@ test_that("Root", {
 })
 
 test_that("validate pjnz", {
-  payload <- setup_payload_validate_pjnz(test_path("testdata"))
+  payload <- system_file("payload", "validate_pjnz_payload.json")
   r <- server$request(
     "POST", "/validate/baseline-individual",
     body = payload,
@@ -30,7 +32,7 @@ test_that("validate pjnz", {
 })
 
 test_that("validate shape", {
-  payload <- setup_payload_validate_shape(test_path("testdata"))
+  payload <- system_file("payload", "validate_shape_payload.json")
   r <- server$request(
     "POST", "/validate/baseline-individual",
     body = payload,
@@ -51,7 +53,7 @@ test_that("validate shape", {
 })
 
 test_that("validate population", {
-  payload <- setup_payload_validate_population(test_path("testdata"))
+  payload <- system_file("payload", "validate_population_payload.json")
   r <- server$request(
     "POST", "/validate/baseline-individual",
     body = payload,
@@ -70,7 +72,7 @@ test_that("validate population", {
 })
 
 test_that("validate programme", {
-  payload <- setup_payload_validate_programme(test_path("testdata"))
+  payload <- system_file("payload", "validate_programme_payload.json")
   r <- server$request(
     "POST", "/validate/survey-and-programme",
     body = payload,
@@ -119,7 +121,7 @@ test_that("validate ANC", {
 })
 
 test_that("validate survey", {
-  payload <- setup_payload_validate_survey(test_path("testdata"))
+  payload <- system_file("payload", "validate_survey_payload.json")
   r <- server$request(
     "POST", "/validate/survey-and-programme",
     body = payload,
@@ -143,7 +145,7 @@ test_that("validate survey", {
 })
 
 test_that("validate baseline", {
-  payload <- setup_payload_validate_baseline(test_path("testdata"))
+  payload <- system_file("payload", "validate_baseline_payload.json")
   r <- server$request(
     "POST", "/validate/baseline-combined",
     body = payload,
@@ -157,7 +159,7 @@ test_that("validate baseline", {
 
 test_that("model interactions", {
   test_mock_model_available()
-  payload <- setup_payload_submit(test_path("testdata"))
+  payload <- setup_payload_submit()
 
   ## Submit a model run
   r <- server$request(
@@ -220,7 +222,7 @@ test_that("model interactions", {
 })
 
 test_that("real model can be run & calibrated by API", {
-  payload <- setup_payload_submit(test_path("testdata"))
+  payload <- setup_payload_submit()
   ## Results can be stored in specified results directory
   results_dir <- tempfile("results")
   dir.create(results_dir)
@@ -370,7 +372,7 @@ test_that("default plotting metadata is exposed", {
 })
 
 test_that("model run options are exposed", {
-  payload <- setup_payload_model_options(test_path("testdata"))
+  payload <- system_file("payload", "model_run_options_payload.json")
   r <- server$request(
     "POST", "/model/options",
     body = payload,
@@ -482,7 +484,7 @@ test_that("model run options are exposed", {
 })
 
 test_that("model options can be validated", {
-  payload <- setup_payload_model_options_validate(test_path("testdata"))
+  payload <- system_file("payload", "validate_options_payload.json")
 
   r <- server$request(
     "POST", "/validate/options",
@@ -526,7 +528,7 @@ test_that("worker information is returned", {
 
 test_that("download streams bytes", {
   test_mock_model_available()
-  payload <- setup_payload_submit(test_path("testdata"))
+  payload <- setup_payload_submit()
 
   ## Run a model
   r <- server$request(
@@ -696,7 +698,7 @@ test_that("crashed worker can be detected", {
   test_server$start()
 
   ## Submit a model run
-  payload <- setup_payload_submit(test_path("testdata"))
+  payload <- setup_payload_submit()
   r <- test_server$request(
     "POST", "/model/submit",
     body = payload,
@@ -746,7 +748,7 @@ test_that("crashed worker can be detected", {
 
 test_that("model run can be cancelled", {
   test_mock_model_available()
-  payload <- setup_payload_submit(test_path("testdata"))
+  payload <- setup_payload_submit()
 
   ## Submit a model run
   r <- server$request(

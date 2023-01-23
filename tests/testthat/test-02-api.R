@@ -57,7 +57,7 @@ test_that("can build api", {
 
 test_that("endpoint_baseline_individual", {
   endpoint <- endpoint_baseline_individual()
-  response <- endpoint$run(setup_payload_validate_pjnz(test_path("testdata")))
+  response <- endpoint$run(system_file("payload", "validate_pjnz_payload.json"))
   expect_equal(response$status_code, 200)
   expect_null(response$error)
   expect_equal(response$data$hash, scalar("12345"))
@@ -75,7 +75,7 @@ test_that("endpoint_baseline_individual works", {
   queue <- test_queue(workers = 0)
   api <- api_build(queue)
   res <- api$request("POST", "/validate/baseline-individual",
-                     body = setup_payload_validate_pjnz(test_path("testdata")))
+                     body = system_file("payload", "validate_pjnz_payload.json"))
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body)
   expect_equal(body$data$hash, "12345")
@@ -89,8 +89,8 @@ test_that("endpoint_baseline_individual works", {
 
 test_that("endpoint_baseline_combined", {
   endpoint <- endpoint_baseline_combined()
-  response <- endpoint$run(
-    setup_payload_validate_baseline(test_path("testdata")))
+  response <- endpoint$run(system_file("payload",
+                                       "validate_baseline_payload.json"))
 
   expect_equal(response$status_code, 200)
   expect_null(response$error)
@@ -103,7 +103,7 @@ test_that("endpoint_baseline_combined works", {
   api <- api_build(queue)
   res <- api$request(
     "POST", "/validate/baseline-combined",
-    body = setup_payload_validate_baseline(test_path("testdata")))
+    body = system_file("payload", "validate_baseline_payload.json"))
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body)
   expect_equal(body$status, "success")
@@ -113,7 +113,8 @@ test_that("endpoint_baseline_combined works", {
 
 test_that("endpoint_model_options", {
   endpoint <- endpoint_model_options()
-  response <- endpoint$run(setup_payload_model_options(test_path("testdata")))
+  response <- endpoint$run(
+    system_file("payload", "model_run_options_payload.json"))
 
   expect_equal(response$status_code, 200)
   expect_null(response$error)
@@ -227,7 +228,7 @@ test_that("endpoint_model_options works", {
   api <- api_build(queue)
   res <- api$request(
     "POST", "/model/options",
-    body = setup_payload_model_options(test_path("testdata")))
+    body = system_file("payload", "model_run_options_payload.json"))
   expect_equal(res$status, 200)
   body <- jsonlite::parse_json(res$body)
   expect_equal(names(body$data), "controlSections")
@@ -338,7 +339,7 @@ test_that("endpoint_model_options_validate can be run", {
 
   endpoint <- endpoint_model_options_validate()
   response <- endpoint$run(
-    setup_payload_model_options_validate(test_path("testdata")))
+    system_file("payload", "validate_options_payload.json"))
 
   expect_equal(response$status_code, 200)
   expect_null(response$error)
@@ -357,7 +358,7 @@ test_that("api can call endpoint_model_options_validate", {
   api <- api_build(queue)
   res <- api$request(
     "POST", "/validate/options",
-    body = setup_payload_model_options_validate(test_path("testdata")))
+    body = system_file("payload", "validate_options_payload.json"))
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body, simplifyVector = FALSE)
   expect_equal(body$status, "success")
@@ -375,7 +376,7 @@ test_that("endpoint_model_submit can be run", {
   test_redis_available()
   queue <- test_queue(workers = 0)
   endpoint <- endpoint_model_submit(queue)
-  payload <- setup_payload_submit(test_path("testdata"))
+  payload <- setup_payload_submit()
   response <- endpoint$run(payload)
 
   expect_equal(response$status_code, 200)
@@ -387,7 +388,7 @@ test_that("api can call endpoint_model_submit", {
   test_redis_available()
   queue <- test_queue()
   api <- api_build(queue)
-  payload <- setup_payload_submit(test_path("testdata"))
+  payload <- setup_payload_submit()
   res <- api$request("POST", "/model/submit", body = payload)
 
   expect_equal(res$status, 200)
@@ -402,7 +403,7 @@ test_that("endpoint_model_status can be run", {
   test_mock_model_available()
   queue <- test_queue(workers = 1)
   model_run <- endpoint_model_submit(queue)
-  payload <- setup_payload_submit(test_path("testdata"))
+  payload <- setup_payload_submit()
   run_response <- model_run$run(payload)
 
   expect_equal(run_response$status_code, 200)
@@ -430,7 +431,7 @@ test_that("api can call endpoint_model_status", {
   test_mock_model_available()
   queue <- test_queue(workers = 1)
   api <- api_build(queue)
-  payload <- setup_payload_submit(test_path("testdata"))
+  payload <- setup_payload_submit()
   res <- api$request("POST", "/model/submit", body = payload)
 
   expect_equal(res$status, 200)
@@ -461,7 +462,7 @@ test_that("endpoint_model_result can be run", {
   test_mock_model_available()
   queue <- test_queue(workers = 1)
   model_run <- endpoint_model_submit(queue)
-  payload <- setup_payload_submit(test_path("testdata"))
+  payload <- setup_payload_submit()
   run_response <- model_run$run(payload)
 
   expect_equal(run_response$status_code, 200)
@@ -488,7 +489,7 @@ test_that("api can call endpoint_model_result", {
   test_mock_model_available()
   queue <- test_queue(workers = 1)
   api <- api_build(queue)
-  payload <- setup_payload_submit(test_path("testdata"))
+  payload <- setup_payload_submit()
   res <- api$request("POST", "/model/submit", body = payload)
 
   expect_equal(res$status, 200)
@@ -519,7 +520,7 @@ test_that("endpoint_model_cancel can be run", {
   test_mock_model_available()
   queue <- test_queue(workers = 1)
   model_run <- endpoint_model_submit(queue)
-  payload <- setup_payload_submit(test_path("testdata"))
+  payload <- setup_payload_submit()
   run_response <- model_run$run(payload)
 
   expect_equal(run_response$status_code, 200)
@@ -537,7 +538,7 @@ test_that("api can call endpoint_model_cancel", {
   test_mock_model_available()
   queue <- test_queue(workers = 1)
   api <- api_build(queue)
-  payload <- setup_payload_submit(test_path("testdata"))
+  payload <- setup_payload_submit()
   res <- api$request("POST", "/model/submit", body = payload)
 
   expect_equal(res$status, 200)
@@ -559,7 +560,7 @@ test_that("erroring model run returns useful messages", {
 
   queue <- MockQueue$new()
   api <- api_build(queue)
-  payload <- setup_payload_submit(test_path("testdata"))
+  payload <- setup_payload_submit()
   res <- api$request("POST", "/model/submit", body = payload)
 
   expect_equal(res$status, 200)
@@ -712,7 +713,7 @@ test_that("endpoint_model_debug can be run", {
 
   queue <- test_queue(workers = 1)
   run_endpoint <- endpoint_model_submit(queue)
-  payload <- setup_payload_submit(test_path("testdata"))
+  payload <- setup_payload_submit()
   run_response <- run_endpoint$run(payload)
 
   expect_equal(run_response$status_code, 200)
@@ -736,7 +737,7 @@ test_that("api can call endpoint_model_debug", {
   api <- api_build(queue)
 
   ## Run the model
-  payload <- setup_payload_submit(test_path("testdata"))
+  payload <- setup_payload_submit()
   res <- api$request("POST", "/model/submit", body = payload)
 
   expect_equal(res$status, 200)

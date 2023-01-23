@@ -38,17 +38,8 @@ $ curl -s http://localhost:8888
 Validate PJNZ
 
 ```
-$ curl -s --data '{
-    "type": "pjnz",
-    "file": {
-        "path": "/src/tests/testthat/testdata/Malawi2019.PJNZ",
-        "filename": "Malawi2019.PJNZ",
-        "hash": "12345",
-        "fromADR": false,
-        "resource_url": "https://adr.unaids.org/file/123.csv"
-    }
-}' \
--X POST -H 'Content-Type: application/json' \
+$ curl -s -X POST -H 'Content-Type: application/json' \
+--data @inst/payload/validate_pjnz_payload.json \
 http://localhost:8888/validate/baseline-individual
 ```
 
@@ -73,16 +64,8 @@ http://localhost:8888/validate/baseline-individual
 Validate shape file and return serialised data
 
 ```
-$ curl -s --data '{
-    "type": "shape",
-    "file": {
-        "path": "/src/tests/testthat/testdata/malawi.geojson",
-        "filename": "original.geojson",
-        "hash": "12345",
-        "fromADR": false
-    }
-}' \
--X POST -H 'Content-Type: application/json' \
+$ curl -s -X POST -H 'Content-Type: application/json' \
+--data @inst/payload/validate_shape_payload.json \
 http://localhost:8888/validate/baseline-individual
 ```
 
@@ -112,16 +95,8 @@ http://localhost:8888/validate/baseline-individual
 Validate population data
 
 ```
-$ curl -s --data '{
-    "type": "population",
-    "file": {
-        "path": "/src/tests/testthat/testdata/population.csv",
-        "filename": "original.csv",
-        "hash": "12345",
-        "fromADR": false
-    }
-}' \
--X POST -H 'Content-Type: application/json' \
+$ curl -s -X POST -H 'Content-Type: application/json' \
+--data @inst/payload/validate_population_payload.json \
 http://localhost:8888/validate/baseline-individual
 ```
 
@@ -143,12 +118,8 @@ http://localhost:8888/validate/baseline-individual
 Validate baseline data
 
 ```
-$ curl -s --data '{
-    "pjnz": "/src/tests/testthat/testdata/Malawi2019.PJNZ",
-    "shape": "/src/tests/testthat/testdata/malawi.geojson",
-    "population": "/src/tests/testthat/testdata/population.csv"
-}' \
--X POST -H 'Content-Type: application/json' \
+$ curl -s -X POST -H 'Content-Type: application/json' \
+--data @inst/payload/validate_baseline_payload.json \
 http://localhost:8888/validate/baseline-combined
 ```
 
@@ -164,17 +135,8 @@ http://localhost:8888/validate/baseline-combined
 Validate programme ART data
 
 ```
-$ curl -s --data '{
-    "type": "programme",
-    "file": {
-        "path": "/src/tests/testthat/testdata/programme.csv",
-        "filename": "original.csv",
-        "hash": "12345",
-        "fromADR": false
-    },
-    "shape": "/src/tests/testthat/testdata/malawi.geojson"
-}' \
--X POST -H 'Content-Type: application/json' \
+$ curl -s -X POST -H 'Content-Type: application/json' \
+--data @inst/payload/validate_programme_payload.json \
 http://localhost:8888/validate/survey-and-programme
 ```
 
@@ -204,18 +166,8 @@ http://localhost:8888/validate/survey-and-programme
 Validate ANC data
 
 ```
-$ curl -s --data '{
-    "type": "anc",
-    "file": {
-        "path": "/src/tests/testthat/testdata/anc.csv",
-        "hash": "12345",
-        "filename": "original.csv",
-        "fromADR": false,
-        "resource_url": "https://adr.unaids.org/file/123.csv"
-    },
-    "shape": "/src/tests/testthat/testdata/malawi.geojson"
-}' \
--X POST -H 'Content-Type: application/json' \
+$ curl -s -X POST -H 'Content-Type: application/json' \
+--data @inst/payload/validate_anc_payload.json \
 http://localhost:8888/validate/survey-and-programme
 ```
 
@@ -245,17 +197,8 @@ http://localhost:8888/validate/survey-and-programme
 Validate survey data
 
 ```
-$ curl -s --data '{
-    "type": "survey",
-    "file": {
-        "path": "/src/tests/testthat/testdata/survey.csv",
-        "filename": "original.csv",
-        "hash": "12345",
-        "fromADR": false
-    },
-    "shape": "/src/tests/testthat/testdata/malawi.geojson"
-}' \
--X POST -H 'Content-Type: application/json' \
+$ curl -s -X POST -H 'Content-Type: application/json' \
+--data @inst/payload/validate_survey_payload.json \
 http://localhost:8888/validate/survey-and-programme
 ```
 
@@ -285,33 +228,8 @@ http://localhost:8888/validate/survey-and-programme
 Get model run options
 
 ```
-$ curl -s --data '{
-    "shape": {
-        "path": "/src/tests/testthat/testdata/malawi.geojson",
-        "filename": "original.geojson",
-        "hash": "12345",
-        "fromADR": false
-    },
-    "survey": {
-        "path": "/src/tests/testthat/testdata/survey.csv",
-        "filename": "original.csv",
-        "hash": "12345",
-        "fromADR": false
-    },
-    "programme": {
-        "path": "/src/tests/testthat/testdata/programme.csv",
-        "filename": "original.csv",
-        "hash": "12345",
-        "fromADR": false
-    },
-    "anc": {
-        "path": "/src/tests/testthat/testdata/anc.csv",
-        "filename": "original.csv",
-        "hash": "12345",
-        "fromADR": false
-    }
-}' \
--X POST -H 'Content-Type: application/json' \
+$ curl -s -X POST -H 'Content-Type: application/json' \
+--data @inst/payload/model_run_options_payload.json \
 http://localhost:8888/model/options
 ```
 
@@ -326,17 +244,17 @@ http://localhost:8888/model/options
                 "description": "Select general model options:",
                 "controlGroups": [
                     {
-                        "label": "Area scope",
+                        "label": "Trigger mock model error",
                         "controls": [
                             {
-                                "name": "area_scope",
-                                "type": "multiselect",
+                                "name": "mock_model_trigger_error",
+                                "type": "select",
                                 "required": true,
+                                "helpText": "Set TRUE to force the model fit to error",
                                 "options": [
                                     {
-                                        "id": "MWI",
-                                        "label": "Malawi - Demo",
-... truncated 1804 lines of output
+                                        "id": "true",
+... truncated 1826 lines of output
 ```
 Run a model
 
@@ -344,37 +262,37 @@ Run a model
 $ curl -s --data '{
     "data": {
         "pjnz": {
-            "path": "/src/tests/testthat/testdata/Malawi2019.PJNZ",
+            "path": "testdata/Malawi2019.PJNZ",
             "filename": "Malawi2019.PJNZ",
             "hash": "12345",
             "fromADR": false
         },
         "shape": {
-            "path": "/src/tests/testthat/testdata/malawi.geojson",
+            "path": "testdata/malawi.geojson",
             "filename": "malawi.geojson",
             "hash": "12345",
             "fromADR": false
         },
         "population": {
-            "path": "/src/tests/testthat/testdata/population.csv",
+            "path": "testdata/population.csv",
             "filename": "population.csv",
             "hash": "12345",
             "fromADR": false
         },
         "survey": {
-            "path": "/src/tests/testthat/testdata/survey.csv",
+            "path": "testdata/survey.csv",
             "filename": "survey.csv",
             "hash": "12345",
             "fromADR": false
         },
         "programme": {
-            "path": "/src/tests/testthat/testdata/programme.csv",
+            "path": "testdata/programme.csv",
             "filename": "programme.csv",
             "hash": "12345",
             "fromADR": false
         },
         "anc": {
-            "path": "/src/tests/testthat/testdata/anc.csv",
+            "path": "testdata/anc.csv",
             "filename": "anc.csv",
             "hash": "12345",
             "fromADR": false
@@ -418,7 +336,7 @@ $ curl -s --data '{
         "max_iter": 250
     },
     "version": {
-        "hintr": "1.1.8",
+        "hintr": "1.1.9",
         "naomi": "2.8.12",
         "rrq": "0.5.7",
         "traduire": "0.0.6"
@@ -433,14 +351,14 @@ http://localhost:8888/model/submit
     "status": "success",
     "errors": null,
     "data": {
-        "id": "1311f63b10518c125ea8008b7fb47553"
+        "id": "957800d3055d679195ffe18aaf3391ab"
     }
 }
 ```
 Query status of model run
 
 ```
-$ curl -s http://localhost:8888/model/status/1311f63b10518c125ea8008b7fb47553
+$ curl -s http://localhost:8888/model/status/957800d3055d679195ffe18aaf3391ab
 ```
 
 ```json
@@ -455,14 +373,14 @@ $ curl -s http://localhost:8888/model/status/1311f63b10518c125ea8008b7fb47553
         "progress": [
 
         ],
-        "id": "1311f63b10518c125ea8008b7fb47553"
+        "id": "957800d3055d679195ffe18aaf3391ab"
     }
 }
 ```
 Get the result of a model run
 
 ```
-$ curl -s http://localhost:8888/model/result/1311f63b10518c125ea8008b7fb47553
+$ curl -s http://localhost:8888/model/result/957800d3055d679195ffe18aaf3391ab
 ```
 
 ```json
@@ -470,7 +388,7 @@ $ curl -s http://localhost:8888/model/result/1311f63b10518c125ea8008b7fb47553
     "status": "success",
     "errors": null,
     "data": {
-        "id": "1311f63b10518c125ea8008b7fb47553",
+        "id": "957800d3055d679195ffe18aaf3391ab",
         "complete": true,
         "warnings": [
             {
@@ -499,14 +417,14 @@ $ curl -s --data '{
         "calibrate_method": "logistic"
     },
     "version": {
-        "hintr": "1.1.8",
+        "hintr": "1.1.9",
         "naomi": "2.8.12",
         "rrq": "0.5.7",
         "traduire": "0.0.6"
     }
 }' \
 -X POST -H 'Content-Type: application/json' \
-http://localhost:8888/calibrate/submit/1311f63b10518c125ea8008b7fb47553
+http://localhost:8888/calibrate/submit/957800d3055d679195ffe18aaf3391ab
 ```
 
 ```json
@@ -514,14 +432,14 @@ http://localhost:8888/calibrate/submit/1311f63b10518c125ea8008b7fb47553
     "status": "success",
     "errors": null,
     "data": {
-        "id": "9fe689ab7c1f2366910cbe892d3c6ce9"
+        "id": "d5d08f4783975d8092e049adec43726b"
     }
 }
 ```
 Query status of calibrate run
 
 ```
-$ curl -s http://localhost:8888/calibrate/status/9fe689ab7c1f2366910cbe892d3c6ce9
+$ curl -s http://localhost:8888/calibrate/status/d5d08f4783975d8092e049adec43726b
 ```
 
 ```json
@@ -536,14 +454,14 @@ $ curl -s http://localhost:8888/calibrate/status/9fe689ab7c1f2366910cbe892d3c6ce
         "progress": [
 
         ],
-        "id": "9fe689ab7c1f2366910cbe892d3c6ce9"
+        "id": "d5d08f4783975d8092e049adec43726b"
     }
 }
 ```
 Get the result of a calibrate run
 
 ```
-$ curl -s http://localhost:8888/calibrate/result/9fe689ab7c1f2366910cbe892d3c6ce9
+$ curl -s http://localhost:8888/calibrate/result/d5d08f4783975d8092e049adec43726b
 ```
 
 ```json
@@ -674,7 +592,7 @@ $ curl -s --data '{
             "id": "6e457f5a9f0413708624b7b0384e5fd0"
         },
         "version": {
-            "hintr": "1.1.8",
+            "hintr": "1.1.9",
             "naomi": "2.8.12",
             "rrq": "0.5.7",
             "traduire": "0.0.6"
@@ -682,7 +600,7 @@ $ curl -s --data '{
     }
 }' \
 -X POST -H 'Content-Type: application/json' \
-http://localhost:8888/download/submit/spectrum/9fe689ab7c1f2366910cbe892d3c6ce9
+http://localhost:8888/download/submit/spectrum/d5d08f4783975d8092e049adec43726b
 ```
 
 ```json
@@ -690,14 +608,14 @@ http://localhost:8888/download/submit/spectrum/9fe689ab7c1f2366910cbe892d3c6ce9
     "status": "success",
     "errors": null,
     "data": {
-        "id": "4fa65b66c29f52bf00877608e2bc2afb"
+        "id": "930202bce97ebe49df170f0e59512357"
     }
 }
 ```
 Query status of download generation
 
 ```
-$ curl -s http://localhost:8888/download/status/4fa65b66c29f52bf00877608e2bc2afb
+$ curl -s http://localhost:8888/download/status/930202bce97ebe49df170f0e59512357
 ```
 
 ```json
@@ -712,33 +630,33 @@ $ curl -s http://localhost:8888/download/status/4fa65b66c29f52bf00877608e2bc2afb
         "progress": [
 
         ],
-        "id": "4fa65b66c29f52bf00877608e2bc2afb"
+        "id": "930202bce97ebe49df170f0e59512357"
     }
 }
 ```
 Headers for summary download result
 
 ```
-$ curl -s -I http://localhost:8888/download/result/4fa65b66c29f52bf00877608e2bc2afb
+$ curl -s -I http://localhost:8888/download/result/930202bce97ebe49df170f0e59512357
 ```
 
 ```json
 HTTP/1.1 200 OK
-Date: Mon, 09 Jan 2023 16:46:42 GMT
+Date: Mon, 23 Jan 2023 18:44:36 GMT
 Content-Type: application/octet-stream
-Content-Disposition: attachment; filename="MWI_naomi-output_20230109-1646.zip"
+Content-Disposition: attachment; filename="MWI_naomi-output_20230123-1844.zip"
 X-Porcelain-Validated: false
-Content-Length: 18808850
+Content-Length: 18810039
 
 ```
 Get the summary download result
 
 ```
-$ curl -s http://localhost:8888/download/result/4fa65b66c29f52bf00877608e2bc2afb
+$ curl -s http://localhost:8888/download/result/930202bce97ebe49df170f0e59512357
 ```
 
 ```json
-Hidden 73551 bytes of output
+Hidden 74802 bytes of output
 ```
 Get plotting metadata for Malawi
 
@@ -780,7 +698,7 @@ $ curl -s http://localhost:8888/hintr/version
     "status": "success",
     "errors": null,
     "data": {
-        "hintr": "1.1.8",
+        "hintr": "1.1.9",
         "naomi": "2.8.12",
         "rrq": "0.5.7",
         "traduire": "0.0.6"
@@ -798,8 +716,8 @@ $ curl -s http://localhost:8888/hintr/worker/status
     "status": "success",
     "errors": null,
     "data": {
-        "specular_anura_1": "IDLE",
-        "specular_anura_2": "IDLE"
+        "capsizable_pipit_1": "IDLE",
+        "capsizable_pipit_2": "IDLE"
     }
 }
 ```

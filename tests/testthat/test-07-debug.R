@@ -12,7 +12,7 @@ test_that("Debug endpoint returns debug information", {
   test_mock_model_available()
 
   ## Start the model running
-  payload <- setup_payload_submit(test_path("testdata"))
+  payload <- setup_payload_submit()
   queue <- test_queue(workers = 1)
   model_submit <- submit_model(queue)
   response <- model_submit(payload)

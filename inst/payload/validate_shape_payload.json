@@ -1,7 +1,7 @@
 {
   "type": "shape",
   "file": {
-    "path": "<+shape+>",
+    "path": "testdata/malawi.geojson",
     "filename": "original.geojson",
     "hash": "12345",
     "fromADR": false

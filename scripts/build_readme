@@ -4,11 +4,12 @@ setup <- function() {
   nw <- docker$network$create("hintr_nw")
   redis <- docker$container$run("redis", name = "redis",
                                 network = nw, detach = TRUE, rm = TRUE)
-  hintr <- docker$container$run("mrcide/hintr:master", name = "hintr",
+  hintr <- docker$container$run("mrcide/hintr:c211d8b", name = "hintr",
                                 ports = "8888:8888",
                                 env = c(REDIS_URL = "redis://redis:6379",
                                         USE_MOCK_MODEL = "true"),
-                                network = nw, detach = TRUE, rm = TRUE)
+                                network = nw, detach = TRUE, rm = TRUE,
+                                working_dir = "/src/tests/testthat")
 
   url <- "http://localhost:8888"
   for (i in seq_len(10)) {
@@ -50,13 +51,13 @@ run_command <- function(x, env, containers) {
     }
     data_cmd <- paste("--data", format_input_data(as.character(data$output)))
     cmd <- paste0("curl -s ", data_cmd,
-                 glue::glue(x$command, .envir = env, .trim = FALSE))
+                  glue::glue(x$command, .envir = env, .trim = FALSE))
   } else {
-    cmd <- paste("curl -s", glue::glue(x$command, .envir = env))
+    cmd <- paste("curl -s", glue::glue(x$command, .envir = env, .trim = FALSE))
   }
   x$cmd <- cmd
   x$output <- system(x$cmd, intern = TRUE)
-  if (x$format == "json") {
+  if (is.null(x$format) || x$format == "json") {
     parsed <- jsonlite::fromJSON(x$output)
     if (!is.null(parsed$errors)) {
       stop(parsed$errors)
@@ -99,7 +100,7 @@ pretty_truncate <- function(x, format = "json", max = 20) {
   str
 }
 
-pretty_command <- function(x, width = 80) {
+pretty_command <- function(x) {
   x <- paste("$", x)
   x <- strsplit(x, "\n")[[1]]
   x

@@ -4,56 +4,56 @@
 - comment: Validate PJNZ
   command: |
     -X POST -H 'Content-Type: application/json' \
+    --data @inst/payload/validate_pjnz_payload.json \
     http://localhost:8888/validate/baseline-individual
-  data: hintr:::setup_payload_validate_pjnz(testthat::test_path("testdata"))
 
 - comment: Validate shape file and return serialised data
   command: |
     -X POST -H 'Content-Type: application/json' \
+    --data @inst/payload/validate_shape_payload.json \
     http://localhost:8888/validate/baseline-individual
-  data: hintr:::setup_payload_validate_shape(testthat::test_path("testdata"))
 
 - comment: Validate population data
   command: |
     -X POST -H 'Content-Type: application/json' \
+    --data @inst/payload/validate_population_payload.json \
     http://localhost:8888/validate/baseline-individual
-  data: hintr:::setup_payload_validate_population(testthat::test_path("testdata"))
 
 - comment: Validate baseline data
   command: |
     -X POST -H 'Content-Type: application/json' \
+    --data @inst/payload/validate_baseline_payload.json \
     http://localhost:8888/validate/baseline-combined
-  data: hintr:::setup_payload_validate_baseline(testthat::test_path("testdata"))
 
 - comment: Validate programme ART data
   command: |
     -X POST -H 'Content-Type: application/json' \
+    --data @inst/payload/validate_programme_payload.json \
     http://localhost:8888/validate/survey-and-programme
-  data: hintr:::setup_payload_validate_programme(testthat::test_path("testdata"))
 
 - comment: Validate ANC data
   command: |
     -X POST -H 'Content-Type: application/json' \
+    --data @inst/payload/validate_anc_payload.json \
     http://localhost:8888/validate/survey-and-programme
-  data: hintr:::setup_payload_validate_anc(testthat::test_path("testdata"))
 
 - comment: Validate survey data
   command: |
     -X POST -H 'Content-Type: application/json' \
+    --data @inst/payload/validate_survey_payload.json \
     http://localhost:8888/validate/survey-and-programme
-  data: hintr:::setup_payload_validate_survey(testthat::test_path("testdata"))
 
 - comment: Get model run options
   command: |
     -X POST -H 'Content-Type: application/json' \
+    --data @inst/payload/model_run_options_payload.json \
     http://localhost:8888/model/options
-  data: hintr:::setup_payload_model_options(testthat::test_path("testdata"))
 
 - comment: Run a model
   command: |
     -X POST -H 'Content-Type: application/json' \
     http://localhost:8888/model/submit
-  data: hintr:::setup_payload_submit(testthat::test_path("testdata"))
+  data: hintr:::setup_payload_submit()
   collect:
     model_id: ["id"]
 

@@ -1,7 +1,7 @@
 {
   "type": "population",
   "file": {
-    "path": "<+population+>",
+    "path": "testdata/population.csv",
     "filename": "original.csv",
     "hash": "12345",
     "fromADR": false

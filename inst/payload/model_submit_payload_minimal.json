@@ -1,25 +1,25 @@
 {
   "data": {
     "pjnz": {
-      "path": "<+pjnz+>",
+      "path": "testdata/Malawi2019.PJNZ",
       "filename": "Malawi2019.PJNZ",
       "hash": "12345",
       "fromADR": false
     },
     "shape": {
-      "path": "<+shape+>",
+      "path": "testdata/malawi.geojson",
       "filename": "malawi.geojson",
       "hash": "12345",
       "fromADR": false
     },
     "population": {
-      "path": "<+population+>",
+      "path": "testdata/population.csv",
       "filename": "population.csv",
       "hash": "12345",
       "fromADR": false
     },
     "survey": {
-      "path": "<+survey+>",
+      "path": "testdata/survey.csv",
       "filename": "survey.csv",
       "hash": "12345",
       "fromADR": false
