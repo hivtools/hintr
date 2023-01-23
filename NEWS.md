@@ -1,3 +1,7 @@
+# hintr 1.1.9
+
+* Ensure Naomi options are translated based on `accept-language` header
+
 # hintr 1.1.8
 
 * Add `hintr_prerun` function which takes model inputs and outputs, saves them onto the server and then returns output zip with state JSON which can be used to rehydrate model outputs

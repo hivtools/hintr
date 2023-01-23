@@ -78,6 +78,8 @@ api_set_language <- function(data, req, res) {
     data$reset_language_hintr <- traduire::translator_set_language(language)
     data$reset_language_naomi <-
       traduire::translator_set_language(language, package = "naomi")
+    data$reset_language_naomi_options <-
+      traduire::translator_set_language(language, package = "naomi.options")
   }
   invisible(NULL)
 }
@@ -85,6 +87,9 @@ api_set_language <- function(data, req, res) {
 api_reset_language <- function(data, req, res, value) {
   if (!is.null(data$reset_language_naomi)) {
     data$reset_language_naomi()
+  }
+  if (!is.null(data$reset_language_naomi_options)) {
+    data$reset_language_naomi_options()
   }
   if (!is.null(data$reset_language_hintr)) {
     data$reset_language_hintr()

@@ -24,6 +24,10 @@ test_that("change language based on header", {
   tr_naomi$set_language("en")
   expect_equal(tr_naomi$language(), "en")
 
+  tr_naomi_options <- traduire::translator(package = "naomi.options")
+  tr_naomi_options$set_language("en")
+  expect_equal(tr_naomi_options$language(), "en")
+
   res <- MockPlumberResponse$new()
   req <- list(HEADERS = c("accept-language" = "fr"))
   value <- list("the response")
@@ -31,10 +35,12 @@ test_that("change language based on header", {
   expect_null(api_set_language(data, req, res))
   expect_equal(tr_hintr$language(), "fr")
   expect_equal(tr_naomi$language(), "fr")
+  expect_equal(tr_naomi_options$language(), "fr")
 
   expect_identical(api_reset_language(data, req, res, value), value)
   expect_equal(tr_hintr$language(), "en")
   expect_equal(tr_naomi$language(), "en")
+  expect_equal(tr_naomi_options$language(), "en")
 })
 
 test_that("can build api", {
