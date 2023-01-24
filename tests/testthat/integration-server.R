@@ -97,7 +97,7 @@ test_that("validate programme", {
 })
 
 test_that("validate ANC", {
-  payload <- setup_payload_validate_anc(test_path("testdata"))
+  payload <- system_file("payload", "validate_anc_payload.json")
   r <- server$request(
     "POST", "/validate/survey-and-programme",
     body = payload,
@@ -787,8 +787,7 @@ test_that("model run can be cancelled", {
 
 test_that("endpoint_model_submit can be run without anc or programme data", {
   test_mock_model_available()
-  payload <- setup_payload_submit(test_path("testdata"),
-                                  include_anc_art = FALSE)
+  payload <- setup_payload_submit(include_anc_art = FALSE)
 
   ## Run a model
   r <- server$request(
