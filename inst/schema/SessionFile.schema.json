@@ -6,7 +6,7 @@
     "hash" : { "type": "string" },
     "filename" : { "type": "string" },
     "fromADR":  { "type": "boolean" },
-    "resource_url": { "type": "string" }
+    "resource_url": { "type": [ "string", "null" ] }
   },
   "additionalProperties": false,
   "required": ["filename", "hash", "path"]
