@@ -1,5 +1,3 @@
-context("endpoints-hintr")
-
 test_that("endpoint worker status works", {
   test_redis_available()
   queue <- test_queue(workers = 2)

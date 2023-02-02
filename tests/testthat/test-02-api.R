@@ -1,5 +1,3 @@
-context("api")
-
 test_that("don't change language if not asked to", {
   data <- new.env()
   tr <- hintr_translator()
@@ -26,6 +24,10 @@ test_that("change language based on header", {
   tr_naomi$set_language("en")
   expect_equal(tr_naomi$language(), "en")
 
+  tr_naomi_options <- traduire::translator(package = "naomi.options")
+  tr_naomi_options$set_language("en")
+  expect_equal(tr_naomi_options$language(), "en")
+
   res <- MockPlumberResponse$new()
   req <- list(HEADERS = c("accept-language" = "fr"))
   value <- list("the response")
@@ -33,10 +35,12 @@ test_that("change language based on header", {
   expect_null(api_set_language(data, req, res))
   expect_equal(tr_hintr$language(), "fr")
   expect_equal(tr_naomi$language(), "fr")
+  expect_equal(tr_naomi_options$language(), "fr")
 
   expect_identical(api_reset_language(data, req, res, value), value)
   expect_equal(tr_hintr$language(), "en")
   expect_equal(tr_naomi$language(), "en")
+  expect_equal(tr_naomi_options$language(), "en")
 })
 
 test_that("can build api", {
@@ -117,36 +121,43 @@ test_that("endpoint_model_options", {
   expect_length(body$data$controlSections, 6)
 
   general_section <- body$data$controlSections[[1]]
-  expect_length(
-    general_section$controlGroups[[1]]$controls[[1]]$options, 1)
+  ## Additional option
   expect_equal(
-    names(general_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
+    general_section$controlGroups[[1]]$controls[[1]]$name,
+    "mock_model_trigger_error"
+  )
+  expect_length(
+    general_section$controlGroups[[1]]$controls[[1]]$options, 2)
+  expect_length(
+    general_section$controlGroups[[2]]$controls[[1]]$options, 1)
+  expect_equal(
+    names(general_section$controlGroups[[2]]$controls[[1]]$options[[1]]),
     c("id", "label", "children")
   )
   expect_equal(
-    general_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
+    general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
     "MWI"
   )
   expect_equal(
-    general_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
+    general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
     "Malawi - Demo"
   )
   expect_equal(
-    general_section$controlGroups[[1]]$controls[[1]]$value,
+    general_section$controlGroups[[2]]$controls[[1]]$value,
     "MWI")
   expect_length(
-    general_section$controlGroups[[2]]$controls[[1]]$options,
+    general_section$controlGroups[[3]]$controls[[1]]$options,
     5
   )
   expect_equal(
-    names(general_section$controlGroups[[2]]$controls[[1]]$options[[1]]),
+    names(general_section$controlGroups[[3]]$controls[[1]]$options[[1]]),
     c("id", "label")
   )
   expect_equal(
-    general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
+    general_section$controlGroups[[3]]$controls[[1]]$options[[1]]$id,
     "0")
   expect_equal(
-    general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
+    general_section$controlGroups[[3]]$controls[[1]]$options[[1]]$label,
     "Country")
 
   survey_section <- body$data$controlSections[[2]]
@@ -221,36 +232,42 @@ test_that("endpoint_model_options works", {
   expect_length(body$data$controlSections, 6)
 
   general_section <- body$data$controlSections[[1]]
-  expect_length(
-    general_section$controlGroups[[1]]$controls[[1]]$options, 1)
   expect_equal(
-    names(general_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
+    general_section$controlGroups[[1]]$controls[[1]]$name,
+    "mock_model_trigger_error"
+  )
+  expect_length(
+    general_section$controlGroups[[1]]$controls[[1]]$options, 2)
+  expect_length(
+    general_section$controlGroups[[2]]$controls[[1]]$options, 1)
+  expect_equal(
+    names(general_section$controlGroups[[2]]$controls[[1]]$options[[1]]),
     c("id", "label", "children")
   )
   expect_equal(
-    general_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
+    general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
     "MWI"
   )
   expect_equal(
-    general_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
+    general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
     "Malawi - Demo"
   )
   expect_equal(
-    general_section$controlGroups[[1]]$controls[[1]]$value,
+    general_section$controlGroups[[2]]$controls[[1]]$value,
     "MWI")
   expect_length(
-    general_section$controlGroups[[2]]$controls[[1]]$options,
+    general_section$controlGroups[[3]]$controls[[1]]$options,
     5
   )
   expect_equal(
-    names(general_section$controlGroups[[2]]$controls[[1]]$options[[1]]),
+    names(general_section$controlGroups[[3]]$controls[[1]]$options[[1]]),
     c("id", "label")
   )
   expect_equal(
-    general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
+    general_section$controlGroups[[3]]$controls[[1]]$options[[1]]$id,
     "0")
   expect_equal(
-    general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
+    general_section$controlGroups[[3]]$controls[[1]]$options[[1]]$label,
     "Country")
 
   survey_section <- body$data$controlSections[[2]]
@@ -544,10 +561,7 @@ test_that("erroring model run returns useful messages", {
   expect_true(!is.null(body$data$id))
 
   out <- queue$queue$task_wait(body$data$id)
-  mock_id <- mockery::mock(scalar("fake_key"), cycle = TRUE)
-  with_mock("ids::proquint" = mock_id, {
-    res <- api$request("GET", sprintf("/model/result/%s", body$data$id))
-  })
+  res <- api$request("GET", sprintf("/model/result/%s", body$data$id))
   expect_equal(res$status, 400)
   body <- jsonlite::fromJSON(res$body)
 
@@ -556,8 +570,8 @@ test_that("erroring model run returns useful messages", {
   expect_true(nrow(body$errors) == 1)
   expect_equal(body$errors[1, "error"], "MODEL_RUN_FAILED")
   expect_equal(body$errors[1, "detail"], "test error")
-  expect_equal(body$errors[1, "key"], "fake_key")
-  expect_match(body$errors[1, "trace"][[1]], "^# [[:xdigit:]]+$")
+  expect_match(body$errors[1, "key"], "\\w+-\\w+-\\w+")
+  expect_match(body$errors[1, "job_id"][[1]], "^[[:xdigit:]]+$")
 })
 
 test_that("endpoint_model_calibrate_options", {
@@ -736,7 +750,7 @@ test_that("endpoint_hintr_version works", {
   endpoint <- endpoint_hintr_version()
   response <- endpoint$run()
 
-  expect_is(response$data, "list")
+  expect_type(response$data, "list")
   expect_setequal(names(response$data), c("hintr", "naomi", "rrq", "traduire"))
   expect_equal(response$data$rrq, scalar(as.character(packageVersion("rrq"))))
 })
@@ -750,7 +764,7 @@ test_that("api can call endpoint_hintr_version", {
   expect_equal(res$status, 200)
   response <- jsonlite::fromJSON(res$body)
 
-  expect_is(response$data, "list")
+  expect_type(response$data, "list")
   expect_setequal(names(response$data), c("hintr", "naomi", "rrq", "traduire"))
   expect_equal(response$data$rrq, as.character(packageVersion("rrq")))
 })
@@ -794,7 +808,7 @@ test_that("api can call endpoint_hintr_stop", {
 
   queue <- test_queue()
   mock_hintr_stop <- mockery::mock(function() NULL)
-  with_mock("hintr:::hintr_stop" = mock_hintr_stop, {
+  with_mock(hintr_stop = mock_hintr_stop, {
     api <- api_build(queue)
     res <- api$request("POST", "/hintr/stop")
   })

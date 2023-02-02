@@ -1,5 +1,3 @@
-context("read-data")
-
 test_that("geojson read applies geojson class", {
   shape <- file_object(file.path("testdata", "malawi.geojson"))
   json <- hintr_geojson_read(shape)

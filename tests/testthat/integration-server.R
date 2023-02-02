@@ -1,5 +1,3 @@
-context("server")
-
 server <- porcelain::porcelain_background$new(
   api, args = list(queue_id = paste0("hintr:", ids::random_id())))
 server$start()
@@ -239,7 +237,7 @@ test_that("real model can be run & calibrated by API", {
   controller <- rrq::rrq_controller$new(queue_id = queue_id)
   res <- controller$message_send_and_wait("EVAL",
                                           "Sys.getenv('USE_MOCK_MODEL')")
-  expect_equivalent(res, c("false", "false"))
+  expect_equal(res, list("false", "false"), ignore_attr = TRUE)
 
   ## Submit a model run
   r <- test_server$request(
@@ -385,36 +383,42 @@ test_that("model run options are exposed", {
   expect_length(response$data$controlSections, 6)
 
   general_section <- response$data$controlSections[[1]]
-  expect_length(
-    general_section$controlGroups[[1]]$controls[[1]]$options, 1)
   expect_equal(
-    names(general_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
+    general_section$controlGroups[[1]]$controls[[1]]$name,
+    "mock_model_trigger_error"
+  )
+  expect_length(
+    general_section$controlGroups[[1]]$controls[[1]]$options, 2)
+  expect_length(
+    general_section$controlGroups[[2]]$controls[[1]]$options, 1)
+  expect_equal(
+    names(general_section$controlGroups[[2]]$controls[[1]]$options[[1]]),
     c("id", "label", "children")
   )
   expect_equal(
-    general_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
+    general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
     "MWI"
   )
   expect_equal(
-    general_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
+    general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
     "Malawi - Demo"
   )
   expect_equal(
-    general_section$controlGroups[[1]]$controls[[1]]$value,
+    general_section$controlGroups[[2]]$controls[[1]]$value,
     "MWI")
   expect_length(
-    general_section$controlGroups[[2]]$controls[[1]]$options,
+    general_section$controlGroups[[3]]$controls[[1]]$options,
     5
   )
   expect_equal(
-    names(general_section$controlGroups[[2]]$controls[[1]]$options[[1]]),
+    names(general_section$controlGroups[[3]]$controls[[1]]$options[[1]]),
     c("id", "label")
   )
   expect_equal(
-    general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
+    general_section$controlGroups[[3]]$controls[[1]]$options[[1]]$id,
     "0")
   expect_equal(
-    general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
+    general_section$controlGroups[[3]]$controls[[1]]$options[[1]]$label,
     "Country")
 
   survey_section <- response$data$controlSections[[2]]
@@ -517,7 +521,7 @@ test_that("worker information is returned", {
   response <- response_from_json(r)
   expect_equal(response$status, "success")
   expect_match(names(response$data), "^[a-z]+_[a-z]+_[12]$")
-  expect_equivalent(response$data, list("IDLE", "IDLE"))
+  expect_equal(response$data, list("IDLE", "IDLE"), ignore_attr = TRUE)
 })
 
 test_that("download streams bytes", {
@@ -646,7 +650,7 @@ test_that("can quit", {
   r <- tryCatch(
     httr::POST(paste0(server$url, "/hintr/stop")),
     error = identity)
-  expect_is(r, "error")
+  expect_type(r, "error")
 
   ## Sleep to give time for process to be killed before checking
   Sys.sleep(2)
@@ -737,7 +741,7 @@ test_that("crashed worker can be detected", {
                "MODEL_RUN_FAILED")
   expect_equal(dat$errors[[1]]$detail,
                "Worker has crashed - error details are unavailable")
-  expect_is(dat$errors[[1]]$key, "character")
+  expect_type(dat$errors[[1]]$key, "character")
 })
 
 test_that("model run can be cancelled", {

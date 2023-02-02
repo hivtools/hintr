@@ -24,11 +24,7 @@ download <- function(model_output, type, path_results, notes, state,
     out <- naomi::hintr_prepare_spectrum_download(model_output, download_path,
                                                   notes)
     if (file_exists(out$path) && !is.null(state)) {
-      t <- tempfile()
-      state_path <- file.path(t, PROJECT_STATE_PATH)
-      dir.create(dirname(state_path), FALSE, TRUE)
-      writeLines(jsonlite::prettify(state), state_path)
-      zip::zip_append(out$path, dirname(state_path), mode = "cherry-pick")
+      add_state_json(out$path, state)
     }
   } else {
     func <- switch(type,
@@ -40,4 +36,13 @@ download <- function(model_output, type, path_results, notes, state,
     out <- func(model_output, download_path)
   }
   out
+}
+
+add_state_json <- function(path, state) {
+  t <- tempfile()
+  state_path <- file.path(t, PROJECT_STATE_PATH)
+  dir.create(dirname(state_path), FALSE, TRUE)
+  writeLines(jsonlite::prettify(state), state_path)
+  zip::zip_append(path, dirname(state_path), mode = "cherry-pick")
+  invisible(TRUE)
 }

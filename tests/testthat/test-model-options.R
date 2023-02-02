@@ -1,13 +1,11 @@
-context("model-options")
-
 test_that("do_endpoint_model_options correctly builds options and fallbacks", {
-  shape <- file_object(file.path("testdata", "malawi.geojson"))
-  survey <- file_object(file.path("testdata", "survey.csv"))
-  art <- file_object(file.path("testdata", "programme.csv"))
-  anc <- file_object(file.path("testdata", "anc.csv"))
+  shape <- file_object(test_path("testdata", "malawi.geojson"))
+  survey <- file_object(test_path("testdata", "survey.csv"))
+  art <- file_object(test_path("testdata", "programme.csv"))
+  anc <- file_object(test_path("testdata", "anc.csv"))
 
   mock_get_controls_json <- mockery::mock('"{"test"}')
-  with_mock("naomi.options::get_controls_json" = mock_get_controls_json,  {
+  with_mock(get_controls_json = mock_get_controls_json,  {
     json <- do_endpoint_model_options(shape, survey, art, anc)
     args <- mockery::mock_args(mock_get_controls_json)
   })
@@ -95,7 +93,7 @@ test_that("do_endpoint_model_options without programme data", {
   survey <- file_object(file.path("testdata", "survey.csv"))
 
   mock_get_controls_json <- mockery::mock('"{"test"}')
-  with_mock("naomi.options::get_controls_json" = mock_get_controls_json,  {
+  with_mock(get_controls_json = mock_get_controls_json,  {
     json <- do_endpoint_model_options(shape, survey, NULL, NULL)
     args <- mockery::mock_args(mock_get_controls_json)
   })
@@ -163,8 +161,8 @@ test_that("do_endpoint_model_options fallback anc year2 to 2022 if in data", {
 
   mock_get_controls_json <- mockery::mock('"{"test"}')
   mock_get_years <- mockery::mock(c(2022, 2021, 2020, 2019))
-  with_mock("naomi.options::get_controls_json" = mock_get_controls_json,
-            "hintr:::get_years" = mock_get_years, {
+  with_mock(get_controls_json = mock_get_controls_json,
+            get_years = mock_get_years, {
     json <- do_endpoint_model_options(shape, survey, art, anc)
     args <- mockery::mock_args(mock_get_controls_json)
   })
@@ -176,7 +174,7 @@ test_that("do_endpoint_model_options fallback anc year2 to 2022 if in data", {
   expect_equal(fallback$anc_art_coverage_year1, scalar(""))
 })
 
-test_that("can retrieve validated model options", {
+test_that("can retrieve validated model options including additional options", {
   shape <- file_object(file.path("testdata", "malawi.geojson"))
   survey <- file_object(file.path("testdata", "survey.csv"))
   art <- file_object(file.path("testdata", "programme.csv"))
@@ -188,36 +186,43 @@ test_that("can retrieve validated model options", {
   expect_length(json$controlSections, 6)
 
   general_section <- json$controlSections[[1]]
-  expect_length(
-    general_section$controlGroups[[1]]$controls[[1]]$options, 1)
+  ## Additional option
   expect_equal(
-    names(general_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
+    general_section$controlGroups[[1]]$controls[[1]]$name,
+    "mock_model_trigger_error"
+  )
+  expect_length(
+    general_section$controlGroups[[1]]$controls[[1]]$options, 2)
+  expect_length(
+    general_section$controlGroups[[2]]$controls[[1]]$options, 1)
+  expect_equal(
+    names(general_section$controlGroups[[2]]$controls[[1]]$options[[1]]),
     c("id", "label", "children")
   )
   expect_equal(
-    general_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
+    general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
     "MWI"
   )
   expect_equal(
-    general_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
+    general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
     "Malawi - Demo"
   )
   expect_equal(
-    general_section$controlGroups[[1]]$controls[[1]]$value,
+    general_section$controlGroups[[2]]$controls[[1]]$value,
     "MWI")
   expect_length(
-    general_section$controlGroups[[2]]$controls[[1]]$options,
+    general_section$controlGroups[[3]]$controls[[1]]$options,
     5
   )
   expect_equal(
-    names(general_section$controlGroups[[2]]$controls[[1]]$options[[1]]),
+    names(general_section$controlGroups[[3]]$controls[[1]]$options[[1]]),
     c("id", "label")
   )
   expect_equal(
-    general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
+    general_section$controlGroups[[3]]$controls[[1]]$options[[1]]$id,
     "0")
   expect_equal(
-    general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
+    general_section$controlGroups[[3]]$controls[[1]]$options[[1]]$label,
     "Country")
 
   survey_section <- json$controlSections[[2]]
@@ -317,8 +322,10 @@ test_that("area level is prepopualted to lowest region", {
 
   json <- jsonlite::parse_json(json)
 
-  expect_equal(json$controlSections[[1]]$controlGroups[[2]]$label, "Area level")
-  expect_equal(json$controlSections[[1]]$controlGroups[[2]]$controls[[1]]$value, "4")
+  expect_equal(json$controlSections[[1]]$controlGroups[[3]]$label,
+               "Area level")
+  expect_equal(json$controlSections[[1]]$controlGroups[[3]]$controls[[1]]$value,
+               "4")
 })
 
 
@@ -357,7 +364,7 @@ test_that("model options work when survey_mid_calendar_quarter missing", {
   survey$path <- t
 
   mock_get_controls_json <- mockery::mock('"{"test"}')
-  with_mock("naomi.options::get_controls_json" = mock_get_controls_json,  {
+  with_mock(get_controls_json = mock_get_controls_json,  {
     json <- do_endpoint_model_options(shape, survey, art, anc)
     args <- mockery::mock_args(mock_get_controls_json)
   })
@@ -418,5 +425,31 @@ test_that("getting survey options for missing indicator returns empty values", {
       options = NULL,
       default = scalar("")
     )
+  )
+})
+
+test_that("when running full model, option to error is not returned", {
+  shape <- file_object(file.path("testdata", "malawi.geojson"))
+  survey <- file_object(file.path("testdata", "survey.csv"))
+  art <- file_object(file.path("testdata", "programme.csv"))
+  anc <- file_object(file.path("testdata", "anc.csv"))
+  json <- withr::with_envvar(c("USE_MOCK_MODEL" = "false"), {
+    do_endpoint_model_options(shape, survey, art, anc)
+  })
+
+  json <- jsonlite::parse_json(json)
+  expect_equal(names(json), "controlSections")
+  expect_length(json$controlSections, 6)
+
+  general_section <- json$controlSections[[1]]
+  expect_length(
+    general_section$controlGroups[[1]]$controls[[1]]$options, 1)
+  expect_equal(
+    names(general_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
+    c("id", "label", "children")
+  )
+  expect_equal(
+    general_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
+    "MWI"
   )
 })

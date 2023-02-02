@@ -6,7 +6,7 @@ mock_model <- list(
   plot_data_path = NULL,
   model_output_path =
     system.file("output", "malawi_model_output.qs", package = "hintr"),
-  version = packageVersion("naomi"),
+  version = utils::packageVersion("naomi"),
   warnings = list(
     list(
       text = scalar(paste0("Zero population input for 8 population ",
@@ -22,7 +22,7 @@ mock_calibrate <- list(
     system.file("output", "malawi_calibrate_plot_data.qs", package = "hintr"),
   model_output_path =
     system.file("output", "malawi_calibrate_output.qs", package = "hintr"),
-  version = packageVersion("naomi"),
+  version = utils::packageVersion("naomi"),
   warnings = list(
     list(
       text = "ART coverage greater than 100% for 10 age groups",

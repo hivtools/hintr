@@ -1,5 +1,3 @@
-context("validate-inputs")
-
 test_that("PJNZ can be validated and return data", {
   pjnz <- file_object(file.path("testdata", "Botswana2018.PJNZ"))
   expect_equal(do_validate_pjnz(pjnz),

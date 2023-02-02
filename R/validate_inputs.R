@@ -7,7 +7,7 @@ do_validate_pjnz <- function(pjnz) {
             list(countries = collapse(unique(countries)))))
   }
   pjnz_spectrum_region_codes <-
-    vapply(pjnz_paths, naomi::read_spectrum_region_code, numeric(1))
+    vapply(pjnz_paths, read_spectrum_region_code, numeric(1))
   zero_codes <- pjnz_spectrum_region_codes == 0
   if (length(which(zero_codes)) > 1) {
     stop(t_("INPUTS_PJNZ_ZIP_REGION0",
@@ -19,6 +19,10 @@ do_validate_pjnz <- function(pjnz) {
                 iso3 = scalar(read_pjnz_iso3_from_path(pjnz_paths[[1]]))),
     filters = json_verbatim("null")
   )
+}
+
+read_spectrum_region_code <- function(...) {
+  naomi::read_spectrum_region_code(...)
 }
 
 read_iso3 <- function(file, type) {

@@ -1,5 +1,3 @@
-context("endpoints-model-options")
-
 test_that("endpoint_model_options returns model options", {
   input <- model_options_input(file.path("testdata", "malawi.geojson"),
                                file.path("testdata", "survey.csv"),
@@ -12,36 +10,43 @@ test_that("endpoint_model_options returns model options", {
   expect_length(json$controlSections, 6)
 
   general_section <- json$controlSections[[1]]
-  expect_length(
-    general_section$controlGroups[[1]]$controls[[1]]$options, 1)
+  ## Additional option
   expect_equal(
-    names(general_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
+    general_section$controlGroups[[1]]$controls[[1]]$name,
+    "mock_model_trigger_error"
+  )
+  expect_length(
+    general_section$controlGroups[[1]]$controls[[1]]$options, 2)
+  expect_length(
+    general_section$controlGroups[[2]]$controls[[1]]$options, 1)
+  expect_equal(
+    names(general_section$controlGroups[[2]]$controls[[1]]$options[[1]]),
     c("id", "label", "children")
   )
   expect_equal(
-    general_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
+    general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
     "MWI"
   )
   expect_equal(
-    general_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
+    general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
     "Malawi - Demo"
   )
   expect_equal(
-    general_section$controlGroups[[1]]$controls[[1]]$value,
+    general_section$controlGroups[[2]]$controls[[1]]$value,
     "MWI")
   expect_length(
-    general_section$controlGroups[[2]]$controls[[1]]$options,
+    general_section$controlGroups[[3]]$controls[[1]]$options,
     5
   )
   expect_equal(
-    names(general_section$controlGroups[[2]]$controls[[1]]$options[[1]]),
+    names(general_section$controlGroups[[3]]$controls[[1]]$options[[1]]),
     c("id", "label")
   )
   expect_equal(
-    general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
+    general_section$controlGroups[[3]]$controls[[1]]$options[[1]]$id,
     "0")
   expect_equal(
-    general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
+    general_section$controlGroups[[3]]$controls[[1]]$options[[1]]$label,
     "Country")
 
   survey_section <- json$controlSections[[2]]
@@ -114,36 +119,43 @@ test_that("endpoint_model_options can be run without programme data", {
   expect_length(json$controlSections, 4)
 
   general_section <- json$controlSections[[1]]
-  expect_length(
-    general_section$controlGroups[[1]]$controls[[1]]$options, 1)
+  ## Additional option
   expect_equal(
-    names(general_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
+    general_section$controlGroups[[1]]$controls[[1]]$name,
+    "mock_model_trigger_error"
+  )
+  expect_length(
+    general_section$controlGroups[[1]]$controls[[1]]$options, 2)
+  expect_length(
+    general_section$controlGroups[[2]]$controls[[1]]$options, 1)
+  expect_equal(
+    names(general_section$controlGroups[[2]]$controls[[1]]$options[[1]]),
     c("id", "label", "children")
   )
   expect_equal(
-    general_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
+    general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
     "MWI"
   )
   expect_equal(
-    general_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
+    general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
     "Malawi - Demo"
   )
   expect_equal(
-    general_section$controlGroups[[1]]$controls[[1]]$value,
+    general_section$controlGroups[[2]]$controls[[1]]$value,
     "MWI")
   expect_length(
-    general_section$controlGroups[[2]]$controls[[1]]$options,
+    general_section$controlGroups[[3]]$controls[[1]]$options,
     5
   )
   expect_equal(
-    names(general_section$controlGroups[[2]]$controls[[1]]$options[[1]]),
+    names(general_section$controlGroups[[3]]$controls[[1]]$options[[1]]),
     c("id", "label")
   )
   expect_equal(
-    general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
+    general_section$controlGroups[[3]]$controls[[1]]$options[[1]]$id,
     "0")
   expect_equal(
-    general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
+    general_section$controlGroups[[3]]$controls[[1]]$options[[1]]$label,
     "Country")
 
   survey_section <- json$controlSections[[2]]
@@ -205,7 +217,7 @@ test_that("endpoint_model_options_validate validates options", {
       )
     )
   ))
-  with_mock("naomi::validate_model_options" = mock_validate_model_options, {
+  with_mock(validate_model_options = mock_validate_model_options, {
     response <- model_options_validate(input)
   })
 
@@ -231,7 +243,7 @@ test_that("invalid model options returns error", {
   }'
 
   mock_validate_model_options <- mockery::mock(stop("Invalid options"))
-  with_mock("naomi:::validate_model_options" = mock_validate_model_options, {
+  with_mock(validate_model_options = mock_validate_model_options, {
     error <- expect_error(model_options_validate(input))
   })
 
@@ -249,7 +261,7 @@ test_that("can get calibration options", {
 
 test_that("failing to get calibration options throws hintr error", {
   mock_calibration_options <- mockery::mock(stop("Failed to get options"))
-  with_mock("naomi.options::get_controls_json" = mock_calibration_options, {
+  with_mock(get_controls_json = mock_calibration_options, {
     error <- expect_error(calibration_options("MWI"))
   })
   expect_equal(error$data[[1]]$error, scalar("INVALID_CALIBRATION_OPTIONS"))

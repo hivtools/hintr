@@ -32,10 +32,14 @@ model_options <- function(input) {
 calibration_options <- function(iso3) {
   tryCatch({
     json_verbatim(
-      naomi.options::get_controls_json("calibration", iso3, NULL, NULL))
+      get_controls_json("calibration", iso3, NULL, NULL))
   }, error = function(e) {
     hintr_error(e$message, "INVALID_CALIBRATION_OPTIONS")
   })
+}
+
+get_controls_json <- function(...) {
+  naomi.options::get_controls_json(...)
 }
 
 root_endpoint <- function() {
@@ -135,13 +139,17 @@ model_options_validate <- function(input) {
     data$anc_testing <- data$anc
     data$anc <- NULL
     data <- naomi:::format_data_input(data)
-    valid <- naomi::validate_model_options(data, input$options)
+    valid <- validate_model_options(data, input$options)
     valid$valid <- scalar(valid$valid)
     valid$warnings <- warnings_scalar(valid$warnings)
     valid
   }, error = function(e) {
     hintr_error(e$message, "INVALID_OPTIONS")
   })
+}
+
+validate_model_options <- function(...) {
+  naomi::validate_model_options(...)
 }
 
 submit_model <- function(queue) {
@@ -484,9 +492,13 @@ prepare_status_response <- function(value, id) {
 }
 
 hintr_error <- function(message, error, status_code = 400L, ...) {
-  key <- scalar(ids::proquint(n_words = 3))
+  key <- scalar(new_error_id())
   porcelain::porcelain_stop(message, error, errors = NULL,
                             status_code = status_code, key = key, ...)
+}
+
+new_error_id <- function() {
+  ids::proquint(n_words = 3)
 }
 
 hintr_404_handler <- function(req, res) {
@@ -500,7 +512,7 @@ hintr_404_handler <- function(req, res) {
       list(
         error = scalar("NOT_FOUND"),
         detail = scalar(message),
-        key = scalar(ids::proquint(n_words = 3))
+        key = scalar(new_error_id())
       )
     ),
     data = NULL
