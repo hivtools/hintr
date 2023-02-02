@@ -7,8 +7,8 @@
 download_debug(id, server = NULL, dest = tempfile(), verbose = TRUE)
 }
 \arguments{
-\item{id}{The model run id to download. This will be printed at
-the top of the stack trace.}
+\item{id}{The model run id to download. This will be printed below the
+error message.}
 
 \item{server}{The url of the server.  The default is to use the
 production naomi/hint/hintr instance. It is not possible to use

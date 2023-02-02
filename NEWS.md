@@ -2,6 +2,7 @@
 
 * Update fallback anc year to 2022
 * Remove stack trace from user display
+* Return `job_id` in error response if error originated from async job
 
 # hintr 1.1.9
 
