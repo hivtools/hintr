@@ -57,7 +57,7 @@ test_that("can build api", {
 
 test_that("endpoint_baseline_individual", {
   endpoint <- endpoint_baseline_individual()
-  response <- endpoint$run(readLines("payload/validate_pjnz_payload.json"))
+  response <- endpoint$run(system_file("payload", "validate_pjnz_payload.json"))
   expect_equal(response$status_code, 200)
   expect_null(response$error)
   expect_equal(response$data$hash, scalar("12345"))
@@ -75,7 +75,7 @@ test_that("endpoint_baseline_individual works", {
   queue <- test_queue(workers = 0)
   api <- api_build(queue)
   res <- api$request("POST", "/validate/baseline-individual",
-                     body = readLines("payload/validate_pjnz_payload.json"))
+                     body = system_file("payload", "validate_pjnz_payload.json"))
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body)
   expect_equal(body$data$hash, "12345")
@@ -84,13 +84,13 @@ test_that("endpoint_baseline_individual works", {
   expect_equal(body$data$filename, "Malawi2019.PJNZ")
   expect_equal(body$data$filters, NULL)
   expect_equal(body$data$fromADR, FALSE)
-  expect_equal(body$data$resource_url,
-               "https://adr.unaids.org/file/123.csv")
+  expect_equal(body$data$resource_url, "https://adr.unaids.org/file/123.csv")
 })
 
 test_that("endpoint_baseline_combined", {
   endpoint <- endpoint_baseline_combined()
-  response <- endpoint$run(readLines("payload/validate_baseline_payload.json"))
+  response <- endpoint$run(system_file("payload",
+                                       "validate_baseline_payload.json"))
 
   expect_equal(response$status_code, 200)
   expect_null(response$error)
@@ -101,8 +101,9 @@ test_that("endpoint_baseline_combined works", {
   test_redis_available()
   queue <- test_queue(workers = 0)
   api <- api_build(queue)
-  res <- api$request("POST", "/validate/baseline-combined",
-                     body = readLines("payload/validate_baseline_payload.json"))
+  res <- api$request(
+    "POST", "/validate/baseline-combined",
+    body = system_file("payload", "validate_baseline_payload.json"))
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body)
   expect_equal(body$status, "success")
@@ -112,7 +113,8 @@ test_that("endpoint_baseline_combined works", {
 
 test_that("endpoint_model_options", {
   endpoint <- endpoint_model_options()
-  response <- endpoint$run(readLines("payload/model_run_options_payload.json"))
+  response <- endpoint$run(
+    system_file("payload", "model_run_options_payload.json"))
 
   expect_equal(response$status_code, 200)
   expect_null(response$error)
@@ -224,8 +226,9 @@ test_that("endpoint_model_options works", {
   test_redis_available()
   queue <- test_queue(workers = 0)
   api <- api_build(queue)
-  res <- api$request("POST", "/model/options",
-                     body = readLines("payload/model_run_options_payload.json"))
+  res <- api$request(
+    "POST", "/model/options",
+    body = system_file("payload", "model_run_options_payload.json"))
   expect_equal(res$status, 200)
   body <- jsonlite::parse_json(res$body)
   expect_equal(names(body$data), "controlSections")
@@ -335,7 +338,8 @@ test_that("endpoint_model_options_validate can be run", {
   queue <- test_queue()
 
   endpoint <- endpoint_model_options_validate()
-  response <- endpoint$run(readLines("payload/validate_options_payload.json"))
+  response <- endpoint$run(
+    system_file("payload", "validate_options_payload.json"))
 
   expect_equal(response$status_code, 200)
   expect_null(response$error)
@@ -352,8 +356,9 @@ test_that("api can call endpoint_model_options_validate", {
   test_redis_available()
   queue <- test_queue()
   api <- api_build(queue)
-  res <- api$request("POST", "/validate/options",
-                     body = readLines("payload/validate_options_payload.json"))
+  res <- api$request(
+    "POST", "/validate/options",
+    body = system_file("payload", "validate_options_payload.json"))
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body, simplifyVector = FALSE)
   expect_equal(body$status, "success")
@@ -371,8 +376,8 @@ test_that("endpoint_model_submit can be run", {
   test_redis_available()
   queue <- test_queue(workers = 0)
   endpoint <- endpoint_model_submit(queue)
-  path <- setup_submit_payload()
-  response <- endpoint$run(readLines(path))
+  payload <- setup_payload_submit()
+  response <- endpoint$run(payload)
 
   expect_equal(response$status_code, 200)
   expect_null(response$error)
@@ -383,9 +388,9 @@ test_that("api can call endpoint_model_submit", {
   test_redis_available()
   queue <- test_queue()
   api <- api_build(queue)
-  path <- setup_submit_payload()
-  res <- api$request("POST", "/model/submit",
-                     body = readLines(path))
+  payload <- setup_payload_submit()
+  res <- api$request("POST", "/model/submit", body = payload)
+
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body)
   expect_equal(body$status, "success")
@@ -398,8 +403,9 @@ test_that("endpoint_model_status can be run", {
   test_mock_model_available()
   queue <- test_queue(workers = 1)
   model_run <- endpoint_model_submit(queue)
-  path <- setup_submit_payload()
-  run_response <- model_run$run(readLines(path))
+  payload <- setup_payload_submit()
+  run_response <- model_run$run(payload)
+
   expect_equal(run_response$status_code, 200)
   expect_true(!is.null(run_response$data$id))
 
@@ -425,9 +431,9 @@ test_that("api can call endpoint_model_status", {
   test_mock_model_available()
   queue <- test_queue(workers = 1)
   api <- api_build(queue)
-  path <- setup_submit_payload()
-  res <- api$request("POST", "/model/submit",
-                     body = readLines(path))
+  payload <- setup_payload_submit()
+  res <- api$request("POST", "/model/submit", body = payload)
+
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body)
   expect_equal(body$status, "success")
@@ -456,8 +462,9 @@ test_that("endpoint_model_result can be run", {
   test_mock_model_available()
   queue <- test_queue(workers = 1)
   model_run <- endpoint_model_submit(queue)
-  path <- setup_submit_payload()
-  run_response <- model_run$run(readLines(path))
+  payload <- setup_payload_submit()
+  run_response <- model_run$run(payload)
+
   expect_equal(run_response$status_code, 200)
   expect_true(!is.null(run_response$data$id))
 
@@ -482,9 +489,9 @@ test_that("api can call endpoint_model_result", {
   test_mock_model_available()
   queue <- test_queue(workers = 1)
   api <- api_build(queue)
-  path <- setup_submit_payload()
-  res <- api$request("POST", "/model/submit",
-                     body = readLines(path))
+  payload <- setup_payload_submit()
+  res <- api$request("POST", "/model/submit", body = payload)
+
   expect_equal(res$status, 200)
   submit_body <- jsonlite::fromJSON(res$body)
   expect_equal(submit_body$status, "success")
@@ -513,8 +520,9 @@ test_that("endpoint_model_cancel can be run", {
   test_mock_model_available()
   queue <- test_queue(workers = 1)
   model_run <- endpoint_model_submit(queue)
-  path <- setup_submit_payload()
-  run_response <- model_run$run(readLines(path))
+  payload <- setup_payload_submit()
+  run_response <- model_run$run(payload)
+
   expect_equal(run_response$status_code, 200)
   expect_true(!is.null(run_response$data$id))
 
@@ -530,9 +538,9 @@ test_that("api can call endpoint_model_cancel", {
   test_mock_model_available()
   queue <- test_queue(workers = 1)
   api <- api_build(queue)
-  path <- setup_submit_payload()
-  res <- api$request("POST", "/model/submit",
-                     body = readLines(path))
+  payload <- setup_payload_submit()
+  res <- api$request("POST", "/model/submit", body = payload)
+
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body)
   expect_equal(body$status, "success")
@@ -552,9 +560,9 @@ test_that("erroring model run returns useful messages", {
 
   queue <- MockQueue$new()
   api <- api_build(queue)
-  path <- setup_submit_payload()
-  res <- api$request("POST", "/model/submit",
-                     body = readLines(path))
+  payload <- setup_payload_submit()
+  res <- api$request("POST", "/model/submit", body = payload)
+
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body)
   expect_equal(body$status, "success")
@@ -705,8 +713,9 @@ test_that("endpoint_model_debug can be run", {
 
   queue <- test_queue(workers = 1)
   run_endpoint <- endpoint_model_submit(queue)
-  path <- setup_submit_payload()
-  run_response <- run_endpoint$run(readLines(path))
+  payload <- setup_payload_submit()
+  run_response <- run_endpoint$run(payload)
+
   expect_equal(run_response$status_code, 200)
   out <- queue$queue$task_wait(run_response$data$id)
 
@@ -728,9 +737,9 @@ test_that("api can call endpoint_model_debug", {
   api <- api_build(queue)
 
   ## Run the model
-  path <- setup_submit_payload()
-  res <- api$request("POST", "/model/submit",
-                     body = readLines(path))
+  payload <- setup_payload_submit()
+  res <- api$request("POST", "/model/submit", body = payload)
+
   expect_equal(res$status, 200)
   response <- jsonlite::fromJSON(res$body)
   out <- queue$queue$task_wait(response$data$id)
@@ -838,8 +847,8 @@ test_that("model calibrate can be queued and result returned", {
 
   ## Submit calibrate request
   submit <- endpoint_model_calibrate_submit(q$queue)
-  path <- setup_calibrate_payload()
-  submit_response <- submit$run(q$model_run_id, readLines(path))
+  payload <- setup_payload_calibrate()
+  submit_response <- submit$run(q$model_run_id, payload)
 
   expect_equal(submit_response$status_code, 200)
   expect_true(!is.null(submit_response$data$id))
@@ -878,10 +887,10 @@ test_that("api can call endpoint_model_calibrate", {
 
   ## Submit calibrate
   api <- api_build(q$queue)
-  calibrate_path <- setup_calibrate_payload()
+  calibrate_payload <- setup_payload_calibrate()
   submit_res <- api$request("POST",
                             paste0("/calibrate/submit/", q$model_run_id),
-                            body = readLines(calibrate_path))
+                            body = calibrate_payload)
 
   expect_equal(submit_res$status, 200)
   submit_body <- jsonlite::fromJSON(submit_res$body)

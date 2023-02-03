@@ -7,17 +7,15 @@ test_that("endpoint_validate_baseline_combined correctly validates data", {
 })
 
 test_that("endpoint_validate_baseline_combined returns error on invalid data", {
-  input <- validate_baseline_all_input(file.path("testdata", "Malawi2019.PJNZ"),
-                                       file.path("testdata", "malawi.geojson"),
-                                       file.path("testdata", "population.csv"))
-  mock_read_iso3 <- mockery::mock("BLZ")
-  with_mock(read_iso3 = mock_read_iso3, {
-    error <- expect_error(validate_baseline_combined(input))
-  })
+  input <- validate_baseline_all_input(
+    file.path("testdata", "Botswana2018.PJNZ"),
+    file.path("testdata", "malawi.geojson"),
+    file.path("testdata", "population.csv"))
+  error <- expect_error(validate_baseline_combined(input))
   expect_equal(error$data[[1]]$error, scalar("INVALID_BASELINE"))
   expect_equal(
     error$data[[1]]$detail,
-    scalar("Countries aren't consistent got MWI from pjnz and BLZ from shape."))
+    scalar("Countries aren't consistent got BWA from pjnz and MWI from shape."))
   expect_equal(error$status_code, 400)
 })
 
@@ -33,21 +31,6 @@ test_that("validation works with muliple PJNZ files", {
   expect_equal(response$consistent, scalar(TRUE))
 })
 
-test_that("validation works with inconsistent data", {
-  skip_if_sensitive_data_missing()
-  input <- validate_baseline_all_input(
-    file.path("testdata", "sensitive", "ZMB", "data",
-              "zmb_all_pjnz_extract.zip"),
-    file.path("testdata", "malawi.geojson"),
-    NULL)
-  error <- expect_error(validate_baseline_combined(input))
-  expect_equal(error$data[[1]]$error, scalar("INVALID_BASELINE"))
-  expect_equal(
-    error$data[[1]]$detail,
-    scalar("Countries aren't consistent got ZMB from pjnz and MWI from shape."))
-  expect_equal(error$status_code, 400)
-})
-
 test_that("validation errors if spectrum region codes mismatch", {
   skip_if_sensitive_data_missing()
   input <- validate_baseline_all_input(
@@ -55,10 +38,8 @@ test_that("validation errors if spectrum region codes mismatch", {
               "zmb_all_pjnz_extract.zip"),
     file.path("testdata", "malawi.geojson"),
     NULL)
-  mock_read_iso3 <- mockery::mock("ZMB")
-  with_mock(read_iso3 = mock_read_iso3, {
-    error <- expect_error(validate_baseline_combined(input))
-  })
+  mockery::stub(do_validate_baseline, "read_iso3", "ZMB", depth = 2)
+  error <- expect_error(validate_baseline_combined(input))
   expect_equal(error$data[[1]]$error, scalar("INVALID_BASELINE"))
   expect_match(error$data[[1]]$detail, paste0(
     "Different spectrum region codes in PJNZ and shape file.\n",
