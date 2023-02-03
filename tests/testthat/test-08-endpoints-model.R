@@ -3,12 +3,12 @@ test_that("endpoint model run queues a model run", {
   test_mock_model_available()
 
   ## Setup payload
-  path <- setup_submit_payload()
+  payload <- setup_payload_submit()
 
   ## Call the endpoint
   queue <- test_queue(workers = 1)
   model_submit <- submit_model(queue)
-  response <- model_submit(readLines(path))
+  response <- model_submit(payload)
   expect_true("id" %in% names(response))
 
   ## Wait for complete and query for status
@@ -47,7 +47,7 @@ test_that("endpoint model run queues a model run", {
 test_that("endpoint_run_model returns error if queueing fails", {
   test_redis_available()
   ## Create request data
-  path <- setup_submit_payload()
+  payload <- setup_payload_submit()
 
   ## Create mocks
   queue <- test_queue()
@@ -56,7 +56,7 @@ test_that("endpoint_run_model returns error if queueing fails", {
   ## Call the endpoint
   model_submit <- submit_model(queue)
   mockery::stub(model_submit, "queue$submit_model_run", mock_submit_model_run)
-  error <- expect_error(model_submit(readLines(path)))
+  error <- expect_error(model_submit(payload))
 
   expect_equal(error$data[[1]]$error, scalar("FAILED_TO_QUEUE"))
   expect_equal(error$data[[1]]$detail, scalar("Failed to queue"))
@@ -67,7 +67,7 @@ test_that("running model with old version throws an error", {
   test_redis_available()
 
   ## Setup payload
-  path <- setup_submit_payload('{
+  payload <- setup_payload_submit(version = '{
                                "hintr": "0.0.12",
                                "naomi": "0.0.15",
                                "rrq": "0.2.1"
@@ -76,7 +76,7 @@ test_that("running model with old version throws an error", {
   ## Call the endpoint
   queue <- test_queue(workers = 1)
   model_submit <- submit_model(queue)
-  error <- expect_error(model_submit(readLines(path)))
+  error <- expect_error(model_submit(payload))
 
   expect_equal(error$data[[1]]$error, scalar("VERSION_OUT_OF_DATE"))
   expect_equal(error$data[[1]]$detail, scalar(
@@ -143,10 +143,10 @@ test_that("querying for result of incomplete jobs returns useful error", {
   test_redis_available()
   test_mock_model_available()
 
-  path <- setup_submit_payload()
+  payload <- setup_payload_submit()
   queue <- test_queue(workers = 1)
   model_submit <- submit_model(queue)
-  response <- model_submit(readLines(path))
+  response <- model_submit(payload)
   expect_true("id" %in% names(response))
 
   ## Get result prematurely
@@ -164,9 +164,9 @@ test_that("erroring model run returns useful messages", {
 
   ## Call the endpoint
   queue <- MockQueue$new()
-  path <- setup_submit_payload()
+  payload <- setup_payload_submit()
   model_submit <- submit_model(queue)
-  response <- model_submit(readLines(path))
+  response <- model_submit(payload)
   expect_true("id" %in% names(response))
   out <- queue$queue$task_wait(response$id)
 
@@ -195,10 +195,10 @@ test_that("model run can be cancelled", {
   test_mock_model_available()
 
   ## Start the model running
-  path <- setup_submit_payload()
+  payload <- setup_payload_submit()
   queue <- test_queue(workers = 1)
   model_submit <- submit_model(queue)
-  response <- model_submit(readLines(path))
+  response <- model_submit(payload)
   expect_true("id" %in% names(response))
   id <- response$id
 
@@ -238,14 +238,14 @@ test_that("translation of progress", {
   test_redis_available()
   test_mock_model_available()
 
-  path <- setup_submit_payload()
+  payload <- setup_payload_submit()
   queue <- test_queue(workers = 1)
   model_submit <- submit_model(queue)
   get_status <- queue_status(queue)
 
   response <- with_hintr_language(
     "fr",
-    model_submit(readLines(path)))
+    model_submit(payload))
   id <- response$id
 
   ## Query for status
@@ -266,14 +266,14 @@ test_that("error messages from naomi are translated", {
 
   model_submit <- submit_model(queue)
   ## Create a population file which deliberately will cause an error
-  path <- setup_submit_payload()
-  payload <- readLines(path)
-  payload <- jsonlite::read_json(path)
+  payload <- setup_payload_submit()
+  payload <- jsonlite::fromJSON(payload)
   pop <- read.csv(payload$data$population$path)
   pop$sex <- NULL
   t <- tempfile()
   write.csv(pop, t)
   payload$data$population$path <- t
+  path <- tempfile()
   writeLines(jsonlite::toJSON(payload), path)
 
   response <- with_hintr_language(

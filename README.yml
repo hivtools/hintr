@@ -2,83 +2,101 @@
   command: http://localhost:8888
 
 - comment: Validate PJNZ
-  command: >
-    -X POST -H 'Content-Type: application/json'
-    --data @example/docker_payload.json
+  command: |
+    -X POST -H 'Content-Type: application/json' \
+    --data @inst/payload/validate_pjnz_payload.json \
     http://localhost:8888/validate/baseline-individual
 
 - comment: Validate shape file and return serialised data
-  command: >
-    -X POST -H 'Content-Type: application/json'
-    --data @example/docker_validate_shape_payload.json
+  command: |
+    -X POST -H 'Content-Type: application/json' \
+    --data @inst/payload/validate_shape_payload.json \
     http://localhost:8888/validate/baseline-individual
 
 - comment: Validate population data
-  command: >
-    -X POST -H 'Content-Type: application/json'
-    --data @example/docker_validate_population_payload.json
+  command: |
+    -X POST -H 'Content-Type: application/json' \
+    --data @inst/payload/validate_population_payload.json \
     http://localhost:8888/validate/baseline-individual
 
 - comment: Validate baseline data
-  command: >
-    -X POST -H 'Content-Type: application/json'
-    --data @example/docker_validate_baseline_payload.json
+  command: |
+    -X POST -H 'Content-Type: application/json' \
+    --data @inst/payload/validate_baseline_payload.json \
     http://localhost:8888/validate/baseline-combined
 
 - comment: Validate programme ART data
-  command: >
-    -X POST -H 'Content-Type: application/json'
-    --data @example/docker_validate_programme_payload.json
+  command: |
+    -X POST -H 'Content-Type: application/json' \
+    --data @inst/payload/validate_programme_payload.json \
     http://localhost:8888/validate/survey-and-programme
 
 - comment: Validate ANC data
-  command: >
-    -X POST -H 'Content-Type: application/json'
-    --data @example/docker_validate_anc_payload.json
+  command: |
+    -X POST -H 'Content-Type: application/json' \
+    --data @inst/payload/validate_anc_payload.json \
     http://localhost:8888/validate/survey-and-programme
 
 - comment: Validate survey data
-  command: >
-    -X POST -H 'Content-Type: application/json'
-    --data @example/docker_validate_survey_payload.json
+  command: |
+    -X POST -H 'Content-Type: application/json' \
+    --data @inst/payload/validate_survey_payload.json \
     http://localhost:8888/validate/survey-and-programme
 
 - comment: Get model run options
-  command: >
-    -X POST -H 'Content-Type: application/json'
-    --data @example/docker_model_run_options.json
+  command: |
+    -X POST -H 'Content-Type: application/json' \
+    --data @inst/payload/model_run_options_payload.json \
     http://localhost:8888/model/options
 
-
 - comment: Run a model
-  command: >
-    -X POST -H 'Content-Type: application/json'
-    --data @example/model_submit_payload.json
+  command: |
+    -X POST -H 'Content-Type: application/json' \
     http://localhost:8888/model/submit
+  data: hintr:::setup_payload_submit()
   collect:
-    id: ["id"]
+    model_id: ["id"]
 
 - comment: Query status of model run
-  command: http://localhost:8888/model/status/{id}
+  command: http://localhost:8888/model/status/{model_id}
   sleep: 8
 
 - comment: Get the result of a model run
-  command: http://localhost:8888/model/result/{id}
+  command: http://localhost:8888/model/result/{model_id}
 
-- comment: Headers for summary download
-  command: -I http://localhost:8888/download/summary/{id}
+- comment: Calibrate a model
+  command: |
+   -X POST -H 'Content-Type: application/json' \
+   http://localhost:8888/calibrate/submit/{model_id}
+  data: hintr:::setup_payload_calibrate()
+  collect:
+    calibrate_id: ["id"]
+
+- comment: Query status of calibrate run
+  command: http://localhost:8888/calibrate/status/{calibrate_id}
+  sleep: 30
+
+- comment: Get the result of a calibrate run
+  command: http://localhost:8888/calibrate/result/{calibrate_id}
+
+- comment: Initialise download generation, type spectrum, coarse_output, summary or comparison
+  command: |
+   -X POST -H 'Content-Type: application/json' \
+   http://localhost:8888/download/submit/spectrum/{calibrate_id}
+  data: hintr:::setup_payload_download_request()
+  collect:
+    download_id: ["id"]
+
+- comment: Query status of download generation
+  command: http://localhost:8888/download/status/{download_id}
+  sleep: 20
+
+- comment: Headers for summary download result
+  command: -I http://localhost:8888/download/result/{download_id}
   format: header
 
-- comment: Get the summary download
-  command: http://localhost:8888/download/summary/{id}
-  format: bytes
-
-- comment: Headers for spectrum digest download
-  command: -I http://localhost:8888/download/spectrum/{id}
-  format: header
-
-- comment: Get the spectrum digest download
-  command: http://localhost:8888/download/spectrum/{id}
+- comment: Get the summary download result
+  command: http://localhost:8888/download/result/{download_id}
   format: bytes
 
 - comment: Get plotting metadata for Malawi

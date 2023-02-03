@@ -1,25 +1,25 @@
 {
   "shape": {
     "path": "testdata/malawi.geojson",
-    "filename": "original.geojson",
+    "filename": "malawi.geojson",
     "hash": "12345",
     "fromADR": false
   },
   "survey": {
     "path": "testdata/survey.csv",
-    "filename": "original.csv",
+    "filename": "survey.csv",
     "hash": "12345",
     "fromADR": false
   },
   "programme": {
     "path": "testdata/programme.csv",
-    "filename": "original.csv",
+    "filename": "programme.csv",
     "hash": "12345",
     "fromADR": false
   },
   "anc": {
     "path": "testdata/anc.csv",
-    "filename": "original.csv",
+    "filename": "anc.csv",
     "hash": "12345",
     "fromADR": false
   }

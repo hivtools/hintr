@@ -25,34 +25,38 @@ For a more complete example of running on a network see [docker test script](htt
 Test that container is working by using
 
 ```
-$ curl http://localhost:8888
-```
-
-```json
-"Welcome to hintr"
-```
-Validate PJNZ
-
-```
-$ curl -X POST -H 'Content-Type: application/json' \
-    --data @example/docker_payload.json \
-    http://localhost:8888/validate/baseline-individual
+$ curl -s http://localhost:8888
 ```
 
 ```json
 {
     "status": "success",
-    "errors": [
+    "errors": null,
+    "data": "Welcome to hintr"
+}
+```
+Validate PJNZ
 
-    ],
+```
+$ curl -s -X POST -H 'Content-Type: application/json' \
+--data @inst/payload/validate_pjnz_payload.json \
+http://localhost:8888/validate/baseline-individual
+```
+
+```json
+{
+    "status": "success",
+    "errors": null,
     "data": {
         "hash": "12345",
         "type": "pjnz",
         "data": {
-            "country": "Botswana",
-            "iso3": "BWA"
+            "country": "Malawi",
+            "iso3": "MWI"
         },
-        "filename": "Botswana2018.PJNZ",
+        "filename": "Malawi2019.PJNZ",
+        "fromADR": false,
+        "resource_url": "https://adr.unaids.org/file/123.csv",
         "filters": null
     }
 }
@@ -60,22 +64,21 @@ $ curl -X POST -H 'Content-Type: application/json' \
 Validate shape file and return serialised data
 
 ```
-$ curl -X POST -H 'Content-Type: application/json' \
-    --data @example/docker_validate_shape_payload.json \
-    http://localhost:8888/validate/baseline-individual
+$ curl -s -X POST -H 'Content-Type: application/json' \
+--data @inst/payload/validate_shape_payload.json \
+http://localhost:8888/validate/baseline-individual
 ```
 
 ```json
 {
     "status": "success",
-    "errors": [
-
-    ],
+    "errors": null,
     "data": {
         "hash": "12345",
         "type": "shape",
         "data": {
             "type": "FeatureCollection",
+            "name": "demo_areas",
             "crs": {
                 "type": "name",
                 "properties": {
@@ -86,28 +89,28 @@ $ curl -X POST -H 'Content-Type: application/json' \
                 {
                     "type": "Feature",
                     "properties": {
-... truncated 144134 lines of output
+                        "area_id": "MWI",
+... truncated 144125 lines of output
 ```
 Validate population data
 
 ```
-$ curl -X POST -H 'Content-Type: application/json' \
-    --data \
-    @example/docker_validate_population_payload.json \
-    http://localhost:8888/validate/baseline-individual
+$ curl -s -X POST -H 'Content-Type: application/json' \
+--data @inst/payload/validate_population_payload.json \
+http://localhost:8888/validate/baseline-individual
 ```
 
 ```json
 {
     "status": "success",
-    "errors": [
-
-    ],
+    "errors": null,
     "data": {
         "hash": "12345",
         "type": "population",
         "data": null,
-        "filename": "population.csv",
+        "filename": "original.csv",
+        "fromADR": false,
+        "resource_url": null,
         "filters": null
     }
 }
@@ -115,18 +118,15 @@ $ curl -X POST -H 'Content-Type: application/json' \
 Validate baseline data
 
 ```
-$ curl -X POST -H 'Content-Type: application/json' \
-    --data \
-    @example/docker_validate_baseline_payload.json \
-    http://localhost:8888/validate/baseline-combined
+$ curl -s -X POST -H 'Content-Type: application/json' \
+--data @inst/payload/validate_baseline_payload.json \
+http://localhost:8888/validate/baseline-combined
 ```
 
 ```json
 {
     "status": "success",
-    "errors": [
-
-    ],
+    "errors": null,
     "data": {
         "consistent": true
     }
@@ -135,112 +135,108 @@ $ curl -X POST -H 'Content-Type: application/json' \
 Validate programme ART data
 
 ```
-$ curl -X POST -H 'Content-Type: application/json' \
-    --data \
-    @example/docker_validate_programme_payload.json \
-    http://localhost:8888/validate/survey-and-programme
+$ curl -s -X POST -H 'Content-Type: application/json' \
+--data @inst/payload/validate_programme_payload.json \
+http://localhost:8888/validate/survey-and-programme
 ```
 
 ```json
 {
     "status": "success",
-    "errors": [
-
-    ],
+    "errors": null,
     "data": {
         "hash": "12345",
         "type": "programme",
         "data": [
             {
-                "area_id": "MWI_4_20",
+                "area_id": "MWI_4_1_demo",
+                "area_name": "Chitipa",
                 "sex": "both",
-                "age_group": "00-14",
+                "age_group": "Y000_014",
                 "year": 2011,
-                "current_art": 464.1
+                "calendar_quarter": "CY2011Q4",
+                "art_current": 127,
+                "art_new": 9,
+                "vl_tested_12mos": null,
+                "vl_suppressed_12mos": null
             },
             {
-                "area_id": "MWI_4_20",
-                "sex": "both",
-                "age_group": "00-14",
-... truncated 3615 lines of output
+... truncated 6180 lines of output
 ```
 Validate ANC data
 
 ```
-$ curl -X POST -H 'Content-Type: application/json' \
-    --data @example/docker_validate_anc_payload.json \
-    http://localhost:8888/validate/survey-and-programme
+$ curl -s -X POST -H 'Content-Type: application/json' \
+--data @inst/payload/validate_anc_payload.json \
+http://localhost:8888/validate/survey-and-programme
 ```
 
 ```json
 {
     "status": "success",
-    "errors": [
-
-    ],
+    "errors": null,
     "data": {
         "hash": "12345",
         "type": "anc",
         "data": [
             {
-                "area_id": "MWI_4_1",
-                "age_group": "15-49",
+                "area_id": "MWI_4_1_demo",
+                "age_group": "Y015_049",
                 "year": 2011,
-                "anc_clients": 4325,
-                "ancrt_hiv_status": 2346,
-                "ancrt_known_pos": 24,
-                "ancrt_already_art": 0,
-                "ancrt_tested": 2322,
-                "ancrt_test_pos": 50,
-                "prevalence": 0.0315,
-... truncated 3367 lines of output
+                "anc_clients": 4330,
+                "anc_known_pos": 24,
+                "anc_already_art": 0,
+                "anc_tested": 2105,
+                "anc_tested_pos": 50,
+                "anc_known_neg": 217,
+                "births_facility": 3279,
+                "anc_prevalence": 0.0315,
+                "anc_art_coverage": 0
+... truncated 3626 lines of output
 ```
 Validate survey data
 
 ```
-$ curl -X POST -H 'Content-Type: application/json' \
-    --data \
-    @example/docker_validate_survey_payload.json \
-    http://localhost:8888/validate/survey-and-programme
+$ curl -s -X POST -H 'Content-Type: application/json' \
+--data @inst/payload/validate_survey_payload.json \
+http://localhost:8888/validate/survey-and-programme
 ```
 
 ```json
 {
     "status": "success",
-    "errors": [
-
-    ],
+    "errors": null,
     "data": {
         "hash": "12345",
         "type": "survey",
         "data": [
             {
-                "indicator": "prev",
-                "survey_id": "MWI2004DHS",
-                "survey_year": 2004,
+                "indicator": "prevalence",
+                "survey_id": "DEMO2004DHS",
+                "survey_mid_calendar_quarter": "CY2004Q4",
                 "area_id": "MWI",
+                "area_name": "Malawi - Demo",
+                "res_type": "all",
                 "sex": "both",
-                "age_group": "15-19",
-                "n_cluster": 392,
-                "n_obs": 1000,
-                "est": 0.021,
-                "se": 0.0049,
-... truncated 281411 lines of output
+                "age_group": "Y015_049",
+                "n_clusters": 512,
+                "n_observations": 5136,
+                "n_eff_kish": 3125.6878,
+                "estimate": 0.1183,
+... truncated 367974 lines of output
 ```
 Get model run options
 
 ```
-$ curl -X POST -H 'Content-Type: application/json' \
-    --data @example/docker_model_run_options.json \
-    http://localhost:8888/model/options
+$ curl -s -X POST -H 'Content-Type: application/json' \
+--data @inst/payload/model_run_options_payload.json \
+http://localhost:8888/model/options
 ```
 
 ```json
 {
     "status": "success",
-    "errors": [
-
-    ],
+    "errors": null,
     "data": {
         "controlSections": [
             {
@@ -248,47 +244,127 @@ $ curl -X POST -H 'Content-Type: application/json' \
                 "description": "Select general model options:",
                 "controlGroups": [
                     {
-                        "label": "Area scope",
+                        "label": "Trigger mock model error",
                         "controls": [
                             {
-                                "name": "area_scope",
-                                "type": "multiselect",
+                                "name": "mock_model_trigger_error",
+                                "type": "select",
+                                "required": true,
+                                "helpText": "Set TRUE to force the model fit to error",
                                 "options": [
                                     {
-                                        "id": "MWI",
-... truncated 1113 lines of output
+                                        "id": "true",
+... truncated 1826 lines of output
 ```
 Run a model
 
 ```
-$ curl -X POST -H 'Content-Type: application/json' \
-    --data @example/model_submit_payload.json \
-    http://localhost:8888/model/submit
+$ curl -s --data '{
+    "data": {
+        "pjnz": {
+            "path": "testdata/Malawi2019.PJNZ",
+            "filename": "Malawi2019.PJNZ",
+            "hash": "12345",
+            "fromADR": false
+        },
+        "shape": {
+            "path": "testdata/malawi.geojson",
+            "filename": "malawi.geojson",
+            "hash": "12345",
+            "fromADR": false
+        },
+        "population": {
+            "path": "testdata/population.csv",
+            "filename": "population.csv",
+            "hash": "12345",
+            "fromADR": false
+        },
+        "survey": {
+            "path": "testdata/survey.csv",
+            "filename": "survey.csv",
+            "hash": "12345",
+            "fromADR": false
+        },
+        "programme": {
+            "path": "testdata/programme.csv",
+            "filename": "programme.csv",
+            "hash": "12345",
+            "fromADR": false
+        },
+        "anc": {
+            "path": "testdata/anc.csv",
+            "filename": "anc.csv",
+            "hash": "12345",
+            "fromADR": false
+        }
+    },
+    "options": {
+        "area_scope": "MWI",
+        "area_level": 4,
+        "calendar_quarter_t1": "CY2016Q1",
+        "calendar_quarter_t2": "CY2018Q3",
+        "calendar_quarter_t3": "CY2019Q2",
+        "survey_prevalence": [
+            "DEMO2016PHIA",
+            "DEMO2015DHS"
+        ],
+        "survey_art_coverage": "DEMO2016PHIA",
+        "survey_recently_infected": "DEMO2016PHIA",
+        "include_art_t1": "true",
+        "include_art_t2": "true",
+        "anc_clients_year2": 2018,
+        "anc_clients_year2_num_months": "9",
+        "anc_prevalence_year1": 2016,
+        "anc_prevalence_year2": 2018,
+        "anc_art_coverage_year1": 2016,
+        "anc_art_coverage_year2": 2018,
+        "spectrum_population_calibration": "none",
+        "spectrum_plhiv_calibration_level": "none",
+        "spectrum_plhiv_calibration_strat": "sex_age_coarse",
+        "spectrum_artnum_calibration_level": "none",
+        "spectrum_artnum_calibration_strat": "sex_age_coarse",
+        "spectrum_infections_calibration_level": "none",
+        "spectrum_infections_calibration_strat": "sex_age_coarse",
+        "spectrum_aware_calibration_level": "none",
+        "spectrum_aware_calibration_strat": "sex_age_coarse",
+        "calibrate_method": "logistic",
+        "artattend_log_gamma_offset": -4,
+        "artattend": false,
+        "output_aware_plhiv": "true",
+        "rng_seed": 17,
+        "no_of_samples": 500,
+        "max_iter": 250
+    },
+    "version": {
+        "hintr": "1.1.9",
+        "naomi": "2.8.12",
+        "rrq": "0.5.7",
+        "traduire": "0.0.6"
+    }
+}' \
+-X POST -H 'Content-Type: application/json' \
+http://localhost:8888/model/submit
 ```
 
 ```json
 {
     "status": "success",
-    "errors": [
-
-    ],
+    "errors": null,
     "data": {
-        "id": "76bed22993c3012ac90347343b8d7f45"
+        "id": "957800d3055d679195ffe18aaf3391ab"
     }
 }
 ```
 Query status of model run
 
 ```
-$ curl http://localhost:8888/model/status/{id}
+$ curl -s http://localhost:8888/model/status/957800d3055d679195ffe18aaf3391ab
 ```
 
 ```json
 {
     "status": "success",
-    "errors": [
-
-    ],
+    "errors": null,
     "data": {
         "done": false,
         "status": "RUNNING",
@@ -297,30 +373,109 @@ $ curl http://localhost:8888/model/status/{id}
         "progress": [
 
         ],
-        "id": "76bed22993c3012ac90347343b8d7f45"
+        "id": "957800d3055d679195ffe18aaf3391ab"
     }
 }
 ```
 Get the result of a model run
 
 ```
-$ curl http://localhost:8888/model/result/{id}
+$ curl -s http://localhost:8888/model/result/957800d3055d679195ffe18aaf3391ab
 ```
 
 ```json
 {
     "status": "success",
-    "errors": [
+    "errors": null,
+    "data": {
+        "id": "957800d3055d679195ffe18aaf3391ab",
+        "complete": true,
+        "warnings": [
+            {
+                "text": "Zero population input for 8 population groups. Replaced with population 0.1.",
+                "locations": [
+                    "model_fit"
+                ]
+            }
+        ]
+    }
+}
+```
+Calibrate a model
 
-    ],
+```
+$ curl -s --data '{
+    "options": {
+        "spectrum_plhiv_calibration_level": "national",
+        "spectrum_plhiv_calibration_strat": "sex_age_group",
+        "spectrum_artnum_calibration_level": "national",
+        "spectrum_artnum_calibration_strat": "sex_age_coarse",
+        "spectrum_infections_calibration_level": "national",
+        "spectrum_infections_calibration_strat": "sex_age_coarse",
+        "spectrum_aware_calibration_level": "national",
+        "spectrum_aware_calibration_strat": "sex_age_coarse",
+        "calibrate_method": "logistic"
+    },
+    "version": {
+        "hintr": "1.1.9",
+        "naomi": "2.8.12",
+        "rrq": "0.5.7",
+        "traduire": "0.0.6"
+    }
+}' \
+-X POST -H 'Content-Type: application/json' \
+http://localhost:8888/calibrate/submit/957800d3055d679195ffe18aaf3391ab
+```
+
+```json
+{
+    "status": "success",
+    "errors": null,
+    "data": {
+        "id": "d5d08f4783975d8092e049adec43726b"
+    }
+}
+```
+Query status of calibrate run
+
+```
+$ curl -s http://localhost:8888/calibrate/status/d5d08f4783975d8092e049adec43726b
+```
+
+```json
+{
+    "status": "success",
+    "errors": null,
+    "data": {
+        "done": false,
+        "status": "RUNNING",
+        "success": null,
+        "queue": 0,
+        "progress": [
+
+        ],
+        "id": "d5d08f4783975d8092e049adec43726b"
+    }
+}
+```
+Get the result of a calibrate run
+
+```
+$ curl -s http://localhost:8888/calibrate/result/d5d08f4783975d8092e049adec43726b
+```
+
+```json
+{
+    "status": "success",
+    "errors": null,
     "data": {
         "data": [
             {
                 "area_id": "MWI",
                 "sex": "both",
-                "age_group": "15-49",
+                "age_group": "Y015_049",
                 "calendar_quarter": "CY2016Q1",
-                "indicator_id": 1,
+                "indicator": "population",
                 "mode": 7631061.6527,
                 "mean": 7631061.6527,
                 "lower": 7631061.6527,
@@ -328,119 +483,241 @@ $ curl http://localhost:8888/model/result/{id}
             },
             {
                 "area_id": "MWI",
-... truncated 462426 lines of output
+                "sex": "both",
+                "age_group": "Y015_064",
+... truncated 3403007 lines of output
 ```
-Headers for summary download
+Initialise download generation, type spectrum, coarse_output, summary or comparison
 
 ```
-$ curl -I http://localhost:8888/download/summary/{id}
-```
-
-```json
-HTTP/1.1 200 OK
-Date: Wed, 20 Nov 2019 14:13:30 GMT
-Content-Type: application/octet-stream
-Date: Wed, 20 Nov 2019 02:13:30 PM GMT
-Connection: close
-Content-Length: 2552891
-
-```
-Get the summary download
-
-```
-$ curl http://localhost:8888/download/summary/{id}
-```
-
-```json
-Hidden 11915 bytes of output
-```
-Headers for spectrum digest download
-
-```
-$ curl -I http://localhost:8888/download/spectrum/{id}
-```
-
-```json
-HTTP/1.1 200 OK
-Date: Wed, 20 Nov 2019 14:13:30 GMT
-Content-Type: application/octet-stream
-Date: Wed, 20 Nov 2019 02:13:30 PM GMT
-Connection: close
-Content-Length: 2552891
-
-```
-Get the spectrum digest download
-
-```
-$ curl http://localhost:8888/download/spectrum/{id}
-```
-
-```json
-Hidden 11915 bytes of output
-```
-Get plotting metadata for Malawi
-
-```
-$ curl http://localhost:8888/meta/plotting/Malawi
+$ curl -s --data '{
+    "notes": {
+        "project_notes": {
+            "name": "My project 123",
+            "updated": "2022/05/17 12:34:21",
+            "note": "These are my project notes"
+        },
+        "version_notes": [
+            {
+                "name": "Version 2",
+                "updated": "2022/05/17 12:34:21",
+                "note": "Notes specific to this version"
+            },
+            {
+                "name": "Version 1",
+                "updated": "2022/05/14 09:12:54",
+                "note": "Notes from the first version"
+            }
+        ]
+    },
+    "state": {
+        "datasets": {
+            "pjnz": {
+                "path": "72A9B1F58AAA743ADA64C6AE985CF228.pjnz",
+                "filename": "demo_mwi2019.pjnz"
+            },
+            "population": {
+                "path": "651105353D7153381ED29363DF0D772F.csv",
+                "filename": "demo_population_agesex.csv"
+            },
+            "shape": {
+                "path": "EBE533976BFAF0CABCA2C2E1B611B9C7.geojson",
+                "filename": "demo_areas.geojson"
+            },
+            "survey": {
+                "path": "F669CA9AA38A3993B5A9E9D3EB717C7D.csv",
+                "filename": "demo_survey_hiv_indicators.csv"
+            },
+            "programme": {
+                "path": "8301300AB39BE177FA593571B9DD94C4.csv",
+                "filename": "demo_art_number.csv"
+            },
+            "anc": {
+                "path": "E6323AAEB045D31E4A267398F669CF20.csv",
+                "filename": "demo_anc_testing.csv"
+            }
+        },
+        "model_fit": {
+            "options": {
+                "area_scope": "MWI",
+                "area_level": 4,
+                "calendar_quarter_t1": "CY2016Q1",
+                "calendar_quarter_t2": "CY2018Q3",
+                "calendar_quarter_t3": "CY2019Q2",
+                "survey_prevalence": [
+                    "DEMO2016PHIA",
+                    "DEMO2015DHS"
+                ],
+                "survey_art_coverage": "DEMO2016PHIA",
+                "survey_recently_infected": "DEMO2016PHIA",
+                "include_art_t1": "true",
+                "include_art_t2": "true",
+                "anc_clients_year2": 2018,
+                "anc_clients_year2_num_months": "9",
+                "anc_prevalence_year1": 2016,
+                "anc_prevalence_year2": 2018,
+                "anc_art_coverage_year1": 2016,
+                "anc_art_coverage_year2": 2018,
+                "spectrum_population_calibration": "none",
+                "spectrum_plhiv_calibration_level": "none",
+                "spectrum_plhiv_calibration_strat": "sex_age_coarse",
+                "spectrum_artnum_calibration_level": "none",
+                "spectrum_artnum_calibration_strat": "sex_age_coarse",
+                "spectrum_infections_calibration_level": "none",
+                "spectrum_infections_calibration_strat": "sex_age_coarse",
+                "spectrum_aware_calibration_level": "none",
+                "spectrum_aware_calibration_strat": "sex_age_coarse",
+                "calibrate_method": "logistic",
+                "artattend_log_gamma_offset": -4,
+                "artattend": false,
+                "output_aware_plhiv": "true",
+                "rng_seed": 17,
+                "no_of_samples": 500,
+                "max_iter": 250
+            },
+            "id": "17d40b32f8e649349e047561a6831144"
+        },
+        "calibrate": {
+            "options": {
+                "spectrum_plhiv_calibration_level": "national",
+                "spectrum_plhiv_calibration_strat": "sex_age_group",
+                "spectrum_artnum_calibration_level": "national",
+                "spectrum_artnum_calibration_strat": "sex_age_coarse",
+                "spectrum_infections_calibration_level": "national",
+                "spectrum_infections_calibration_strat": "sex_age_coarse",
+                "spectrum_aware_calibration_level": "national",
+                "spectrum_aware_calibration_strat": "sex_age_coarse",
+                "calibrate_method": "logistic"
+            },
+            "id": "6e457f5a9f0413708624b7b0384e5fd0"
+        },
+        "version": {
+            "hintr": "1.1.9",
+            "naomi": "2.8.12",
+            "rrq": "0.5.7",
+            "traduire": "0.0.6"
+        }
+    }
+}' \
+-X POST -H 'Content-Type: application/json' \
+http://localhost:8888/download/submit/spectrum/d5d08f4783975d8092e049adec43726b
 ```
 
 ```json
 {
     "status": "success",
-    "errors": [
+    "errors": null,
+    "data": {
+        "id": "930202bce97ebe49df170f0e59512357"
+    }
+}
+```
+Query status of download generation
 
-    ],
+```
+$ curl -s http://localhost:8888/download/status/930202bce97ebe49df170f0e59512357
+```
+
+```json
+{
+    "status": "success",
+    "errors": null,
+    "data": {
+        "done": false,
+        "status": "RUNNING",
+        "success": null,
+        "queue": 0,
+        "progress": [
+
+        ],
+        "id": "930202bce97ebe49df170f0e59512357"
+    }
+}
+```
+Headers for summary download result
+
+```
+$ curl -s -I http://localhost:8888/download/result/930202bce97ebe49df170f0e59512357
+```
+
+```json
+HTTP/1.1 200 OK
+Date: Mon, 23 Jan 2023 18:44:36 GMT
+Content-Type: application/octet-stream
+Content-Disposition: attachment; filename="MWI_naomi-output_20230123-1844.zip"
+X-Porcelain-Validated: false
+Content-Length: 18810039
+
+```
+Get the summary download result
+
+```
+$ curl -s http://localhost:8888/download/result/930202bce97ebe49df170f0e59512357
+```
+
+```json
+Hidden 74802 bytes of output
+```
+Get plotting metadata for Malawi
+
+```
+$ curl -s http://localhost:8888/meta/plotting/Malawi
+```
+
+```json
+{
+    "status": "success",
+    "errors": null,
     "data": {
         "anc": {
             "choropleth": {
                 "indicators": [
                     {
-                        "indicator": "art_coverage",
-                        "value_column": "art_coverage",
+                        "indicator": "anc_prevalence",
+                        "value_column": "anc_prevalence",
                         "indicator_column": "",
                         "indicator_value": "",
-                        "name": "ART coverage",
+                        "name": "ANC HIV prevalence",
                         "min": 0,
-                        "max": 1,
-                        "colour": "interpolateViridis",
-                        "invert_scale": false
-                    },
-... truncated 247 lines of output
+                        "max": 0.5,
+                        "colour": "interpolateOranges",
+                        "invert_scale": false,
+                        "scale": 1,
+                        "accuracy": null,
+                        "format": "0.0%"
+... truncated 798 lines of output
 ```
 Get information about hintr versions
 
 ```
-$ curl http://localhost:8888/hintr/version
+$ curl -s http://localhost:8888/hintr/version
 ```
 
 ```json
 {
     "status": "success",
-    "errors": [
-
-    ],
+    "errors": null,
     "data": {
-        "hintr": "0.0.15",
-        "naomi": "0.0.17",
-        "rrq": "0.2.1"
+        "hintr": "1.1.9",
+        "naomi": "2.8.12",
+        "rrq": "0.5.7",
+        "traduire": "0.0.6"
     }
 }
 ```
 Get information about hintr's workers
 
 ```
-$ curl http://localhost:8888/hintr/worker/status
+$ curl -s http://localhost:8888/hintr/worker/status
 ```
 
 ```json
 {
     "status": "success",
-    "errors": [
-
-    ],
+    "errors": null,
     "data": {
-        "supersecretive_sanderling_1": "IDLE",
-        "supersecretive_sanderling_2": "IDLE"
+        "capsizable_pipit_1": "IDLE",
+        "capsizable_pipit_2": "IDLE"
     }
 }
 ```
@@ -488,3 +765,32 @@ To run tests locally:
     ```
 
 Finally tests can be run with `devtools::test()`.
+
+## Using sensitive data
+
+To run tests which use sensitive data you need to clone the private [naomi-data repo](https://github.com/mrc-ide/naomi-data) into `tests/testthat/testdata/sensitive`.
+
+```
+git clone git@github.com:mrc-ide/naomi-data.git tests/testthat/testdata/sensitive
+```
+
+## Adding prerun model results
+
+Details here will depend on the deploy (and that will be the place to look for the running version).
+
+Use `hintr::prerun_push`, specifying the *relative* filenames of the output, spectrum and summary files.
+
+First, run a model using `naomi::hintr_run_model` into some directory, say `mydir`
+
+Then import the data into the *production copy of naomi* with
+
+```
+hintr::prerun_push("mydir",
+                   output = "malawi_output.qs",
+                   spectrum = "malawi_spectrum_download.zip",
+                   summary = "malawi_summary_download.zip")
+```
+
+Make a note of the hash that is returned - you'll need that if you want to delete the data.
+
+**You must be on the VPN for this to work.**

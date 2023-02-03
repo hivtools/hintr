@@ -48,5 +48,5 @@
     "no_of_samples": 20,
     "max_iter": 250
   },
-  "version": <version_info>
+  "version": "<+version_info+>"
 }
