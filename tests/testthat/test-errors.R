@@ -24,13 +24,13 @@ test_that("validate errors", {
   ))
   expect_true(v(e1$body))
 
-  e2 <- f("msg", "ERROR", trace = c(scalar("test"), scalar("trace")))
+  e2 <- f("msg", "ERROR", job_id = scalar("123"))
   expect_equal(e2$value$errors, list(
     list(
       error = scalar("ERROR"),
       detail = scalar("msg"),
       key = scalar("fake_key"),
-      trace = c(scalar("test"), scalar("trace"))
+      job_id = scalar("123")
     )
   ))
   expect_true(v(e2$body))

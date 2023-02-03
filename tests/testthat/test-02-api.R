@@ -579,7 +579,7 @@ test_that("erroring model run returns useful messages", {
   expect_equal(body$errors[1, "error"], "MODEL_RUN_FAILED")
   expect_equal(body$errors[1, "detail"], "test error")
   expect_match(body$errors[1, "key"], "\\w+-\\w+-\\w+")
-  expect_true("rrq:::rrq_worker_main()" %in% body$errors[1, "trace"][[1]])
+  expect_match(body$errors[1, "job_id"][[1]], "^[[:xdigit:]]+$")
 })
 
 test_that("endpoint_model_calibrate_options", {
