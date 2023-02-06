@@ -85,7 +85,8 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
     anc_prevalence_year1 = anc_year_options,
     anc_prevalence_year2 = anc_year_options,
     anc_art_coverage_year1 = anc_year_options,
-    anc_art_coverage_year2 = anc_year_options
+    anc_art_coverage_year2 = anc_year_options,
+    psnu_level = area_level_options
   )
 
   values <- list(

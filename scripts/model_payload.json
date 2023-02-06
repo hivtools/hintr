@@ -43,6 +43,8 @@
     "calendar_quarter_t1": "CY2016Q1",
     "calendar_quarter_t2": "CY2018Q3",
     "calendar_quarter_t3": "CY2019Q2",
+    "calendar_quarter_t4": "CY2022Q3",
+    "calendar_quarter_t5": "CY2023Q3",
     "survey_prevalence": ["DEMO2016PHIA", "DEMO2015DHS"],
     "survey_art_coverage": "DEMO2016PHIA",
     "survey_recently_infected": "DEMO2016PHIA",
@@ -60,6 +62,7 @@
     "output_aware_plhiv": "true",
     "rng_seed": 17,
     "no_of_samples": 500,
-    "max_iter": 250
+    "max_iter": 250,
+    "psny_level": null
   }
 }

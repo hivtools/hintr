@@ -16,7 +16,8 @@ test_that("do_endpoint_model_options correctly builds options and fallbacks", {
                     "survey_prevalence", "survey_art_coverage",
                     "survey_recently_infected", "anc_clients_year2",
                     "anc_prevalence_year1", "anc_prevalence_year2",
-                    "anc_art_coverage_year1", "anc_art_coverage_year2"))
+                    "anc_art_coverage_year1", "anc_art_coverage_year2",
+                    "psnu_level"))
 
   expect_length(options$area_scope, 1)
   expect_equal(names(options$area_scope[[1]]),
@@ -104,7 +105,8 @@ test_that("do_endpoint_model_options without programme data", {
                     "survey_prevalence", "survey_art_coverage",
                     "survey_recently_infected", "anc_clients_year2",
                     "anc_prevalence_year1", "anc_prevalence_year2",
-                    "anc_art_coverage_year1", "anc_art_coverage_year2"))
+                    "anc_art_coverage_year1", "anc_art_coverage_year2",
+                    "psnu_level"))
 
   expect_length(options$area_scope, 1)
   expect_equal(names(options$area_scope[[1]]),
