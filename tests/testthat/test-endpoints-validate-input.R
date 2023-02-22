@@ -106,7 +106,6 @@ test_that("validate_baseline supports shape files", {
 })
 
 test_that("endpoint_validate_baseline returns human readable error", {
-  testthat::skip("Flaky test - see mrc-3892")
   input <- validate_baseline_input(file.path("testdata", "uganda.geojson"),
                                    "shape")
   error <- expect_error(validate_baseline(input))
