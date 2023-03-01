@@ -72,21 +72,21 @@ test_that("do_endpoint_model_options correctly builds options and fallbacks", {
   expect_equal(options$anc_prevalence_year1,
                options$anc_art_coverage_year2)
 
-  fallback <- args[[1]][[4]]
-  expect_setequal(names(fallback),
-                  c("area_scope", "area_level",
+  overrides <- args[[1]][[4]]
+  expect_setequal(names(overrides),
+                  c("area_scope",
                     "calendar_quarter_t1", "survey_prevalence",
                     "survey_art_coverage", "anc_prevalence_year1",
                     "anc_prevalence_year2", "anc_art_coverage_year1",
                     "anc_art_coverage_year2"))
-  expect_equal(fallback$area_scope, scalar("MWI"))
-  expect_equal(fallback$calendar_quarter_t1, scalar("CY2016Q1"))
-  expect_equal(fallback$survey_prevalence, scalar("DEMO2016PHIA"))
-  expect_equal(fallback$survey_art_coverage, scalar("DEMO2016PHIA"))
-  expect_equal(fallback$anc_prevalence_year1, scalar("2016"))
-  expect_equal(fallback$anc_prevalence_year2, scalar(""))
-  expect_equal(fallback$anc_art_coverage_year1, scalar("2016"))
-  expect_equal(fallback$anc_art_coverage_year2, scalar(""))
+  expect_equal(overrides$area_scope, scalar("MWI"))
+  expect_equal(overrides$calendar_quarter_t1, scalar("CY2016Q1"))
+  expect_equal(overrides$survey_prevalence, scalar("DEMO2016PHIA"))
+  expect_equal(overrides$survey_art_coverage, scalar("DEMO2016PHIA"))
+  expect_equal(overrides$anc_prevalence_year1, scalar("2016"))
+  expect_equal(overrides$anc_prevalence_year2, scalar(""))
+  expect_equal(overrides$anc_art_coverage_year1, scalar("2016"))
+  expect_equal(overrides$anc_art_coverage_year2, scalar(""))
 })
 
 test_that("do_endpoint_model_options without programme data", {
@@ -155,7 +155,7 @@ test_that("do_endpoint_model_options without programme data", {
   expect_equal(fallback$area_scope, scalar("MWI"))
 })
 
-test_that("do_endpoint_model_options fallback anc year2 to 2022 if in data", {
+test_that("do_endpoint_model_options overrides anc year2 to 2022 if in data", {
   shape <- file_object(file.path("testdata", "malawi.geojson"))
   survey <- file_object(file.path("testdata", "survey.csv"))
   art <- file_object(file.path("testdata", "programme.csv"))
@@ -168,12 +168,12 @@ test_that("do_endpoint_model_options fallback anc year2 to 2022 if in data", {
     json <- do_endpoint_model_options(shape, survey, art, anc)
     args <- mockery::mock_args(mock_get_controls_json)
   })
-  fallback <- args[[1]][[4]]
-  expect_equal(fallback$anc_prevalence_year2, scalar("2022"))
-  expect_equal(fallback$anc_art_coverage_year2, scalar("2022"))
+  overrides <- args[[1]][[4]]
+  expect_equal(overrides$anc_prevalence_year2, scalar("2022"))
+  expect_equal(overrides$anc_art_coverage_year2, scalar("2022"))
   ## Year 1 defaults are NULL as survey year not in ANC years
-  expect_equal(fallback$anc_prevalence_year1, scalar(""))
-  expect_equal(fallback$anc_art_coverage_year1, scalar(""))
+  expect_equal(overrides$anc_prevalence_year1, scalar(""))
+  expect_equal(overrides$anc_art_coverage_year1, scalar(""))
 })
 
 test_that("can retrieve validated model options including additional options", {
@@ -314,20 +314,6 @@ test_that("can read geojson level labels", {
       id = scalar("4"),
       label = scalar("District + Metro")
     )))
-})
-
-
-test_that("area level is prepopualted to lowest region", {
-  shape <- file_object(file.path("testdata", "malawi.geojson"))
-  survey <- file_object(file.path("testdata", "survey.csv"))
-  json <- do_endpoint_model_options(shape, survey, NULL, NULL)
-
-  json <- jsonlite::parse_json(json)
-
-  expect_equal(json$controlSections[[1]]$controlGroups[[3]]$label,
-               "Area level")
-  expect_equal(json$controlSections[[1]]$controlGroups[[3]]$controls[[1]]$value,
-               "4")
 })
 
 
