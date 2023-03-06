@@ -124,7 +124,7 @@ Queue <- R6::R6Class(
     },
 
     cleanup = function() {
-      clear_cache(self$queue$keys$queue_id)
+      clear_cache(r6_private(self$queue)$keys$queue_id)
       if (self$cleanup_on_exit && !is.null(self$queue$con)) {
         message(t_("QUEUE_STOPPING_WORKERS"))
         self$queue$worker_stop(type = "kill")

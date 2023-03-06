@@ -43,9 +43,10 @@ migrate_task <- function(task_id, queue, dry_run = FALSE) {
   new_res <- migrate(res)
   if (!dry_run) {
     store <- rrq:::rrq_object_store(queue$queue$con,
-                                    queue$queue$keys)
+                                    r6_private(queue$queue)$keys)
     hash <- store$set(new_res, task_id)
-    queue$queue$con$HSET(queue$queue$keys$task_result, task_id, hash)
+    queue$queue$con$HSET(r6_private(queue$queue)$keys$task_result, task_id,
+                         hash)
   }
   out <- list(
     id = task_id,
@@ -63,4 +64,8 @@ migrate <- function(res) {
   naomi:::build_hintr_output(res$output_path,
                              res$calibration_path,
                              warnings = NULL)
+}
+
+r6_private <- function(x) {
+  x[[".__enclos_env__"]]$private
 }

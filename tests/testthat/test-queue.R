@@ -53,7 +53,7 @@ test_that("queue works as intended", {
   expect_length(queue$queue$task_list(), 0)
 
   con <- queue$queue$con
-  key <- queue$queue$keys$worker_name
+  key <- r6_private(queue$queue)$keys$worker_name
   expect_equal(con$SCARD(key), 2)
 
   rm(queue)
