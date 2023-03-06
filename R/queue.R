@@ -37,7 +37,7 @@ Queue <- R6::R6Class(
 
     start = function(workers, timeout) {
       if (workers > 0L) {
-        ids <- rrq::worker_spawn(self$queue, workers)
+        ids <- rrq::rrq_worker_spawn(self$queue, workers)
         if (is.finite(timeout) && timeout > 0) {
           self$queue$message_send_and_wait("TIMEOUT_SET", timeout, ids)
         }
