@@ -164,7 +164,7 @@ create_result <- function(queue, result) {
   task_id <- ids::random_id()
   rrq:::run_task_cleanup(queue$queue$con,
                          r6_private(queue$queue)$keys,
-                         queue$queue$.__enclos_env__$private$store,
+                         r6_private(queue$queue)$store,
                          task_id,
                          rrq:::TASK_COMPLETE,
                          result)
