@@ -160,3 +160,7 @@ assert_names <- function(items, required, optional,
   }
   invisible(TRUE)
 }
+
+r6_private <- function(x) {
+  x[[".__enclos_env__"]]$private
+}

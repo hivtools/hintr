@@ -113,7 +113,7 @@ test_that("querying for an orphan task returns sensible error", {
 
   queue <- test_queue()
   id <- ids::random_id()
-  queue$queue$con$HSET(queue$queue$keys$task_status, id, "DIED")
+  queue$queue$con$HSET(r6_private(queue$queue)$keys$task_status, id, "DIED")
   get_model_result <- model_result(queue)
   error <- expect_error(get_model_result(id))
 
