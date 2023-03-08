@@ -91,7 +91,6 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
 
   values <- list(
     area_scope = parent_region_id,
-    area_level = area_level_options[[length(area_level_options)]]$id,
     calendar_quarter_t1 = most_recent_survey_quarter,
     survey_prevalence = survey_prevalence_options$default,
     survey_art_coverage = survey_art_coverage_options$default,
