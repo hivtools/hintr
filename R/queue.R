@@ -37,7 +37,7 @@ Queue <- R6::R6Class(
 
     start = function(workers, timeout) {
       if (workers > 0L) {
-        ids <- rrq::worker_spawn(self$queue, workers)
+        ids <- rrq::rrq_worker_spawn(self$queue, workers)
         if (is.finite(timeout) && timeout > 0) {
           self$queue$message_send_and_wait("TIMEOUT_SET", timeout, ids)
         }
@@ -124,7 +124,7 @@ Queue <- R6::R6Class(
     },
 
     cleanup = function() {
-      clear_cache(self$queue$keys$queue_id)
+      clear_cache(r6_private(self$queue)$keys$queue_id)
       if (self$cleanup_on_exit && !is.null(self$queue$con)) {
         message(t_("QUEUE_STOPPING_WORKERS"))
         self$queue$worker_stop(type = "kill")
