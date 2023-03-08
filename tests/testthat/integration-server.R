@@ -1,8 +1,8 @@
-context("server")
-
-server <- porcelain::porcelain_background$new(
-  api, args = list(queue_id = paste0("hintr:", ids::random_id())))
-server$start()
+withr::with_dir(testthat::test_path(), {
+  server <- porcelain::porcelain_background$new(
+    api, args = list(queue_id = paste0("hintr:", ids::random_id())))
+  server$start()
+})
 
 test_that("Root", {
   r <- server$request("GET", "/")
@@ -11,11 +11,11 @@ test_that("Root", {
 })
 
 test_that("validate pjnz", {
-  payload <- file.path("payload", "validate_pjnz_payload.json")
+  payload <- system_file("payload", "validate_pjnz_payload.json")
   r <- server$request(
     "POST", "/validate/baseline-individual",
-    body = httr::upload_file(payload, type = "application/json"),
-    encode = "json")
+    body = payload,
+    httr::content_type_json())
   expect_equal(httr::status_code(r), 200)
   expect_equal(
     response_from_json(r),
@@ -27,15 +27,16 @@ test_that("validate pjnz", {
                                  iso3 = "MWI"),
                      filename = "Malawi2019.PJNZ",
                      fromADR = FALSE,
+                     resource_url = "https://adr.unaids.org/file/123.csv",
                      filters = NULL)))
 })
 
 test_that("validate shape", {
-  payload <- file.path("payload", "validate_shape_payload.json")
+  payload <- system_file("payload", "validate_shape_payload.json")
   r <- server$request(
     "POST", "/validate/baseline-individual",
-    body = httr::upload_file(payload, type = "application/json"),
-    encode = "json")
+    body = payload,
+    httr::content_type_json())
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
 
@@ -43,6 +44,7 @@ test_that("validate shape", {
   expect_equal(response$errors, NULL)
   expect_equal(response$data$hash, "12345")
   expect_equal(response$data$fromADR, FALSE)
+  expect_equal(response$data$resource_url, NULL)
   expect_equal(response$data$filename, "original.geojson")
   expect_equal(response$data$type, "shape")
   expect_true(all(c("type", "features") %in% names(response$data$data)))
@@ -51,29 +53,30 @@ test_that("validate shape", {
 })
 
 test_that("validate population", {
-  payload <- file.path("payload", "validate_population_payload.json")
+  payload <- system_file("payload", "validate_population_payload.json")
   r <- server$request(
     "POST", "/validate/baseline-individual",
-    body = httr::upload_file(payload,type = "application/json"),
-    encode = "json")
+    body = payload,
+    httr::content_type_json())
   expect_equal(httr::status_code(r), 200)
-  expect_equal(response_from_json(r),
-               list(status = "success",
-                    errors = NULL,
-                    data = list(hash = "12345",
-                                type = "population",
-                                data = NULL,
-                                filename = "original.csv",
-                                fromADR = FALSE,
-                                filters = NULL)))
+  expect_equal(response_from_json(r), list(
+    status = "success",
+    errors = NULL,
+    data = list(hash = "12345",
+                type = "population",
+                data = NULL,
+                filename = "original.csv",
+                fromADR = FALSE,
+                resource_url = NULL,
+                filters = NULL)))
 })
 
 test_that("validate programme", {
-  payload <- file.path("payload", "validate_programme_payload.json")
+  payload <- system_file("payload", "validate_programme_payload.json")
   r <- server$request(
     "POST", "/validate/survey-and-programme",
-    body = httr::upload_file(payload, type = "application/json"),
-    encode = "json")
+    body = payload,
+    httr::content_type_json())
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
   expect_equal(response$status, "success")
@@ -82,6 +85,7 @@ test_that("validate programme", {
   expect_equal(response$data$filename, "original.csv")
   expect_equal(response$data$type, "programme")
   expect_equal(response$data$fromADR, FALSE)
+  expect_equal(response$data$resource_url, NULL)
   expect_true(length(response$data$data) >= 500)
   expect_type(response$data$data[[1]]$art_current, "integer")
   expect_equal(names(response$data$filters),
@@ -93,11 +97,11 @@ test_that("validate programme", {
 })
 
 test_that("validate ANC", {
-  payload <- file.path("payload", "validate_anc_payload.json")
+  payload <- system_file("payload", "validate_anc_payload.json")
   r <- server$request(
     "POST", "/validate/survey-and-programme",
-    body = httr::upload_file(payload, type = "application/json"),
-    encode = "json")
+    body = payload,
+    httr::content_type_json())
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
   expect_equal(response$status, "success")
@@ -106,6 +110,8 @@ test_that("validate ANC", {
   expect_equal(response$data$filename, "original.csv")
   expect_equal(response$data$type, "anc")
   expect_equal(response$data$fromADR, FALSE)
+  expect_equal(response$data$resource_url,
+               "https://adr.unaids.org/file/123.csv")
   expect_true(length(response$data$data) >= 200)
   expect_type(response$data$data[[1]]$anc_clients, "integer")
   expect_equal(names(response$data$filters), c("year", "indicators"))
@@ -115,11 +121,11 @@ test_that("validate ANC", {
 })
 
 test_that("validate survey", {
-  payload <- file.path("payload", "validate_survey_payload.json")
+  payload <- system_file("payload", "validate_survey_payload.json")
   r <- server$request(
     "POST", "/validate/survey-and-programme",
-    body = httr::upload_file(payload, type = "application/json"),
-    encode = "json")
+    body = payload,
+    httr::content_type_json())
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
   expect_equal(response$status, "success")
@@ -128,6 +134,7 @@ test_that("validate survey", {
   expect_equal(response$data$filename, "original.csv")
   expect_equal(response$data$type, "survey")
   expect_equal(response$data$fromADR, FALSE)
+  expect_equal(response$data$resource_url, NULL)
   expect_true(length(response$data$data) >= 20000)
   expect_type(response$data$data[[1]]$estimate, "double")
   expect_equal(names(response$data$filters), c("age", "surveys", "indicators"))
@@ -138,11 +145,11 @@ test_that("validate survey", {
 })
 
 test_that("validate baseline", {
-  payload <- file.path("payload", "validate_baseline_payload.json")
+  payload <- system_file("payload", "validate_baseline_payload.json")
   r <- server$request(
     "POST", "/validate/baseline-combined",
-    body = httr::upload_file(payload, type = "application/json"),
-    encode = "json")
+    body = payload,
+    httr::content_type_json())
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
   expect_equal(response$status, "success")
@@ -152,13 +159,13 @@ test_that("validate baseline", {
 
 test_that("model interactions", {
   test_mock_model_available()
-  payload <- setup_submit_payload()
+  payload <- setup_payload_submit()
 
   ## Submit a model run
   r <- server$request(
     "POST", "/model/submit",
-    body = httr::upload_file(payload, type = "application/json"),
-    encode = "json")
+    body = payload,
+    httr::content_type_json())
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
   expect_equal(response$status, "success")
@@ -215,7 +222,7 @@ test_that("model interactions", {
 })
 
 test_that("real model can be run & calibrated by API", {
-  payload <- setup_submit_payload()
+  payload <- setup_payload_submit()
   ## Results can be stored in specified results directory
   results_dir <- tempfile("results")
   dir.create(results_dir)
@@ -232,13 +239,13 @@ test_that("real model can be run & calibrated by API", {
   controller <- rrq::rrq_controller$new(queue_id = queue_id)
   res <- controller$message_send_and_wait("EVAL",
                                           "Sys.getenv('USE_MOCK_MODEL')")
-  expect_equivalent(res, c("false", "false"))
+  expect_equal(res, list("false", "false"), ignore_attr = TRUE)
 
   ## Submit a model run
   r <- test_server$request(
     "POST", "/model/submit",
-    body = httr::upload_file(payload, type = "application/json"),
-    encode = "json")
+    body = payload,
+    httr::content_type_json())
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
   expect_equal(response$status, "success")
@@ -277,11 +284,11 @@ test_that("real model can be run & calibrated by API", {
   expect_true(response$data$complete)
 
   ## Calibrate submit
-  payload <- setup_calibrate_payload()
+  payload <- setup_payload_calibrate()
   r <- test_server$request(
     "POST",  paste0("/calibrate/submit/", id),
-    body = httr::upload_file(payload, type = "application/json"),
-    encode = "json")
+    body = payload,
+    httr::content_type_json())
 
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
@@ -365,11 +372,11 @@ test_that("default plotting metadata is exposed", {
 })
 
 test_that("model run options are exposed", {
-  options <- file.path("payload", "model_run_options_payload.json")
+  payload <- system_file("payload", "model_run_options_payload.json")
   r <- server$request(
     "POST", "/model/options",
-    body = httr::upload_file(options, type = "application/json"),
-    encode = "json")
+    body = payload,
+    httr::content_type_json())
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
   expect_equal(response$status, "success")
@@ -378,36 +385,42 @@ test_that("model run options are exposed", {
   expect_length(response$data$controlSections, 6)
 
   general_section <- response$data$controlSections[[1]]
-  expect_length(
-    general_section$controlGroups[[1]]$controls[[1]]$options, 1)
   expect_equal(
-    names(general_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
+    general_section$controlGroups[[1]]$controls[[1]]$name,
+    "mock_model_trigger_error"
+  )
+  expect_length(
+    general_section$controlGroups[[1]]$controls[[1]]$options, 2)
+  expect_length(
+    general_section$controlGroups[[2]]$controls[[1]]$options, 1)
+  expect_equal(
+    names(general_section$controlGroups[[2]]$controls[[1]]$options[[1]]),
     c("id", "label", "children")
   )
   expect_equal(
-    general_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
+    general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
     "MWI"
   )
   expect_equal(
-    general_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
+    general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
     "Malawi - Demo"
   )
   expect_equal(
-    general_section$controlGroups[[1]]$controls[[1]]$value,
+    general_section$controlGroups[[2]]$controls[[1]]$value,
     "MWI")
   expect_length(
-    general_section$controlGroups[[2]]$controls[[1]]$options,
+    general_section$controlGroups[[3]]$controls[[1]]$options,
     5
   )
   expect_equal(
-    names(general_section$controlGroups[[2]]$controls[[1]]$options[[1]]),
+    names(general_section$controlGroups[[3]]$controls[[1]]$options[[1]]),
     c("id", "label")
   )
   expect_equal(
-    general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
+    general_section$controlGroups[[3]]$controls[[1]]$options[[1]]$id,
     "0")
   expect_equal(
-    general_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
+    general_section$controlGroups[[3]]$controls[[1]]$options[[1]]$label,
     "Country")
 
   survey_section <- response$data$controlSections[[2]]
@@ -471,12 +484,12 @@ test_that("model run options are exposed", {
 })
 
 test_that("model options can be validated", {
-  payload <- "payload/validate_options_payload.json"
+  payload <- system_file("payload", "validate_options_payload.json")
 
   r <- server$request(
     "POST", "/validate/options",
-    body = httr::upload_file(payload, type = "application/json"),
-    encode = "json")
+    body = payload,
+    httr::content_type_json())
 
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
@@ -510,18 +523,18 @@ test_that("worker information is returned", {
   response <- response_from_json(r)
   expect_equal(response$status, "success")
   expect_match(names(response$data), "^[a-z]+_[a-z]+_[12]$")
-  expect_equivalent(response$data, list("IDLE", "IDLE"))
+  expect_equal(response$data, list("IDLE", "IDLE"), ignore_attr = TRUE)
 })
 
 test_that("download streams bytes", {
   test_mock_model_available()
-  payload <- setup_submit_payload()
+  payload <- setup_payload_submit()
 
   ## Run a model
   r <- server$request(
     "POST", "/model/submit",
-    body = httr::upload_file(payload, type = "application/json"),
-    encode = "json")
+    body = payload,
+    httr::content_type_json())
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
   expect_equal(response$status, "success")
@@ -540,11 +553,11 @@ test_that("download streams bytes", {
   })
 
   ## Calibrate submit
-  payload <- setup_calibrate_payload()
+  payload <- setup_payload_calibrate()
   r <- server$request(
     "POST",  paste0("/calibrate/submit/", model_fit_id),
-    body = httr::upload_file(payload, type = "application/json"),
-    encode = "json")
+    body = payload,
+    httr::content_type_json())
 
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
@@ -639,7 +652,7 @@ test_that("can quit", {
   r <- tryCatch(
     httr::POST(paste0(server$url, "/hintr/stop")),
     error = identity)
-  expect_is(r, "error")
+  expect_type(r, "error")
 
   ## Sleep to give time for process to be killed before checking
   Sys.sleep(2)
@@ -685,11 +698,11 @@ test_that("crashed worker can be detected", {
   test_server$start()
 
   ## Submit a model run
-  payload <- setup_submit_payload()
+  payload <- setup_payload_submit()
   r <- test_server$request(
     "POST", "/model/submit",
-    body = httr::upload_file(payload, type = "application/json"),
-    encode = "json")
+    body = payload,
+    httr::content_type_json())
   httr::stop_for_status(r)
   id <- response_from_json(r)$data$id
 
@@ -730,18 +743,18 @@ test_that("crashed worker can be detected", {
                "MODEL_RUN_FAILED")
   expect_equal(dat$errors[[1]]$detail,
                "Worker has crashed - error details are unavailable")
-  expect_is(dat$errors[[1]]$key, "character")
+  expect_type(dat$errors[[1]]$key, "character")
 })
 
 test_that("model run can be cancelled", {
   test_mock_model_available()
-  payload <- setup_submit_payload()
+  payload <- setup_payload_submit()
 
   ## Submit a model run
   r <- server$request(
     "POST", "/model/submit",
-    body = httr::upload_file(payload, type = "application/json"),
-    encode = "json")
+    body = payload,
+    httr::content_type_json())
   expect_equal(httr::status_code(r), 200)
   id <- response_from_json(r)$data$id
 
@@ -774,13 +787,13 @@ test_that("model run can be cancelled", {
 
 test_that("endpoint_model_submit can be run without anc or programme data", {
   test_mock_model_available()
-  payload <- setup_submit_payload(include_anc_art = FALSE)
+  payload <- setup_payload_submit(include_anc_art = FALSE)
 
   ## Run a model
   r <- server$request(
     "POST", "/model/submit",
-    body = httr::upload_file(payload, type = "application/json"),
-    encode = "json")
+    body = payload,
+    httr::content_type_json())
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
   expect_equal(response$status, "success")
@@ -789,10 +802,10 @@ test_that("endpoint_model_submit can be run without anc or programme data", {
 })
 
 test_that("input time series can return plot data for programme", {
-  programme_input <- input_time_series_request(
-    file.path("testdata", "programme.csv"),
-    "programme",
-    file.path("testdata", "malawi.geojson"))
+  programme_input <- setup_payload_input_time_series(
+    test_path("testdata"),
+    "programme.csv",
+    "programme")
   r <- server$request(
     "POST", "/chart-data/input-time-series/programme",
     body = programme_input,
@@ -810,10 +823,10 @@ test_that("input time series can return plot data for programme", {
 })
 
 test_that("input time series can return plot data for anc", {
-  programme_input <- input_time_series_request(
-    file.path("testdata", "anc.csv"),
-    "anc",
-    file.path("testdata", "malawi.geojson"))
+  programme_input <- setup_payload_input_time_series(
+    test_path("testdata"),
+    "anc.csv",
+    "anc")
   r <- server$request(
     "POST", "/chart-data/input-time-series/anc",
     body = programme_input,
@@ -831,7 +844,7 @@ test_that("input time series can return plot data for anc", {
 })
 
 test_that("rehydrate", {
-  payload <- setup_reydrate_payload()
+  payload <- setup_payload_rehydrate()
 
   r <- server$request("POST",
                       "/rehydrate/submit",

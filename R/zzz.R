@@ -4,6 +4,7 @@
 #' @importFrom jsonlite unbox
 #' @importFrom naomi get_metadata
 #' @importFrom rrq rrq_controller
+#' @importFrom naomi.options get_controls_json
 #' @importFrom traduire t_
 NULL
 
@@ -29,7 +30,7 @@ hintr_init_traduire <- function() {
   namespaces <- "translation"
   traduire::translator_register(resources = NULL,
                                 language = languages[[1]],
-                                default_namspace = namespaces[[1]],
+                                default_namespace = namespaces[[1]],
                                 resource_pattern = pattern,
                                 namespaces = namespaces,
                                 languages = languages,

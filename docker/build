@@ -24,7 +24,6 @@ RUN install_packages --repo=https://mrc-ide.github.io/drat \
         covr \
         ssh
 WORKDIR /src
-RUN R CMD build .
 ENTRYPOINT [ "/bin/bash", "-l", "-c" ]
 EOF
 

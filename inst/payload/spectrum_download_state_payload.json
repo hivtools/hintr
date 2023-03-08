@@ -1,0 +1,83 @@
+{
+  "datasets": {
+    "pjnz":{
+      "path":"72A9B1F58AAA743ADA64C6AE985CF228.pjnz",
+      "filename":"demo_mwi2019.pjnz"
+    },
+    "population":{
+      "path":"651105353D7153381ED29363DF0D772F.csv",
+      "filename":"demo_population_agesex.csv"
+    },
+    "shape":{
+      "path":"EBE533976BFAF0CABCA2C2E1B611B9C7.geojson",
+      "filename":"demo_areas.geojson"
+    },
+    "survey":{
+      "path":"F669CA9AA38A3993B5A9E9D3EB717C7D.csv",
+      "filename":"demo_survey_hiv_indicators.csv"
+    },
+    "programme":{
+      "path":"8301300AB39BE177FA593571B9DD94C4.csv",
+      "filename":"demo_art_number.csv"
+    },
+    "anc":{
+      "path":"E6323AAEB045D31E4A267398F669CF20.csv",
+      "filename":"demo_anc_testing.csv"
+    }
+  },
+  "model_fit": {
+    "options": {
+      "area_scope": "MWI",
+      "area_level": 4,
+      "calendar_quarter_t1": "CY2016Q1",
+      "calendar_quarter_t2": "CY2018Q3",
+      "calendar_quarter_t3": "CY2019Q2",
+      "calendar_quarter_t4": "CY2022Q3",
+      "calendar_quarter_t5": "CY2023Q3",
+      "survey_prevalence": ["DEMO2016PHIA", "DEMO2015DHS"],
+      "survey_art_coverage": "DEMO2016PHIA",
+      "survey_recently_infected": "DEMO2016PHIA",
+      "include_art_t1": "true",
+      "include_art_t2": "true",
+      "anc_clients_year2": 2018,
+      "anc_clients_year2_num_months": "9",
+      "anc_prevalence_year1": 2016,
+      "anc_prevalence_year2": 2018,
+      "anc_art_coverage_year1": 2016,
+      "anc_art_coverage_year2": 2018,
+      "spectrum_population_calibration": "none",
+      "spectrum_plhiv_calibration_level": "none",
+      "spectrum_plhiv_calibration_strat": "sex_age_coarse",
+      "spectrum_artnum_calibration_level": "none",
+      "spectrum_artnum_calibration_strat": "sex_age_coarse",
+      "spectrum_infections_calibration_level": "none",
+      "spectrum_infections_calibration_strat": "sex_age_coarse",
+      "spectrum_aware_calibration_level": "none",
+      "spectrum_aware_calibration_strat": "sex_age_coarse",
+      "calibrate_method": "logistic",
+      "artattend_log_gamma_offset": -4,
+      "artattend": false,
+      "output_aware_plhiv": "true",
+      "rng_seed": 17,
+      "no_of_samples": 500,
+      "max_iter": 250,
+      "psnu_level": null
+    },
+    "id": "17d40b32f8e649349e047561a6831144"
+  },
+  "calibrate": {
+    "options": {
+      "spectrum_plhiv_calibration_level": "national",
+      "spectrum_plhiv_calibration_strat": "sex_age_group",
+      "spectrum_artnum_calibration_level": "national",
+      "spectrum_artnum_calibration_strat": "sex_age_coarse",
+      "spectrum_infections_calibration_level": "national",
+      "spectrum_infections_calibration_strat": "sex_age_coarse",
+      "spectrum_aware_calibration_level": "national",
+      "spectrum_aware_calibration_strat": "sex_age_coarse",
+      "calibrate_method": "logistic"
+    },
+    "id": "6e457f5a9f0413708624b7b0384e5fd0"
+  },
+  "version": "<+version_info+>"
+}

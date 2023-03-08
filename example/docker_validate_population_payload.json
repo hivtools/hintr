@@ -1,9 +1,0 @@
-{
-  "type": "population",
-  "file": {
-      "path": "src/tests/testthat/testdata/population.csv",
-      "filename": "population.csv",
-      "hash": "12345",
-      "fromADR": false
-  }
-}

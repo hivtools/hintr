@@ -9,7 +9,8 @@ validate_baseline_input <- function(file_path, type) {
         "path": "%s",
         "hash": "12345",
         "filename": "original",
-        "fromADR": false
+        "fromADR": false,
+        "resource_url": "https://adr.unaids.org/file/123.csv"
       }
     }', type, file_path)
 }
@@ -24,7 +25,8 @@ model_options_input <- function(shape, survey, programme, anc) {
         "path": "%s",
         "hash": "12345",
         "filename": "original",
-        "fromADR": false
+        "fromADR": false,
+        "resource_url": "https://adr.unaids.org/file/123.csv"
       }', x)
     }
   }
@@ -56,39 +58,18 @@ validate_baseline_all_input <- function(pjnz, shape, population) {
   )
 }
 
-validate_programme_survey_input <- function(file_path, type, shape,
-                                            pjnz) {
+validate_programme_survey_input <- function(file_path, type, shape) {
   sprintf(
     '{"type": "%s",
       "file": {
         "path": "%s",
         "hash": "12345",
         "filename": "original",
-        "fromADR": false
+        "fromADR": false,
+        "resource_url": "https://adr.unaids.org/file/123.csv"
       },
-      "shape": "%s",
-      "pjnz": "%s"
-    }', type, file_path, shape, pjnz)
-}
-
-input_time_series_request <- function(file_path, type, shape_path) {
-  sprintf(
-    '{
-      "data": {
-        "%s": {
-          "path": "%s",
-          "hash": "12345",
-          "filename": "original",
-          "fromADR": false
-        },
-        "shape": {
-          "path": "%s",
-          "hash": "6789",
-          "filename": "shape_file",
-          "fromADR": false
-        }
-      }
-    }', type, file_path, shape_path)
+      "shape": "%s"
+    }', type, file_path, shape)
 }
 
 MockPlumberResponse <- R6::R6Class("PlumberResponse", list(

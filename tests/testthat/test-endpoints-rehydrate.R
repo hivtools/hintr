@@ -1,5 +1,5 @@
 test_that("rehydrate returns json", {
-  payload <- setup_reydrate_payload()
+  payload <- setup_payload_rehydrate()
   input <- jsonlite::fromJSON(payload)
   out <- rehydrate(input$file)
 
@@ -18,7 +18,7 @@ test_that("rehydrate endpoint returns json", {
   q <- test_queue_result()
 
   ## Submit rehydrate request
-  payload <- setup_reydrate_payload()
+  payload <- setup_payload_rehydrate()
   submit <- endpoint_rehydrate_submit(q$queue)
   submit_response <- submit$run(payload)
 
@@ -58,7 +58,7 @@ test_that("api can call spectrum download", {
   api <- api_build(q$queue)
 
   ## Submit rehydrate request
-  payload <- setup_reydrate_payload()
+  payload <- setup_payload_rehydrate()
   submit <- api$request("POST", "/rehydrate/submit", body = payload)
   expect_equal(submit$status, 200)
   submit_body <- jsonlite::fromJSON(submit$body)
@@ -98,7 +98,7 @@ test_that("rehydrate returns useful error if cannot rehydrate from zip", {
   q <- test_queue_result()
 
   ## Submit rehydrate request which will error
-  payload <- setup_reydrate_payload("testdata/Malawi2019.PJNZ")
+  payload <- setup_payload_rehydrate("testdata/Malawi2019.PJNZ")
   submit <- endpoint_rehydrate_submit(q$queue)
   submit_response <- submit$run(payload)
   expect_equal(submit_response$status_code, 200)
@@ -120,7 +120,7 @@ test_that("rehydrate returns useful error when submission fails", {
   test_mock_model_available()
   q <- test_queue_result()
 
-  payload <- setup_reydrate_payload("missing/file.zip")
+  payload <- setup_payload_rehydrate("missing/file.zip")
   submit <- endpoint_rehydrate_submit(q$queue)
   response <- submit$run(payload)
 
@@ -134,7 +134,7 @@ test_that("rehydrate returns useful error when submission fails", {
 
 test_that("trying to rehydrate with no notes does not error", {
   ## Setup payload and remove notes.txt from zip
-  payload <- setup_reydrate_payload()
+  payload <- setup_payload_rehydrate()
   input <- jsonlite::fromJSON(payload)
   t <- tempfile()
   dir.create(t, FALSE, TRUE)

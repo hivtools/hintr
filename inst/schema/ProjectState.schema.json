@@ -1,15 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "definitions": {
-    "file": {
-      "type": "object",
-      "properties": {
-        "path": { "type": "string" },
-        "filename": { "type": "string" }
-      },
-      "additionalProperties": false,
-      "required": [ "path", "filename" ]
-    },
     "async_run_options": {
       "type": "object",
       "properties": {
@@ -22,19 +13,7 @@
   },
   "type": "object",
   "properties": {
-    "datasets": {
-      "type": "object",
-      "properties": {
-        "pjnz": { "$ref": "#/definitions/file" },
-        "population": { "$ref": "#/definitions/file" },
-        "shape": { "$ref": "#/definitions/file" },
-        "survey": { "$ref": "#/definitions/file" },
-        "programme": { "$ref": "#/definitions/file" },
-        "anc": { "$ref": "#/definitions/file" }
-      },
-      "additionalProperties": false,
-      "required": [ "pjnz", "population", "shape", "survey" ]
-    },
+    "datasets": { "$ref": "InputDatasets.schema.json" },
     "model_fit": { "$ref": "#/definitions/async_run_options" },
     "calibrate": { "$ref": "#/definitions/async_run_options" },
     "version": { "$ref": "VersionInfo.schema.json" }

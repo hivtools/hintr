@@ -1,5 +1,3 @@
-context("utils")
-
 test_that("can check for empty", {
   expect_true(is_empty(NULL))
   expect_true(is_empty(NA))
@@ -74,7 +72,8 @@ test_that("can convert list to data frame", {
 })
 
 test_that("notes can be formatted", {
-  notes <- jsonlite::read_json(setup_download_request_payload())
+  notes <- jsonlite::fromJSON(setup_payload_download_request(),
+                              simplifyVector = FALSE)
   formatted <- format_notes(notes$notes)
   expect_equal(formatted, paste0(c(
     "Project notes:",
@@ -93,4 +92,34 @@ test_that("notes can be formatted", {
     "2022/05/14 09:12:54",
     "Notes from the first version",
     ""), collapse = "\n"))
+})
+
+test_that("assert_files_exist", {
+  t1 <- tempfile()
+  file.create(t1)
+  t2 <- tempfile()
+  file.create(t2)
+  expect_true(assert_files_exist(c(t1, t2)))
+  expect_error(assert_files_exist(c(t1, "not a file")),
+               "File not a file does not exist")
+})
+
+test_that("assert_names", {
+  required <- c("one", "two")
+  optional <- c("three", "four")
+  input <- list(one = 1, two = 2, three = 3, four = 4)
+  expect_true(assert_names(input, required, optional))
+
+  input <- list(one = 1, two = 2)
+  expect_true(assert_names(input, required, optional))
+
+  input <- list(one = 1, three = 3, four = 4)
+  expect_error(assert_names(input, required, optional),
+               "Required item(s) two are missing from input",
+               fixed = TRUE)
+
+  input <- list(one = 1, two = 2, five = 5)
+  expect_error(assert_names(input, required, optional),
+               "Unknown item(s) five are included in input",
+               fixed = TRUE)
 })

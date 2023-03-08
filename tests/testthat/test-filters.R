@@ -1,14 +1,15 @@
-context("filters")
-
 test_that("get_age_label correctly maps to label and returns useful error", {
-  expect_equivalent(get_age_labels("Y050_054"), data_frame(age_group = "Y050_054",
-                                                           age_group_label = "50-54",
-                                                           age_group_sort_order = 25))
+  expect_equal(get_age_labels("Y050_054"),
+               data_frame(age_group = "Y050_054",
+                          age_group_label = "50-54",
+                          age_group_sort_order = 25),
+               ignore_attr = TRUE)
 
-  expect_equivalent(get_age_labels(c("Y000_004", "Y015_019", "Y050_054")),
-                    data_frame(age_group = c("Y000_004", "Y015_019", "Y050_054"),
-                               age_group_label = c("0-4", "15-19", "50-54"),
-                               age_group_sort_order = c(15, 18, 25)))
+  expect_equal(get_age_labels(c("Y000_004", "Y015_019", "Y050_054")),
+               data_frame(age_group = c("Y000_004", "Y015_019", "Y050_054"),
+                          age_group_label = c("0-4", "15-19", "50-54"),
+                          age_group_sort_order = c(15, 18, 25)),
+               ignore_attr = TRUE)
   expect_error(get_age_labels("Y000_090"),
                "Age groups metadata contains 0 rows for age_group Y000_090. Speak to administrator.")
   expect_error(get_age_labels(c("Y000_090", "-20-09")),

@@ -8,7 +8,7 @@ api(
   queue_id = NULL,
   workers = 2,
   results_dir = tempdir(),
-  prerun_dir = NULL,
+  inputs_dir = NULL,
   log_level = "info"
 )
 }
@@ -20,7 +20,7 @@ if NULL}
 
 \item{results_dir}{The dir for results to be saved to}
 
-\item{prerun_dir}{The directory to store prerun results}
+\item{inputs_dir}{THe directory where input files are stored}
 
 \item{log_level}{The "lgr" log level to use}
 }

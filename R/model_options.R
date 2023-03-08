@@ -64,8 +64,8 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
       list(id = scalar(as.character(year)),
            label = scalar(as.character(year)))
     })
-    if (2021 %in% anc_years) {
-      anc_year2_default <- scalar(as.character(2021))
+    if (2022 %in% anc_years) {
+      anc_year2_default <- scalar(as.character(2022))
     }
     survey_year <- naomi::calendar_quarter_to_year(most_recent_survey_quarter)
     if (survey_year %in% anc_years) {
@@ -85,12 +85,12 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
     anc_prevalence_year1 = anc_year_options,
     anc_prevalence_year2 = anc_year_options,
     anc_art_coverage_year1 = anc_year_options,
-    anc_art_coverage_year2 = anc_year_options
+    anc_art_coverage_year2 = anc_year_options,
+    psnu_level = area_level_options
   )
 
   values <- list(
     area_scope = parent_region_id,
-    area_level = area_level_options[[length(area_level_options)]]$id,
     calendar_quarter_t1 = most_recent_survey_quarter,
     survey_prevalence = survey_prevalence_options$default,
     survey_art_coverage = survey_art_coverage_options$default,
@@ -100,9 +100,32 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
     anc_art_coverage_year2 = anc_year2_default
   )
 
-  naomi.options::get_controls_json("model", iso3, options, values,
-                                   config = list(include_art = has_art,
-                                                 include_anc = has_anc))
+  additional_control_groups <- NULL
+  if (use_mock_model()) {
+    additional_control_groups <- list(
+      list(
+        label = "Trigger mock model error",
+        controls = list(
+          list(
+            name = "mock_model_trigger_error",
+            type = "select",
+            help_text = "Set TRUE to force the model fit to error",
+            required = TRUE,
+            options = list(list(id = "true", label = "Yes"),
+                           list(id = "false", label = "No")),
+            value = "false"
+          )
+        )
+      )
+    )
+  }
+
+  options <- get_controls_json(
+    "model", iso3, options, values,
+    config = list(include_art = has_art,
+                  include_anc = has_anc,
+                  additional_control_groups = additional_control_groups))
+  options
 }
 
 get_level_options <- function(json) {

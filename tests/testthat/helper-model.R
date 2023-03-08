@@ -6,7 +6,7 @@ mock_model <- list(
   plot_data_path = NULL,
   model_output_path =
     system.file("output", "malawi_model_output.qs", package = "hintr"),
-  version = packageVersion("naomi"),
+  version = utils::packageVersion("naomi"),
   warnings = list(
     list(
       text = scalar(paste0("Zero population input for 8 population ",
@@ -22,7 +22,7 @@ mock_calibrate <- list(
     system.file("output", "malawi_calibrate_plot_data.qs", package = "hintr"),
   model_output_path =
     system.file("output", "malawi_calibrate_output.qs", package = "hintr"),
-  version = packageVersion("naomi"),
+  version = utils::packageVersion("naomi"),
   warnings = list(
     list(
       text = "ART coverage greater than 100% for 10 age groups",
@@ -121,31 +121,6 @@ mock_model_v0.1.2 <- list(
                 package = "hintr"))
 class(mock_model_v0.1.2) <- "hintr_output"
 
-setup_submit_payload <- function(version = NULL, include_anc_art = TRUE) {
-  path <- tempfile()
-  if (is.null(version)) {
-    version <- to_json(cfg$version_info)
-  }
-  if (include_anc_art) {
-    payload <- readLines("payload/model_submit_payload.json")
-  } else {
-    payload <- readLines("payload/model_submit_payload_minimal.json")
-  }
-  payload <- gsub("<version_info>", version, payload, fixed = TRUE)
-  writeLines(payload, path)
-  path
-}
-
-setup_calibrate_payload <- function(version = NULL) {
-  path <- tempfile()
-  if (is.null(version)) {
-    version <- to_json(cfg$version_info)
-  }
-  payload <- readLines("payload/model_calibrate_payload.json")
-  payload <- gsub("<version_info>", version, payload, fixed = TRUE)
-  writeLines(payload, path)
-  path
-}
 
 clone_model_output <- function(output) {
   model_output_path <- tempfile(fileext = ".qs")
@@ -206,57 +181,3 @@ wait_status <- function(t, obj, timeout = 2, time_poll = 0.05,
   stop(sprintf("Did not change status from %s in time", status))
 }
 
-setup_download_request_payload <- function(version = NULL,
-                                           include_notes = TRUE,
-                                           include_state = TRUE) {
-  if (!any(include_notes, include_state)) {
-    stop("Must include notes and/or state info in payload")
-  }
-  payload <- "{"
-  path <- tempfile()
-  if (include_notes) {
-    payload <- c(payload,
-                 '"notes":',
-                 readLines("payload/spectrum_download_notes_payload.json"))
-  }
-  if (include_state) {
-    if (include_notes) {
-      payload <- c(payload, ",")
-    }
-    if (is.null(version)) {
-      version <- to_json(cfg$version_info)
-    }
-    state_payload <- readLines("payload/spectrum_download_state_payload.json")
-    state_payload <- gsub("<version_info>", version, state_payload,
-                          fixed = TRUE)
-    payload <- c(payload,
-                 '"state":',
-                 state_payload)
-  }
-  payload <- c(payload, "}")
-  writeLines(payload, path)
-  path
-}
-
-setup_project_state_json <- function(version = NULL) {
-  path <- tempfile()
-  if (is.null(version)) {
-    version <- to_json(cfg$version_info)
-  }
-  payload <- readLines("payload/spectrum_download_state_payload.json")
-  payload <- gsub("<version_info>", version, payload, fixed = TRUE)
-  writeLines(payload, path)
-  path
-}
-
-setup_reydrate_payload <- function(
-    path = system.file("output", "malawi_spectrum_download.zip",
-                       package = "hintr")) {
-  c('{"file":{',
-    paste0('"path": "', path, '",'),
-    '"hash": "1234",',
-    '"filename": "malawi_spectrum_download.zip"',
-    '}',
-    '}'
-  )
-}

@@ -1,5 +1,3 @@
-context("validate-inputs")
-
 test_that("PJNZ can be validated and return data", {
   pjnz <- file_object(file.path("testdata", "Botswana2018.PJNZ"))
   expect_equal(do_validate_pjnz(pjnz),
@@ -89,8 +87,7 @@ test_that("empty rows are ignored in validation", {
 test_that("do_validate_programme validates programme file", {
   programme <- file_object(file.path("testdata", "programme.csv"))
   shape <- file_object(file.path("testdata", "malawi.geojson"))
-  pjnz <- file_object(file.path("testdata", "Malawi2019.PJNZ"))
-  data <- do_validate_programme(programme, shape, pjnz)
+  data <- do_validate_programme(programme, shape)
   ## Some arbitrary test that the data has actually been returned
   expect_true(nrow(data$data) > 200)
   expect_type(data$data$art_current, "double")
@@ -125,8 +122,7 @@ test_that("do_validate_programme validates programme file", {
 test_that("do_validate_anc validates ANC file and gets data for plotting", {
   anc <- file_object(file.path("testdata", "anc.csv"))
   shape <- file_object(file.path("testdata", "malawi.geojson"))
-  pjnz <- file_object(file.path("testdata", "Malawi2019.PJNZ"))
-  data <- do_validate_anc(anc, shape, pjnz)
+  data <- do_validate_anc(anc, shape)
 
   expect_true(nrow(data$data) > 200)
   expect_type(data$data$area_id, "character")
@@ -153,8 +149,7 @@ test_that("do_validate_anc can include anc_hiv_status column", {
   write.csv(anc, t)
   anc_file <- file_object(t)
   shape <- file_object(file.path("testdata", "malawi.geojson"))
-  pjnz <- file_object(file.path("testdata", "Malawi2019.PJNZ"))
-  data <- do_validate_anc(anc_file, shape, pjnz)
+  data <- do_validate_anc(anc_file, shape)
 
   expect_true(nrow(data$data) > 200)
   expect_type(data$data$area_id, "character")
@@ -179,8 +174,7 @@ test_that("do_validate_anc adds default anc_known_neg column", {
   t <- tempfile(fileext = ".csv")
   write.csv(x, t, row.names = FALSE)
   shape <- file_object(file.path("testdata", "malawi.geojson"))
-  pjnz <- file_object(file.path("testdata", "Malawi2019.PJNZ"))
-  data <- do_validate_anc(file_object(t), shape, pjnz)
+  data <- do_validate_anc(file_object(t), shape)
 
   expect_true(nrow(data$data) > 200)
   expect_type(data$data$area_id, "character")
@@ -191,8 +185,7 @@ test_that("do_validate_anc adds default anc_known_neg column", {
 test_that("do_validate_survey validates survey file", {
   survey <- file_object(file.path("testdata", "survey.csv"))
   shape <- file_object(file.path("testdata", "malawi.geojson"))
-  pjnz <- file_object(file.path("testdata", "Malawi2019.PJNZ"))
-  data <- do_validate_survey(survey, shape, pjnz)
+  data <- do_validate_survey(survey, shape)
   ## Some arbitrary test that the data has actually been returned
   expect_true(nrow(data$data) > 20000)
   expect_type(data$data$estimate, "double")
@@ -231,24 +224,21 @@ test_that("do_validate_survey validates survey file", {
 test_that("do_validate_programme returns useful error from shapefile comparison", {
   programme <- file_object(file.path("testdata", "programme.csv"))
   shape <- file_object(file.path("testdata", "malawi_missing_regions.geojson"))
-  pjnz <- file_object(file.path("testdata", "Malawi2019.PJNZ"))
-  expect_error(do_validate_programme(programme, shape, pjnz),
+  expect_error(do_validate_programme(programme, shape),
     "Regions aren't consistent programme file contains 32 regions missing from shape file including:\n\\w+")
 })
 
 test_that("do_validate_anc returns useful error from shapefile comparison", {
   anc <- file_object(file.path("testdata", "anc.csv"))
   shape <- file_object(file.path("testdata", "malawi_missing_regions.geojson"))
-  pjnz <- file_object(file.path("testdata", "Malawi2019.PJNZ"))
-  expect_error(do_validate_anc(anc, shape, pjnz),
+  expect_error(do_validate_anc(anc, shape),
     "Regions aren't consistent ANC file contains 32 regions missing from shape file including:\n\\w+")
 })
 
 test_that("do_validate_survey returns useful error from shapefile comparison", {
   survey <- file_object(file.path("testdata", "survey.csv"))
   shape <- file_object(file.path("testdata", "malawi_missing_regions.geojson"))
-  pjnz <- file_object(file.path("testdata", "Malawi2019.PJNZ"))
-  expect_error(do_validate_survey(survey, shape, pjnz),
+  expect_error(do_validate_survey(survey, shape),
     "Regions aren't consistent survey file contains 68 regions missing from shape file including:\n\\w+")
 })
 

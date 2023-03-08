@@ -1,0 +1,10 @@
+{
+  "type": "pjnz",
+  "file": {
+    "path": "testdata/Malawi2019.PJNZ",
+    "filename": "Malawi2019.PJNZ",
+    "hash": "12345",
+    "fromADR": false,
+    "resource_url": "https://adr.unaids.org/file/123.csv"
+  }
+}

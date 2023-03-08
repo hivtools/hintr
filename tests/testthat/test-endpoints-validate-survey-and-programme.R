@@ -1,11 +1,8 @@
-context("survey-and-programme")
-
 test_that("endpoint_validate_survey_programme supports programme file", {
   input <- validate_programme_survey_input(
     file.path("testdata", "programme.csv"),
     "programme",
-    file.path("testdata", "malawi.geojson"),
-    file.path("testdata", "Malawi2019.PJNZ"))
+    file.path("testdata", "malawi.geojson"))
   response <- validate_survey_programme(input)
 
   expect_equal(response$filename, scalar("original"))
@@ -21,8 +18,7 @@ test_that("endpoint_validate_survey_programme returns error on invalid programme
   input <- validate_programme_survey_input(
     file.path("testdata", "malformed_programme.csv"),
     "programme",
-    file.path("testdata", "malawi.geojson"),
-    file.path("testdata", "Malawi2019.PJNZ"))
+    file.path("testdata", "malawi.geojson"))
   error <- expect_error(validate_survey_programme(input))
 
   expect_equal(error$data[[1]]$error, scalar("INVALID_FILE"))
@@ -36,8 +32,7 @@ test_that("endpoint_validate_survey_programme supports ANC file", {
   input <- validate_programme_survey_input(
     file.path("testdata", "anc.csv"),
     "anc",
-    file.path("testdata", "malawi.geojson"),
-    file.path("testdata", "Malawi2019.PJNZ"))
+    file.path("testdata", "malawi.geojson"))
   response <- validate_survey_programme(input)
 
   expect_equal(response$filename, scalar("original"))
@@ -54,8 +49,7 @@ test_that("endpoint_validate_survey_programme returns error on invalid ANC data"
   input <- validate_programme_survey_input(
     file.path("testdata", "malformed_anc.csv"),
     "anc",
-    file.path("testdata", "malawi.geojson"),
-    file.path("testdata", "Malawi2019.PJNZ"))
+    file.path("testdata", "malawi.geojson"))
   error <- expect_error(validate_survey_programme(input))
 
   expect_equal(error$data[[1]]$error, scalar("INVALID_FILE"))
@@ -71,8 +65,7 @@ test_that("endpoint_validate_survey_programme supports survey file", {
   input <- validate_programme_survey_input(
     file.path("testdata", "survey.csv"),
     "survey",
-    file.path("testdata", "malawi.geojson"),
-    file.path("testdata", "Malawi2019.PJNZ"))
+    file.path("testdata", "malawi.geojson"))
   response <- validate_survey_programme(input)
 
   expect_equal(response$filename, scalar("original"))
@@ -88,8 +81,7 @@ test_that("endpoint_validate_survey_programme returns error on invalid survey da
   input <- validate_programme_survey_input(
     file.path("testdata", "malformed_survey.csv"),
     "survey",
-    file.path("testdata", "malawi.geojson"),
-    file.path("testdata", "Malawi2019.PJNZ"))
+    file.path("testdata", "malawi.geojson"))
   error <- expect_error(validate_survey_programme(input))
 
   expect_equal(error$data[[1]]$error, scalar("INVALID_FILE"))
@@ -103,8 +95,7 @@ test_that("possible filters are returned for data", {
   input <- validate_programme_survey_input(
     file.path("testdata", "programme.csv"),
     "programme",
-    file.path("testdata", "malawi.geojson"),
-    file.path("testdata", "Malawi2019.PJNZ"))
+    file.path("testdata", "malawi.geojson"))
   response <- validate_survey_programme(input)
 
   expect_equal(names(response$filters), c("age", "calendar_quarter", "indicators"))
@@ -141,8 +132,7 @@ test_that("possible filters are returned for data", {
   input <- validate_programme_survey_input(
     file.path("testdata", "anc.csv"),
     "anc",
-    file.path("testdata", "malawi.geojson"),
-    file.path("testdata", "Malawi2019.PJNZ"))
+    file.path("testdata", "malawi.geojson"))
   response <- validate_survey_programme(input)
 
   expect_equal(names(response$filters), c("year", "indicators"))
@@ -159,8 +149,7 @@ test_that("possible filters are returned for data", {
   input <- validate_programme_survey_input(
     file.path("testdata", "survey.csv"),
     "survey",
-    file.path("testdata", "malawi.geojson"),
-    file.path("testdata", "Malawi2019.PJNZ"))
+    file.path("testdata", "malawi.geojson"))
   response <- validate_survey_programme(input)
 
   expect_equal(names(response$filters), c("age", "surveys", "indicators"))
@@ -202,8 +191,7 @@ test_that("filters not returned if indicator missing from input data", {
   input <- validate_programme_survey_input(
     file.path("testdata", "programme_no_vls.csv"),
     "programme",
-    file.path("testdata", "malawi.geojson"),
-    file.path("testdata", "Malawi2019.PJNZ"))
+    file.path("testdata", "malawi.geojson"))
   response <- validate_survey_programme(input)
 
   expect_equal(names(response$filters),
@@ -220,7 +208,8 @@ test_that("filters not returned if indicator missing from input data", {
 
 test_that("endpoint_validate_survey_programme programme", {
   endpoint <- endpoint_validate_survey_programme()
-  response <- endpoint$run(readLines("payload/validate_programme_payload.json"))
+  response <- endpoint$run(
+    system_file("payload", "validate_programme_payload.json"))
 
   expect_equal(response$status_code, 200)
   expect_null(response$error)
@@ -237,9 +226,9 @@ test_that("endpoint_validate_survey_programme works with programme data", {
   test_redis_available()
   queue <- test_queue(workers = 0)
   api <- api_build(queue)
-  res <- api$request("POST", "/validate/survey-and-programme",
-                     body =
-                       readLines("payload/validate_programme_payload.json"))
+  res <- api$request(
+    "POST", "/validate/survey-and-programme",
+    body = system_file("payload", "validate_programme_payload.json"))
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body)
   expect_equal(body$status, "success")
@@ -255,7 +244,7 @@ test_that("endpoint_validate_survey_programme works with programme data", {
 
 test_that("endpoint_validate_survey_programme anc", {
   endpoint <- endpoint_validate_survey_programme()
-  response <- endpoint$run(readLines("payload/validate_anc_payload.json"))
+  response <- endpoint$run(system_file("payload", "validate_anc_payload.json"))
 
   expect_equal(response$status_code, 200)
   expect_null(response$error)
@@ -273,8 +262,9 @@ test_that("endpoint_validate_survey_programme works with anc data", {
   test_redis_available()
   queue <- test_queue(workers = 0)
   api <- api_build(queue)
-  res <- api$request("POST", "/validate/survey-and-programme",
-                     body = readLines("payload/validate_anc_payload.json"))
+  res <- api$request(
+    "POST", "/validate/survey-and-programme",
+    body = system_file("payload", "validate_anc_payload.json"))
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body)
   expect_equal(body$status, "success")
@@ -291,7 +281,8 @@ test_that("endpoint_validate_survey_programme works with anc data", {
 
 test_that("endpoint_validate_survey_programme survey", {
   endpoint <- endpoint_validate_survey_programme()
-  response <- endpoint$run(readLines("payload/validate_survey_payload.json"))
+  response <- endpoint$run(
+    system_file("payload", "validate_survey_payload.json"))
 
   expect_equal(response$status_code, 200)
   expect_null(response$error)
@@ -307,8 +298,9 @@ test_that("endpoint_validate_survey_programme works with survey data", {
   test_redis_available()
   queue <- test_queue(workers = 0)
   api <- api_build(queue)
-  res <- api$request("POST", "/validate/survey-and-programme",
-                     body = readLines("payload/validate_survey_payload.json"))
+  res <- api$request(
+    "POST", "/validate/survey-and-programme",
+    body = system_file("payload", "validate_survey_payload.json"))
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body)
   expect_equal(body$status, "success")
@@ -333,8 +325,7 @@ test_that("anc data can be validated can be run with relaxed validation", {
   input <- validate_programme_survey_input(
     t,
     "anc",
-    file.path("testdata", "malawi.geojson"),
-    file.path("testdata", "Malawi2019.PJNZ"))
+    file.path("testdata", "malawi.geojson"))
   queue <- test_queue(workers = 0)
   api <- api_build(queue)
 

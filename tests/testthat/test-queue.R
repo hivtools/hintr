@@ -1,5 +1,3 @@
-context("queue")
-
 test_that("queue works as intended", {
   test_redis_available()
   test_mock_model_available()
@@ -55,7 +53,7 @@ test_that("queue works as intended", {
   expect_length(queue$queue$task_list(), 0)
 
   con <- queue$queue$con
-  key <- queue$queue$keys$worker_name
+  key <- r6_private(queue$queue)$keys$worker_name
   expect_equal(con$SCARD(key), 2)
 
   rm(queue)
@@ -175,3 +173,7 @@ test_that("calibrate gets run before model running", {
                c("COMPLETE", "ERROR"))
 })
 
+test_that("queue has handle on uploads dir", {
+  queue <- Queue$new(workers = 0, inputs_dir = tempdir())
+  expect_equal(queue$inputs_dir, tempdir())
+})

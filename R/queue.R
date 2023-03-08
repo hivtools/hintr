@@ -6,12 +6,12 @@ Queue <- R6::R6Class(
     cleanup_on_exit = NULL,
     queue = NULL,
     results_dir = NULL,
-    prerun_dir = NULL,
+    inputs_dir = NULL,
 
     initialize = function(queue_id = NULL, workers = 2,
                           cleanup_on_exit = workers > 0,
                           results_dir = tempdir(),
-                          prerun_dir = NULL,
+                          inputs_dir = NULL,
                           timeout = Inf) {
       self$cleanup_on_exit <- cleanup_on_exit
       self$results_dir <- results_dir
@@ -32,12 +32,12 @@ Queue <- R6::R6Class(
       message(t_("QUEUE_CACHE"))
       set_cache(queue_id)
 
-      self$prerun_dir <- prerun_dir
+      self$inputs_dir <- inputs_dir
     },
 
     start = function(workers, timeout) {
       if (workers > 0L) {
-        ids <- rrq::worker_spawn(self$queue, workers)
+        ids <- rrq::rrq_worker_spawn(self$queue, workers)
         if (is.finite(timeout) && timeout > 0) {
           self$queue$message_send_and_wait("TIMEOUT_SET", timeout, ids)
         }
@@ -51,10 +51,9 @@ Queue <- R6::R6Class(
 
     submit_model_run = function(data, options) {
       results_dir <- self$results_dir
-      prerun_dir <- self$prerun_dir
       language <- traduire::translator()$language()
       self$submit(quote(
-        hintr:::run_model(data, options, results_dir, prerun_dir, language)),
+        hintr:::run_model(data, options, results_dir, language)),
         queue = QUEUE_RUN)
     },
 
@@ -126,7 +125,7 @@ Queue <- R6::R6Class(
     },
 
     cleanup = function() {
-      clear_cache(self$queue$keys$queue_id)
+      clear_cache(r6_private(self$queue)$keys$queue_id)
       if (self$cleanup_on_exit && !is.null(self$queue$con)) {
         message(t_("QUEUE_STOPPING_WORKERS"))
         self$queue$worker_stop(type = "kill")

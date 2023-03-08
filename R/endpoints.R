@@ -4,6 +4,7 @@ input_response <- function(value, type, file) {
               data = value$data,
               filename = scalar(file$filename),
               fromADR = scalar(file$fromADR),
+              resource_url = scalar(file$resource_url),
               filters = value$filters)
   if (!is.null(value$warnings)) {
     ret$warnings <- warnings_scalar(value$warnings)
@@ -31,10 +32,14 @@ model_options <- function(input) {
 calibration_options <- function(iso3) {
   tryCatch({
     json_verbatim(
-      naomi.options::get_controls_json("calibration", iso3, NULL, NULL))
+      get_controls_json("calibration", iso3, NULL, NULL))
   }, error = function(e) {
     hintr_error(e$message, "INVALID_CALIBRATION_OPTIONS")
   })
+}
+
+get_controls_json <- function(...) {
+  naomi.options::get_controls_json(...)
 }
 
 root_endpoint <- function() {
@@ -87,11 +92,9 @@ validate_survey_programme <- function(input, strict = TRUE) {
   tryCatch({
     shape <- file_object(input$shape)
     assert_file_exists(input$file$path)
-    pjnz <- file_object(input$pjnz)
-    assert_file_exists(pjnz$path)
     assert_file_exists(shape$path)
     input_response(
-      validate_func(input$file, shape, pjnz, strict), input$type, input$file)
+      validate_func(input$file, shape, strict), input$type, input$file)
   },
   error = function(e) {
     hintr_error(e$message, "INVALID_FILE")
@@ -136,13 +139,17 @@ model_options_validate <- function(input) {
     data$anc_testing <- data$anc
     data$anc <- NULL
     data <- naomi:::format_data_input(data)
-    valid <- naomi::validate_model_options(data, input$options)
+    valid <- validate_model_options(data, input$options)
     valid$valid <- scalar(valid$valid)
     valid$warnings <- warnings_scalar(valid$warnings)
     valid
   }, error = function(e) {
     hintr_error(e$message, "INVALID_OPTIONS")
   })
+}
+
+validate_model_options <- function(...) {
+  naomi::validate_model_options(...)
 }
 
 submit_model <- function(queue) {
@@ -248,13 +255,15 @@ comparison_plot <- function(queue) {
                    "calendar_quarter", "indicator", "source", "mean",
                    "lower", "upper")]
     filters <- get_comparison_plot_filters(data)
+    selections <- get_comparison_barchart_selections(data, filters)
     list(
       data = data,
       plottingMetadata = list(
         barchart = list(
           indicators = get_barchart_metadata(data, "comparison"),
           filters = filters,
-          defaults = get_comparison_barchart_defaults(data, filters)
+          defaults = selections[[1]],
+          selections = selections
         )
       )
     )
@@ -268,8 +277,7 @@ verify_result_available <- function(queue, id, version = NULL) {
     naomi:::assert_model_output_version(result, version = version)
   } else if (task_status == "ERROR") {
     result <- queue$result(id)
-    trace <- c(sprintf("# %s", id), result$trace)
-    hintr_error(result$message, "MODEL_RUN_FAILED", trace = trace)
+    hintr_error(result$message, "MODEL_RUN_FAILED", job_id = scalar(id))
   } else if (task_status == "DIED") {
     hintr_error(t_("MODEL_RESULT_CRASH"), "MODEL_RUN_FAILED")
   } else if (task_status == "CANCELLED") {
@@ -483,9 +491,13 @@ prepare_status_response <- function(value, id) {
 }
 
 hintr_error <- function(message, error, status_code = 400L, ...) {
-  key <- scalar(ids::proquint(n_words = 3))
+  key <- scalar(new_error_id())
   porcelain::porcelain_stop(message, error, errors = NULL,
                             status_code = status_code, key = key, ...)
+}
+
+new_error_id <- function() {
+  ids::proquint(n_words = 3)
 }
 
 hintr_404_handler <- function(req, res) {
@@ -499,7 +511,7 @@ hintr_404_handler <- function(req, res) {
       list(
         error = scalar("NOT_FOUND"),
         detail = scalar(message),
-        key = scalar(ids::proquint(n_words = 3))
+        key = scalar(new_error_id())
       )
     ),
     data = NULL

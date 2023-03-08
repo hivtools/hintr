@@ -7,7 +7,7 @@ do_validate_pjnz <- function(pjnz) {
             list(countries = collapse(unique(countries)))))
   }
   pjnz_spectrum_region_codes <-
-    vapply(pjnz_paths, naomi::read_spectrum_region_code, numeric(1))
+    vapply(pjnz_paths, read_spectrum_region_code, numeric(1))
   zero_codes <- pjnz_spectrum_region_codes == 0
   if (length(which(zero_codes)) > 1) {
     stop(t_("INPUTS_PJNZ_ZIP_REGION0",
@@ -19,6 +19,10 @@ do_validate_pjnz <- function(pjnz) {
                 iso3 = scalar(read_pjnz_iso3_from_path(pjnz_paths[[1]]))),
     filters = json_verbatim("null")
   )
+}
+
+read_spectrum_region_code <- function(...) {
+  naomi::read_spectrum_region_code(...)
 }
 
 read_iso3 <- function(file, type) {
@@ -115,7 +119,7 @@ do_validate_population <- function(population) {
 #'
 #' @return An error if invalid.
 #' @keywords internal
-do_validate_programme <- function(programme, shape, pjnz, strict = TRUE) {
+do_validate_programme <- function(programme, shape, strict = TRUE) {
   assert_file_extension(programme, "csv")
   data <- read_csv(programme$path, header = TRUE)
   assert_single_country(data, "programme")
@@ -159,7 +163,7 @@ do_validate_programme <- function(programme, shape, pjnz, strict = TRUE) {
 #'
 #' @return An error if invalid.
 #' @keywords internal
-do_validate_anc <- function(anc, shape, pjnz, strict = TRUE) {
+do_validate_anc <- function(anc, shape, strict = TRUE) {
   assert_file_extension(anc, "csv")
   data <- as.data.frame(naomi::read_anc_testing(anc$path))
   assert_single_country(data, "anc")
@@ -203,7 +207,7 @@ do_validate_anc <- function(anc, shape, pjnz, strict = TRUE) {
 #'
 #' @return An error if invalid.
 #' @keywords internal
-do_validate_survey <- function(survey, shape, pjnz, strict = TRUE) {
+do_validate_survey <- function(survey, shape, strict = TRUE) {
   assert_file_extension(survey, "csv")
   data <- read_csv(survey$path, header = TRUE)
   assert_single_country(data, "survey")

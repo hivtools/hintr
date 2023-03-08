@@ -1,5 +1,3 @@
-context("validation-asserts")
-
 test_that("assert fails if more than once country in json", {
   shape <- file_object(file.path("testdata", "malawi.geojson"))
   json <- hintr_geojson_read(shape)
@@ -169,12 +167,12 @@ test_that("can check region file spectrum codes are valid", {
   expect_true(assert_region_codes_valid(json))
 
   mock_contains_property <- mockery::mock(c(FALSE, TRUE, TRUE))
-  with_mock("hintr:::features_contain_property" = mock_contains_property, {
+  with_mock(features_contain_property = mock_contains_property, {
     expect_true(assert_region_codes_valid(json))
   })
 
   mock_contains_property <- mockery::mock(c(FALSE, FALSE, TRUE))
-  with_mock("hintr:::features_contain_property" = mock_contains_property, {
+  with_mock(features_contain_property = mock_contains_property, {
     expect_error(assert_region_codes_valid(json),
                  "Shape file contains 2 regions with missing spectrum region code, code can only be missing for country level region.")
   })

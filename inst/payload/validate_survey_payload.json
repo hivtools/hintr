@@ -1,0 +1,10 @@
+{
+  "type": "survey",
+  "file": {
+    "path": "testdata/survey.csv",
+    "filename": "original.csv",
+    "hash": "12345",
+    "fromADR": false
+  },
+  "shape": "testdata/malawi.geojson"
+}

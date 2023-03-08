@@ -1,0 +1,11 @@
+{
+  "type": "anc",
+  "file": {
+    "path": "testdata/anc.csv",
+    "hash": "12345",
+    "filename": "original.csv",
+    "fromADR": false,
+    "resource_url": "https://adr.unaids.org/file/123.csv"
+  },
+  "shape": "testdata/malawi.geojson"
+}
