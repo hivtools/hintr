@@ -44,7 +44,7 @@ create_blocking_worker <- function(queue_id, worker_name = NULL) {
                        worker_name = worker_name,
                        queue = c(QUEUE_CALIBRATE, QUEUE_RUN),
                        time_poll = 1,
-                       timeout = 300,
+                       timeout_idle = 300,
                        heartbeat_period = 3,
                        verbose = TRUE)
 }

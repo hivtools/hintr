@@ -337,7 +337,7 @@ test_that("download result returns formatted error if unexpected issue", {
   expect_equal(error$status_code, 400)
   expect_equal(names(error$data[[1]]), c("error", "detail", "key"))
   expect_equal(error$data[[1]]$error, scalar("FAILED_TO_RETRIEVE_RESULT"))
-  expect_equal(error$data[[1]]$detail, scalar("Missing some results"))
+  expect_equal(error$data[[1]]$detail, scalar("Missing results for task: '1'"))
 })
 
 test_that("download submit returns error if queueing fails", {
