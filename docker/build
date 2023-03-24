@@ -8,6 +8,7 @@ function cleanup {
     rm -rf $PACKAGE_ROOT/naomi
     rm -f $PACKAGE_ROOT/docker/Dockerfile.worker
     rm -f $PACKAGE_ROOT/docker/Dockerfile.test
+    rm -f $PACKAGE_ROOT/docker/Dockerfile.validation
 }
 trap cleanup EXIT
 
@@ -25,6 +26,11 @@ RUN install_packages --repo=https://mrc-ide.github.io/drat \
         ssh
 WORKDIR /src
 ENTRYPOINT [ "/bin/bash", "-l", "-c" ]
+EOF
+
+cat << EOF > $HERE/Dockerfile.validation
+FROM $TAG_SHA
+ENTRYPOINT ["/usr/local/bin/validation_api"]
 EOF
 
 rm -rf naomi
@@ -48,8 +54,16 @@ docker build \
       -f docker/Dockerfile.test \
       $PACKAGE_ROOT
 
+docker build \
+      -t $TAG_HINTR_VALIDATION_SHA \
+      -f docker/Dockerfile.validation \
+      $PACKAGE_ROOT
+
 # We always push the SHA tagged versions, for debugging if the tests
 # after this step fail
 docker push $TAG_HINTR_TESTS
 docker push $TAG_SHA
 docker push $TAG_WORKER_SHA
+docker push $TAG_HINTR_VALIDATION_SHA
+docker tag $TAG_HINTR_VALIDATION_SHA $TAG_HINTR_VALIDATION_BRANCH
+docker push $TAG_HINTR_VALIDATION_BRANCH
