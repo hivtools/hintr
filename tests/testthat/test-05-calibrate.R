@@ -80,7 +80,7 @@ test_that("can calibrate a model result", {
   expect_equal(barchart$filters[[2]]$options[[2]]$label,
                scalar("September 2018"))
   expect_true(length(barchart$filters[[4]]$options) >= 29)
-  expect_equal(nrow(barchart$indicators), 23)
+  expect_equal(nrow(barchart$indicators), 25)
 
   ## Quarters are in descending order
   calendar_quarters <-
@@ -97,7 +97,8 @@ test_that("can calibrate a model result", {
                  "art_current_residents", "art_current",
                  "untreated_plhiv_num", "aware_plhiv_prop",
                  "unaware_plhiv_num", "aware_plhiv_num", "plhiv_attend",
-                 "untreated_plhiv_attend", "incidence",
+                 "untreated_plhiv_attend", "aware_plhiv_attend",
+                 "unaware_plhiv_attend", "incidence",
                  "infections", "anc_prevalence", "anc_art_coverage",
                  "anc_clients", "anc_plhiv", "anc_already_art",
                  "anc_art_new", "anc_known_pos",
@@ -124,7 +125,7 @@ test_that("can calibrate a model result", {
   expect_equal(choropleth$filters[[2]]$options[[2]]$label,
                scalar("September 2018"))
   expect_true(length(choropleth$filters[[4]]$options) >= 29)
-  expect_equal(nrow(choropleth$indicators), 23)
+  expect_equal(nrow(choropleth$indicators), 25)
 
   ## Quarters are in descending order
   calendar_quarters <-
@@ -140,7 +141,8 @@ test_that("can calibrate a model result", {
                  "art_current_residents", "art_current",
                  "untreated_plhiv_num", "aware_plhiv_prop",
                  "unaware_plhiv_num", "aware_plhiv_num", "plhiv_attend",
-                 "untreated_plhiv_attend", "incidence",
+                 "untreated_plhiv_attend", "aware_plhiv_attend",
+                 "unaware_plhiv_attend", "incidence",
                  "infections", "anc_prevalence", "anc_art_coverage",
                  "anc_clients", "anc_plhiv", "anc_already_art",
                  "anc_art_new", "anc_known_pos",

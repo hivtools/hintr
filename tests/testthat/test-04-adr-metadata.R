@@ -126,7 +126,7 @@ test_that("trying to get ADR metadata without result available throws error", {
   out <- metadata$run("some_id")
   expect_equal(out$error$data[[1]]$error, scalar("FAILED_TO_RETRIEVE_RESULT"))
   expect_match(out$error$data[[1]]$detail,
-               scalar("Missing some results"))
+               scalar("Missing result for task: 'some_id'"))
   expect_equal(out$status_code, 400)
 
   out <- metadata$run(q$calibrate_id)
