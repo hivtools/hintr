@@ -15,7 +15,7 @@ App to show district level estimates of HIV indicators
 
 Docker images are built on buildkite, run via
 ```
-docker run --rm -d -p 8888:8888 --name hintr-validation mrcide/hintr-validation:validation-api
+docker run --rm -d -p 8888:8888 --workdir="$PWD/tests/testthat" --name hintr-validation mrcide/hintr-validation:validation-api
 ```
 
 Test that container is working by using
@@ -88,7 +88,32 @@ http://localhost:8888/validate/baseline-individual
                     "properties": {
                         "area_id": "MWI",
 ... truncated 144125 lines of output
+
 ```
+
+With error
+
+```
+$ curl -s -X POST -H 'Content-Type: application/json' \
+--data @inst/payload/validate_shape_payload_error.json \
+http://localhost:8888/validate/baseline-individual
+```
+
+```
+{
+  "status": "failure",
+  "errors": [
+    {
+      "error": "INVALID_FILE",
+      "detail": "Should have located one parent regions but found regions MWI, MWI.1, MWI.2, MWI.3, MWI.1.1.",
+      "key": "pohok-lagos-kozov"
+    }
+  ],
+  "data": null
+}
+```
+
+
 Validate population data
 
 ```
@@ -160,6 +185,30 @@ http://localhost:8888/validate/survey-and-programme
             {
 ... truncated 6180 lines of output
 ```
+
+With an error
+
+```
+$ curl -s -X POST -H 'Content-Type: application/json' \
+--data @inst/payload/validate_programme_payload_error.json \
+http://localhost:8888/validate/survey-and-programme
+```
+
+```
+{
+  "status": "failure",
+  "errors": [
+    {
+      "error": "INVALID_FILE",
+      "detail": "Data missing column calendar_quarter.",
+      "key": "dinoj-godos-pavog"
+    }
+  ],
+  "data": null
+}
+```
+
+
 Validate ANC data
 
 ```

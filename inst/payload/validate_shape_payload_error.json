@@ -1,0 +1,9 @@
+{
+  "type": "shape",
+  "file": {
+    "path": "testdata/malawi_missing_regions.geojson",
+    "filename": "original.geojson",
+    "hash": "12345",
+    "fromADR": false
+  }
+}
