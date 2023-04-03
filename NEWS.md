@@ -1,3 +1,7 @@
+# hintr 1.1.13
+
+* Validate that ANC programme data must contain a "year" column
+
 # hintr 1.1.10
 
 * Update fallback anc year to 2022
