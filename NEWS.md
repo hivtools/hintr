@@ -1,6 +1,6 @@
 # hintr 1.1.13
 
-* Validate that ANC programme data must contain a "year" column
+* Error early if reading data generates a warning, we cannot proceed with only a partial read of the data
 
 # hintr 1.1.10
 

@@ -24,7 +24,7 @@ test_that("endpoint_validate_survey_programme returns error on invalid programme
   expect_equal(error$data[[1]]$error, scalar("INVALID_FILE"))
   expect_equal(
     error$data[[1]]$detail,
-    scalar("Data missing 2 columns calendar_quarter, year."))
+    scalar("Data missing column calendar_quarter."))
   expect_equal(error$status_code, 400)
 })
 
@@ -356,4 +356,12 @@ test_that("anc data can be validated can be run with relaxed validation", {
   expect_type(body$data$data[, "anc_prevalence"], "double")
   expect_type(body$data$data[, "anc_art_coverage"], "double")
   expect_length(body$data$warnings, 0)
+})
+
+test_that("file read errors early if file only partially read", {
+  t <- tempfile(fileext = ".csv")
+  writeLines("file,header\nrow1,value1\nrow2\none,two", t)
+
+  expect_error(do_validate_programme(file_object(t), NULL),
+               "Stopped early on line 3")
 })

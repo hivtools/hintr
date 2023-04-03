@@ -125,7 +125,7 @@ do_validate_programme <- function(programme, shape, strict = TRUE) {
   assert_single_country(data, "programme")
   assert_column_names(
     colnames(data),
-    c("area_id", "calendar_quarter", "sex", "year", "age_group", "art_current"))
+    c("area_id", "calendar_quarter", "sex", "age_group", "art_current"))
   shape_regions <- read_regions(shape, "shape")
   assert_consistent_regions(shape_regions$area_id, unique(data$area_id),
                             "programme")

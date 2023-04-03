@@ -24,11 +24,15 @@ read_csv_regions <- function(csv_file) {
 }
 
 read_csv <- function(file, ...) {
-  data <- data.table::fread(file, ...,
-                            blank.lines.skip = TRUE,
-                            data.table = FALSE,
-                            nThread = 1,
-                            na.strings = c("NA", ""))
+  ## Make fread error early if any warning thrown e.g. because of
+  ## partially read data
+  data <- withr::with_options(list(warn = 3),
+    data.table::fread(file, ...,
+                      blank.lines.skip = TRUE,
+                      data.table = FALSE,
+                      nThread = 1,
+                      na.strings = c("NA", ""))
+  )
   data[rowSums(is.na(data)) != ncol(data), ]
 }
 
