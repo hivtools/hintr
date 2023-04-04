@@ -1,3 +1,7 @@
+# hintr 1.1.13
+
+* Error early if reading data generates a warning, we cannot proceed with only a partial read of the data
+
 # hintr 1.1.10
 
 * Update fallback anc year to 2022

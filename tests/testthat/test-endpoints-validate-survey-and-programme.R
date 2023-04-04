@@ -357,3 +357,11 @@ test_that("anc data can be validated can be run with relaxed validation", {
   expect_type(body$data$data[, "anc_art_coverage"], "double")
   expect_length(body$data$warnings, 0)
 })
+
+test_that("file read errors early if file only partially read", {
+  t <- tempfile(fileext = ".csv")
+  writeLines("file,header\nrow1,value1\nrow2\none,two", t)
+
+  expect_error(do_validate_programme(file_object(t), NULL),
+               "Stopped early on line 3")
+})
