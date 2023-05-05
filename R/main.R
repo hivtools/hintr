@@ -51,7 +51,7 @@ main_worker <- function(args = commandArgs(TRUE)) {
     worker_config <- "calibrate_only"
   }
   worker <- rrq_worker_new(hintr_queue_id(args$queue_id, TRUE),
-                           worker_config = worker_config)
+                           name_config = worker_config)
   worker$loop()
   invisible(TRUE)
   # nocov end

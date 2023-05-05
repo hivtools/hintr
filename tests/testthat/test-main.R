@@ -27,7 +27,7 @@ test_that("main worker creates worker with multiple queues", {
   })
   args <- mockery::mock_args(mock_rrq_worker)[[1]]
   expect_equal(args[[1]], "queue_id")
-  expect_equal(args$worker_config, "localhost")
+  expect_equal(args$name_config, "localhost")
 })
 
 test_that("main worker can create a calibrate only worker", {
@@ -37,6 +37,6 @@ test_that("main worker can create a calibrate only worker", {
   })
   args <- mockery::mock_args(mock_rrq_worker)[[1]]
   expect_equal(args[[1]], "queue_id")
-  expect_equal(args$worker_config, "calibrate_only")
+  expect_equal(args$name_config, "calibrate_only")
 })
 
