@@ -59,7 +59,7 @@ main_worker <- function(args = commandArgs(TRUE)) {
 
 rrq_worker_new <- function(...) {
   # nocov start
-  rrq_worker$new(...)
+  rrq::rrq_worker$new(...)
   # nocov end
 }
 
