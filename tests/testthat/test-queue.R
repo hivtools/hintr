@@ -51,7 +51,7 @@ test_that("queue works as intended", {
   expect_length(queue$queue$task_list(), 0)
 
   con <- queue$queue$con
-  key <- r6_private(queue$queue)$keys$worker_name
+  key <- r6_private(queue$queue)$keys$worker_id
   expect_equal(con$SCARD(key), 2)
 
   rm(queue)
@@ -139,7 +139,7 @@ test_that("queue starts up normally without a timeout", {
 test_that("queue object starts up 2 queues", {
   queue <- test_queue(workers = 2)
   expect_equal(queue$queue$worker_config_read("localhost")$queue,
-               c(QUEUE_CALIBRATE, QUEUE_RUN))
+               c(QUEUE_CALIBRATE, QUEUE_RUN, "default"))
   queue$submit(quote(sin(1)), queue = QUEUE_CALIBRATE)
   run_id <- queue$submit(quote(sin(1)), queue = QUEUE_RUN)
   other_id <- queue$submit(quote(sin(1)), queue = "other")
@@ -153,7 +153,7 @@ test_that("queue object starts up 2 queues", {
 
 test_that("calibrate gets run before model running", {
   queue <- test_queue(workers = 0)
-  worker <- create_blocking_worker(queue$queue$queue_id)
+  worker <- create_blocking_worker(queue$queue)
   run_id <- queue$submit_model_run(NULL, NULL)
   ## Calibrate tasks will error but that is fine - we want to test here
   ## that calibrate & model run get queued and run in the correct order
