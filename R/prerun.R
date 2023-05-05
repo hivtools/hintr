@@ -162,12 +162,12 @@ build_state_output <- function(queue, output, options) {
 
 create_result <- function(queue, result) {
   task_id <- ids::random_id()
-  rrq:::run_task_cleanup(queue$queue$con,
-                         r6_private(queue$queue)$keys,
-                         r6_private(queue$queue)$store,
-                         task_id,
-                         rrq:::TASK_COMPLETE,
-                         result)
+  rrq:::run_task_cleanup_success(queue$queue$con,
+                                 r6_private(queue$queue)$keys,
+                                 r6_private(queue$queue)$store,
+                                 task_id,
+                                 rrq:::TASK_COMPLETE,
+                                 result)
   task_id
 }
 

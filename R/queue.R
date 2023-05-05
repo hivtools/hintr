@@ -22,10 +22,14 @@ Queue <- R6::R6Class(
       message(t_("QUEUE_STARTING"))
       queue_id <- hintr_queue_id(queue_id)
       self$queue <- rrq::rrq_controller$new(queue_id, con)
-      self$queue$worker_config_save("localhost", heartbeat_period = 10,
-                                    queue = c(QUEUE_CALIBRATE, QUEUE_RUN))
-      self$queue$worker_config_save("calibrate_only", heartbeat_period = 10,
-                                    queue = QUEUE_CALIBRATE)
+      default_worker_cfg <- rrq::rrq_worker_config(
+        heartbeat_period = 10,
+        queue = c(QUEUE_CALIBRATE, QUEUE_RUN))
+      calibrate_worker_cfg <- rrq::rrq_worker_config(
+        heartbeat_period = 10,
+        queue = QUEUE_CALIBRATE)
+      self$queue$worker_config_save("localhost", default_worker_cfg)
+      self$queue$worker_config_save("calibrate_only", calibrate_worker_cfg)
 
       self$start(workers, timeout)
 
@@ -37,9 +41,10 @@ Queue <- R6::R6Class(
 
     start = function(workers, timeout) {
       if (workers > 0L) {
-        ids <- rrq::rrq_worker_spawn(self$queue, workers)
+        worker_manager <- rrq::rrq_worker_spawn(self$queue, workers)
         if (is.finite(timeout) && timeout > 0) {
-          self$queue$message_send_and_wait("TIMEOUT_SET", timeout, ids)
+          self$queue$message_send_and_wait("TIMEOUT_SET", timeout,
+                                           worker_manager$id)
         }
       }
     },
@@ -110,7 +115,7 @@ Queue <- R6::R6Class(
     },
 
     cancel = function(id) {
-      self$queue$task_cancel(id, delete = FALSE)
+      self$queue$task_cancel(id)
     },
 
     ## Not part of the api exposed functions, used in tests
