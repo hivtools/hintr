@@ -1,3 +1,9 @@
+# hintr 1.1.15
+
+* Add two new endpoints in preparation for web backend accessing the result data on disk directly
+   * `/calibrate/result/metadata/<id>` to return the metadata and warnings from the `/calibrate/result/<id>` endpoint
+   * `/calibrate/result/data/<id>` for returning only the data from the `/calibrate/result/<id>` endpoint
+
 # hintr 1.1.13
 
 * Error early if reading data generates a warning, we cannot proceed with only a partial read of the data
