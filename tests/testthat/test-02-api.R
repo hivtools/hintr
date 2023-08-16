@@ -879,6 +879,20 @@ test_that("model calibrate can be queued and result returned", {
   expect_true(nrow(response$data$data) > 84042)
   expect_equal(names(response$data$plottingMetadata),
                c("barchart", "choropleth"))
+
+  ## Get metadata
+  metadata <- endpoint_model_calibrate_metadata(q$queue)
+  metadata_response <- metadata$run(status_response$data$id)
+  expect_equal(metadata_response$data$plottingMetadata,
+               response$data$plottingMetadata)
+  expect_equal(metadata_response$data$warnings,
+               response$data$warnings)
+
+  ## Get data
+  data <- endpoint_model_calibrate_data(q$queue)
+  data_response <- data$run(status_response$data$id)
+  expect_equal(data_response$data$data,
+               response$data$data)
 })
 
 test_that("api can call endpoint_model_calibrate", {
@@ -926,6 +940,24 @@ test_that("api can call endpoint_model_calibrate", {
   expect_true(nrow(result_body$data$data) > 84042)
   expect_equal(names(result_body$data$plottingMetadata),
                c("barchart", "choropleth"))
+
+  ## Get metadata
+  metadata_res <- api$request("GET", paste0("/calibrate/result/metadata/",
+                                            status_body$data$id))
+  expect_equal(metadata_res$status, 200)
+  metadata_body <- jsonlite::fromJSON(metadata_res$body)
+  expect_equal(metadata_body$data$plottingMetadata,
+               result_body$data$plottingMetadata)
+  expect_equal(metadata_body$data$warnings,
+               result_body$data$warnings)
+
+  ## Get data
+  data_res <- api$request("GET", paste0("/calibrate/result/data/",
+                                        status_body$data$id))
+  expect_equal(data_res$status, 200)
+  data_body <- jsonlite::fromJSON(data_res$body)
+  expect_equal(data_body$data$data,
+               result_body$data$data)
 })
 
 test_that("model calibrate result includes warnings", {

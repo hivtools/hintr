@@ -219,6 +219,32 @@ calibrate_result <- function(queue) {
   }
 }
 
+calibrate_metadata <- function(queue) {
+  function(id) {
+    verify_result_available(queue, id)
+    result <- queue$result(id)
+    output <- naomi::read_hintr_output(result$plot_data_path)
+    metadata <- build_output_metadata(output)
+    warnings <- list()
+    if (!is.null(result$warnings)) {
+      warnings <- warnings_scalar(result$warnings)
+    }
+    list(
+      plottingMetadata = metadata,
+      warnings = warnings
+    )
+  }
+}
+
+calibrate_data <- function(queue) {
+  function(id) {
+    verify_result_available(queue, id)
+    result <- queue$result(id)
+    output <- naomi::read_hintr_output(result$plot_data_path)
+    list(data = select_data(output))
+  }
+}
+
 calibrate_plot <- function(queue) {
   function(id) {
     verify_result_available(queue, id)

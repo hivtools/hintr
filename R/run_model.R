@@ -83,8 +83,19 @@ select_data <- function(data) {
 
 process_result <- function(model_output) {
   output <- naomi::read_hintr_output(model_output$plot_data_path)
+  metadata <- build_output_metadata(output)
+  warnings <- list()
+  if (!is.null(model_output$warnings)) {
+    warnings <- warnings_scalar(model_output$warnings)
+  }
+  list(data = select_data(output),
+       plottingMetadata = metadata,
+       warnings = warnings)
+}
+
+build_output_metadata <- function(output) {
   output_filters <- get_model_output_filters(output)
-  metadata <- list(
+  list(
     barchart = list(
       indicators = get_barchart_metadata(output),
       filters = output_filters,
@@ -95,13 +106,6 @@ process_result <- function(model_output) {
       filters = output_filters
     )
   )
-  warnings <- list()
-  if (!is.null(model_output$warnings)) {
-    warnings <- warnings_scalar(model_output$warnings)
-  }
-  list(data = select_data(output),
-       plottingMetadata = metadata,
-       warnings = warnings)
 }
 
 use_mock_model <- function() {
