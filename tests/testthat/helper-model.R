@@ -19,7 +19,7 @@ class(mock_model) <- "hintr_output"
 
 mock_calibrate <- list(
   plot_data_path =
-    system.file("output", "malawi_calibrate_plot_data.qs", package = "hintr"),
+    system.file("output", "malawi_calibrate_plot_data.duckdb", package = "hintr"),
   model_output_path =
     system.file("output", "malawi_calibrate_output.qs", package = "hintr"),
   version = utils::packageVersion("naomi"),
@@ -80,7 +80,7 @@ test_mock_model_available <- function() {
 ## hintr version 0.1.39 to 1.0.7 and naomi version 2.4.3 to 2.5.6
 mock_calibrate_v1.0.7 <- list(
   plot_data_path =
-    system.file("output", "malawi_calibrate_plot_data.qs", package = "hintr"),
+    system.file("output", "malawi_calibrate_plot_data.duckdb", package = "hintr"),
   model_output_path =
     system.file("output", "malawi_calibrate_output.qs", package = "hintr"),
   version = "2.5.6"
