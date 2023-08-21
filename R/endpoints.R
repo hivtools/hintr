@@ -230,6 +230,7 @@ calibrate_metadata <- function(queue) {
       warnings <- warnings_scalar(result$warnings)
     }
     list(
+      path = scalar(result$plot_data_path),
       plottingMetadata = metadata,
       warnings = warnings
     )

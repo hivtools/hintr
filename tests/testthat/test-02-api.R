@@ -872,7 +872,8 @@ test_that("model calibrate can be queued and result returned", {
   response <- result$run(status_response$data$id)
 
   expect_equal(response$status_code, 200)
-  expect_equal(names(response$data), c("data", "plottingMetadata", "warnings"))
+  expect_equal(names(response$data),
+               c("data", "plottingMetadata", "warnings"))
   expect_equal(colnames(response$data$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
@@ -883,6 +884,8 @@ test_that("model calibrate can be queued and result returned", {
   ## Get metadata
   metadata <- endpoint_model_calibrate_metadata(q$queue)
   metadata_response <- metadata$run(status_response$data$id)
+  expect_equal(metadata$response$data$path,
+               response$data$path)
   expect_equal(metadata_response$data$plottingMetadata,
                response$data$plottingMetadata)
   expect_equal(metadata_response$data$warnings,
