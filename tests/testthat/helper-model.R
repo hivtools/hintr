@@ -127,7 +127,7 @@ clone_model_output <- function(output) {
   file.copy(output$model_output_path, model_output_path)
   plot_data_path <- NULL
   if (!is.null(output$plot_data_path)) {
-    plot_data_path <- tempfile(fileext = ".qs")
+    plot_data_path <- tempfile(fileext = ".duckdb")
     file.copy(output$plot_data_path, plot_data_path)
   }
   out <- list(model_output_path = model_output_path,
