@@ -316,14 +316,21 @@ test_that("real model can be run & calibrated by API", {
   response <- response_from_json(r)
   expect_equal(response$status, "success")
   expect_equal(response$errors, NULL)
-  expect_equal(names(response$data),
-               c("data", "plottingMetadata", "warnings"))
+  expect_equal(names(response$data), c("data", "plottingMetadata", "warnings"))
   expect_equal(names(response$data$data[[1]]),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
   expect_true(length(response$data$data) > 84042)
   expect_equal(names(response$data$plottingMetadata),
                c("barchart", "choropleth"))
+
+  ## Get path to result
+  r <- test_server$request("GET", paste0("/calibrate/result/path/",
+                                         calibrate_id))
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+  expect_equal(names(response$data), "path")
+  expect_true(file.exists(response$data$path))
 })
 
 test_that("plotting metadata is exposed", {

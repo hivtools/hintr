@@ -2,9 +2,6 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "path": {
-      "type": "string"
-    },
     "plottingMetadata": {
       "type": "object",
       "properties": {
@@ -19,5 +16,5 @@
       "items": { "$ref": "Warning.schema.json"  }
     }
   },
-  "required": [ "path", "plottingMetadata", "warnings" ]
+  "required": [ "plottingMetadata", "warnings" ]
 }

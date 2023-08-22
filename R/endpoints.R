@@ -230,7 +230,6 @@ calibrate_metadata <- function(queue) {
       warnings <- warnings_scalar(result$warnings)
     }
     list(
-      path = scalar(result$plot_data_path),
       plottingMetadata = metadata,
       warnings = warnings
     )
@@ -243,6 +242,16 @@ calibrate_data <- function(queue) {
     result <- queue$result(id)
     output <- naomi::read_hintr_output(result$plot_data_path)
     list(data = select_data(output))
+  }
+}
+
+calibrate_result_path <- function(queue) {
+  function(id) {
+    verify_result_available(queue, id)
+    result <- queue$result(id)
+    list(
+      path = scalar(result$plot_data_path)
+    )
   }
 }
 
