@@ -245,6 +245,16 @@ calibrate_data <- function(queue) {
   }
 }
 
+calibrate_result_path <- function(queue) {
+  function(id) {
+    verify_result_available(queue, id)
+    result <- queue$result(id)
+    list(
+      path = scalar(result$plot_data_path)
+    )
+  }
+}
+
 calibrate_plot <- function(queue) {
   function(id) {
     verify_result_available(queue, id)

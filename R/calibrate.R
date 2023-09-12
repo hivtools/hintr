@@ -12,7 +12,7 @@ run_calibrate <- function(model_output, calibration_options, path_results,
 
   path_results <- normalizePath(path_results, mustWork = TRUE)
   plot_data_path <- tempfile("plot_data", tmpdir = path_results,
-                             fileext = ".qs")
+                             fileext = ".duckdb")
   model_output_path <- tempfile("model_output", tmpdir = path_results,
                                 fileext = ".qs")
 

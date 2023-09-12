@@ -16,5 +16,5 @@
       "items": { "$ref": "Warning.schema.json"  }
     }
   },
-  "required": ["plottingMetadata", "warnings" ]
+  "required": [ "plottingMetadata", "warnings" ]
 }
