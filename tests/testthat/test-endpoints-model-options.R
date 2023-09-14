@@ -1,3 +1,5 @@
+gc()
+
 test_that("endpoint_model_options returns model options", {
   input <- model_options_input(file.path("testdata", "malawi.geojson"),
                                file.path("testdata", "survey.csv"),
