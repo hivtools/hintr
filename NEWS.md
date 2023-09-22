@@ -1,3 +1,7 @@
+# hintr 1.1.17
+
+* Return calibrate result path from `/calibrate/result/path/<id>` relative to the results directory
+
 # hintr 1.1.16
 
 * Add a new endpoint `/calibrate/result/path/<id>` which will return the path to the calibration plot data output which can be read by web backend
