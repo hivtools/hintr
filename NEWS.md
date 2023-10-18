@@ -1,3 +1,7 @@
+# hintr 1.1.17
+
+* Add a dummy download endpoint of type "agyw" for generating AGYW (adolescent girls and young women) tool
+
 # hintr 1.1.16
 
 * Add a new endpoint `/calibrate/result/path/<id>` which will return the path to the calibration plot data output which can be read by web backend

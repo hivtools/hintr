@@ -54,22 +54,22 @@ setup_payload_calibrate <- function(version = NULL) {
 
 setup_payload_download_request <- function(version = NULL,
                                            include_notes = TRUE,
-                                           include_state = TRUE) {
-  if (!any(include_notes, include_state)) {
-    stop("Must include notes and/or state info in payload")
+                                           include_state = TRUE,
+                                           include_pjnz = FALSE) {
+  if (!any(include_notes, include_state, include_pjnz)) {
+    stop("Must include one or more of notes, state or pjnz in payload")
   }
-  payload <- "{"
+  payload <- list()
   path <- tempfile()
   if (include_notes) {
+    notes <- paste0(readLines(
+      system_file("payload", "spectrum_download_notes_payload.json")),
+      collapse = "\n")
     payload <- c(
       payload,
-      '"notes":',
-      readLines(system_file("payload", "spectrum_download_notes_payload.json")))
+      paste('"notes":', notes))
   }
   if (include_state) {
-    if (include_notes) {
-      payload <- c(payload, ",")
-    }
     if (is.null(version)) {
       version <- to_json(cfg$version_info)
     }
@@ -82,8 +82,15 @@ setup_payload_download_request <- function(version = NULL,
       )
     )
     payload <- c(payload,
-                 '"state":',
-                 state_payload)
+                 paste('"state":', state_payload))
   }
-  to_json(json_verbatim(c(payload, "}")))
+  if (include_pjnz) {
+    pjnz <- jsonlite::read_json(
+      system_file("payload", "model_submit_payload.json"))$data$pjnz
+    payload <- c(payload, paste(
+      '"pjnz": ', jsonlite::toJSON(pjnz, auto_unbox = TRUE, null = "null")))
+  }
+  payload <- paste(payload, collapse = ",\n")
+  payload <- paste("{\n", payload, "\n}")
+  to_json(json_verbatim(payload))
 }
