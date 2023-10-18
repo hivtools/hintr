@@ -354,26 +354,27 @@ download_submit <- function(queue) {
       version <- "2.7.16"
     }
     verify_result_available(queue, id, version)
-    input <- NULL
+    prepared_input <- NULL
     if (!is.null(input)) {
       parsed_input <- jsonlite::fromJSON(input, simplifyVector = FALSE)
       if (!is.null(parsed_input$notes)) {
-        input$notes <- format_notes(parsed_input$notes)
+        prepared_input$notes <- format_notes(parsed_input$notes)
       }
       if (!is.null(parsed_input$state)) {
         ## Keep this as raw JSON because we want to write it straight out to
         ## the output zip and this way we can avoid unboxing problems
         ## from deserializing and reserializing the data
-        input$state <- V8::v8()$call("(d) => JSON.stringify(d.state)",
-                                     V8::JS(paste0(input, collapse = "\n")))
+        prepared_input$state <- V8::v8()$call(
+          "(d) => JSON.stringify(d.state)",
+          V8::JS(paste0(input, collapse = "\n")))
       }
       if (!is.null(parsed_input$pjnz)) {
-        input$pjnz <- parsed_input$pjnz
+        prepared_input$pjnz <- parsed_input$pjnz
       }
     }
     tryCatch(
       list(id = scalar(
-        queue$submit_download(queue$result(id), type, input))),
+        queue$submit_download(queue$result(id), type, prepared_input))),
       error = function(e) {
         hintr_error(e$message, "FAILED_TO_QUEUE")
       }
