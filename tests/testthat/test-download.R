@@ -8,8 +8,8 @@ test_that("download can include project state", {
   out <- download(model_output,
            type = "spectrum",
            path_results = results,
-           notes = "notes",
-           state = '{"state": "example"}')
+           input = list(notes = "notes",
+                        state = '{"state": "example"}'))
 
   expect_true(file.exists(out$path))
   dest <- tempfile()
@@ -30,8 +30,8 @@ test_that("download can be translated", {
   out <- download(model_output,
                   type = "spectrum",
                   path_results = results,
-                  notes = "notes",
-                  state = '{"state": "example"}',
+                  input = list(notes = "notes",
+                               state = '{"state": "example"}'),
                   language = "fr")
 
   expect_true(file.exists(out$path))

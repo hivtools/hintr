@@ -214,7 +214,7 @@ test_that("real model can be run with csv2 data", {
     calendar_quarter_t2 = "CY2018Q3",
     calendar_quarter_t3 = "CY2019Q2",
     calendar_quarter_t4 = "CY2022Q3",
-    calendar_quarter_t5 = "CY2023Q3"
+    calendar_quarter_t5 = "CY2023Q3",
     survey_prevalence = c("DEMO2016PHIA", "DEMO2015DHS"),
     survey_art_coverage = "DEMO2016PHIA",
     survey_recently_infected = "DEMO2016PHIA",
@@ -270,7 +270,7 @@ test_that("mock model can be forced to error", {
     calendar_quarter_t2 = "CY2018Q3",
     calendar_quarter_t3 = "CY2019Q2",
     calendar_quarter_t4 = "CY2022Q3",
-    calendar_quarter_t5 = "CY2023Q3"
+    calendar_quarter_t5 = "CY2023Q3",
     survey_prevalence = c("DEMO2016PHIA", "DEMO2015DHS"),
     survey_art_coverage = "DEMO2016PHIA",
     survey_recently_infected = "DEMO2016PHIA",
