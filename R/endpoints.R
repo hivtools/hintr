@@ -398,7 +398,7 @@ download_result <- function(queue) {
                          coarse_output = "coarse-output",
                          summary = "summary-report",
                          comparison = "comparison-report",
-                         agyw = "agyw")
+                         agyw = "AGYW")
       ext <- switch(res$metadata$type,
                     spectrum = ".zip",
                     coarse_output = ".zip",
