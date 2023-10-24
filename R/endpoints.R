@@ -354,24 +354,27 @@ download_submit <- function(queue) {
       version <- "2.7.16"
     }
     verify_result_available(queue, id, version)
-    notes <- NULL
-    state <- NULL
+    prepared_input <- NULL
     if (!is.null(input)) {
       parsed_input <- jsonlite::fromJSON(input, simplifyVector = FALSE)
       if (!is.null(parsed_input$notes)) {
-        notes <- format_notes(parsed_input$notes)
+        prepared_input$notes <- format_notes(parsed_input$notes)
       }
       if (!is.null(parsed_input$state)) {
         ## Keep this as raw JSON because we want to write it straight out to
         ## the output zip and this way we can avoid unboxing problems
         ## from deserializing and reserializing the data
-        state <- V8::v8()$call("(d) => JSON.stringify(d.state)",
-                               V8::JS(paste0(input, collapse = "\n")))
+        prepared_input$state <- V8::v8()$call(
+          "(d) => JSON.stringify(d.state)",
+          V8::JS(paste0(input, collapse = "\n")))
+      }
+      if (!is.null(parsed_input$pjnz)) {
+        prepared_input$pjnz <- parsed_input$pjnz
       }
     }
     tryCatch(
       list(id = scalar(
-        queue$submit_download(queue$result(id), type, notes, state))),
+        queue$submit_download(queue$result(id), type, prepared_input))),
       error = function(e) {
         hintr_error(e$message, "FAILED_TO_QUEUE")
       }
@@ -394,12 +397,14 @@ download_result <- function(queue) {
                          spectrum = "naomi-output",
                          coarse_output = "coarse-output",
                          summary = "summary-report",
-                         comparison = "comparison-report")
+                         comparison = "comparison-report",
+                         agyw = "AGYW")
       ext <- switch(res$metadata$type,
                     spectrum = ".zip",
                     coarse_output = ".zip",
                     summary = ".html",
-                    comparison = ".html")
+                    comparison = ".html",
+                    agyw = ".xlsx")
       bytes <- readBin(res$path, "raw", n = file.size(res$path))
       bytes <- porcelain::porcelain_add_headers(bytes, list(
         "Content-Disposition" = build_content_disp_header(res$metadata$areas,

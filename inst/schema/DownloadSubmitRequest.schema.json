@@ -3,7 +3,8 @@
   "type": "object",
   "properties": {
     "notes": { "$ref": "Notes.schema.json" },
-    "state": { "$ref": "ProjectState.schema.json" }
+    "state": { "$ref": "ProjectState.schema.json" },
+    "pjnz": { "$ref": "SessionFile.schema.json" }
   },
   "additionalProperties": false
 }
