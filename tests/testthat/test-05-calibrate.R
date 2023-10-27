@@ -152,7 +152,7 @@ test_that("can calibrate a model result", {
   ## Table metadata is returned
   expect_equal(names(result$tableMetadata), "presets")
   expect_length(result$tableMetadata$presets, 2)
-  expect_names(result$tableMetadata$presets[[1]],
+  expect_equal(names(result$tableMetadata$presets[[1]]),
                c("label", "column", "area_id"))
 })
 
