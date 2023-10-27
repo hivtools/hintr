@@ -1,3 +1,7 @@
+# hintr 1.1.18
+
+* Add `tableMetadata` into the `calibrate/result/<id>` and `calibrate/result/metadata/<id>` endpoints for controling how the new output table feature will look
+
 # hintr 1.1.17
 
 * Add a dummy download endpoint of type "agyw" for generating AGYW (adolescent girls and young women) tool

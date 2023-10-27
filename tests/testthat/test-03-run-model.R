@@ -1,11 +1,13 @@
 test_that("model can be run & calibrated and filters extracted", {
   test_mock_model_available()
   res <- process_result(mock_calibrate)
-  expect_equal(names(res), c("data", "plottingMetadata", "warnings"))
+  expect_equal(names(res),
+               c("data", "plottingMetadata", "tableMetadata", "warnings"))
   expect_equal(names(res$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
   expect_true(nrow(res$data) > 84042)
+  expect_equal(names(res$tableMetadata), "presets")
   expect_equal(names(res$plottingMetadata), c("barchart", "choropleth"))
   barchart <- res$plottingMetadata$barchart
   expect_equal(names(barchart), c("indicators", "filters", "defaults"))
@@ -74,13 +76,15 @@ test_that("model without national level results can be processed", {
   output_temp <- tempfile(fileext = ".rds")
   saveRDS(output, output_temp)
   res <- process_result(list(plot_data_path = output_temp))
-  expect_equal(names(res), c("data", "plottingMetadata", "warnings"))
+  expect_equal(names(res),
+               c("data", "plottingMetadata", "tableMetadata", "warnings"))
   expect_equal(names(res$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
   expect_true(nrow(res$data) > 84042)
   expect_equal(as.data.frame(res$data)[1, "area_id"], "MWI_1_1_demo",
                ignore_attr = TRUE)
+  expect_equal(names(res$tableMetadata), "presets")
   expect_equal(names(res$plottingMetadata), c("barchart", "choropleth"))
   barchart <- res$plottingMetadata$barchart
   expect_equal(names(barchart), c("indicators", "filters", "defaults"))
@@ -306,4 +310,9 @@ test_that("mock model can be forced to error", {
     run_model(data, options, tempdir()),
     "Mock model has errored because option 'mock_model_trigger_error' is TRUE"
   )
+})
+
+test_that("table metadata has been translated", {
+  metadata <- build_output_table_metadata()
+  expect_equal(metadata$presets[[1]]$label, scalar("Sex by area"))
 })

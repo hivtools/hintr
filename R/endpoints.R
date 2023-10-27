@@ -225,12 +225,14 @@ calibrate_metadata <- function(queue) {
     result <- queue$result(id)
     output <- naomi::read_hintr_output(result$plot_data_path)
     metadata <- build_output_metadata(output)
+    table_metadata <- build_output_table_metadata()
     warnings <- list()
     if (!is.null(result$warnings)) {
       warnings <- warnings_scalar(result$warnings)
     }
     list(
       plottingMetadata = metadata,
+      tableMetadata = table_metadata,
       warnings = warnings
     )
   }

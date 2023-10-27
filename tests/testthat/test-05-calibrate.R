@@ -52,7 +52,8 @@ test_that("can calibrate a model result", {
 
   get_result <- calibrate_result(q$queue)
   result <- get_result(res$id)
-  expect_equal(names(result), c("data", "plottingMetadata", "warnings"))
+  expect_equal(names(result),
+               c("data", "plottingMetadata", "tableMetadata", "warnings"))
   expect_equal(colnames(result$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
@@ -147,6 +148,12 @@ test_that("can calibrate a model result", {
                  "anc_clients", "anc_plhiv", "anc_already_art",
                  "anc_art_new", "anc_known_pos",
                  "anc_tested_pos", "anc_tested_neg"))
+
+  ## Table metadata is returned
+  expect_equal(names(result$tableMetadata), "presets")
+  expect_length(result$tableMetadata$presets, 2)
+  expect_names(result$tableMetadata$presets[[1]],
+               c("label", "column", "area_id"))
 })
 
 test_that("model calibration fails is version out of date", {

@@ -84,12 +84,14 @@ select_data <- function(data) {
 process_result <- function(model_output) {
   output <- naomi::read_hintr_output(model_output$plot_data_path)
   metadata <- build_output_metadata(output)
+  table_metadata <- build_output_table_metadata()
   warnings <- list()
   if (!is.null(model_output$warnings)) {
     warnings <- warnings_scalar(model_output$warnings)
   }
   list(data = select_data(output),
        plottingMetadata = metadata,
+       tableMetadata = table_metadata,
        warnings = warnings)
 }
 
@@ -107,6 +109,27 @@ build_output_metadata <- function(output) {
     )
   )
 }
+
+build_output_table_metadata <- function() {
+  list(
+    presets = list(
+      list(
+        label = scalar(t_("TABLE_SEX_BY_AREA")),
+        column = scalar("sex"),
+        row = scalar("area_id")
+      ),
+      list(
+        label = scalar(t_("TABLE_SEX_BY_5_YEAR_AGE_GROUP")),
+        column = scalar("sex"),
+        row = scalar("age"),
+        selected_filter_options = list(
+          age = naomi::get_five_year_age_groups()
+        )
+      )
+    )
+  )
+}
+
 
 use_mock_model <- function() {
   Sys.getenv("USE_MOCK_MODEL") == "true"
