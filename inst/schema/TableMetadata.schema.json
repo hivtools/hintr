@@ -26,7 +26,7 @@
     "presets" : {
       "type": "array",
       "items": { "$ref": "#/definitions/table_preset" }
-    },
+    }
   },
   "additionalProperties": false,
   "required": [ "presets" ]
