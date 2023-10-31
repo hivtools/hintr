@@ -69,18 +69,41 @@ test_mock_model_available <- function() {
                  mock_calibrate$model_output_path, mock_spectrum$path,
                  mock_coarse_output$path, mock_summary$path)
   invisible(lapply(mock_data, function(x) {
-    if(!is.list(x) && !file.exists(x)) {
+    if (!is.list(x) && !file.exists(x)) {
       testthat::skip(sprintf(
         "Test data %s is missing - run ./scripts/build_test_data to create test data.", x))
     }
   }))
 }
 
+t_qs <- tempfile(fileext = ".qs")
+plot_data <- naomi::read_hintr_output(system.file("output", "malawi_calibrate_plot_data.duckdb", package = "hintr"))
+naomi:::hintr_save(plot_data, t_qs)
+
+## Model calibrate output as returned by
+## hintr version 1.0.8 to 1.1.15 and naomi version 2.5.6 to 2.9.10
+mock_calibrate_v1.1.15 <- list(
+  plot_data_path = t_qs,
+  model_output_path =
+    system.file("output", "malawi_calibrate_output.qs", package = "hintr"),
+  version = "2.9.10"
+)
+class(mock_calibrate) <- "hintr_output"
+
+## Model output as returned by
+## hintr version 0.1.39 to 1.0.7 and naomi version 2.4.3 to 2.5.4
+mock_model_v1.1.15 <- list(
+  plot_data_path = NULL,
+  model_output_path =
+    system.file("output", "malawi_model_output.qs", package = "hintr"),
+  version = "2.9.10"
+)
+class(mock_model) <- "hintr_output"
+
 ## Model calibrate output as returned by
 ## hintr version 0.1.39 to 1.0.7 and naomi version 2.4.3 to 2.5.6
 mock_calibrate_v1.0.7 <- list(
-  plot_data_path =
-    system.file("output", "malawi_calibrate_plot_data.duckdb", package = "hintr"),
+  plot_data_path = t_qs,
   model_output_path =
     system.file("output", "malawi_calibrate_output.qs", package = "hintr"),
   version = "2.5.6"
@@ -127,7 +150,8 @@ clone_model_output <- function(output) {
   file.copy(output$model_output_path, model_output_path)
   plot_data_path <- NULL
   if (!is.null(output$plot_data_path)) {
-    plot_data_path <- tempfile(fileext = ".duckdb")
+    fileext <- tools::file_ext(output$plot_data_path)
+    plot_data_path <- tempfile(fileext = paste0(".", fileext))
     file.copy(output$plot_data_path, plot_data_path)
   }
   out <- list(model_output_path = model_output_path,
