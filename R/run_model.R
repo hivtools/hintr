@@ -116,7 +116,7 @@ build_output_table_metadata <- function() {
       list(
         label = scalar(t_("TABLE_SEX_BY_AREA")),
         column = scalar("sex"),
-        row = scalar("area_id")
+        row = scalar("area")
       ),
       list(
         label = scalar(t_("TABLE_SEX_BY_5_YEAR_AGE_GROUP")),
