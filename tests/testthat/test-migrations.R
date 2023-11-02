@@ -5,7 +5,7 @@ test_that("single task can be migrated", {
   t <- tempfile()
   dir.create(t)
   expect_message(migrated <- migrate_task(q$calibrate_id, q$queue,
-                                          "2.9.10", "2.9.11", dry_run = FALSE),
+                                          "2.9.11", dry_run = FALSE),
                  sprintf("Successfully migrated %s", q$calibrate_id))
   expect_equal(migrated$id, q$calibrate_id)
   expect_true(naomi:::is_hintr_output(migrated$new_res))
@@ -14,7 +14,6 @@ test_that("single task can be migrated", {
   expect_equal(migrated$prev_res$model_output_path,
                migrated$new_res$model_output_path)
   expect_equal(migrated$new_res$version, "2.9.11")
-  expect_equal(migrated$from, "2.9.10")
   expect_equal(migrated$to, "2.9.11")
   expect_equal(migrated$action, "Successfully migrated")
 
@@ -31,7 +30,7 @@ test_that("already up to date task is not migrated", {
   t <- tempfile()
   dir.create(t)
   expect_message(migrated <- migrate_task(q$calibrate_id, q$queue,
-                                          "2.9.10", "2.9.11", dry_run = FALSE),
+                                          "2.9.11", dry_run = FALSE),
                  sprintf("Not migrating %s, already up to date",
                          q$calibrate_id))
   expect_equal(migrated$id, q$calibrate_id)
@@ -47,7 +46,7 @@ test_that("invalid output format is not migrated", {
   t <- tempfile()
   dir.create(t)
   expect_message(migrated <- migrate_task(q$calibrate_id, q$queue,
-                                          "2.9.10", "2.9.11", dry_run = FALSE),
+                                          "2.9.11", dry_run = FALSE),
                  sprintf("Not migrating %s, invalid output format",
                          q$calibrate_id))
   expect_equal(migrated$id, q$calibrate_id)
@@ -62,7 +61,7 @@ test_that("model output is not migrated", {
   t <- tempfile()
   dir.create(t)
   expect_message(migrated <- migrate_task(q$model, q$queue,
-                                          "2.9.10", "2.9.11", dry_run = FALSE),
+                                          "2.9.11", dry_run = FALSE),
                  sprintf(
                    "Not migrating %s, this result does not have plot data",
                    q$model_run_id))
@@ -99,7 +98,7 @@ test_that("all tasks can be migrated", {
   t <- tempfile()
   dir.create(t)
   msg <- capture_messages(
-    migrate <- run_migration(q$queue, t, "2.9.10", "2.9.11", dry_run = FALSE))
+    migrate <- run_migration(q$queue, t, "2.9.11", dry_run = FALSE))
 
   expect_equal(sum(grepl("Migrating", msg)), 4) ## 4 Migrating messages
   expect_equal(sum(grepl(sprintf(
@@ -112,10 +111,11 @@ test_that("all tasks can be migrated", {
     "Not migrating %s", calibrate_response$id), msg)), 1)
   expect_equal(sum(grepl("Saving summary csv", msg)), 1)
 
-  expect_length(migrate, 4)
+  migration_log <- qs::qread(migrate$log_path)
+  expect_length(migration_log, 4)
   files <- list.files(t)
   expect_length(files, 2)
-  summary <- read.csv(file.path(t, "summary.csv"))
+  summary <- read.csv(migrate$summary_path)
   expect_setequal(colnames(summary), c("id", "action"))
   expect_equal(nrow(summary), 4)
   expect_setequal(summary$id, c(q$model_run_id, q$calibrate_id, run_response$id,
@@ -124,9 +124,6 @@ test_that("all tasks can be migrated", {
     summary$action,
     c("Successfully migrated", "No change - up to date",
     "No change - only migrating plot data and this result has none"))
-
-  migration_output <- naomi::read_hintr_output(file.path(t, "output.qs"))
-  expect_equal(migration_output, migrate)
 
   ## Data has been migrated
   migrated_mock_run_result <- q$queue$result(q$model_run_id)
@@ -161,10 +158,11 @@ test_that("only completed tasks are migrated", {
 
   t <- tempfile()
   dir.create(t)
-  msg <- capture_messages(migrated <- run_migration(queue, t, "2.9.10",
-                                                    "2.9.11", dry_run = FALSE))
+  msg <- capture_messages(migrate <- run_migration(queue, t,
+                                                   "2.9.11", dry_run = FALSE))
   expect_equal(sum(grepl("Migrating", msg)), 0) ## Nothing was migrated
-  expect_equal(migrated, list())
+  migration_log <- qs::qread(migrate$log_path)
+  expect_equal(migration_log, list())
 })
 
 test_that("migration can be run in dry-run mode", {
@@ -193,7 +191,7 @@ test_that("migration can be run in dry-run mode", {
   ## Run migration
   t <- tempfile()
   dir.create(t)
-  msg <- capture_messages(migrate <- run_migration(q$queue, t, "2.9.10",
+  msg <- capture_messages(migrate <- run_migration(q$queue, t,
                                                    "2.9.11", dry_run = TRUE))
 
   expect_equal(sum(grepl("Migrating", msg)), 4) ## 4 Migrating messages
@@ -207,10 +205,11 @@ test_that("migration can be run in dry-run mode", {
     "Not migrating %s", calibrate_response$id), msg)), 1)
   expect_equal(sum(grepl("Saving summary csv", msg)), 1)
 
-  expect_length(migrate, 4)
+  migration_log <- qs::qread(migrate$log_path)
+  expect_length(migration_log, 4)
   files <- list.files(t)
   expect_length(files, 2)
-  summary <- read.csv(file.path(t, "summary.csv"))
+  summary <- read.csv(migrate$summary_path)
   expect_setequal(colnames(summary), c("id", "action"))
   expect_equal(nrow(summary), 4)
   expect_setequal(summary$id, c(q$model_run_id, q$calibrate_id, run_response$id,
@@ -219,9 +218,6 @@ test_that("migration can be run in dry-run mode", {
     summary$action,
     c("Successfully migrated", "No change - up to date",
       "No change - only migrating plot data and this result has none"))
-
-  migration_output <- qs::qread(file.path(t, "output.qs"))
-  expect_equal(migration_output, migrate)
 
   ## Data has not been migrated
   migrated_mock_run_result <- q$queue$result(q$model_run_id)

@@ -1,28 +1,33 @@
-run_migration <- function(queue, output_dir, from_version, to_version,
-                          dry_run = TRUE) {
-  output_dir <- normalizePath(output_dir, mustWork = TRUE)
+run_migration <- function(queue, log_dir, to_version, dry_run = TRUE) {
+  log_dir <- normalizePath(log_dir, mustWork = TRUE)
   tasks <- queue$queue$task_list()
   status <- queue$queue$task_status(tasks)
   completed_tasks <- tasks[status == "COMPLETE"]
   migrations <- lapply(completed_tasks, migrate_task, queue,
-                       from_version, to_version, dry_run)
+                       to_version, dry_run)
   summary <- lapply(migrations, function(migration) {
     list(
       id = migration$id,
       action = migration$action
     )
   })
+
+  time_now <- iso_time_str()
   summary <- do.call(rbind, summary)
-  summary_path <- file.path(output_dir, "summary.csv")
+  summary_path <- file.path(log_dir, sprintf("summary_%s.csv", time_now))
   message(sprintf("Saving summary csv %s", summary_path))
-  output_path <- file.path(output_dir, "output.qs")
   utils::write.csv(summary, summary_path, row.names = FALSE)
-  message(sprintf("Saving output qs %s", output_path))
-  qs::qsave(migrations, output_path, preset = "fast")
-  migrations
+
+  log_path <- file.path(log_dir, sprintf("log_%s.qs", time_now))
+  message(sprintf("Saving output qs %s", log_path))
+  qs::qsave(migrations, log_path, preset = "fast")
+  list(
+    summary_path = summary_path,
+    log_path = log_path
+  )
 }
 
-migrate_task <- function(task_id, queue, from_version, to_version, dry_run) {
+migrate_task <- function(task_id, queue, to_version, dry_run) {
   message(sprintf("Migrating %s", task_id))
   res <- queue$queue$task_result(task_id)
   if (!naomi:::is_hintr_output(res) ||
@@ -66,7 +71,6 @@ migrate_task <- function(task_id, queue, from_version, to_version, dry_run) {
     id = task_id,
     prev_res = res,
     new_res = new_res,
-    from = from_version,
     to = to_version,
     action = "Successfully migrated"
   )
