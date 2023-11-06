@@ -1,3 +1,7 @@
+# hintr 1.1.18
+
+* Add a function to migrate from naomi v 2.9.10 to 2.9.11. i.e. to migrate from plot data being stored as .qs files to being stored as duckdb database.
+
 # hintr 1.1.17
 
 * Add a dummy download endpoint of type "agyw" for generating AGYW (adolescent girls and young women) tool
