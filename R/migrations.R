@@ -2,6 +2,14 @@ run_migration <- function(queue, log_dir, to_version, dry_run = TRUE) {
   log_dir <- normalizePath(log_dir, mustWork = TRUE)
   tasks <- queue$queue$task_list()
   status <- queue$queue$task_status(tasks)
+
+  running_tasks <- tasks[status %in% c("RUNNING", "PENDING")]
+  for (task in running_tasks) {
+    ## Wait for running tasks to finish before attempting migration
+    message(sprintf("Waiting for task %s", task))
+    queue$queue$task_wait(task)
+  }
+
   completed_tasks <- tasks[status == "COMPLETE"]
   migrations <- lapply(completed_tasks, migrate_task, queue,
                        to_version, dry_run)
