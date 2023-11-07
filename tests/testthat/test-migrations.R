@@ -54,6 +54,28 @@ test_that("invalid output format is not migrated", {
   expect_equal(migrated$action, "No change - not migrateable")
 })
 
+test_that("download output format is not migrated", {
+  test_mock_model_available()
+  q <- test_queue_result()
+
+  ## Submit download request and wait for it to complete
+  submit <- endpoint_download_submit(q$queue)
+  submit_response <- submit$run(q$calibrate_id, "coarse_output")
+  expect_equal(submit_response$status_code, 200)
+  expect_true(!is.null(submit_response$data$id))
+  out <- q$queue$queue$task_wait(submit_response$data$id)
+
+  t <- tempfile()
+  dir.create(t)
+  expect_message(migrated <- migrate_task(submit_response$data$id, q$queue,
+                                          "2.9.11", dry_run = FALSE),
+                 sprintf("Not migrating %s, this is a download output",
+                         submit_response$data$id))
+  expect_equal(migrated$id, submit_response$data$id)
+  expect_equal(migrated$prev_res, q$queue$result(submit_response$data$id))
+  expect_equal(migrated$action, "No change - not migrating download outputs")
+})
+
 test_that("model output is not migrated", {
   test_mock_model_available()
   q <- test_queue_result(model = mock_model_v1.1.15,

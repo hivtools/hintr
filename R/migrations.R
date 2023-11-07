@@ -40,11 +40,19 @@ migrate_task <- function(task_id, queue, to_version, dry_run) {
   res <- queue$queue$task_result(task_id)
   if (!naomi:::is_hintr_output(res) ||
       !all(c("plot_data_path", "model_output_path") %in% names(res))) {
-    message(sprintf("Not migrating %s, invalid output format", task_id))
+    is_download <- "path" %in% names(res)
+    if (is_download) {
+      msg <- sprintf("Not migrating %s, this is a download output", task_id)
+      log <- "No change - not migrating download outputs"
+    } else {
+      msg <- sprintf("Not migrating %s, invalid output format", task_id)
+      log <- "No change - not migrateable"
+    }
+    message(msg)
     return(list(
       id = task_id,
       prev_res = res,
-      action = "No change - not migrateable"
+      action = log
     ))
   }
   if (!is.null(res$version) &&
