@@ -89,3 +89,47 @@ test_that("hintr_submit_prerun uploads files and returns output zip", {
                                simplifyVector = FALSE)
   expect_equal(names(state), c("datasets", "model_fit", "calibrate", "version"))
 })
+
+
+test_that("hintr_submit_prerun uploads plot data as duckdb", {
+  test_redis_available()
+  inputs_dir <- tempfile()
+  dir.create(inputs_dir)
+  results_dir <- tempfile()
+  dir.create(results_dir)
+  queue_id <- paste0("hintr:", ids::random_id())
+  server <- porcelain::porcelain_background$new(
+    api, args = list(queue_id = queue_id,
+                     workers = 0,
+                     results_dir = results_dir,
+                     inputs_dir = inputs_dir))
+  server$start()
+
+  existing_inputs <- length(list.files(inputs_dir))
+  existing_outputs <- length(list.files(results_dir))
+
+  t <- tempfile(fileext = ".zip")
+  ## Upload old data here that has plot data as a qs file
+  out <- hintr_submit_prerun(prerun_inputs, mock_model_v1.1.15,
+                             mock_calibrate_v1.1.15,
+                             "http://localhost", port = server$port,
+                             output_zip_path = t)
+  expect_equal(out, t)
+
+  expect_equal(length(list.files(inputs_dir)) - existing_inputs, 6)
+  expect_equal(length(list.files(results_dir)) - existing_outputs, 3)
+
+  dest <- tempfile()
+  zip::unzip(t, exdir = dest)
+  expect_true(PROJECT_STATE_PATH %in% list.files(dest, recursive = TRUE))
+  state <- jsonlite::read_json(file.path(dest, PROJECT_STATE_PATH),
+                               simplifyVector = FALSE)
+  expect_equal(names(state), c("datasets", "model_fit", "calibrate", "version"))
+
+  ## Plot data output must be a duckdb file for the web front end to be
+  ## able to run it.
+  calibrate_id <- state$calibrate$id
+  q <- Queue$new(queue_id = queue_id, workers = 0)
+  res <- q$queue$task_result(calibrate_id)
+  expect_equal(tools::file_ext(res$plot_data_path), "duckdb")
+})
