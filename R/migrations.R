@@ -74,6 +74,18 @@ migrate_task <- function(task_id, queue, to_version, dry_run) {
       action = "No change - only migrating plot data and this result has none"
     ))
   }
+  if (!file.exists(res$plot_data_path)) {
+    ## Have seen some instances of prod where plot data doesn't exist
+    ## it's probably really old model fit so not going to
+    ## worry about it to much and just skip it
+    message(
+      sprintf("Not migrating %s, plot data path does not exist", task_id))
+    return(list(
+      id = task_id,
+      prev_res = res,
+      action = "No change - plot data path does not exist"
+    ))
+  }
 
   new_res <- migrate(res, to_version, dry_run)
   if (!dry_run) {
