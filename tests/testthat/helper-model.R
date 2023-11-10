@@ -88,7 +88,7 @@ mock_calibrate_v1.1.15 <- list(
     system.file("output", "malawi_calibrate_output.qs", package = "hintr"),
   version = "2.9.10"
 )
-class(mock_calibrate) <- "hintr_output"
+class(mock_calibrate_v1.1.15) <- "hintr_output"
 
 ## Model output as returned by
 ## hintr version 0.1.39 to 1.0.7 and naomi version 2.4.3 to 2.5.4
@@ -98,7 +98,7 @@ mock_model_v1.1.15 <- list(
     system.file("output", "malawi_model_output.qs", package = "hintr"),
   version = "2.9.10"
 )
-class(mock_model) <- "hintr_output"
+class(mock_model_v1.1.15) <- "hintr_output"
 
 ## Model calibrate output as returned by
 ## hintr version 0.1.39 to 1.0.7 and naomi version 2.4.3 to 2.5.6
@@ -108,7 +108,7 @@ mock_calibrate_v1.0.7 <- list(
     system.file("output", "malawi_calibrate_output.qs", package = "hintr"),
   version = "2.5.6"
 )
-class(mock_calibrate) <- "hintr_output"
+class(mock_calibrate_v1.0.7) <- "hintr_output"
 
 ## Model output as returned by
 ## hintr version 0.1.39 to 1.0.7 and naomi version 2.4.3 to 2.5.4
@@ -118,7 +118,7 @@ mock_model_v1.0.7 <- list(
     system.file("output", "malawi_model_output.qs", package = "hintr"),
   version = "2.5.4"
 )
-class(mock_model) <- "hintr_output"
+class(mock_model_v1.0.7) <- "hintr_output"
 
 ## Model output as returned by
 ## hintr version 0.1.4 to 0.1.38 and naomi version 1.0.8 to 2.4.2

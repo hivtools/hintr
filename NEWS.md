@@ -1,3 +1,7 @@
+# hintr 1.1.19
+
+* Ensure that plot data in submit_prerun is uploaded as a duckdb file.
+
 # hintr 1.1.18
 
 * Add a function to migrate from naomi v 2.9.10 to 2.9.11. i.e. to migrate from plot data being stored as .qs files to being stored as duckdb database.

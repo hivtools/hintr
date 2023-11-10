@@ -36,6 +36,19 @@ hintr_submit_prerun <- function(inputs, model_output, calibrate_output,
   assert_names(inputs, required, optional)
   assert_files_exist(inputs)
 
+  ## Make sure data is in format required by the web backend
+  ext <- tools::file_ext(calibrate_output$plot_data_path)
+  ## Would be nice to do this in some way that doesn't have knowledge
+  ## of what is the "latest" data type.. as this is coupling over
+  ## hint and naomi quite tightly but should protect against science
+  ## creating the model output without using the `naomi:::hintr_save` util
+  if (ext != "duckdb") {
+    plot_data <- naomi::read_hintr_output(calibrate_output$plot_data_path)
+    new_plot_data_path <- tempfile("plot_data", fileext = ".duckdb")
+    naomi:::hintr_save(plot_data, new_plot_data_path)
+    calibrate_output$plot_data_path <- new_plot_data_path
+  }
+
   if (!is.null(port)) {
     url <- paste0(server, ":", port)
   } else {
