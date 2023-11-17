@@ -153,7 +153,7 @@ test_that("can calibrate a model result", {
   expect_equal(names(result$tableMetadata), "presets")
   expect_length(result$tableMetadata$presets, 2)
   expect_equal(names(result$tableMetadata$presets[[1]]),
-               c("label", "column", "row"))
+               c("id", "label", "column", "row"))
 })
 
 test_that("model calibration fails is version out of date", {

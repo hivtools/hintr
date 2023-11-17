@@ -114,11 +114,13 @@ build_output_table_metadata <- function() {
   list(
     presets = list(
       list(
+        id = "sex_by_area",
         label = scalar(t_("TABLE_SEX_BY_AREA")),
         column = scalar("sex"),
         row = scalar("area")
       ),
       list(
+        id = "sex_by_5_year_age_group",
         label = scalar(t_("TABLE_SEX_BY_5_YEAR_AGE_GROUP")),
         column = scalar("sex"),
         row = scalar("age"),

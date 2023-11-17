@@ -5,6 +5,7 @@
     "table_preset": {
       "type": "object",
       "properties": {
+        "id": { "type": "string" },
         "label": { "type": "string" },
         "column": { "type": "string" },
         "row": { "type": "string" },
@@ -19,7 +20,7 @@
         }
       },
       "additionalProperties": false,
-      "required": [ "label", "column", "row" ]
+      "required": [ "id", "label", "column", "row" ]
     }
   },
   "properties" : {
