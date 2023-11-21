@@ -117,13 +117,13 @@ build_output_table_metadata <- function() {
         id = "sex_by_area",
         label = scalar(t_("TABLE_SEX_BY_AREA")),
         column = scalar("sex"),
-        row = scalar("area")
+        row = scalar("area_id")
       ),
       list(
         id = "sex_by_5_year_age_group",
         label = scalar(t_("TABLE_SEX_BY_5_YEAR_AGE_GROUP")),
         column = scalar("sex"),
-        row = scalar("age"),
+        row = scalar("age_group"),
         selected_filter_options = list(
           age = naomi::get_five_year_age_groups()
         )

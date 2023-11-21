@@ -8,6 +8,16 @@ test_that("model can be run & calibrated and filters extracted", {
                  "indicator", "mode", "mean", "lower", "upper"))
   expect_true(nrow(res$data) > 84042)
   expect_equal(names(res$tableMetadata), "presets")
+
+  ## All table metadata rows and columns come from the data
+  data_names <- names(res$data)
+  for (preset in res$tableMetadata$presets) {
+    expect_true(preset$column %in% data_names,
+                sprintf("Column '%s' not a valid data column", preset$column))
+    expect_true(preset$row %in% data_names,
+                sprintf("Row '%s' not a valid data column", preset$row))
+  }
+
   expect_equal(names(res$plottingMetadata), c("barchart", "choropleth"))
   barchart <- res$plottingMetadata$barchart
   expect_equal(names(barchart), c("indicators", "filters", "defaults"))
