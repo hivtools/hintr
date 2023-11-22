@@ -326,5 +326,5 @@ test_that("table metadata has been translated", {
   output <- naomi::read_hintr_output(mock_calibrate$plot_data_path)
   filters <- get_model_output_filters(output)
   metadata <- build_output_table_metadata(output, filters)
-  expect_equal(metadata$presets[[1]]$label, scalar("Sex by area"))
+  expect_equal(metadata$presets[[1]]$default$label, scalar("Sex by area"))
 })
