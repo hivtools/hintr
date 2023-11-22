@@ -187,10 +187,10 @@ get_survey_options <- function(survey_data, metadata, indicator) {
                                        indicator)
   if (nrow(indicator_data) == 0) {
     ## Gets serialised to JSON and requires an obj
-    ## for options NULL -> {}
+    ## for options list -> []
     ## a string for default values
     return(list(
-      options = NULL,
+      options = list(),
       default = scalar("")
     ))
   }

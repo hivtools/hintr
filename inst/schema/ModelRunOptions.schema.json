@@ -28,7 +28,7 @@
         }
       },
       "additionalProperties": false,
-      "required": [ "name", "type", "required" ]
+      "required": [ "name", "type", "required", "options" ]
     },
     "multiselectControl": {
       "type": "object",
@@ -65,7 +65,7 @@
         }
       },
       "additionalProperties": false,
-      "required": [ "name", "type", "required" ]
+      "required": [ "name", "type", "required", "options" ]
     },
     "numberControl": {
       "type": "object",
