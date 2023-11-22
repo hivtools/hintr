@@ -152,8 +152,23 @@ test_that("can calibrate a model result", {
   ## Table metadata is returned
   expect_equal(names(result$tableMetadata), "presets")
   expect_length(result$tableMetadata$presets, 2)
-  expect_equal(names(result$tableMetadata$presets[[1]]),
+  expect_equal(names(result$tableMetadata$presets[[1]]$default),
                c("id", "label", "column", "row"))
+
+  table_filters1 <- result$tableMetadata$presets[[1]]$filters
+  filter_ids1 <- vcapply(table_filters1, "[[", "id")
+  expect_setequal(filter_ids1, c("area_level", "quarter", "sex", "age"))
+  area_level_filter <- table_filters1[filter_ids1 == "area_level"][[1]]
+  expect_equal(area_level_filter$column_id, scalar("area_level"))
+  expect_equal(area_level_filter$options[[1]],
+               list(id = scalar("0"), label = scalar("Country")))
+  other_table_filters <- table_filters1[filter_ids1 != "area_level"]
+  expect_true(all(other_table_filters %in% barchart$filters))
+
+  table_filters2 <- result$tableMetadata$presets[[2]]$filters
+  filter_ids2 <- vcapply(table_filters2, "[[", "id")
+  expect_setequal(filter_ids2, c("area", "quarter", "sex", "age"))
+  expect_equal(table_filters2, barchart$filters)
 })
 
 test_that("model calibration fails is version out of date", {

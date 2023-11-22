@@ -27,6 +27,7 @@
     "OUTPUT_FILTER_AREA": "Área",
     "OUTPUT_FILTER_PERIOD": "Período",
     "OUTPUT_FILTER_SEX": "Género",
+    "OUTPUT_FILTER_AREA_LEVEL": "Nível de área",
     "PJNZ_INVALID_ZIP": "O zip não contém ficheiros PJNZ",
     "QUEUE_CACHE": "A criar cache",
     "QUEUE_CONNECTING": "A estabelecer ligação à redis em {{redis}}",

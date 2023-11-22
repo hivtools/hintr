@@ -67,6 +67,7 @@
     "OUTPUT_FILTER_SEX": "Sex",
     "OUTPUT_FILTER_AGE": "Age",
     "OUTPUT_FILTER_DATA_TYPE": "Data type",
+    "OUTPUT_FILTER_AREA_LEVEL": "Area level",
     "MODEL_RESULT_OLD": "Can't download {{type}}, please re-run model and try download again.",
     "OUTPUT_GENERATION_FAILED": "Failed to generate output",
     "INVALID_DOWNLOAD_TYPE": "Failed to generate download for {{type}} type, contact system admin.",

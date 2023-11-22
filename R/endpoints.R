@@ -224,8 +224,9 @@ calibrate_metadata <- function(queue) {
     verify_result_available(queue, id)
     result <- queue$result(id)
     output <- naomi::read_hintr_output(result$plot_data_path)
-    metadata <- build_output_metadata(output)
-    table_metadata <- build_output_table_metadata()
+    filters <- get_model_output_filters(output)
+    metadata <- build_output_metadata(output, filters)
+    table_metadata <- build_output_table_metadata(output, filters)
     warnings <- list()
     if (!is.null(result$warnings)) {
       warnings <- warnings_scalar(result$warnings)

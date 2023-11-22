@@ -12,9 +12,9 @@ test_that("model can be run & calibrated and filters extracted", {
   ## All table metadata rows and columns come from the data
   data_names <- names(res$data)
   for (preset in res$tableMetadata$presets) {
-    expect_true(preset$column %in% data_names,
+    expect_true(preset$defaults$column %in% data_names,
                 sprintf("Column '%s' not a valid data column", preset$column))
-    expect_true(preset$row %in% data_names,
+    expect_true(preset$defaults$row %in% data_names,
                 sprintf("Row '%s' not a valid data column", preset$row))
   }
 
@@ -323,6 +323,8 @@ test_that("mock model can be forced to error", {
 })
 
 test_that("table metadata has been translated", {
-  metadata <- build_output_table_metadata()
+  output <- naomi::read_hintr_output(mock_calibrate$plot_data_path)
+  filters <- get_model_output_filters(output)
+  metadata <- build_output_table_metadata(output, filters)
   expect_equal(metadata$presets[[1]]$label, scalar("Sex by area"))
 })

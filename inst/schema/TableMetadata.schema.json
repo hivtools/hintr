@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "definitions": {
-    "table_preset": {
+    "table_defaults": {
       "type": "object",
       "properties": {
         "id": { "type": "string" },
@@ -21,6 +21,18 @@
       },
       "additionalProperties": false,
       "required": [ "id", "label", "column", "row" ]
+    },
+    "table_preset": {
+      "type": "object",
+      "properties": {
+        "filters" : {
+          "type": "array",
+          "items": { "$ref": "Filter.schema.json" }
+        },
+        "defaults": { "$ref": "#/definitions/table_defaults" }
+      },
+      "additionalProperties": false,
+      "required": [ "filters", "defaults" ]
     }
   },
   "properties" : {

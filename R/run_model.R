@@ -83,8 +83,9 @@ select_data <- function(data) {
 
 process_result <- function(model_output) {
   output <- naomi::read_hintr_output(model_output$plot_data_path)
-  metadata <- build_output_metadata(output)
-  table_metadata <- build_output_table_metadata()
+  filters <- get_model_output_filters(output)
+  metadata <- build_output_metadata(output, filters)
+  table_metadata <- build_output_table_metadata(output, filters)
   warnings <- list()
   if (!is.null(model_output$warnings)) {
     warnings <- warnings_scalar(model_output$warnings)
@@ -95,41 +96,46 @@ process_result <- function(model_output) {
        warnings = warnings)
 }
 
-build_output_metadata <- function(output) {
-  output_filters <- get_model_output_filters(output)
+build_output_metadata <- function(output, filters) {
   list(
     barchart = list(
       indicators = get_barchart_metadata(output),
-      filters = output_filters,
-      defaults = get_barchart_defaults(output, output_filters)
+      filters = filters,
+      defaults = get_barchart_defaults(output, filters)
     ),
     choropleth = list(
       indicators = get_choropleth_metadata(output),
-      filters = output_filters
+      filters = filters
     )
   )
 }
 
-build_output_table_metadata <- function() {
-  list(
-    presets = list(
-      list(
-        id = "sex_by_area",
-        label = scalar(t_("TABLE_SEX_BY_AREA")),
-        column = scalar("sex"),
-        row = scalar("area_id")
-      ),
-      list(
-        id = "sex_by_5_year_age_group",
-        label = scalar(t_("TABLE_SEX_BY_5_YEAR_AGE_GROUP")),
-        column = scalar("sex"),
-        row = scalar("age_group"),
-        selected_filter_options = list(
-          age = naomi::get_five_year_age_groups()
-        )
+build_output_table_metadata <- function(output, filters) {
+  area_level_filter <- get_area_level_filter(output)
+  filter_ids <- vcapply(filters, "[[", "id")
+  sex_by_area_filters <- c(list(area_level_filter), filters[filter_ids != "area"])
+  sex_by_area <- list(
+    filters = sex_by_area_filters,
+    defaults = list(
+      id = scalar("sex_by_area"),
+      label = scalar(t_("TABLE_SEX_BY_AREA")),
+      column = scalar("sex"),
+      row = scalar("area_id")
+    )
+  )
+  sex_by_5_year_age_group <- list(
+    filters = filters,
+    defaults = list(
+      id = scalar("sex_by_5_year_age_group"),
+      label = scalar(t_("TABLE_SEX_BY_5_YEAR_AGE_GROUP")),
+      column = scalar("sex"),
+      row = scalar("age_group"),
+      selected_filter_options = list(
+        age = naomi::get_five_year_age_groups()
       )
     )
   )
+  list(presets = list(sex_by_area, sex_by_5_year_age_group))
 }
 
 

@@ -52,6 +52,16 @@ get_indicator_filters <- function(data, type) {
   get_filters(data, type)
 }
 
+get_area_level_filters <- function(data) {
+  levels <- unique(data$area_level)
+  lapply(levels, function(level) {
+    list(
+      id = scalar(as.character(level)),
+      label = scalar(data[data$area_level == level, "area_level_label"][1])
+    )
+  })
+}
+
 #' Read filters from wide format data
 #'
 #' Expect input data with headers like
@@ -203,13 +213,22 @@ get_comparison_plot_filters <- function(data) {
   )
 }
 
+get_area_level_filter <- function(data) {
+  list(
+    id = scalar("area_level"),
+    column_id = scalar("area_level"),
+    label = scalar(t_("OUTPUT_FILTER_AREA_LEVEL")),
+    options = get_area_level_filters(data)
+  )
+}
+
 get_barchart_defaults <- function(output, output_filters) {
   list(
     indicator_id = scalar("prevalence"),
     x_axis_id = scalar("age"),
     disaggregate_by_id = scalar("sex"),
     selected_filter_options = list(
-      area = get_area_level_filter_option(output),
+      area = get_area_id_filter_default(output),
       quarter = get_selected_mappings(output_filters, "quarter")[2],
       sex = get_selected_mappings(output_filters, "sex", c("female", "male")),
       age = get_selected_mappings(output_filters, "age",
@@ -234,7 +253,7 @@ get_calibrate_barchart_defaults <- function(filters) {
 }
 
 get_comparison_barchart_selections <- function(output, filters) {
-  area_default <- get_area_level_filter_option(output)
+  area_default <- get_area_id_filter_default(output)
   five_year_age_groups <- get_selected_mappings(
     filters, "age", naomi::get_five_year_age_groups())
   all_sexes <- get_selected_mappings(filters, "sex")
@@ -340,7 +359,7 @@ get_selected_mappings <- function(mappings, type, ids = NULL, key = "options") {
   selected
 }
 
-get_area_level_filter_option <- function(output) {
+get_area_id_filter_default <- function(output) {
   ## We expect the areas to be returned in order - return the first region
   ## level as the default
   option <- output[1, c("area_id", "area_name")]
