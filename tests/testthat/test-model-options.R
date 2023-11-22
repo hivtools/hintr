@@ -410,7 +410,7 @@ test_that("getting survey options for missing indicator returns empty values", {
   expect_equal(
     get_survey_options(data, metadata, "art_coverage"),
     list(
-      options = NULL,
+      options = list(),
       default = scalar("")
     )
   )
