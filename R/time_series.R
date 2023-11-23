@@ -1,12 +1,13 @@
 get_programme_time_series <- function(programme, shape) {
   data <- naomi::prepare_input_time_series_art(programme$path, shape$path)
+  browser()
   data <- as.data.frame(data, stringsAsFactors = FALSE)
   columns <- get_programme_time_series_columns(data)
   area_level_options <- get_selected_mappings(columns, "area_level",
                                               key = "values")
   list(
     data = data[, c("area_id", "area_name", "area_level", "area_hierarchy",
-                    "quarter", "time_period", "plot", "value")],
+                    "quarter", "time_period", "plot", "value", "missing_ids")],
     metadata = list(
       columns = columns,
       defaults = list(
@@ -26,13 +27,15 @@ get_programme_time_series <- function(programme, shape) {
 
 get_anc_time_series <- function(anc, shape) {
   data <- naomi::prepare_input_time_series_anc(anc$path, shape$path)
+  browser()
   data <- as.data.frame(data, stringsAsFactors = FALSE)
   columns <- get_anc_time_series_columns(data)
   area_level_options <- get_selected_mappings(columns, "area_level",
                                               key = "values")
   list(
     data = data[, c("area_id", "area_name", "area_level", "area_hierarchy",
-                    "age_group", "time_period", "quarter", "plot", "value")],
+                    "age_group", "time_period", "quarter", "plot", "value",
+                    "missing_ids")],
     metadata = list(
       columns = columns,
       defaults = list(

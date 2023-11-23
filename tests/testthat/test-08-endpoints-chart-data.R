@@ -77,6 +77,9 @@ test_that("endpoint_input_time_series_plot works with programme data", {
   expect_null(body$errors)
   expect_equal(names(body$data), c("data", "metadata", "warnings"))
   expect_true(nrow(body$data$data) > 100)
+  expect_true("missing_ids" %in% names(body$data$data))
+  expect_true(all(lapply(body$data$data$missing_ids, typeof) %in%
+                    c("character", "NULL")))
   expect_equal(names(body$data$metadata$defaults$selected_filter_options),
                c("plot_type", "area_level", "quarter"))
 })
@@ -94,6 +97,9 @@ test_that("endpoint_input_time_series_plot works without vls indicators", {
   expect_null(body$errors)
   expect_equal(names(body$data), c("data", "metadata", "warnings"))
   expect_true(nrow(body$data$data) > 100)
+  expect_true("missing_ids" %in% names(body$data$data))
+  expect_true(all(lapply(body$data$data$missing_ids, typeof) %in%
+                    c("character", "NULL")))
   expect_equal(names(body$data$metadata$defaults$selected_filter_options),
                c("plot_type", "area_level", "quarter"))
 })
