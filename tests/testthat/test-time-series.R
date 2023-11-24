@@ -9,7 +9,7 @@ test_that("get_programme_time_series returns data and columns", {
     colnames(out$data),
     c(
       "area_id", "area_name", "area_level", "area_hierarchy",
-      "time_period", "quarter", "plot", "value"
+      "time_period", "quarter", "plot", "value", "missing_ids"
     )
   )
 
@@ -74,7 +74,7 @@ test_that("get_anc_time_series returns data and columns", {
     colnames(out$data),
     c(
       "area_id", "area_name", "area_level", "area_hierarchy",
-      "age_group", "time_period", "quarter", "plot", "value"
+      "age_group", "time_period", "quarter", "plot", "value", "missing_ids"
     )
   )
 
