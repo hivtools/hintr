@@ -12,9 +12,9 @@ test_that("model can be run & calibrated and filters extracted", {
   ## All table metadata rows and columns come from the data
   data_names <- names(res$data)
   for (preset in res$tableMetadata$presets) {
-    expect_true(preset$defaults$column %in% data_names,
+    expect_true(preset$defaults$column$id %in% data_names,
                 sprintf("Column '%s' not a valid data column", preset$column))
-    expect_true(preset$defaults$row %in% data_names,
+    expect_true(preset$defaults$row$id %in% data_names,
                 sprintf("Row '%s' not a valid data column", preset$row))
   }
 

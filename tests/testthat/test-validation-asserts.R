@@ -308,7 +308,8 @@ test_that("can check for non NA values", {
 test_that("can assert data has to have 1 area level", {
   testthat::skip_on_covr()
   data <- read_csv("testdata/programme.csv")
-  shape_regions <- read_geojson_data(list(path = "testdata/malawi.geojson"))
+  shape_regions <- read_geojson_data(list(path = "testdata/malawi.geojson",
+                                          hash = "123"))
   expect_true(assert_single_level_per_year(shape_regions, data))
   data$area_id[1] <- "MWI_2_1_demo"
   data$area_id[3] <- "MWI_2_1_demo"
