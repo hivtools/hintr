@@ -28,6 +28,15 @@
     },
     "area_hierarchy": {
       "type": [ "string" ]
+    },
+    "missing_ids": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        { "type": "null" }
+      ]
     }
   },
   "additionalProperties": false,
