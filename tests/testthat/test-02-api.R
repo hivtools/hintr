@@ -867,28 +867,33 @@ test_that("model calibrate can be queued and result returned", {
   expect_match(status_response$data$progress[[1]],
                "Saving outputs - [\\d.m\\s]+s elapsed", perl = TRUE)
 
-  ## Get result
+  ## Get result & metadata together
   result <- endpoint_model_calibrate_result(q$queue)
   response <- result$run(status_response$data$id)
 
   expect_equal(response$status_code, 200)
-  expect_equal(names(response$data), c("data", "plottingMetadata", "warnings"))
+  expect_equal(names(response$data),
+               c("data", "plottingMetadata", "tableMetadata", "warnings"))
   expect_equal(colnames(response$data$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
   expect_true(nrow(response$data$data) > 84042)
   expect_equal(names(response$data$plottingMetadata),
                c("barchart", "choropleth"))
+  expect_equal(names(response$data$tableMetadata),
+               "presets")
 
-  ## Get metadata
+  ## Get metadata alone
   metadata <- endpoint_model_calibrate_metadata(q$queue)
   metadata_response <- metadata$run(status_response$data$id)
   expect_equal(metadata_response$data$plottingMetadata,
                response$data$plottingMetadata)
+  expect_equal(metadata_response$data$tableMetadata,
+               response$data$tableMetadata)
   expect_equal(metadata_response$data$warnings,
                response$data$warnings)
 
-  ## Get data
+  ## Get data alone
   data <- endpoint_model_calibrate_data(q$queue)
   data_response <- data$run(status_response$data$id)
   expect_equal(data_response$data$data,
@@ -939,13 +944,15 @@ test_that("api can call endpoint_model_calibrate", {
   result_body <- jsonlite::fromJSON(result_res$body)
   expect_null(result_body$errors)
   expect_equal(names(result_body$data),
-               c("data", "plottingMetadata", "warnings"))
+               c("data", "plottingMetadata", "tableMetadata", "warnings"))
   expect_equal(colnames(result_body$data$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
   expect_true(nrow(result_body$data$data) > 84042)
   expect_equal(names(result_body$data$plottingMetadata),
                c("barchart", "choropleth"))
+  expect_equal(names(result_body$data$tableMetadata),
+               "presets")
 
   ## Get metadata
   metadata_res <- api$request("GET", paste0("/calibrate/result/metadata/",
@@ -956,6 +963,8 @@ test_that("api can call endpoint_model_calibrate", {
                result_body$data$plottingMetadata)
   expect_equal(metadata_body$data$warnings,
                result_body$data$warnings)
+  expect_equal(metadata_body$data$tableMetadata,
+               result_body$data$tableMetadata)
 
   ## Get data
   data_res <- api$request("GET", paste0("/calibrate/result/data/",

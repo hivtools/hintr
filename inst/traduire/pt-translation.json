@@ -27,6 +27,7 @@
     "OUTPUT_FILTER_AREA": "Área",
     "OUTPUT_FILTER_PERIOD": "Período",
     "OUTPUT_FILTER_SEX": "Género",
+    "OUTPUT_FILTER_AREA_LEVEL": "Nível de área",
     "PJNZ_INVALID_ZIP": "O zip não contém ficheiros PJNZ",
     "QUEUE_CACHE": "A criar cache",
     "QUEUE_CONNECTING": "A estabelecer ligação à redis em {{redis}}",
@@ -87,5 +88,7 @@
     "QUARTER_4": "trimestre 4",
     "VALIDATION_MULTIPLE_LEVELS_DETAIL": "ano {{year}} tem níveis de área {{levels}}",
     "VALIDATION_MULTIPLE_LEVELS": "Os dados só podem ser relativos a regiões a um único nível de área por ano. Em dados carregados {{detail}}",
-    "FAILED_ZIP_REHYDRATE_SUBMIT": "Não é possível carregar a partir deste ficheiro zip, faltando informação necessária ao arquivo. Por favor, regenerar zip de saída e tentar novamente."
+    "FAILED_ZIP_REHYDRATE_SUBMIT": "Não é possível carregar a partir deste ficheiro zip, faltando informação necessária ao arquivo. Por favor, regenerar zip de saída e tentar novamente.",
+    "TABLE_SEX_BY_AREA": "Sexo por área",
+    "TABLE_SEX_BY_5_YEAR_AGE_GROUP": "Sexo por faixa etária de 5 anos"
 }

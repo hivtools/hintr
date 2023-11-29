@@ -1,3 +1,7 @@
+# hintr 1.1.20
+
+* Add `tableMetadata` into the `calibrate/result/<id>` and `calibrate/result/metadata/<id>` endpoints for controling how the new output table feature will look
+
 # hintr 1.1.19
 
 * Ensure that plot data in submit_prerun is uploaded as a duckdb file.

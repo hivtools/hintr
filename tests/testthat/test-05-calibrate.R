@@ -52,7 +52,8 @@ test_that("can calibrate a model result", {
 
   get_result <- calibrate_result(q$queue)
   result <- get_result(res$id)
-  expect_equal(names(result), c("data", "plottingMetadata", "warnings"))
+  expect_equal(names(result),
+               c("data", "plottingMetadata", "tableMetadata", "warnings"))
   expect_equal(colnames(result$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
@@ -147,6 +148,27 @@ test_that("can calibrate a model result", {
                  "anc_clients", "anc_plhiv", "anc_already_art",
                  "anc_art_new", "anc_known_pos",
                  "anc_tested_pos", "anc_tested_neg"))
+
+  ## Table metadata is returned
+  expect_equal(names(result$tableMetadata), "presets")
+  expect_length(result$tableMetadata$presets, 2)
+  expect_equal(names(result$tableMetadata$presets[[1]]$default),
+               c("id", "label", "column", "row"))
+
+  table_filters1 <- result$tableMetadata$presets[[1]]$filters
+  filter_ids1 <- vcapply(table_filters1, "[[", "id")
+  expect_setequal(filter_ids1, c("area_level", "quarter", "sex", "age"))
+  area_level_filter <- table_filters1[filter_ids1 == "area_level"][[1]]
+  expect_equal(area_level_filter$column_id, scalar("area_level"))
+  expect_equal(area_level_filter$options[[1]],
+               list(id = scalar("0"), label = scalar("Country")))
+  other_table_filters <- table_filters1[filter_ids1 != "area_level"]
+  expect_true(all(other_table_filters %in% barchart$filters))
+
+  table_filters2 <- result$tableMetadata$presets[[2]]$filters
+  filter_ids2 <- vcapply(table_filters2, "[[", "id")
+  expect_setequal(filter_ids2, c("area", "quarter", "sex", "age"))
+  expect_equal(table_filters2, barchart$filters)
 })
 
 test_that("model calibration fails is version out of date", {
