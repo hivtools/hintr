@@ -62,7 +62,7 @@
     "QUEUE_STOPPING_WORKERS": "Stopping workers",
     "QUEUE_ID_NOT_SET": "Environment variable 'HINTR_QUEUE_ID' is not set",
     "METADATA_BUILD_INDICATOR": "Expected only 1 row for indicator, data type, plot type combination.\nCheck each combination is unique in configuration.",
-    "OUTPUT_COLUMN_DETAIL_LEVEL": "Detail",
+    "OUTPUT_FILTER_DETAIL_LEVEL": "Detail",
     "OUTPUT_FILTER_AREA": "Area",
     "OUTPUT_FILTER_PERIOD": "Period",
     "OUTPUT_FILTER_SEX": "Sex",

@@ -217,7 +217,7 @@ get_area_level_filter <- function(data) {
   list(
     id = scalar("area_level"),
     column_id = scalar("area_level"),
-    label = scalar(t_("OUTPUT_FILTER_AREA_LEVEL")),
+    label = scalar(t_("OUTPUT_FILTER_DETAIL_LEVEL")),
     options = get_area_level_filters(data)
   )
 }

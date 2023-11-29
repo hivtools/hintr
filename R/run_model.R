@@ -125,7 +125,7 @@ build_output_table_metadata <- function(output, filters) {
       ),
       row = list(
         id = scalar("area_id"),
-        label = scalar(t_("OUTPUT_COLUMN_DETAIL_LEVEL"))
+        label = scalar(t_("OUTPUT_FILTER_AREA"))
       )
     )
   )
