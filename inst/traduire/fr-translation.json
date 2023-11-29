@@ -62,6 +62,7 @@
     "QUEUE_STOPPING_WORKERS": "Arrêt des travailleurs",
     "QUEUE_ID_NOT_SET": "La variable d'environnement « HINTR_QUEUE_ID » n'est pas définie",
     "METADATA_BUILD_INDICATOR": "1 ligne seule est attendue pour l'indicateur, le type de données, la combinaison de type de graphique.\nVérifiez que chaque combinaison est unique dans sa configuration.",
+    "OUTPUT_COLUMN_DETAIL_LEVEL": "Détail",
     "OUTPUT_FILTER_AREA": "Zone",
     "OUTPUT_FILTER_PERIOD": "Période",
     "OUTPUT_FILTER_SEX": "Sexe",

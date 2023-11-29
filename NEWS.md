@@ -1,6 +1,10 @@
+# hintr 1.1.21
+
+* Update `tableMetadata` to return `id` and `label` for `row` and `column` values.
+
 # hintr 1.1.20
 
-* Add `tableMetadata` into the `calibrate/result/<id>` and `calibrate/result/metadata/<id>` endpoints for controling how the new output table feature will look
+* Add `tableMetadata` into the `calibrate/result/<id>` and `calibrate/result/metadata/<id>` endpoints for controlling how the new output table feature will look
 
 # hintr 1.1.19
 

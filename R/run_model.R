@@ -119,8 +119,14 @@ build_output_table_metadata <- function(output, filters) {
     defaults = list(
       id = scalar("sex_by_area"),
       label = scalar(t_("TABLE_SEX_BY_AREA")),
-      column = scalar("sex"),
-      row = scalar("area_id")
+      column = list(
+        id = scalar("sex"),
+        label = scalar(t_("OUTPUT_FILTER_SEX"))
+      ),
+      row = list(
+        id = scalar("area_id"),
+        label = scalar(t_("OUTPUT_COLUMN_DETAIL_LEVEL"))
+      )
     )
   )
   sex_by_5_year_age_group <- list(
@@ -128,8 +134,14 @@ build_output_table_metadata <- function(output, filters) {
     defaults = list(
       id = scalar("sex_by_5_year_age_group"),
       label = scalar(t_("TABLE_SEX_BY_5_YEAR_AGE_GROUP")),
-      column = scalar("sex"),
-      row = scalar("age_group"),
+      column = list(
+        id = scalar("sex"),
+        label = scalar(t_("OUTPUT_FILTER_SEX"))
+      ),
+      row = list(
+        id = scalar("age_group"),
+        label = scalar(t_("OUTPUT_FILTER_AGE"))
+      ),
       selected_filter_options = list(
         age = naomi::get_five_year_age_groups()
       )

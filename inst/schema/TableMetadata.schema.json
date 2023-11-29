@@ -7,8 +7,24 @@
       "properties": {
         "id": { "type": "string" },
         "label": { "type": "string" },
-        "column": { "type": "string" },
-        "row": { "type": "string" },
+        "column": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string" },
+            "label": { "type": "string" }
+          },
+          "additionalProperties": false,
+          "required": [ "id", "label" ]
+        },
+        "row": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string" },
+            "label": { "type": "string" }
+          },
+          "additionalProperties": false,
+          "required": [ "id", "label" ]
+        },
         "selected_filter_options": {
           "type": "object",
           "patternProperties": {

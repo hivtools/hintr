@@ -23,6 +23,7 @@
     "MODEL_RESULT_OLD": "Não é possível descarregar {{type}}, por favor, volte a executar o modelo e tente descarregar novamente.",
     "MODEL_RUN_CANCELLED": "A execução do modelo foi cancelada pelo utilizador",
     "MODEL_SUBMIT_OLD": "A tentar executar o modelo com uma versão antiga das opções. Atualizar opções de execução do modelo",
+    "OUTPUT_COLUMN_DETAIL_LEVEL": "Detalhe",
     "OUTPUT_FILTER_AGE": "Idade",
     "OUTPUT_FILTER_AREA": "Área",
     "OUTPUT_FILTER_PERIOD": "Período",
