@@ -6,7 +6,6 @@ Options:
 --workers=N         Number of workers to spawn [default: 2]
 --port=PORT         Port to use [default: 8888]
 --results-dir=PATH  Directory to store model results in
---prerun-dir=PATH   Directory to find prerun results in
 --inputs-dir=PATH   Directory to find input files in"
 
   validate_path <- function(path) {

@@ -9,3 +9,4 @@ docker/Dockerfile.worker
 inst/output/*
 id_rsa
 tests/testthat/testdata/sensitive
+prerun_output.zip
