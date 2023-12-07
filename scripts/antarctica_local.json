@@ -1,7 +1,7 @@
 {
   "server": "localhost",
   "port": 8888,
-  "output_path": "prerun_output.zip",
+  "output_path": "prerun_output_mwi.zip",
   "adr": {
     "pull_from_adr": true,
     "dataset_id": "antarctica-country-estimates-2024-1",

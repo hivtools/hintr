@@ -2,12 +2,20 @@
 "Runs a model from local data or ADR data and pushes results to the remote server of choice
 
 Usage:
-  push_test_results (--config=<config>)
+  fit_and_push (--config=<config>)
 
 Options:
-  -h --help                         Show this screen.
+  -h --help           Show this screen.
   --config=<config>   Path to the remote run config JSON.
 " -> usage
+
+pkgs <- installed.packages()
+required <- c("hintr", "docopt", "getPass", "jsonlite", "ckanr")
+installed <- required %in% pkgs
+if (any(!installed)) {
+  missing <- paste0(required[!installed], collapse = ", ")
+  stop("Missing package(s) %s, install it to run", missing)
+}
 
 dat <- docopt::docopt(usage)
 names(dat) <- gsub("-", "_", names(dat), fixed = TRUE)
@@ -37,6 +45,12 @@ recursive_scalar <- function(x) {
   })
 }
 
+if (file.exists(config$output_path)) {
+  stop(sprintf(
+    "File at '%s' already exists, remove it or specify different path",
+    config$output_path))
+}
+
 if (config$adr$pull_from_adr) {
   message("Pulling dataset from ADR, if you want to use local set 'pull_from_adr' to false")
 
@@ -50,7 +64,7 @@ if (config$adr$pull_from_adr) {
   }
   resources <- res$results[[1]]$resources
 
-  resource_types <- vapply(resources, "[[", character(1), "resource_type")
+  resource_types <- lapply(resources, "[[", "resource_type")
 
   to_fetch <- setNames(
     c("inputs-unaids-spectrum-file", "inputs-unaids-geographic",
@@ -114,6 +128,11 @@ out <- system2("./scripts/run_and_push_to_server",
     "--server", config$server,
     "--port", config$port,
     "--output-path", config$output_path))
+
+message("Upload complete, you can now rehydrate from output zip")
+message(paste("NB: The input files must have been previously uploaded to the",
+              "web app or this won't work. Pull them in from the ADR first",
+              "and then rehydrate the project."))
 
 if (out != 0) {
   quit(save = "no", status = 1)
