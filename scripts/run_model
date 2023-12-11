@@ -50,6 +50,7 @@ notes <- sprintf("%s\n%s\n%s\n",
                  download_payload$notes$project_notes$updated,
                  download_payload$notes$project_notes$note)
 spectrum <- naomi::hintr_prepare_spectrum_download(calibrated,
+                                                   NULL,
                                                    dat$spectrum_path,
                                                    notes)
 
