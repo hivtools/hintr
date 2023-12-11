@@ -374,6 +374,9 @@ download_submit <- function(queue) {
       if (!is.null(parsed_input$pjnz)) {
         prepared_input$pjnz <- parsed_input$pjnz
       }
+      if (!is.null(parsed_input$vmmc)) {
+        prepared_input$vmmc <- parsed_input$vmmc
+      }
     }
     tryCatch(
       list(id = scalar(
