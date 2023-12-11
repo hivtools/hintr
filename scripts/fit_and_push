@@ -14,7 +14,7 @@ required <- c("hintr", "docopt", "getPass", "jsonlite", "ckanr")
 installed <- required %in% pkgs
 if (any(!installed)) {
   missing <- paste0(required[!installed], collapse = ", ")
-  stop("Missing package(s) %s, install it to run", missing)
+  stop(sprintf("Missing package(s) %s, install it to run", missing))
 }
 
 dat <- docopt::docopt(usage)
