@@ -6,7 +6,7 @@ test_that("main_api_args", {
   expect_true(file.exists(default$results_dir))
   expect_equal(
     main_api_args(c("--workers=0", "--port", "80", "--results-dir=out",
-                    "--prerun-dir=pr", "--inputs-dir=in", "hintr")),
+                    "--inputs-dir=in", "hintr")),
     list(port = 80, queue_id = "hintr", workers = 0, results_dir = "out",
          inputs_dir = "in"))
 })
