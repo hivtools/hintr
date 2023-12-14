@@ -1,3 +1,7 @@
+# hintr 1.1.22
+
+* Remove hardcoded year2 value for ANC prevalance and ANC ART coverage
+
 # hintr 1.1.21
 
 * Update `tableMetadata` to return `id` and `label` for `row` and `column` values.
