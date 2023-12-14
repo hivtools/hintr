@@ -91,7 +91,7 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
     survey_prevalence = survey_prevalence_options$default,
     survey_art_coverage = survey_art_coverage_options$default,
     anc_prevalence_year1 = anc_year1_default,
-    anc_art_coverage_year1 = anc_year1_default,
+    anc_art_coverage_year1 = anc_year1_default
   )
 
   additional_control_groups <- NULL
