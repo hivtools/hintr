@@ -13,7 +13,7 @@ App to show district level estimates of HIV indicators
 
 ## Running in docker
 
-Docker images are built on travis, if on master branch run via:
+Docker images are built on buildkite, if on master branch run via:
 ```
 docker run --rm -d --network=host --name hintr_redis redis
 docker run --rm -d --network=host --mount type=volume,src=upload_volume,dst=/uploads \
