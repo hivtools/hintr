@@ -313,6 +313,21 @@ test_that("endpoint_validate_survey_programme works with survey data", {
   expect_type(body$data$data[, "estimate"], "double")
 })
 
+test_that("endpoint_validate_survey_programme vmmc", {
+  endpoint <- endpoint_validate_survey_programme()
+  response <- endpoint$run(
+    system_file("payload", "validate_vmmc_payload.json"))
+
+  expect_equal(response$status_code, 200)
+  expect_null(response$error)
+  expect_equal(response$data$filename, scalar("original.xlsx"))
+  expect_equal(response$data$hash, scalar("12345"))
+  expect_equal(response$data$fromADR, scalar(FALSE))
+  ## No data returned from this endpoint
+  expect_equal(response$data$data, json_verbatim("null"))
+  expect_equal(response$data$filters, json_verbatim("null"))
+})
+
 test_that("anc data can be validated can be run with relaxed validation", {
   test_redis_available()
   ## Create some data which will fail when validation is strict but

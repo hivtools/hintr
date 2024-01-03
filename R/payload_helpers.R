@@ -92,7 +92,7 @@ setup_payload_download_request <- function(version = NULL,
       '"pjnz": ', jsonlite::toJSON(pjnz, auto_unbox = TRUE, null = "null")))
   }
   if (include_vmmc) {
-    path <- testthat::test_path("testdata", "vmmc.csv")
+    path <- testthat::test_path("testdata", "vmmx.xlsx")
     payload <- c(payload, paste(
       '"vmmc":',
       jsonlite::toJSON(file_object(path), auto_unbox = TRUE, null = "null")))

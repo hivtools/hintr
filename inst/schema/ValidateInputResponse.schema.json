@@ -128,6 +128,24 @@
       },
       "additionalProperties": false,
       "required": ["filename", "hash", "type", "data", "filters", "warnings"]
+    },
+
+    "vmmc_response": {
+      "type": "object",
+      "properties": {
+        "hash": { "$ref": "FileName.schema.json" },
+        "filename" : { "type": "string" },
+        "fromADR":  { "type": "boolean" },
+        "resource_url": { "type": [ "string", "null" ] },
+        "type": {
+          "type": "string",
+          "enum": [ "vmmc" ]
+        },
+        "data": { "$ref": "VmmcResponseData.schema.json" },
+        "filters": { "type": "null" }
+      },
+      "additionalProperties": false,
+      "required": ["filename", "hash", "type", "data"]
     }
   },
 
@@ -137,7 +155,8 @@
     {"$ref": "#/definitions/population_response"},
     {"$ref": "#/definitions/programme_response"},
     {"$ref": "#/definitions/anc_response"},
-    {"$ref": "#/definitions/survey_response"}
+    {"$ref": "#/definitions/survey_response"},
+    {"$ref": "#/definitions/vmmc_response"}
   ]
 }
 

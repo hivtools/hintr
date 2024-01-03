@@ -88,7 +88,8 @@ validate_survey_programme <- function(input, strict = TRUE) {
   validate_func <- switch(input$type,
                           programme = do_validate_programme,
                           anc = do_validate_anc,
-                          survey = do_validate_survey)
+                          survey = do_validate_survey,
+                          vmmc = do_validate_vmmc)
   tryCatch({
     shape <- file_object(input$shape)
     assert_file_exists(input$file$path)
