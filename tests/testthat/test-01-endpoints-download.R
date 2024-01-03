@@ -940,7 +940,6 @@ test_that("api: spectrum download ignores any pjnz passed in", {
   expect_equal(res$status, 200)
 })
 
-
 test_that("api can include vmmc in spectrum download", {
   test_redis_available()
   test_mock_model_available()
