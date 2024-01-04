@@ -22,9 +22,9 @@ download <- function(model_output, type, path_results, input, language = NULL) {
 
   if (type == "spectrum") {
     out <- naomi::hintr_prepare_spectrum_download(model_output,
-                                                  input$vmmc,
                                                   download_path,
-                                                  input$notes)
+                                                  input$notes,
+                                                  input$vmmc)
     if (file_exists(out$path) && !is.null(input$state)) {
       add_state_json(out$path, input$state)
     }
