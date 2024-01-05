@@ -254,7 +254,8 @@ do_validate_vmmc <- function(vmmc, shape, strict = TRUE) {
                             unique(data$area_id),
                             "vmmc")
   list(data = json_verbatim("null"),
-       filters = json_verbatim("null"))
+       filters = json_verbatim("null"),
+       warnings = list())
 }
 
 #' Validate collection of baseline data for consistency.

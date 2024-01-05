@@ -326,6 +326,7 @@ test_that("endpoint_validate_survey_programme vmmc", {
   ## No data returned from this endpoint
   expect_equal(response$data$data, json_verbatim("null"))
   expect_equal(response$data$filters, json_verbatim("null"))
+  expect_equal(response$data$warnings, list())
 })
 
 test_that("anc data can be validated can be run with relaxed validation", {

@@ -227,7 +227,8 @@ test_that("do_validate_vmmc validates vmmc file", {
   data <- do_validate_vmmc(vmmc, shape)
   ## Some arbitrary test that the data has actually been returned
   expect_equal(data, list(data = json_verbatim("null"),
-                          filters = json_verbatim("null")))
+                          filters = json_verbatim("null"),
+                          warnings = list()))
 })
 
 test_that("do_validate_programme returns useful error from shapefile comparison", {

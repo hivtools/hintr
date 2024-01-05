@@ -142,10 +142,14 @@
           "enum": [ "vmmc" ]
         },
         "data": { "$ref": "VmmcResponseData.schema.json" },
-        "filters": { "type": "null" }
+        "filters": { "type": "null" },
+        "warnings": {
+          "type": "array",
+          "items": { "$ref": "Warning.schema.json"  }
+        }
       },
       "additionalProperties": false,
-      "required": ["filename", "hash", "type", "data"]
+      "required": ["filename", "hash", "type", "data", "filters", "warnings"]
     }
   },
 
