@@ -62,11 +62,13 @@
     "QUEUE_STOPPING_WORKERS": "Arrêt des travailleurs",
     "QUEUE_ID_NOT_SET": "La variable d'environnement « HINTR_QUEUE_ID » n'est pas définie",
     "METADATA_BUILD_INDICATOR": "1 ligne seule est attendue pour l'indicateur, le type de données, la combinaison de type de graphique.\nVérifiez que chaque combinaison est unique dans sa configuration.",
+    "OUTPUT_FILTER_DETAIL_LEVEL": "Détail",
     "OUTPUT_FILTER_AREA": "Zone",
     "OUTPUT_FILTER_PERIOD": "Période",
     "OUTPUT_FILTER_SEX": "Sexe",
     "OUTPUT_FILTER_AGE": "Âge",
     "OUTPUT_FILTER_DATA_TYPE": "Type de données",
+    "OUTPUT_FILTER_AREA_LEVEL": "Niveau de la zone",
     "MODEL_RESULT_OLD": "Impossible de télécharger {{type}}, veuillez réexécuter le modèle et réessayer de télécharger.",
     "OUTPUT_GENERATION_FAILED": "Impossible de générer une sortie",
     "INVALID_DOWNLOAD_TYPE": "Impossible de générer le téléchargement pour le type de {{type}}, contactez l'administrateur système.",
@@ -88,5 +90,7 @@
     "QUARTER_4": "trimestre 4",
     "VALIDATION_MULTIPLE_LEVELS_DETAIL": "l'année {{year}} a des niveaux de zone {{levels}}",
     "VALIDATION_MULTIPLE_LEVELS": "Les données ne peuvent concerner que les régions à un seul niveau de zone par an. Dans les données téléchargées {{detail}}",
-    "FAILED_ZIP_REHYDRATE_SUBMIT": "Impossible de charger à partir de ce fichier zip, l'archive manque d'informations requises. Veuillez régénérer le zip de sortie et réessayer."
+    "FAILED_ZIP_REHYDRATE_SUBMIT": "Impossible de charger à partir de ce fichier zip, l'archive manque d'informations requises. Veuillez régénérer le zip de sortie et réessayer.",
+    "TABLE_SEX_BY_AREA": "Sexe par zone",
+    "TABLE_SEX_BY_5_YEAR_AGE_GROUP": "Sexe par tranche d'âge de 5 ans"
 }

@@ -1,3 +1,23 @@
+# hintr 1.1.22
+
+* Remove hardcoded year2 value for ANC prevalance and ANC ART coverage
+
+# hintr 1.1.21
+
+* Update `tableMetadata` to return `id` and `label` for `row` and `column` values.
+
+# hintr 1.1.20
+
+* Add `tableMetadata` into the `calibrate/result/<id>` and `calibrate/result/metadata/<id>` endpoints for controlling how the new output table feature will look
+
+# hintr 1.1.19
+
+* Ensure that plot data in submit_prerun is uploaded as a duckdb file.
+
+# hintr 1.1.18
+
+* Add a function to migrate from naomi v 2.9.10 to 2.9.11. i.e. to migrate from plot data being stored as .qs files to being stored as duckdb database.
+
 # hintr 1.1.17
 
 * Add a dummy download endpoint of type "agyw" for generating AGYW (adolescent girls and young women) tool

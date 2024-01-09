@@ -77,16 +77,13 @@ test_that("do_endpoint_model_options correctly builds options and fallbacks", {
                   c("area_scope",
                     "calendar_quarter_t1", "survey_prevalence",
                     "survey_art_coverage", "anc_prevalence_year1",
-                    "anc_prevalence_year2", "anc_art_coverage_year1",
-                    "anc_art_coverage_year2"))
+                    "anc_art_coverage_year1"))
   expect_equal(overrides$area_scope, scalar("MWI"))
   expect_equal(overrides$calendar_quarter_t1, scalar("CY2016Q1"))
   expect_equal(overrides$survey_prevalence, scalar("DEMO2016PHIA"))
   expect_equal(overrides$survey_art_coverage, scalar("DEMO2016PHIA"))
   expect_equal(overrides$anc_prevalence_year1, scalar("2016"))
-  expect_equal(overrides$anc_prevalence_year2, scalar(""))
   expect_equal(overrides$anc_art_coverage_year1, scalar("2016"))
-  expect_equal(overrides$anc_art_coverage_year2, scalar(""))
 })
 
 test_that("do_endpoint_model_options without programme data", {
@@ -156,10 +153,10 @@ test_that("do_endpoint_model_options without programme data", {
 })
 
 test_that("do_endpoint_model_options overrides anc year2 to 2022 if in data", {
-  shape <- file_object(file.path("testdata", "malawi.geojson"))
-  survey <- file_object(file.path("testdata", "survey.csv"))
-  art <- file_object(file.path("testdata", "programme.csv"))
-  anc <- file_object(file.path("testdata", "anc.csv"))
+  shape <- file_object(test_path("testdata", "malawi.geojson"))
+  survey <- file_object(test_path("testdata", "survey.csv"))
+  art <- file_object(test_path("testdata", "programme.csv"))
+  anc <- file_object(test_path("testdata", "anc.csv"))
 
   mock_get_controls_json <- mockery::mock('"{"test"}')
   mock_get_years <- mockery::mock(c(2022, 2021, 2020, 2019))
@@ -169,8 +166,6 @@ test_that("do_endpoint_model_options overrides anc year2 to 2022 if in data", {
     args <- mockery::mock_args(mock_get_controls_json)
   })
   overrides <- args[[1]][[4]]
-  expect_equal(overrides$anc_prevalence_year2, scalar("2022"))
-  expect_equal(overrides$anc_art_coverage_year2, scalar("2022"))
   ## Year 1 defaults are NULL as survey year not in ANC years
   expect_equal(overrides$anc_prevalence_year1, scalar(""))
   expect_equal(overrides$anc_art_coverage_year1, scalar(""))
@@ -410,7 +405,7 @@ test_that("getting survey options for missing indicator returns empty values", {
   expect_equal(
     get_survey_options(data, metadata, "art_coverage"),
     list(
-      options = NULL,
+      options = list(),
       default = scalar("")
     )
   )
