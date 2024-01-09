@@ -75,7 +75,7 @@ message(sprintf("Saving summary report at %s",
 
 
 agyw_tool <- naomi::hintr_prepare_agyw_download(calibrated,
-                                                model_payload$data$pjnz,
+                                                model_payload$data$pjnz$path,
                                                 dat$agyw_path)
 message(sprintf("Saving AGYW tool at %s",
                 normalizePath(dat$agyw_path, mustWork = TRUE)))
