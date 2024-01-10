@@ -1,4 +1,7 @@
 #!/usr/bin/env Rscript
+
+
+
 "Run a model and save outputs at specified paths
 Usage:
   run_model (--model-payload=<model-payload> --calibrate-payload=<calibrate-payload> --download-payload=<download-payload> --model-output-path=<output-path> --calibrate-output-path=<calibrate-output-path> --calibrate-plot-path=<calibrate-plot-path> --spectrum-path=<spectrum-path> --coarse-output-path=<coarse-output-path> --summary-report-path=<summary-report-path> --agyw-path=<agyw-path>)
@@ -70,11 +73,26 @@ message(sprintf("Saving coarse output at %s",
 
 summary_report <- naomi::hintr_prepare_summary_report_download(
   calibrated, dat$summary_report_path)
+
 message(sprintf("Saving summary report at %s",
                 normalizePath(dat$summary_report_path, mustWork = TRUE)))
 
+# Create dummy data
+# Create naomi outputs with "MWI_demo" iso3 to align with testing data in
+# naomi.resources
+output <- naomi::read_hintr_output(calibrated$model_output_path)
 
-agyw_tool <- naomi::hintr_prepare_agyw_download(calibrated,
+if(output$output_package$fit$model_options$area_scope == "MWI"){
+
+  agyw_test_outputs <- make_agyw_testfiles(calibrated)
+
+} else {
+
+  agyw_test_outputs <- calibrated
+
+}
+
+agyw_tool <- naomi::hintr_prepare_agyw_download(agyw_test_outputs,
                                                 model_payload$data$pjnz$path,
                                                 dat$agyw_path)
 message(sprintf("Saving AGYW tool at %s",
