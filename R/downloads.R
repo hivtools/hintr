@@ -27,7 +27,7 @@ download <- function(model_output, type, path_results, input, language = NULL) {
       add_state_json(out$path, input$state)
     }
   } else if (type == "agyw") {
-    out <- naomi::hintr_prepare_agyw_download(model_output, input$pjnz,
+    out <- naomi::hintr_prepare_agyw_download(model_output, input$pjnz$path,
                                               download_path)
   } else {
     func <- switch(type,

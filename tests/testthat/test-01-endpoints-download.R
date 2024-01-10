@@ -857,6 +857,10 @@ test_that("api can create agyw download", {
   q <- test_queue_result()
   api <- api_build(q$queue)
 
+  res <- q$queue$result(q$calibrate_id)
+  agyw_result <- make_agyw_testfiles(res)
+  agyw_result_id <- add_queue_result(q$queue, agyw_result)
+
   ## Prepare body
   payload <- setup_payload_download_request(include_notes = FALSE,
                                             include_state = FALSE,
@@ -864,7 +868,7 @@ test_that("api can create agyw download", {
 
   ## Submit download request
   submit <- api$request("POST",
-                        paste0("/download/submit/agyw/", q$calibrate_id),
+                        paste0("/download/submit/agyw/", agyw_result_id),
                         body = payload)
   submit_body <- jsonlite::fromJSON(submit$body)
   expect_equal(submit$status, 200)
