@@ -858,7 +858,7 @@ test_that("api can create agyw download", {
   api <- api_build(q$queue)
 
   res <- q$queue$result(q$calibrate_id)
-  agyw_result <- make_agyw_testfiles(res)
+  agyw_result <- naomi:::make_agyw_testfiles(res)
   agyw_result_id <- add_queue_result(q$queue, agyw_result)
 
   ## Prepare body

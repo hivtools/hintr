@@ -84,7 +84,7 @@ output <- naomi::read_hintr_output(calibrated$model_output_path)
 
 if(output$output_package$fit$model_options$area_scope == "MWI"){
 
-  agyw_test_outputs <- hintr:::make_agyw_testfiles(calibrated)
+  agyw_test_outputs <- naomi:::make_agyw_testfiles(calibrated)
 
 } else {
 
