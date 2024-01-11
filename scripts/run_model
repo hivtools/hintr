@@ -1,7 +1,5 @@
 #!/usr/bin/env Rscript
 
-
-
 "Run a model and save outputs at specified paths
 Usage:
   run_model (--model-payload=<model-payload> --calibrate-payload=<calibrate-payload> --download-payload=<download-payload> --model-output-path=<output-path> --calibrate-output-path=<calibrate-output-path> --calibrate-plot-path=<calibrate-plot-path> --spectrum-path=<spectrum-path> --coarse-output-path=<coarse-output-path> --summary-report-path=<summary-report-path> --agyw-path=<agyw-path>)
