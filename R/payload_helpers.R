@@ -55,7 +55,8 @@ setup_payload_calibrate <- function(version = NULL) {
 setup_payload_download_request <- function(version = NULL,
                                            include_notes = TRUE,
                                            include_state = TRUE,
-                                           include_pjnz = FALSE) {
+                                           include_pjnz = FALSE,
+                                           include_vmmc = FALSE) {
   if (!any(include_notes, include_state, include_pjnz)) {
     stop("Must include one or more of notes, state or pjnz in payload")
   }
@@ -89,6 +90,12 @@ setup_payload_download_request <- function(version = NULL,
       system_file("payload", "model_submit_payload.json"))$data$pjnz
     payload <- c(payload, paste(
       '"pjnz": ', jsonlite::toJSON(pjnz, auto_unbox = TRUE, null = "null")))
+  }
+  if (include_vmmc) {
+    path <- testthat::test_path("testdata", "vmmc.xlsx")
+    payload <- c(payload, paste(
+      '"vmmc":',
+      jsonlite::toJSON(file_object(path), auto_unbox = TRUE, null = "null")))
   }
   payload <- paste(payload, collapse = ",\n")
   payload <- paste("{\n", payload, "\n}")

@@ -939,3 +939,54 @@ test_that("api: spectrum download ignores any pjnz passed in", {
   res <- api$request("GET", paste0("/download/result/", submit_body$data$id))
   expect_equal(res$status, 200)
 })
+
+test_that("api can include vmmc in spectrum download", {
+  test_redis_available()
+  test_mock_model_available()
+  q <- test_queue_result()
+  api <- api_build(q$queue)
+
+  ## Prepare body
+  payload <- setup_payload_download_request(include_vmmc = TRUE)
+
+  ## Submit download request
+  submit <- api$request("POST",
+                        paste0("/download/submit/spectrum/", q$calibrate_id),
+                        body = payload)
+  submit_body <- jsonlite::fromJSON(submit$body)
+  expect_equal(submit$status, 200)
+  expect_true(!is.null(submit_body$data$id))
+
+  ## Status
+  out <- q$queue$queue$task_wait(submit_body$data$id)
+  status <- api$request("GET",
+                        paste0("/download/status/", submit_body$data$id))
+
+  expect_equal(status$status, 200)
+  status_body <- jsonlite::fromJSON(status$body)
+  expect_equal(status_body$data$id, submit_body$data$id)
+  expect_true(status_body$data$done)
+  expect_equal(status_body$data$status, "COMPLETE")
+  expect_true(status_body$data$success)
+  expect_equal(status_body$data$queue, 0)
+  expect_length(status_body$data$progress, 1)
+
+  ## Get result
+  res <- api$request("GET", paste0("/download/result/", submit_body$data$id))
+
+  expect_equal(res$status, 200)
+  expect_equal(res$headers$`Content-Type`, "application/octet-stream")
+  expect_match(res$headers$`Content-Disposition`,
+               'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
+  ## Size of bytes is close to expected
+  size <- length(res$body)
+  expect_equal(res$headers$`Content-Length`, size)
+
+  t <- tempfile()
+  dest <- tempfile()
+  writeBin(as.vector(res$body), t)
+  zip::unzip(t, exdir = dest)
+
+  ## TODO: Add some relevant check that the VMMC data has been appended?
+  expect_true(INDICATORS_PATH %in% list.files(dest))
+})

@@ -14,9 +14,6 @@ the input shape file.}
 
 \item{strict}{If FALSE then run less stringent validation rules, used
 for data exploration mode.}
-
-\item{pjnz}{A file object (path, hash, filename) corresponding to
-the input PJNZ file.}
 }
 \value{
 An error if invalid.
