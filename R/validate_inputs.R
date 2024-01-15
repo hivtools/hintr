@@ -244,6 +244,7 @@ do_validate_survey <- function(survey, shape, strict = TRUE) {
 #' @keywords internal
 do_validate_vmmc <- function(vmmc, shape, strict = TRUE) {
   assert_file_extension(vmmc, "xlsx")
+  assert_sheet_exists(vmmc$path, "Datapack inputs")
   ## Skip the first header, the file has two rows of headers
   data <- readxl::read_xlsx(vmmc$path, sheet = "Datapack inputs", skip = 1,
                             .name_repair = "minimal")
