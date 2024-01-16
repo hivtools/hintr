@@ -987,6 +987,11 @@ test_that("api can include vmmc in spectrum download", {
   writeBin(as.vector(res$body), t)
   zip::unzip(t, exdir = dest)
 
-  ## TODO: Add some relevant check that the VMMC data has been appended?
   expect_true(INDICATORS_PATH %in% list.files(dest))
+
+  expect_true(PEPFAR_DATAPACK_PATH %in% list.files(dest))
+  pepfar_data <- read.csv(file.path(dest, PEPFAR_DATAPACK_PATH))
+  expect_true(!any(is.na(pepfar_data)))
+  expect_true(all(c("VMMC_CIRC_SUBNAT.T_1", "VMMC_TOTALCIRC_SUBNAT.T_1") %in%
+                    pepfar_data$indicator_code))
 })
