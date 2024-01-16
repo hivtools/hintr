@@ -249,7 +249,8 @@ do_validate_vmmc <- function(vmmc, shape, strict = TRUE) {
   data <- readxl::read_xlsx(vmmc$path, sheet = "Datapack inputs", skip = 1,
                             .name_repair = "minimal")
   assert_single_country(data, "vmmc")
-  assert_column_names(colnames(data), "area_id")
+  assert_column_names(colnames(data), c("area_id", "15-24", "25-34",
+                      "35-49", "50+", "15-24", "25-34", "35-49", "50+"))
   shape_regions <- read_regions(shape, "shape")
   assert_consistent_regions(shape_regions$area_id,
                             unique(data$area_id),
