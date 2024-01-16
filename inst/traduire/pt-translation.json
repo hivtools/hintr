@@ -91,5 +91,6 @@
     "VALIDATION_MULTIPLE_LEVELS": "Os dados só podem ser relativos a regiões a um único nível de área por ano. Em dados carregados {{detail}}",
     "FAILED_ZIP_REHYDRATE_SUBMIT": "Não é possível carregar a partir deste ficheiro zip, faltando informação necessária ao arquivo. Por favor, regenerar zip de saída e tentar novamente.",
     "TABLE_SEX_BY_AREA": "Sexo por área",
-    "TABLE_SEX_BY_5_YEAR_AGE_GROUP": "Sexo por faixa etária de 5 anos"
+    "TABLE_SEX_BY_5_YEAR_AGE_GROUP": "Sexo por faixa etária de 5 anos",
+    "VALIDATION_SHEET_MISSING": "O arquivo Excel carregado está faltando a planilha necessária '{{sheet_name}}'. Verifique o recurso e tente novamente."
 }

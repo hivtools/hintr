@@ -1,5 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "string",
-  "enum": ["pjnz", "shape", "population", "survey", "programme", "anc"]
+  "enum": ["pjnz", "shape", "population", "survey", "programme", "anc", "vmmc"]
 }

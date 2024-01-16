@@ -26,6 +26,7 @@ Imports:
     naomi.options (>= 1.1.0),
     porcelain (>= 0.1.8),
     R6,
+    readxl,
     rrq (>= 0.7.0),
     specio (>= 0.1.4),
     storr,

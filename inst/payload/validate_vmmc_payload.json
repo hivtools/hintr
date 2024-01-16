@@ -1,0 +1,10 @@
+{
+  "type": "vmmc",
+  "file": {
+    "path": "testdata/vmmc.xlsx",
+    "filename": "original.xlsx",
+    "hash": "12345",
+    "fromADR": false
+  },
+  "shape": "testdata/malawi.geojson"
+}
