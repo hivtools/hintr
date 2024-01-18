@@ -5,11 +5,6 @@ get_filter_mocks <- function() {
   )
 }
 
-get_args_from_vector <- function(vector) {
-  # mock args are lists of lists
-  lapply(as.list(vector), list)
-}
-
 test_that("can build metadata response", {
   metadata <- do_plotting_metadata("MWI")
   expect_true(all(names(metadata) %in%
@@ -72,7 +67,7 @@ test_that("can get plot settings control", {
 
 test_that("can get choropleth settings", {
   mocks <- get_filter_mocks()
-  expected_filter_calls <- get_args_from_vector(c("indicator", "detail", "area", "period", "sex", "age"))
+  expected_filter_calls <- get_mock_args_from_vector(c("indicator", "detail", "area", "period", "sex", "age"))
   choropleth_settings <- call_with_mocks_object({
     get_choropleth_settings()
   }, mocks)
@@ -89,8 +84,8 @@ test_that("can get barchart settings", {
   mocks <- get_filter_mocks()
   base_filter_ids <- c("area", "period", "sex", "age")
   all_filter_ids <- c("indicator", base_filter_ids)
-  expected_x_axis_or_disagg_by_calls <- get_args_from_vector(base_filter_ids)
-  expected_filter_calls <- get_args_from_vector(all_filter_ids)
+  expected_x_axis_or_disagg_by_calls <- get_mock_args_from_vector(base_filter_ids)
+  expected_filter_calls <- get_mock_args_from_vector(all_filter_ids)
   barchart_settings <- call_with_mocks_object({
       get_barchart_settings()
   }, mocks)
@@ -136,7 +131,7 @@ test_that("can get bubble settings", {
   bubble_settings <- call_with_mocks_object({
       get_bubble_settings()
   }, mocks)
-  expected_filter_calls <- get_args_from_vector(c("detail", "area", "period", "sex", "age"))
+  expected_filter_calls <- get_mock_args_from_vector(c("detail", "area", "period", "sex", "age"))
   expect_equal(mock_args(mocks$get_filter_from_id), expected_filter_calls)
   expected_indicators <- list(
     list(
@@ -161,8 +156,8 @@ test_that("can get bubble settings", {
 test_that("can get table presets", {
   mocks <- get_filter_mocks()
   stub(get_table_presets, "naomi::get_five_year_age_groups", "five_year_age_groups")
-  expected_filter_calls_1 <- get_args_from_vector(c("indicator", "detail", "period", "sex", "age"))
-  expected_filter_calls_2 <- get_args_from_vector(c("indicator", "area", "period", "sex", "age"))
+  expected_filter_calls_1 <- get_mock_args_from_vector(c("indicator", "detail", "period", "sex", "age"))
+  expected_filter_calls_2 <- get_mock_args_from_vector(c("indicator", "area", "period", "sex", "age"))
   expected_filter_calls <- append(expected_filter_calls_1, expected_filter_calls_2)
   table_presets <- call_with_mocks_object({
       get_table_presets()

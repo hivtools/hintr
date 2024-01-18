@@ -1,3 +1,13 @@
+get_filter_option_mocks <- function() {
+  list(
+    get_area_level_filters = mock("area_level_filters"),
+    get_quarter_filters = mock("quarter_filters"),
+    get_sex_filters = mock("sex_filters"),
+    get_age_filters = mock("age_filters"),
+    get_output_indicator_filters = mock("indicator_filters")
+  )
+}
+
 test_that("get_age_label correctly maps to label and returns useful error", {
   expect_equal(get_age_labels("Y050_054"),
                data_frame(age_group = "Y050_054",
@@ -369,22 +379,14 @@ test_that("get_spectrum_region_filters gets regions from data", {
 })
 
 test_that("can get model output filters", {
-  mock_area_level_filters <- mock("area_level_filters")
-  mock_quarter_filters <- mock("quarter_filters")
-  mock_sex_filters <- mock("sex_filters")
-  mock_age_filters <- mock("age_filters")
-  mock_indicator_filters <- mock("indicator_filters")
-
-  filters <- with_mock(
-    get_area_level_filters = mock_area_level_filters,
-    get_quarter_filters = mock_quarter_filters,
-    get_sex_filters = mock_sex_filters,
-    get_age_filters = mock_age_filters,
-    get_output_indicator_filters = mock_indicator_filters,
-    {
-      get_model_output_filters("test_data")
-    }
-  )
+  mocks <- get_filter_option_mocks()
+  filters <- call_with_mocks_object({
+    get_model_output_filters("test_data")
+  }, mocks)
+  expect_args(mocks$get_area_level_filters, 1, "test_data")
+  expect_args(mocks$get_quarter_filters, 1, "test_data")
+  expect_args(mocks$get_sex_filters, 1, "test_data")
+  expect_args(mocks$get_age_filters, 1, "test_data")
 
   expect_equal(filters,
     list(
@@ -421,9 +423,4 @@ test_that("can get model output filters", {
       )
     )
   )
-
-  expect_args(mock_area_level_filters, 1, "test_data")
-  expect_args(mock_age_filters, 1, "test_data")
-  expect_args(mock_quarter_filters, 1, "test_data")
-  expect_args(mock_sex_filters, 1, "test_data")
 })
