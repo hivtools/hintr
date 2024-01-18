@@ -40,3 +40,7 @@ hintr_init_traduire <- function() {
 hintr_translator_unregister <- function() {
   traduire::translator_unregister()
 }
+
+t_ <- function(...) {
+  traduire::t_(..., package = "hintr")
+}

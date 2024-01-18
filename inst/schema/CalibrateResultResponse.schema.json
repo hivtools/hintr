@@ -3,20 +3,10 @@
   "type": "object",
   "properties": {
     "data": { "$ref": "ModelResultData.schema.json" },
-    "plottingMetadata": {
-      "type": "object",
-      "properties": {
-        "barchart": { "$ref": "BarchartMetadata.schema.json" },
-        "choropleth": { "$ref": "ChoroplethMetadata.schema.json" }
-      },
-      "additionalProperties": false,
-      "required": [ "barchart", "choropleth" ]
-    },
-    "tableMetadata": { "$ref": "TableMetadata.schema.json" },
     "warnings": {
       "type": "array",
       "items": { "$ref": "Warning.schema.json"  }
     }
   },
-  "required": [ "data", "plottingMetadata", "tableMetadata", "warnings" ]
+  "required": [ "data", "warnings" ]
 }

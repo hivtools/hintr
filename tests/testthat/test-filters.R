@@ -367,3 +367,63 @@ test_that("get_spectrum_region_filters gets regions from data", {
   expect_equal(filters[[2]]$id, scalar("1"))
   expect_equal(filters[[2]]$label, scalar("Southern"))
 })
+
+test_that("can get model output filters", {
+  mock_area_level_filters <- mock("area_level_filters")
+  mock_quarter_filters <- mock("quarter_filters")
+  mock_sex_filters <- mock("sex_filters")
+  mock_age_filters <- mock("age_filters")
+  mock_indicator_filters <- mock("indicator_filters")
+
+  filters <- with_mock(
+    get_area_level_filters = mock_area_level_filters,
+    get_quarter_filters = mock_quarter_filters,
+    get_sex_filters = mock_sex_filters,
+    get_age_filters = mock_age_filters,
+    get_output_indicator_filters = mock_indicator_filters,
+    {
+      get_model_output_filters("test_data")
+    }
+  )
+
+  expect_equal(filters,
+    list(
+      list(
+        id = scalar("area"),
+        column_id = scalar("area_id"),
+        options = json_verbatim("null"),
+        use_shape_regions = scalar(TRUE)
+      ),
+      list(
+        id = scalar("detail"),
+        column_id = scalar("area_level"),
+        options = "area_level_filters"
+      ),
+      list(
+        id = scalar("quarter"),
+        column_id = scalar("calendar_quarter"),
+        options = "quarter_filters"
+      ),
+      list(
+        id = scalar("sex"),
+        column_id = scalar("sex"),
+        options = "sex_filters"
+      ),
+      list(
+        id = scalar("age"),
+        column_id = scalar("age_group"),
+        options = "age_filters"
+      ),
+      list(
+        id = scalar("indicator"),
+        column_id = scalar("indicator"),
+        options = "indicator_filters"
+      )
+    )
+  )
+
+  expect_args(mock_area_level_filters, 1, "test_data")
+  expect_args(mock_age_filters, 1, "test_data")
+  expect_args(mock_quarter_filters, 1, "test_data")
+  expect_args(mock_sex_filters, 1, "test_data")
+})

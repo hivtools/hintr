@@ -62,6 +62,18 @@ get_area_level_filters <- function(data) {
   })
 }
 
+get_output_indicator_filters <- function() {
+  metadata <- naomi::get_metadata()
+  indicator_metadata <- metadata[
+    metadata$data_type == "output" & metadata$plot_type == "barchart",
+    c("indicator", "name")]
+  names(indicator_metadata) <- c("id", "label")
+  ordering <- metadata[
+    metadata$data_type == "output" & metadata$plot_type == "barchart",
+    c("indicator_sort_order")]
+  indicator_metadata[order(ordering), ]
+}
+
 #' Read filters from wide format data
 #'
 #' Expect input data with headers like
@@ -117,27 +129,33 @@ get_model_output_filters <- function(data) {
     list(
       id = scalar("area"),
       column_id = scalar("area_id"),
-      label = scalar(t_("OUTPUT_FILTER_AREA")),
       options = json_verbatim("null"),
       use_shape_regions = scalar(TRUE)
     ),
     list(
+      id = scalar("detail"),
+      column_id = scalar("area_level"),
+      options = get_area_level_filters(data)
+    ),
+    list(
       id = scalar("quarter"),
       column_id = scalar("calendar_quarter"),
-      label = scalar(t_("OUTPUT_FILTER_PERIOD")),
       options = get_quarter_filters(data)
     ),
     list(
       id = scalar("sex"),
       column_id = scalar("sex"),
-      label = scalar(t_("OUTPUT_FILTER_SEX")),
       options = get_sex_filters(data)
     ),
     list(
       id = scalar("age"),
       column_id = scalar("age_group"),
-      label = scalar(t_("OUTPUT_FILTER_AGE")),
       options = get_age_filters(data)
+    ),
+    list(
+      id = scalar("indicator"),
+      column_id = scalar("indicator"),
+      options = get_output_indicator_filters()
     )
   )
 }

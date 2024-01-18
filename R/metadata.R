@@ -71,3 +71,128 @@ get_choropleth_metadata <- function(output) {
 get_country_iso3 <- function(area_ids) {
   sub("([A-Z]{3}).*", "\\1", area_ids[1])
 }
+
+get_plot_settings_control <- function() {
+  list(
+    choropleth = get_choropleth_settings(),
+    barchart = get_barchart_settings(),
+    table = get_table_settings(),
+    bubble = get_bubble_settings()
+  )
+}
+
+get_choropleth_settings <- function() {
+  filter_ids <- c("indicator", "detail", "area", "period", "sex", "age")
+  list(
+    defaultFilterTypes = lapply(filter_ids, get_filter_from_id),
+    plotSettings = list()
+  )
+}
+
+get_barchart_settings <- function() {
+  base_filter_ids <- c("area", "period", "sex", "age")
+  all_filter_ids <- c("indicator", base_filter_ids)
+  x_axis_or_disagg_by_options <- lapply(base_filter_ids, get_x_axis_or_disagg_by_option)
+  list(
+    defaultFilterTypes = lapply(all_filter_ids, get_filter_from_id),
+    plotSettings = list(
+      list(
+        id = scalar("x_axis"),
+        label = scalar(t_("OUTPUT_BARCHART_X_AXIS")),
+        options = x_axis_or_disagg_by_options
+      ),
+      list(
+        id = scalar("disagg_by"),
+        label = scalar(t_("OUTPUT_BARCHART_DISAGG_BY")),
+        options = x_axis_or_disagg_by_options
+      )
+    )
+  )
+}
+
+get_x_axis_or_disagg_by_option <- function(id) {
+  list(
+    id = scalar(id),
+    label = scalar(get_label_for_id(id)),
+    effect = list(
+      setMultiple = id
+    )
+  )
+}
+
+get_table_settings <- function() {
+  list(
+    plotSettings = list(
+      list(
+        id = scalar("presets"),
+        label = scalar(t_("OUTPUT_TABLE_PRESETS")),
+        options = get_table_presets()
+      )
+    )
+  )
+}
+
+get_table_presets <- function() {
+  list(
+    list(
+      id = scalar("sex_by_area"),
+      label = scalar(t_("TABLE_SEX_BY_AREA")),
+      effect = list(
+        setFilters = lapply(c("indicator", "detail", "period", "sex", "age"), get_filter_from_id),
+        setMultiple = c("sex")
+      )
+    ),
+    list(
+      id = scalar("sex_by_5_year_age_group"),
+      label = scalar(t_("TABLE_SEX_BY_5_YEAR_AGE_GROUP")),
+      effect = list(
+        setFilters = lapply(c("indicator", "area", "period", "sex", "age"), get_filter_from_id),
+        setMultiple = c("sex", "age"),
+        setFilterValues = list(
+          age = naomi::get_five_year_age_groups()
+        )
+      )
+    )
+  )
+}
+
+get_bubble_settings <- function() {
+  indicators <- list(
+    list(
+      filterId = scalar("indicator"),
+      label = scalar(t_("OUTPUT_BUBBLE_SIZE_INDICATOR")),
+      stateFilterId = scalar("sizeIndicator")
+    ),
+    list(
+      filterId = scalar("indicator"),
+      label = scalar(t_("OUTPUT_BUBBLE_COLOUR_INDICATOR")),
+      stateFilterId = scalar("colourIndicator")
+    )
+  )
+  base_filter_ids <- lapply(c("detail", "area", "period", "sex", "age"), get_filter_from_id)
+  list(
+    defaultFilterTypes = c(indicators, base_filter_ids),
+    plotSettings = list()
+  )
+}
+
+get_filter_from_id <- function(id) {
+  list(
+    filterId = scalar(id),
+    label = scalar(get_label_for_id(id)),
+    stateFilterId = scalar(id)
+  )
+}
+
+get_label_for_id <- function(id) {
+  t_(
+    switch(id,
+      "area" = "OUTPUT_FILTER_AREA",
+      "period" = "OUTPUT_FILTER_PERIOD",
+      "sex" = "OUTPUT_FILTER_SEX",
+      "age" = "OUTPUT_FILTER_AGE",
+      "detail" = "OUTPUT_FILTER_AREA_LEVEL",
+      "indicator" = "OUTPUT_FILTER_INDICATOR"
+    )
+  )
+}

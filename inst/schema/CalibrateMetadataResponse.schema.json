@@ -2,20 +2,29 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "plottingMetadata": {
+    "filterTypes": {
+      "type": "array",
+      "items": { "$ref": "FilterTypes.schema.json" }
+    },
+    "indicators": {
+      "type": "array",
+      "items": { "$ref": "ChoroplethIndicatorMetadata.schema.json" }
+    },
+    "plotSettingsControl": {
       "type": "object",
       "properties": {
-        "barchart": { "$ref": "BarchartMetadata.schema.json" },
-        "choropleth": { "$ref": "ChoroplethMetadata.schema.json" }
+        "choropleth": { "$ref": "PlotSettingsControl.schema.json" },
+        "barchart": { "$ref": "PlotSettingsControl.schema.json" },
+        "table": { "$ref": "PlotSettingsControl.schema.json" },
+        "bubble": { "$ref": "PlotSettingsControl.schema.json" }
       },
       "additionalProperties": false,
-      "required": [ "barchart", "choropleth" ]
+      "required": ["choropleth", "barchart", "table", "bubble"]
     },
-    "tableMetadata": { "$ref": "TableMetadata.schema.json" },
     "warnings": {
       "type": "array",
-      "items": { "$ref": "Warning.schema.json"  }
+      "items": { "$ref": "Warning.schema.json" }
     }
   },
-  "required": [ "plottingMetadata", "tableMetadata", "warnings" ]
+  "required": [ "filterTypes", "indicators", "plotSettingsControl", "warnings" ]
 }

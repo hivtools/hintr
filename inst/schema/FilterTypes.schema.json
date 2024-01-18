@@ -1,0 +1,21 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "string"
+        },
+        "column_id": {
+            "type": "string"
+        },
+        "options": {
+            "type": [ "array", "null" ],
+            "items": { "$ref": "FilterOption.schema.json" }
+        },
+        "use_shape_regions": {
+            "type": "boolean"
+        }
+    },
+    "additionalProperties": false,
+    "required": ["id", "column_id", "options"]
+}
