@@ -41,6 +41,8 @@ hintr_translator_unregister <- function() {
   traduire::translator_unregister()
 }
 
+# while running tests it sometimes pick up the env as
+# testthat instead of hintr so explicitly specifying the env
 t_ <- function(...) {
   traduire::t_(..., package = "hintr")
 }

@@ -1,3 +1,7 @@
+# hintr 1.1.23
+
+* Refactor model calibrate metadata to new style with `plotControlSettings` as part of plot cleanup epic.
+
 # hintr 1.1.22
 
 * Remove hardcoded year2 value for ANC prevalance and ANC ART coverage
