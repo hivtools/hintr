@@ -231,15 +231,6 @@ get_comparison_plot_filters <- function(data) {
   )
 }
 
-get_area_level_filter <- function(data) {
-  list(
-    id = scalar("area_level"),
-    column_id = scalar("area_level"),
-    label = scalar(t_("OUTPUT_FILTER_DETAIL_LEVEL")),
-    options = get_area_level_filters(data)
-  )
-}
-
 get_barchart_defaults <- function(output, output_filters) {
   list(
     indicator_id = scalar("prevalence"),
