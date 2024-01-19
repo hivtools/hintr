@@ -317,15 +317,11 @@ test_that("real model can be run & calibrated by API", {
   expect_equal(response$status, "success")
   expect_equal(response$errors, NULL)
   expect_equal(names(response$data),
-               c("data", "plottingMetadata", "tableMetadata", "warnings"))
+               c("data", "warnings"))
   expect_equal(names(response$data$data[[1]]),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
   expect_true(length(response$data$data) > 84042)
-  expect_equal(names(response$data$plottingMetadata),
-               c("barchart", "choropleth"))
-  expect_equal(names(response$data$tableMetadata),
-               c("presets"))
 
   ## Get path to result
   r <- test_server$request("GET", paste0("/calibrate/result/path/",
