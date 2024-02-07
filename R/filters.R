@@ -138,7 +138,7 @@ get_model_output_filters <- function(data) {
       options = get_area_level_filters(data)
     ),
     list(
-      id = scalar("quarter"),
+      id = scalar("period"),
       column_id = scalar("calendar_quarter"),
       options = get_quarter_filters(data)
     ),
