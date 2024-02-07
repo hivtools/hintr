@@ -1,8 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
-    "PlotNames": {
-        "type": "string",
-        "enum": ["barchart", "choropleth", "table", "bubble"],
-        "tsEnumNames": ["Bar", "Map", "Table", "Bubble"]
-    }
+    "type": "object",
+    "enum": ["barchart", "choropleth", "table", "bubble"],
+    "tsEnumNames": ["Bar", "Map", "Table", "Bubble"]
 }
