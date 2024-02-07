@@ -290,14 +290,14 @@ test_that("can get defaults for bar chart", {
                                   "disaggregate_by_id",
                                   "selected_filter_options"))
   expect_equal(names(defaults$selected_filter_options),
-               c("area", "quarter", "sex", "age"))
+               c("area", "period", "sex", "age"))
   expect_equal(defaults$selected_filter_options$area, list(
     list(
       id = scalar("MWI"),
       label = scalar("Malawi - Demo")
     )
   ))
-  expect_equal(defaults$selected_filter_options$quarter, list(
+  expect_equal(defaults$selected_filter_options$period, list(
     list(
       id = scalar("CY2018Q3"),
       label = scalar("September 2018")
@@ -402,7 +402,7 @@ test_that("can get model output filters", {
         options = "area_level_filters"
       ),
       list(
-        id = scalar("quarter"),
+        id = scalar("period"),
         column_id = scalar("calendar_quarter"),
         options = "quarter_filters"
       ),
