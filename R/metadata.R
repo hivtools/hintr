@@ -85,7 +85,19 @@ get_choropleth_settings <- function() {
   filter_ids <- c("indicator", "detail", "area", "period", "sex", "age")
   list(
     defaultFilterTypes = lapply(filter_ids, get_filter_from_id),
-    plotSettings = list()
+    plotSettings = list(
+      list(
+        id = scalar("default"),
+        label = scalar(""),
+        options = list(
+          id = scalar(""),
+          label = scalar(""),
+          effects = list(
+            setMultiple = "area"
+          )
+        )
+      )
+    )
   )
 }
 
@@ -172,7 +184,19 @@ get_bubble_settings <- function() {
   base_filter_ids <- lapply(c("detail", "area", "period", "sex", "age"), get_filter_from_id)
   list(
     defaultFilterTypes = c(indicators, base_filter_ids),
-    plotSettings = list()
+    plotSettings = list(
+      list(
+        id = scalar("default"),
+        label = scalar(""),
+        options = list(
+          id = scalar(""),
+          label = scalar(""),
+          effects = list(
+            setMultiple = "area"
+          )
+        )
+      )
+    )
   )
 }
 

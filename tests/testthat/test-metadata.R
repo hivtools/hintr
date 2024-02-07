@@ -75,7 +75,19 @@ test_that("can get choropleth settings", {
   expect_equal(choropleth_settings,
     list(
       defaultFilterTypes = rep(list("filter_ref"), 6),
-      plotSettings = list()
+      plotSettings = list(
+        list(
+          id = scalar("default"),
+          label = scalar(""),
+          options = list(
+            id = scalar(""),
+            label = scalar(""),
+            effects = list(
+              setMultiple = "area"
+            )
+          )
+        )
+      )
     )
   )
 })
@@ -148,7 +160,19 @@ test_that("can get bubble settings", {
   expect_equal(bubble_settings,
     list(
       defaultFilterTypes = append(expected_indicators, rep(list("filter_ref"), 5)),
-      plotSettings = list()
+      plotSettings = list(
+        list(
+          id = scalar("default"),
+          label = scalar(""),
+          options = list(
+            id = scalar(""),
+            label = scalar(""),
+            effects = list(
+              setMultiple = "area"
+            )
+          )
+        )
+      )
     )
   )
 })
