@@ -82,7 +82,7 @@ test_that("can get choropleth settings", {
           options = list(
             id = scalar(""),
             label = scalar(""),
-            effects = list(
+            effect = list(
               setMultiple = "area"
             )
           )
@@ -167,7 +167,7 @@ test_that("can get bubble settings", {
           options = list(
             id = scalar(""),
             label = scalar(""),
-            effects = list(
+            effect = list(
               setMultiple = "area"
             )
           )
