@@ -80,10 +80,12 @@ test_that("can get choropleth settings", {
           id = scalar("default"),
           label = scalar(""),
           options = list(
-            id = scalar(""),
-            label = scalar(""),
-            effect = list(
-              setMultiple = "area"
+            list(
+              id = scalar(""),
+              label = scalar(""),
+              effect = list(
+                setMultiple = "area"
+              )
             )
           )
         )
@@ -165,10 +167,12 @@ test_that("can get bubble settings", {
           id = scalar("default"),
           label = scalar(""),
           options = list(
-            id = scalar(""),
-            label = scalar(""),
-            effect = list(
-              setMultiple = "area"
+            list(
+              id = scalar(""),
+              label = scalar(""),
+              effect = list(
+                setMultiple = "area"
+              )
             )
           )
         )

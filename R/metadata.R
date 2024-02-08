@@ -90,10 +90,12 @@ get_choropleth_settings <- function() {
         id = scalar("default"),
         label = scalar(""),
         options = list(
-          id = scalar(""),
-          label = scalar(""),
-          effect = list(
-            setMultiple = "area"
+          list(
+            id = scalar(""),
+            label = scalar(""),
+            effect = list(
+              setMultiple = "area"
+            )
           )
         )
       )
@@ -189,10 +191,12 @@ get_bubble_settings <- function() {
         id = scalar("default"),
         label = scalar(""),
         options = list(
-          id = scalar(""),
-          label = scalar(""),
-          effect = list(
-            setMultiple = "area"
+          list(
+            id = scalar(""),
+            label = scalar(""),
+            effect = list(
+              setMultiple = "area"
+            )
           )
         )
       )
