@@ -730,7 +730,7 @@ test_that("crashed worker can be detected", {
   ##
   ## We can use the ps package to get the tree of processes, and find
   ## the most recent one and kill that
-  w <- obj$worker_task_id()
+  w <- rrq::rrq_worker_task_id(controll = obj)
   expect_equal(unname(w), id)
   info <- obj$worker_info()[[names(w)]]
   children <- ps::ps_children(ps::ps_handle(info$pid))
