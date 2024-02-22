@@ -851,14 +851,14 @@ test_that("comparison report download errors for old model output", {
     "Model output out of date please re-run model and try again."))
 })
 
-test_that("api can create agyw download", {
+test_that("api can create agyw/shipp download", {
   test_redis_available()
   test_mock_model_available()
   q <- test_queue_result()
   api <- api_build(q$queue)
 
   res <- q$queue$result(q$calibrate_id)
-  agyw_result <- naomi:::make_agyw_testfiles(res)
+  agyw_result <- naomi:::make_shipp_testfiles(res)
   agyw_result_id <- add_queue_result(q$queue, agyw_result)
 
   ## Prepare body

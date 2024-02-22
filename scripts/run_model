@@ -82,7 +82,7 @@ output <- naomi::read_hintr_output(calibrated$model_output_path)
 
 if(output$output_package$fit$model_options$area_scope == "MWI"){
 
-  agyw_test_outputs <- naomi:::make_agyw_testfiles(calibrated)
+  agyw_test_outputs <- naomi:::make_shipp_testfiles(calibrated)
 
 } else {
 
@@ -90,8 +90,8 @@ if(output$output_package$fit$model_options$area_scope == "MWI"){
 
 }
 
-agyw_tool <- naomi::hintr_prepare_agyw_download(agyw_test_outputs,
-                                                model_payload$data$pjnz$path,
-                                                dat$agyw_path)
+agyw_tool <- naomi::hintr_prepare_shipp_download(agyw_test_outputs,
+                                                 model_payload$data$pjnz$path,
+                                                 dat$agyw_path)
 message(sprintf("Saving AGYW tool at %s",
                 normalizePath(dat$agyw_path, mustWork = TRUE)))
