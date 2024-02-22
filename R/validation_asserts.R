@@ -336,3 +336,12 @@ assert_single_level_per_year <- function(shape_regions, data) {
   }
   invisible(TRUE)
 }
+
+assert_sheet_exists <- function(excel_file_path, sheet_name) {
+  available_sheets <- readxl::excel_sheets(excel_file_path)
+  if (!(sheet_name %in% available_sheets)) {
+    stop(t_("VALIDATION_SHEET_MISSING",
+         list(sheet_name = sheet_name)))
+  }
+  invisible(TRUE)
+}

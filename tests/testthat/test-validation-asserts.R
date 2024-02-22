@@ -318,3 +318,11 @@ test_that("can assert data has to have 1 area level", {
                       "per year. In uploaded data year 2011 has area levels ",
                       "2, 4, year 2012 has area levels 2, 4."))
 })
+
+test_that("can assert that excel file has a required sheet", {
+  data <- test_path("testdata", "vmmc.xlsx")
+  expect_error(assert_sheet_exists(data, "My sheet"),
+               paste("Uploaded Excel file is missing required sheet",
+                     "'My sheet'. Please check resource and try again."))
+  expect_true(assert_sheet_exists(data, "Datapack inputs"))
+})
