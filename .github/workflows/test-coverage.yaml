@@ -37,6 +37,10 @@ jobs:
         run: |
           ./scripts/redis start
 
+      - name: Build test data
+        run: |
+          ./scripts/build_test_data
+
       - name: Test coverage
         run: |
           covr::codecov(
