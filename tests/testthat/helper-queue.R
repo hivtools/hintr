@@ -14,7 +14,7 @@ MockQueue <- R6::R6Class(
   cloneable = FALSE,
   public = list(
     submit = function(job, queue, environment = parent.frame()) {
-      self$queue$enqueue_(quote(stop("test error")))
+      self$queue$enqueue_(quote(cli::cli_abort("test error")))
     },
 
     submit_model = function(data, options) {

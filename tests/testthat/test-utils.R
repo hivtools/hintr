@@ -123,3 +123,22 @@ test_that("assert_names", {
                "Unknown item(s) five are included in input",
                fixed = TRUE)
 })
+
+
+test_that("can format error messages", {
+  test_error <- function(x) {
+    tryCatch(
+      force(x),
+      error = function(e) {
+        api_error_msg(e)
+      })
+  }
+
+  d <- data.frame(x = c(1, 2))
+  expect_match(test_error(tidyselect::eval_select("y", d)),
+               "Column `y` doesn't exist.")
+  expect_equal(test_error(stop("test error")), "test error")
+  expect_equal(test_error(cli::cli_abort("test error")), "test error")
+  expect_equal(test_error(hintr_error("test error", "MY_ERR")),
+               "porcelain_error:\n  * MY_ERR: test error")
+})
