@@ -390,17 +390,22 @@ download_submit <- function(queue) {
   }
 }
 
+get_download_result <- function(queue, id, error_message) {
+  res <- queue$result(id)
+  if (is_error(res)) {
+    msg <- api_error_msg(res)
+    hintr_error(msg, "OUTPUT_GENERATION_FAILED")
+  } else if (is.null(res$path)) {
+    msg <- t_(error_message)
+    hintr_error(msg, "OUTPUT_GENERATION_FAILED")
+  }
+  res
+}
+
 download_result <- function(queue) {
   function(id) {
     tryCatch({
-      res <- queue$result(id)
-      if (is_error(res)) {
-        msg <- api_error_msg(res)
-        hintr_error(msg, "OUTPUT_GENERATION_FAILED")
-      } else if (is.null(res$path)) {
-        msg <- t_("FAILED_DOWNLOAD")
-        hintr_error(msg, "OUTPUT_GENERATION_FAILED")
-      }
+      res <- get_download_result(queue, id, "FAILED_DOWNLOAD")
       filename <- switch(res$metadata$type,
                          spectrum = "naomi-output",
                          coarse_output = "coarse-output",
