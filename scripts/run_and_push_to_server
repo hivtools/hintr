@@ -1,0 +1,44 @@
+#!/usr/bin/env Rscript
+"Run a model and push outputs to a specified server
+
+Outputs a zip which can be uploaded into the app to recover your results. The input data must exist on the server already. Try uploading it first if having problems.
+
+Usage:
+  run_and_push_to_server (--model-payload=<model-payload> --calibrate-payload=<calibrate-payload> --server=<server> --port=<port> --output-path=<output-path>)
+
+Options:
+  -h --help                                Show this screen.
+  --model-payload=<model-payload>          Path to model run payload.
+  --calibrate-payload=<calibrate-payload>  Path to calibrate payload.
+  --server=<server>                        Server URL to push results to
+  --port=<port>                            Port to push results to
+  --output-path=<output-path>              Path to save output zip to
+" -> usage
+
+dat <- docopt::docopt(usage)
+names(dat) <- gsub("-", "_", names(dat), fixed = TRUE)
+
+model_payload <- jsonlite::fromJSON(dat$model_payload)
+input_paths <- lapply(model_payload$data, function(x) {
+  if (!file.exists(x$path)) {
+    stop(sprintf("Input file %s doesn't exist.", x))
+  }
+  return(x$path)
+})
+
+message("Running model fit")
+output <- naomi::hintr_run_model(model_payload$data,
+                                 model_payload$options)
+
+message("Calibrating model")
+calibrate_payload <- jsonlite::fromJSON(dat$calibrate_payload)
+calibrated <- naomi::hintr_calibrate(output, calibrate_payload$options)
+
+message("Submitting prerun")
+input_paths$programme <- input_paths$art_number
+input_paths$art_number <- NULL
+input_paths$anc <- input_paths$anc_testing
+input_paths$anc_testing <- NULL
+
+path <- hintr::hintr_submit_prerun(input_paths, output, calibrated, dat$server, dat$port, dat$output_path)
+message(paste0("Rehydrate on server from path at ", path))

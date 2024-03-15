@@ -1,0 +1,139 @@
+#!/usr/bin/env Rscript
+"Runs a model from local data or ADR data and pushes results to the remote server of choice
+
+Usage:
+  fit_and_push (--config=<config>)
+
+Options:
+  -h --help           Show this screen.
+  --config=<config>   Path to the remote run config JSON.
+" -> usage
+
+pkgs <- installed.packages()
+required <- c("hintr", "docopt", "getPass", "jsonlite", "ckanr")
+installed <- required %in% pkgs
+if (any(!installed)) {
+  missing <- paste0(required[!installed], collapse = ", ")
+  stop(sprintf("Missing package(s) %s, install it to run", missing))
+}
+
+dat <- docopt::docopt(usage)
+names(dat) <- gsub("-", "_", names(dat), fixed = TRUE)
+
+config <- jsonlite::fromJSON(dat$config, simplifyVector = FALSE)
+input_files <- config$input_data
+
+scalar <- function(val) {
+  if (inherits(val, "scalar")) {
+    val
+  } else {
+    jsonlite::unbox(val)
+  }
+}
+
+recursive_scalar <- function(x) {
+  if (is.null(x)) {
+    return(NULL)
+  }
+  lapply(x, function(item) {
+    if (length(item) > 1 || is.list(item)) {
+      out <- recursive_scalar(item)
+    } else {
+      out <- scalar(item)
+    }
+    out
+  })
+}
+
+if (file.exists(config$output_path)) {
+  stop(sprintf(
+    "File at '%s' already exists, remove it or specify different path",
+    config$output_path))
+}
+
+if (config$adr$pull_from_adr) {
+  message("Pulling dataset from ADR, if you want to use local set 'pull_from_adr' to false")
+
+  key <- getPass::getPass("ADR API key, use any to list public datasets: ")
+  ckanr::ckanr_setup(url = config$adr$adr_url, key = key)
+  res <- ckanr::package_search(q = paste0("name:", config$adr$dataset_id))
+  if (res$count != 1) {
+    stop(sprintf(
+      "Package search got more than 1 package with ID %s, check ADR itself",
+      config$adr$dataset_id))
+  }
+  resources <- res$results[[1]]$resources
+
+  resource_types <- lapply(resources, "[[", "resource_type")
+
+  to_fetch <- setNames(
+    c("inputs-unaids-spectrum-file", "inputs-unaids-geographic",
+      "inputs-unaids-population", "inputs-unaids-survey", "inputs-unaids-art",
+      "inputs-unaids-anc"),
+    c("pjnz", "shape", "population", "survey", "art_number", "anc_testing"))
+
+  t <- tempfile()
+  dir.create(t)
+
+  optional_resources <- c("art_number", "anc_testing")
+  for (api_resource_name in names(to_fetch)) {
+    adr_resource_type <- to_fetch[api_resource_name]
+    resource_url <- resources[resource_types == adr_resource_type][[1]]$url
+    message(resource_url)
+    if (is.null(resource_url) || !nzchar(resource_url)) {
+      if (api_resource_name %in% optional_resources) {
+        message(sprintf("Not fetching optional %s resource as not present on ADR", api_resource_name))
+        input_files[api_resource_name] <- NULL
+      } else {
+        stop(sprintf("Failed to fetch required resource %s. ADR returned %s",
+                     api_resource_name,
+                     resources[resource_types == adr_resource_type][[1]]))
+      }
+    } else {
+      dest <- file.path(t, basename(resource_url))
+      message(sprintf("Fetching %s from ADR", api_resource_name))
+      ckanr::ckan_fetch(resource_url, store = "disk", path = dest)
+      input_files[api_resource_name] <- dest
+    }
+  }
+}
+
+files <- lapply(input_files, function(file_path) {
+  list(
+    filename = scalar(basename(file_path)),
+    path = scalar(file_path),
+    hash = scalar("123"),
+    fromADR = scalar(FALSE)
+  )
+})
+
+model_payload <- recursive_scalar(list(
+  data = files,
+  options = config$model_options
+))
+
+model_payload_path <- tempfile()
+jsonlite::write_json(model_payload, model_payload_path, null = "null")
+
+calibrate_payload <- recursive_scalar(
+  list(options = config$calibrate_options)
+)
+calibrate_payload_path <- tempfile()
+jsonlite::write_json(calibrate_payload, calibrate_payload_path, null = "null")
+
+out <- system2("./scripts/run_and_push_to_server",
+  args = c(
+    "--model-payload", model_payload_path,
+    "--calibrate-payload", calibrate_payload_path,
+    "--server", config$server,
+    "--port", config$port,
+    "--output-path", config$output_path))
+
+message("Upload complete, you can now rehydrate from output zip")
+message(paste("NB: The input files must have been previously uploaded to the",
+              "web app or this won't work. Pull them in from the ADR first",
+              "and then rehydrate the project."))
+
+if (out != 0) {
+  quit(save = "no", status = 1)
+}
