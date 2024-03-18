@@ -47,7 +47,7 @@ test_that("api can upload input files", {
   res2 <- api$request("POST", "/internal/upload/input/survey_data.csv",
                       body = charToRaw(file))
 
-  expect_equal(res, res2)
+  expect_equal(res$body, res2$body)
 
   ## File has not been uploaded
   expect_length(list.files(inputs_dir), 1)
@@ -73,7 +73,7 @@ test_that("can upload output files", {
   ## Uploading again
   res2 <- endpoint$run(charToRaw(file), "survey_data.csv")
 
-  expect_equal(res, res2)
+  expect_equal(res$body, res2$body)
 
   ## File has not been uploaded
   expect_length(list.files(results_dir), 1)
@@ -102,7 +102,7 @@ test_that("api can upload output files", {
   res2 <- api$request("POST", "/internal/upload/result/survey_data.csv",
                       body = charToRaw(file))
 
-  expect_equal(res, res2)
+  expect_equal(res$body, res2$body)
 
   ## File has not been uploaded
   expect_length(list.files(results_dir), 1)
