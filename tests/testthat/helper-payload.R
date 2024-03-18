@@ -1,8 +1,8 @@
 setup_payload_input_time_series <- function(data_root_dir, file_path, type) {
   file <- normalizePath(file.path(data_root_dir, file_path),
-                        mustWork = TRUE)
+                        winslash = "/", mustWork = TRUE)
   shape <- normalizePath(file.path(data_root_dir, "malawi.geojson"),
-                         mustWork = TRUE)
+                         winslash = "/", mustWork = TRUE)
 
   sprintf(
     '{

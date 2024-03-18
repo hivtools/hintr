@@ -62,7 +62,7 @@ run_model <- function(data, options, path_results, language = NULL) {
     return(output)
   }
 
-  path_results <- normalizePath(path_results, mustWork = TRUE)
+  path_results <- normalizePath(path_results, winslash = "/", mustWork = TRUE)
   model_output_path <- tempfile("model_output", tmpdir = path_results,
                                 fileext = ".qs")
 

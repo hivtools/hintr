@@ -113,7 +113,7 @@ setup_prerun_queue <- function() {
 
   as_file <- function(filename, dir) {
     list(
-      path = scalar(normalizePath(file.path(dir, filename))),
+      path = scalar(normalizePath(file.path(dir, filename), winslash = "/")),
       filename = scalar(filename)
     )
   }

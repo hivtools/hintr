@@ -54,15 +54,16 @@ jobs:
           extra-packages: any::rcmdcheck
           needs: check
 
-      - name: Install and start Colima
-        if: runner.os == 'macOS'
-        run: |
-          brew install docker colima
-          colima start
-
       - name: Start Redis
+        if: runner.os != 'Windows'
+        uses: shogo82148/actions-setup-redis@v1
+        with:
+          redis-version: "5.x"
+
+      - name: Start Redis (windows)
+        if: runner.os == 'Windows'
         run: |
-          ./scripts/redis start
+          choco install memurai-developer
 
       - name: Build test data
         run: Rscript ./scripts/build_test_data
@@ -70,3 +71,8 @@ jobs:
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
+          error-on: '"error"'
+
+      - name: Setup tmate session
+        if: ${{ failure() }}
+        uses: mxschmitt/action-tmate@v3

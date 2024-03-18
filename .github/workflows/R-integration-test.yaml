@@ -51,17 +51,30 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck
-          needs: check
+          extra-packages: any::devtools
 
       - name: Start Redis
-        run: |
-          ./scripts/redis start
+        if: runner.os != 'Windows'
+        uses: shogo82148/actions-setup-redis@v1
+        with:
+          redis-version: "5.x"
 
+      - name: Start Redis (windows)
+        if: runner.os == 'Windows'
+        run: |
+          choco install memurai-developer
       - name: Build test data
         run: |
           ./scripts/build_test_data
 
+      - name: Install hintr
+        run: |
+          Rscript -e 'devtools::install()'
+
       - name: Run integration tests
         run: |
           ./scripts/test_integration
+
+      - name: Setup tmate session
+        if: ${{ failure() }}
+        uses: mxschmitt/action-tmate@v3

@@ -1,5 +1,5 @@
 run_migration <- function(queue, log_dir, to_version, dry_run = TRUE) {
-  log_dir <- normalizePath(log_dir, mustWork = TRUE)
+  log_dir <- normalizePath(log_dir, winslash = "/", mustWork = TRUE)
   tasks <- queue$queue$task_list()
   status <- queue$queue$task_status(tasks)
 

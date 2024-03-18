@@ -34,8 +34,15 @@ jobs:
           needs: coverage
 
       - name: Start Redis
+        if: runner.os != 'Windows'
+        uses: shogo82148/actions-setup-redis@v1
+        with:
+          redis-version: "5.x"
+
+      - name: Start Redis (windows)
+        if: runner.os == 'Windows'
         run: |
-          ./scripts/redis start
+          choco install memurai-developer
 
       - name: Build test data
         run: |
