@@ -164,3 +164,11 @@ assert_names <- function(items, required, optional,
 r6_private <- function(x) {
   x[[".__enclos_env__"]]$private
 }
+
+## We want to be able to format both rlang_error type errors, hintr
+## errors and standard errors in a way that in an issue report it will
+## be easily readable.
+## In particular tidyselect returns error messages without a $message.
+api_error_msg <- function(e) {
+  cli::ansi_strip(conditionMessage(e))
+}

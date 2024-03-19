@@ -375,7 +375,7 @@ test_that("trying to get download with invalid result returns error", {
   out <- endpoint$run(q$calibrate_id)
   expect_equal(out$error$data[[1]]$error, scalar("OUTPUT_GENERATION_FAILED"))
   expect_match(out$error$data[[1]]$detail,
-               scalar("Failed to generate metadata, output format is invalid"))
+               scalar("Failed to generate download, output format is invalid"))
   expect_equal(out$status_code, 400)
 })
 
