@@ -74,7 +74,3 @@ jobs:
       - name: Run integration tests
         run: |
           ./scripts/test_integration
-
-      - name: Setup tmate session
-        if: ${{ failure() }}
-        uses: mxschmitt/action-tmate@v3
