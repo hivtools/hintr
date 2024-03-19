@@ -894,7 +894,7 @@ test_that("api can create agyw/shipp download", {
   expect_equal(res$status, 200)
   expect_equal(res$headers$`Content-Type`, "application/octet-stream")
   expect_match(res$headers$`Content-Disposition`,
-               'attachment; filename="MWI_AGYW_\\d+-\\d+.xlsx"')
+               'attachment; filename="MWI_SHIPP_\\d+-\\d+.xlsx"')
   ## Size of bytes is close to expected
   size <- length(res$body)
   expect_equal(res$headers$`Content-Length`, size)
@@ -906,7 +906,7 @@ test_that("api can create agyw/shipp download", {
   expect_equal(head_res$status, 200)
   expect_equal(head_res$headers$`Content-Type`, "application/octet-stream")
   expect_match(head_res$headers$`Content-Disposition`,
-               'attachment; filename="MWI_AGYW_\\d+-\\d+.xlsx"')
+               'attachment; filename="MWI_SHIPP_\\d+-\\d+.xlsx"')
   expect_equal(head_res$headers$`Content-Length`, size)
   ## Plumber uses an empty string to represent an empty body
   expect_null(head_res$body)

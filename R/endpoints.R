@@ -411,13 +411,13 @@ download_result <- function(queue) {
                          coarse_output = "coarse-output",
                          summary = "summary-report",
                          comparison = "comparison-report",
-                         agyw = "AGYW")
+                         shipp = "SHIPP")
       ext <- switch(res$metadata$type,
                     spectrum = ".zip",
                     coarse_output = ".zip",
                     summary = ".html",
                     comparison = ".html",
-                    agyw = ".xlsx")
+                    shipp = ".xlsx")
       bytes <- readBin(res$path, "raw", n = file.size(res$path))
       bytes <- porcelain::porcelain_add_headers(bytes, list(
         "Content-Disposition" = build_content_disp_header(res$metadata$areas,
