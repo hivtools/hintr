@@ -851,11 +851,15 @@ test_that("comparison report download errors for old model output", {
     "Model output out of date please re-run model and try again."))
 })
 
-test_that("api can create agyw download", {
+test_that("api can create agyw/shipp download", {
   test_redis_available()
   test_mock_model_available()
   q <- test_queue_result()
   api <- api_build(q$queue)
+
+  res <- q$queue$result(q$calibrate_id)
+  agyw_result <- naomi:::make_shipp_testfiles(res)
+  agyw_result_id <- add_queue_result(q$queue, agyw_result)
 
   ## Prepare body
   payload <- setup_payload_download_request(include_notes = FALSE,
@@ -864,7 +868,7 @@ test_that("api can create agyw download", {
 
   ## Submit download request
   submit <- api$request("POST",
-                        paste0("/download/submit/agyw/", q$calibrate_id),
+                        paste0("/download/submit/agyw/", agyw_result_id),
                         body = payload)
   submit_body <- jsonlite::fromJSON(submit$body)
   expect_equal(submit$status, 200)
@@ -890,7 +894,7 @@ test_that("api can create agyw download", {
   expect_equal(res$status, 200)
   expect_equal(res$headers$`Content-Type`, "application/octet-stream")
   expect_match(res$headers$`Content-Disposition`,
-               'attachment; filename="MWI_AGYW_\\d+-\\d+.xlsx"')
+               'attachment; filename="MWI_SHIPP_\\d+-\\d+.xlsx"')
   ## Size of bytes is close to expected
   size <- length(res$body)
   expect_equal(res$headers$`Content-Length`, size)
@@ -902,7 +906,7 @@ test_that("api can create agyw download", {
   expect_equal(head_res$status, 200)
   expect_equal(head_res$headers$`Content-Type`, "application/octet-stream")
   expect_match(head_res$headers$`Content-Disposition`,
-               'attachment; filename="MWI_AGYW_\\d+-\\d+.xlsx"')
+               'attachment; filename="MWI_SHIPP_\\d+-\\d+.xlsx"')
   expect_equal(head_res$headers$`Content-Length`, size)
   ## Plumber uses an empty string to represent an empty body
   expect_null(head_res$body)

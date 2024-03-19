@@ -1,6 +1,7 @@
 # nocov start
 # These are test helpers so skipping coverage checks, they should not
 # be used by anything in the package
+
 #' Build JSON from template and a set of params
 #'
 #' @param template Template JSON of payload

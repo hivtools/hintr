@@ -22,7 +22,7 @@ Imports:
     glue,
     ids,
     jsonlite (>= 1.2.2),
-    naomi (>= 2.9.23),
+    naomi (>= 2.9.24),
     naomi.options (>= 1.1.0),
     porcelain (>= 0.1.8),
     R6,
@@ -48,7 +48,6 @@ Suggests:
     tidyselect,
     withr
 Remotes:
-    mrc-ide/geojsonio,
     mrc-ide/rrq,
     mrc-ide/mockr
 Config/testthat/edition: 3

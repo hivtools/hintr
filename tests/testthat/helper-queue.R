@@ -88,6 +88,12 @@ test_queue_result <- function(model = mock_model, calibrate = mock_calibrate,
   )
 }
 
+add_queue_result <- function(queue, res) {
+  new_id <- queue$submit(quote(identity(res)))
+  queue$queue$task_wait(new_id)
+  new_id
+}
+
 prerun_inputs <- list(
   pjnz = "testdata/Malawi2019.PJNZ",
   population = "testdata/population.csv",
