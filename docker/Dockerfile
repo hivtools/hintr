@@ -14,15 +14,13 @@ RUN install_packages --repo=https://mrc-ide.r-universe.dev \
         jsonlite \
         jsonvalidate \
         lgr \
-        mockr \
         naomi.options \
         plumber \
         porcelain \
         ps \
         remotes \
         rlang \
-        rrq \
-        testthat.buildkite
+        rrq
 
 COPY docker/bin /usr/local/bin/
 

@@ -37,6 +37,7 @@ Imports:
     zip
 Suggests:
     callr,
+    cli,
     covr,
     httr,
     jsonvalidate,
@@ -46,6 +47,7 @@ Suggests:
     redux,
     ssh,
     testthat (>= 2.1.0),
+    tidyselect,
     withr
 Remotes:
     mrc-ide/naomi,

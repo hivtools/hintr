@@ -14,7 +14,7 @@ test_that("prerun returns project state", {
   for (data in state$datasets) {
     expect_setequal(names(data), c("path", "filename"))
     expect_match(
-      normalizePath(data$path, winslash = "/"),
+      normalizePath(data$path, winslash = "/", mustWork = FALSE),
       paste0(substring(
         normalizePath(prerun_setup$queue$inputs_dir, winslash = "/"),
         2), "/\\w+"))

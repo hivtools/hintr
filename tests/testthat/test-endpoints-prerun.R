@@ -17,7 +17,7 @@ test_that("prerun endpoint creates outputs and returns state", {
   for (data in state$datasets) {
     expect_setequal(names(data), c("path", "filename"))
     expect_match(
-      normalizePath(data$path, winslash = "/"),
+      normalizePath(data$path, winslash = "/", mustWork = FALSE),
       paste0(substring(
         normalizePath(prerun_setup$queue$inputs_dir, winslash = "/"),
         2), "/\\w+"))
@@ -69,7 +69,7 @@ test_that("api can call prerun endpoint", {
   for (data in state$datasets) {
     expect_setequal(names(data), c("path", "filename"))
     expect_match(
-      normalizePath(data$path, winslash = "/"),
+      normalizePath(data$path, winslash = "/", mustWork = FALSE),
       paste0(substring(
         normalizePath(prerun_setup$queue$inputs_dir, winslash = "/"),
         2), "/\\w+"))
@@ -102,7 +102,9 @@ test_that("api can call prerun endpoint", {
 
 test_that("prerun endpoint errors if file missing", {
   prerun_setup <- setup_prerun_queue()
-  files <- list.files(prerun_setup$queue$inputs_dir, full.names = TRUE)
+  files <- normalizePath(
+    list.files(prerun_setup$queue$inputs_dir, full.names = TRUE),
+    winslash = "/")
   anc <- files[basename(files) == "anc.csv"]
   programme <- files[basename(files) == "programme.csv"]
   unlink(anc)

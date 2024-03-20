@@ -177,7 +177,7 @@ test_that("can check region file spectrum codes are valid", {
     expect_error(
       assert_region_codes_valid(json),
       paste("Shape file contains 2 regions with missing spectrum region code,",
-            " code can only be missing for country level region.")),
+            "code can only be missing for country level region.")),
   features_contain_property = mock_contains_property)
 })
 
