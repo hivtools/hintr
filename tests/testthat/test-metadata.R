@@ -35,9 +35,10 @@ test_that("error thrown when metadata contains conflicting information", {
     indicator = rep("prevalence", 2),
     indicator_sort_order = c(1, 2)
   ))
-  with_mock(get_plotting_metadata = mock_get_plotting_metadata, {
-    expect_error(do_plotting_metadata("Malawi"),
-                 "Expected only 1 row for indicator, data type, plot type combination.
-Check each combination is unique in configuration.")
-  })
+  with_mocked_bindings(
+    expect_error(
+      do_plotting_metadata("Malawi"),
+      "Expected only 1 row for indicator, data type, plot type combination.
+Check each combination is unique in configuration."),
+    get_plotting_metadata = mock_get_plotting_metadata)
 })

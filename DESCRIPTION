@@ -40,7 +40,6 @@ Suggests:
     covr,
     httr,
     jsonvalidate,
-    mockr,
     mockery,
     pkgload,
     ps,
@@ -49,9 +48,6 @@ Suggests:
     testthat (>= 2.1.0),
     withr
 Remotes:
-    mrc-ide/rrq,
-    mrc-ide/mockr,
-    mrc-ide/naomi@gh-actions,
-    mrc-ide/naomi.options
+    mrc-ide/naomi,
 Config/testthat/edition: 3
 Config/testthat/parallel: true

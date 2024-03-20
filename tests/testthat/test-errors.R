@@ -4,14 +4,14 @@ test_that("validate errors", {
 
   mock_id <- mockery::mock(scalar("fake_key"), cycle = TRUE)
   f <- function(message, error, ...) {
-    with_mock(new_error_id = mock_id, {
+    with_mocked_bindings(
       tryCatch(
         hintr_error(message, error, ...),
         error = function(e) {
           porcelain:::porcelain_process_error(e)
         }
-      )
-    })
+      ),
+    new_error_id = mock_id)
   }
 
   e1 <- f("msg", "ERROR")
