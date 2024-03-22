@@ -1,10 +1,3 @@
-get_filter_mocks <- function() {
-  list(
-    get_filter_from_id = mock("filter_ref", cycle = TRUE),
-    get_x_axis_or_disagg_by_option = mock("x_axis_or_disagg_by_option", cycle = TRUE)
-  )
-}
-
 test_that("can build metadata response", {
   metadata <- do_plotting_metadata("MWI")
   expect_true(all(names(metadata) %in%
@@ -98,7 +91,7 @@ test_that("can get choropleth settings", {
 test_that("can get barchart settings", {
   mocks <- get_filter_mocks()
   base_filter_ids <- c("area", "period", "sex", "age")
-  all_filter_ids <- c("indicator", base_filter_ids)
+  all_filter_ids <- c(c("indicator", "detail"), base_filter_ids)
   expected_x_axis_or_disagg_by_calls <- get_mock_args_from_vector(base_filter_ids)
   expected_filter_calls <- get_mock_args_from_vector(all_filter_ids)
   barchart_settings <- call_with_mocks_object({
@@ -108,7 +101,7 @@ test_that("can get barchart settings", {
   expect_equal(mock_args(mocks$get_filter_from_id), expected_filter_calls)
   expect_equal(barchart_settings,
     list(
-      defaultFilterTypes = rep(list("filter_ref"), 5),
+      defaultFilterTypes = rep(list("filter_ref"), 6),
       plotSettings = list(
         list(
           id = scalar("x_axis"),

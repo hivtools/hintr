@@ -104,8 +104,8 @@ get_choropleth_settings <- function() {
 }
 
 get_barchart_settings <- function() {
-  base_filter_ids <- c("detail", "area", "period", "sex", "age")
-  all_filter_ids <- c("indicator", base_filter_ids)
+  base_filter_ids <- c("area", "period", "sex", "age")
+  all_filter_ids <- c(c("indicator", "detail"), base_filter_ids)
   x_axis_or_disagg_by_options <- lapply(base_filter_ids, get_x_axis_or_disagg_by_option)
   list(
     defaultFilterTypes = lapply(all_filter_ids, get_filter_from_id),
