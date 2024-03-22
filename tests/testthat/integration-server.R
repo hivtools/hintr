@@ -173,7 +173,7 @@ test_that("model interactions", {
   expect_equal(names(response$data), c("id"))
 
   ## Get the status
-  testthat::try_again(4, {
+  testthat::try_again(10, {
     Sys.sleep(2)
     r <- server$request("GET", paste0("/model/status/", response$data$id))
     expect_equal(httr::status_code(r), 200)
@@ -726,7 +726,7 @@ test_that("crashed worker can be detected", {
   ##
   ## We can use the ps package to get the tree of processes, and find
   ## the most recent one and kill that
-  w <- obj$worker_task_id()
+  w <- rrq::rrq_worker_task_id(controll = obj)
   expect_equal(unname(w), id)
   info <- obj$worker_info()[[names(w)]]
   children <- ps::ps_children(ps::ps_handle(info$pid))

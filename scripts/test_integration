@@ -6,4 +6,5 @@ env <- pkgload::load_all(".")$env
 test_env <- new.env(parent = env)
 testthat::test_file("tests/testthat/integration-server.R",
                     env = test_env,
-                    stop_on_failure = TRUE)
+                    stop_on_failure = TRUE,
+                    reporter = testthat::CheckReporter$new())

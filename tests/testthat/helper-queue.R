@@ -14,7 +14,7 @@ MockQueue <- R6::R6Class(
   cloneable = FALSE,
   public = list(
     submit = function(job, queue, environment = parent.frame()) {
-      self$queue$enqueue_(quote(stop("test error")))
+      self$queue$enqueue_(quote(cli::cli_abort("test error")))
     },
 
     submit_model = function(data, options) {
@@ -113,7 +113,7 @@ setup_prerun_queue <- function() {
 
   as_file <- function(filename, dir) {
     list(
-      path = scalar(normalizePath(file.path(dir, filename))),
+      path = scalar(normalizePath(file.path(dir, filename), winslash = "/")),
       filename = scalar(filename)
     )
   }

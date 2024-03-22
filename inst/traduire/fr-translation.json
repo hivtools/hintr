@@ -79,6 +79,7 @@
     "OUTPUT_GENERATION_FAILED": "Impossible de générer une sortie",
     "INVALID_DOWNLOAD_TYPE": "Impossible de générer le téléchargement pour le type de {{type}}, contactez l'administrateur système.",
     "FAILED_ADR_METADATA": "Échec de la génération des métadonnées, le format de sortie n'est pas valide.",
+    "FAILED_DOWNLOAD": "Échec de la génération du téléchargement, le format de sortie n'est pas valide",
     "UNKNOWN_OUTPUT_TYPE": "L'exécution du modèle a renvoyé un type de sortie inconnu, veuillez contacter le support.",
     "INVALID_TIME_SERIES_INPUT_TYPE": "Les données de séries chronologiques ne peuvent être retournées que pour {{types}}, reçu '{{type}}'.",
     "INPUT_TIME_SERIES_COLUMN_PLOT_TYPE": "Type de parcelle",

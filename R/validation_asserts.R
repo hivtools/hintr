@@ -78,7 +78,7 @@ assert_year_column <- function(data, col_name = "year") {
 #' Check that the values of a column are not NA
 #'
 #' @param data data to be checked
-#' @param column_names column name to be checked
+#' @param column_name column name to be checked
 #'
 #' @return TRUE if column contains no NA values else throws error
 #' @keywords internal

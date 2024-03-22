@@ -25,12 +25,13 @@ test_that("input_response correctly formats data and validates it", {
   mock_validate <- mockery::mock(TRUE)
   file <- list(path = "path", hash = "12345", filename = "original.pjnz", fromADR = FALSE,
                resource_url = "https://adr.unaids.org/file/123.pjnz")
-  with_mock(validate_json_schema = mock_validate, {
+  with_mocked_bindings(
     response <- input_response(list(data = list(country = scalar("Botswana")),
                                     filters = json_verbatim("null")),
                                "pjnz",
-                                file)
-  })
+                                file),
+    validate_json_schema = mock_validate
+  )
   expect_equal(response$data$country, scalar("Botswana"))
   expect_equal(response$hash, scalar("12345"))
   mockery::expect_called(mock_validate, 1)

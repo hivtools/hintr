@@ -17,7 +17,7 @@ download <- function(model_output, type, path_results, input, language = NULL) {
                      agyw = ".xlsx",
                      hintr_error(t_("INVALID_DOWNLOAD_TYPE", list(type = type)),
                                  "INVALID_DOWNLOAD_TYPE"))
-  path_results <- normalizePath(path_results, mustWork = TRUE)
+  path_results <- normalizePath(path_results, winslash = "/", mustWork = TRUE)
   download_path <- tempfile(type, tmpdir = path_results, fileext = file_ext)
 
   if (type == "spectrum") {

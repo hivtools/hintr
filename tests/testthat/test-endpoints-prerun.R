@@ -16,8 +16,11 @@ test_that("prerun endpoint creates outputs and returns state", {
     c("pjnz", "population", "shape", "survey", "programme", "anc"))
   for (data in state$datasets) {
     expect_setequal(names(data), c("path", "filename"))
-    expect_match(data$path,
-                 paste0(substring(prerun_setup$queue$inputs_dir, 2), "/\\w+"))
+    expect_match(
+      normalizePath(data$path, winslash = "/", mustWork = FALSE),
+      paste0(substring(
+        normalizePath(prerun_setup$queue$inputs_dir, winslash = "/"),
+        2), "/\\w+"))
   }
 
   ## Model fit
@@ -65,8 +68,11 @@ test_that("api can call prerun endpoint", {
     c("pjnz", "population", "shape", "survey", "programme", "anc"))
   for (data in state$datasets) {
     expect_setequal(names(data), c("path", "filename"))
-    expect_match(data$path,
-                 paste0(substring(prerun_setup$queue$inputs_dir, 2), "/\\w+"))
+    expect_match(
+      normalizePath(data$path, winslash = "/", mustWork = FALSE),
+      paste0(substring(
+        normalizePath(prerun_setup$queue$inputs_dir, winslash = "/"),
+        2), "/\\w+"))
   }
 
   ## Model fit
@@ -96,7 +102,9 @@ test_that("api can call prerun endpoint", {
 
 test_that("prerun endpoint errors if file missing", {
   prerun_setup <- setup_prerun_queue()
-  files <- list.files(prerun_setup$queue$inputs_dir, full.names = TRUE)
+  files <- normalizePath(
+    list.files(prerun_setup$queue$inputs_dir, full.names = TRUE),
+    winslash = "/")
   anc <- files[basename(files) == "anc.csv"]
   programme <- files[basename(files) == "programme.csv"]
   unlink(anc)
@@ -111,5 +119,8 @@ test_that("prerun endpoint errors if file missing", {
     "File 'programme' at path '%s' with original name '%s' does not exist.\n",
     "File 'anc' at path '%s' with original name '%s' does not exist.\n",
     "Make sure to upload them first with '/internal/upload/*' endpoints."),
-    programme, basename(programme), anc, basename(anc))))
+    normalizePath(programme,  winslash = "/", mustWork = FALSE),
+    basename(programme),
+    normalizePath(anc,  winslash = "/", mustWork = FALSE),
+    basename(anc))))
 })

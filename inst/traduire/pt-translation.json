@@ -79,6 +79,7 @@
     "OUTPUT_GENERATION_FAILED": "Falha em gerar resultados",
     "INVALID_DOWNLOAD_TYPE": "Falha em gerar o download para o tipo {{type}}, contactar o administrador do sistema.",
     "FAILED_ADR_METADATA": "Falha na geração de metadados, o formato de saída é inválido",
+    "FAILED_DOWNLOAD": "Falha ao gerar a transferência, o formato de saída é inválido",
     "INVALID_TIME_SERIES_INPUT_TYPE": "Os dados das séries cronológicas só podem ser devolvidos para {{types}}, recebidos '{{type}}'.",
     "INPUT_TIME_SERIES_COLUMN_PLOT_TYPE": "Tipo de terreno",
     "INPUT_TIME_SERIES_COLUMN_AREA_LEVEL": "Nível de área",

@@ -5,10 +5,12 @@ test_that("do_endpoint_model_options correctly builds options and fallbacks", {
   anc <- file_object(test_path("testdata", "anc.csv"))
 
   mock_get_controls_json <- mockery::mock('"{"test"}')
-  with_mock(get_controls_json = mock_get_controls_json,  {
-    json <- do_endpoint_model_options(shape, survey, art, anc)
-    args <- mockery::mock_args(mock_get_controls_json)
-  })
+  with_mocked_bindings(
+    {
+      json <- do_endpoint_model_options(shape, survey, art, anc)
+      args <- mockery::mock_args(mock_get_controls_json)
+    },
+    get_controls_json = mock_get_controls_json)
   options <- args[[1]][[3]]
   expect_setequal(names(options),
                   c("area_scope", "area_level",
@@ -91,10 +93,12 @@ test_that("do_endpoint_model_options without programme data", {
   survey <- file_object(file.path("testdata", "survey.csv"))
 
   mock_get_controls_json <- mockery::mock('"{"test"}')
-  with_mock(get_controls_json = mock_get_controls_json,  {
-    json <- do_endpoint_model_options(shape, survey, NULL, NULL)
-    args <- mockery::mock_args(mock_get_controls_json)
-  })
+  with_mocked_bindings(
+    {
+      json <- do_endpoint_model_options(shape, survey, NULL, NULL)
+      args <- mockery::mock_args(mock_get_controls_json)
+    },
+    get_controls_json = mock_get_controls_json)
   options <- args[[1]][[3]]
   expect_setequal(names(options),
                   c("area_scope", "area_level",
@@ -160,11 +164,13 @@ test_that("do_endpoint_model_options overrides anc year2 to 2022 if in data", {
 
   mock_get_controls_json <- mockery::mock('"{"test"}')
   mock_get_years <- mockery::mock(c(2022, 2021, 2020, 2019))
-  with_mock(get_controls_json = mock_get_controls_json,
-            get_years = mock_get_years, {
-    json <- do_endpoint_model_options(shape, survey, art, anc)
-    args <- mockery::mock_args(mock_get_controls_json)
-  })
+  with_mocked_bindings(
+    {
+      json <- do_endpoint_model_options(shape, survey, art, anc)
+      args <- mockery::mock_args(mock_get_controls_json)
+    },
+    get_controls_json = mock_get_controls_json,
+    get_years = mock_get_years)
   overrides <- args[[1]][[4]]
   ## Year 1 defaults are NULL as survey year not in ANC years
   expect_equal(overrides$anc_prevalence_year1, scalar(""))
@@ -347,10 +353,12 @@ test_that("model options work when survey_mid_calendar_quarter missing", {
   survey$path <- t
 
   mock_get_controls_json <- mockery::mock('"{"test"}')
-  with_mock(get_controls_json = mock_get_controls_json,  {
-    json <- do_endpoint_model_options(shape, survey, art, anc)
-    args <- mockery::mock_args(mock_get_controls_json)
-  })
+  with_mocked_bindings(
+    {
+      json <- do_endpoint_model_options(shape, survey, art, anc)
+      args <- mockery::mock_args(mock_get_controls_json)
+    },
+    get_controls_json = mock_get_controls_json)
 
   ## Fallback set to most recent time option
   fallback <- args[[1]][[4]]

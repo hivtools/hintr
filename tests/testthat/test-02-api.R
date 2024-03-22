@@ -817,10 +817,10 @@ test_that("api can call endpoint_hintr_stop", {
 
   queue <- test_queue()
   mock_hintr_stop <- mockery::mock(function() NULL)
-  with_mock(hintr_stop = mock_hintr_stop, {
+  with_mocked_bindings({
     api <- api_build(queue)
     res <- api$request("POST", "/hintr/stop")
-  })
+  }, hintr_stop = mock_hintr_stop)
   expect_equal(res$status, 200)
   mockery::expect_called(mock_hintr_stop, 1)
 })

@@ -339,7 +339,7 @@ test_that("anc data can be validated can be run with relaxed validation", {
   write.csv(anc, t, row.names = FALSE)
 
   input <- validate_programme_survey_input(
-    t,
+    normalizePath(t, winslash = "/"),
     "anc",
     file.path("testdata", "malawi.geojson"))
   queue <- test_queue(workers = 0)
