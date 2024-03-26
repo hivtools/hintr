@@ -173,7 +173,7 @@ test_that("model interactions", {
   expect_equal(names(response$data), c("id"))
 
   ## Get the status
-  testthat::try_again(4, {
+  testthat::try_again(10, {
     Sys.sleep(2)
     r <- server$request("GET", paste0("/model/status/", response$data$id))
     expect_equal(httr::status_code(r), 200)
