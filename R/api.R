@@ -5,6 +5,7 @@ api_build <- function(queue, validate = FALSE, logger = NULL) {
   api$handle(endpoint_baseline_combined())
   api$handle(endpoint_validate_survey_programme())
   api$handle(endpoint_input_time_series_plot())
+  api$handle(endpoint_review_input_metadata())
   api$handle(endpoint_model_options())
   api$handle(endpoint_model_options_validate())
   api$handle(endpoint_model_submit(queue))
