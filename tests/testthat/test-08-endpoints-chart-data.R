@@ -11,6 +11,30 @@ test_that("input time series works with programme/art data", {
                c("plot_type", "area_level", "quarter"))
 })
 
+test_that("review inputs function works with anc", {
+  input_json <- setup_payload_input_time_series(
+    test_path("testdata"),
+    "anc.csv",
+    "anc")
+  input <- jsonlite::fromJSON(input_json)
+  input$data$programme <- list(
+    path = test_path("testdata", "programme.csv"),
+    hash = "12345",
+    filename = "programme",
+    fromADR = FALSE
+  )
+  input$data$survey <- list(
+    path = test_path("testdata", "survey.csv"),
+    hash = "12345",
+    filename = "survey",
+    fromADR = FALSE
+  )
+  input$iso3 <- "MWI"
+  input_json <- jsonlite::toJSON(input, auto_unbox = TRUE)
+  out <- review_input_filter_metadata(input_json)
+  # TODO test
+})
+
 test_that("input time series works with anc data", {
   input <- setup_payload_input_time_series(
     test_path("testdata"),

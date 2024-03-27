@@ -77,7 +77,8 @@ get_plot_settings_control <- function() {
     choropleth = get_choropleth_settings(),
     barchart = get_barchart_settings(),
     table = get_table_settings(),
-    bubble = get_bubble_settings()
+    bubble = get_bubble_settings(),
+    inputTimeSeries = get_input_time_series_setting()
   )
 }
 

@@ -127,6 +127,379 @@ input_time_series <- function(type, input) {
   })
 }
 
+review_input_filter_metadata <- function(input) {
+  input <- jsonlite::fromJSON(input)
+  types <- names(input$data)
+  types <- types[types != "shape"]
+  
+  list(
+    filterTypes = get_review_input_filter_types(input, types),
+    indicators = get_review_input_indicators(types),
+    plotSettingsControl = list(
+      timeSeries = get_time_series_settings(),
+      inputChoropleth = get_input_choropleth_settings()
+    )
+  )
+}
+
+get_review_input_filter_types <- function(input, types) {
+  json <- hintr_geojson_read(input$data$shape)
+  base_filters <- list(
+    list(
+      id = scalar("area"),
+      column_id = scalar("area_id"),
+      optons = json_verbatim("null"),
+      use_shape_regions = scalar(TRUE)
+    ),
+    list(
+      id = scalar("map_area_level"),
+      column_id = scalar("area_level"),
+      options = get_level_options(json)
+    )
+  )
+  Reduce(append_filter_types(input), c(list(NULL), types))
+}
+
+append_filter_types <- function(input) {
+  function(filter_types, type) {
+    append(filter_types, c(get_time_series_filter_types(input, type),
+                           get_map_filter_types(input, type)))
+  }
+}
+
+get_review_input_indicators <- function(types) {
+  metadata <- naomi::get_metadata()
+  indicators <- metadata[metadata$data_type %in% types, ]
+}
+
+get_time_series_filter_types <- function(input, type) {
+  if (type == "anc") {
+    get_anc_time_series_filter_types(input)
+  } else if (type == "programme") {
+    get_programme_time_series_filter_types(input)
+  }
+}
+
+get_anc_time_series_filter_types <- function(input) {
+  data <- naomi::prepare_input_time_series_anc(
+    input$data$anc$path, input$data$shape$path
+  )
+  data <- as.data.frame(data, stringsAsFactors = FALSE)
+  columns <- get_anc_time_series_columns(data)
+  plot_type_filter <- list(
+    id = scalar("time_series_anc_plot_type"),
+    column_id = scalar("anc_plot_type"),
+    options = get_selected_mappings(columns, "plot_type",
+                                    key = "values")
+  )
+  area_level_filter <- list(
+    id = scalar("time_series_anc_area_level"),
+    column_id = scalar("area_level"),
+    options = get_selected_mappings(columns, "area_level",
+                                    key = "values")
+  )
+  age_filter <- list(
+    id = scalar("time_series_anc_age"),
+    column_id = scalar("age"),
+    options = get_selected_mappings(columns, "age",
+                                    key = "values")
+  )
+  list(plot_type_filter, area_level_filter, age_filter)
+}
+
+get_programme_time_series_filter_types <- function(input) {
+  data <- naomi::prepare_input_time_series_art(
+    input$data$programme$path, input$data$shape$path
+  )
+  data <- as.data.frame(data, stringsAsFactors = FALSE)
+  columns <- get_programme_time_series_columns(data)
+  plot_type_filter <- list(
+    id = scalar("time_series_programme_plot_type"),
+    column_id = scalar("programme_plot_type"),
+    options = get_selected_mappings(columns, "plot_type",
+                                    key = "values")
+  )
+  area_level_filter <- list(
+    id = scalar("time_series_programme_area_level"),
+    column_id = scalar("area_level"),
+    options = get_selected_mappings(columns, "area_level",
+                                  key = "values")
+  )
+  quarter_filter <- list(
+    id = scalar("time_series_programme_quarter"),
+    column_id = scalar("quarter"),
+    options = get_selected_mappings(columns, "quarter",
+                                    key = "values")
+  )
+  filter_types <- list(plot_type_filter, area_level_filter,
+                       quarter_filter)
+}
+
+get_map_filter_types <- function(input, type) {
+  if (type == "anc") {
+    get_anc_map_filter_types(input)
+  } else if (type == "programme") {
+    get_programme_map_filter_types(input)
+  } else if (type == "survey") {
+    get_survey_map_filter_types(input)
+  }
+}
+
+get_anc_map_filter_types <- function(input) {
+  data <- as.data.frame(naomi::read_anc_testing(input$data$anc$path))
+  data <- naomi::calculate_prevalence_art_coverage(data)
+  year_filter <- list(
+    id = scalar("map_anc_year"),
+    label = scalar(t_("INPUT_TIME_SERIES_COLUMN_YEAR")),
+    column_id = scalar("year"),
+    options = get_year_filters(data)
+  )
+  indicator_filter <- list(
+    id = scalar("map_anc_indicator"),
+    column_id = scalar("indicator"),
+    options = get_indicator_filters(data, "anc")
+  )
+  list(year_filter, indicator_filter)
+}
+
+get_programme_map_filter_types <- function(input) {
+  data <- read_csv(input$data$programme$path, header = TRUE)
+  quarter_filter <- list(
+    id = scalar("map_programme_quarter"),
+    column_id = scalar("quarter"),
+    options = get_quarter_filters(data)
+  )
+  age_filter <- list(
+    id = scalar("map_programme_age"),
+    column_id = scalar("age"),
+    options = get_age_filters(data)
+  )
+  sex_filter <- list(
+    id = scalar("map_programme_sex"),
+    column_id = scalar("sex"),
+    options = get_sex_filters(data)
+  )
+  indicator_filter <- list(
+    id = scalar("map_programme_indicator"),
+    column_id = scalar("indicator"),
+    options = get_indicator_filters(data, "programme")
+  )
+  list(quarter_filter, age_filter, sex_filter, indicator_filter)
+}
+
+get_survey_map_filter_types <- function(input) {
+  data <- read_csv(input$data$survey$path, header = TRUE)
+  age_filter <- list(
+    id = scalar("map_survey_age"),
+    column_id = scalar("age"),
+    options = get_age_filters(data)
+  )
+  survey_filter <- list(
+    id = scalar("map_survey_surveys"),
+    column_id = scalar("survery_id"),
+    options = get_survey_filters(data)
+  )
+  sex_filter <- list(
+    id = scalar("map_survey_sex"),
+    column_id = scalar("sex"),
+    options = get_sex_filters(data)
+  )
+  indicator_filter <- list(
+    id = scalar("map_survey_indicator"),
+    column_id = scalar("indicator"),
+    options = get_indicator_filters(data, "survey")
+  )
+  list(age_filter, survey_filter, sex_filter, indicator_filter)
+}
+
+get_time_series_settings <- function() {
+  list(
+    plotSettings = list(
+      list(
+        id = scalar("time_series_data_source"),
+        label = scalar(t_("REVIEW_INPUT_DATA_SOURCE")),
+        options = get_time_series_data_source_options()
+      )
+    )
+  )
+}
+
+get_time_series_data_source_options <- function() {
+  list(
+    list(
+      id = scalar("programme"),
+      label = scalar(t_("REVIEW_INPUT_PROGRAMME")),
+      effect = list(
+        setFilters = list(
+          list(
+            filterId = scalar("time_series_programme_plot_type"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_PLOT_TYPE")),
+            stateFilterId = scalar("plotType")
+          ),
+          list(
+            filterId = scalar("time_series_programme_area_level"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA_LEVEL")),
+            stateFilterId = scalar("detail")
+          ),
+          list(
+            filterId = scalar("time_series_programme_quarter"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_QUARTER")),
+            stateFilterId = scalar("quarter")
+          )
+        ),
+        setMultiple = list("time_series_programme_quarter")
+      )
+    ),
+    list(
+      id = scalar("anc"),
+      label = scalar(t_("REVIEW_INPUT_ANC")),
+      effect = list(
+        setFilters = list(
+          list(
+            filterId = scalar("time_series_anc_plot_type"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_PLOT_TYPE")),
+            stateFilterId = scalar("plotType")
+          ),
+          list(
+            filterId = scalar("time_series_anc_area_level"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA_LEVEL")),
+            stateFilterId = scalar("detail")
+          ),
+          list(
+            filterId = scalar("time_series_anc_age"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AGE")),
+            stateFilterId = scalar("age")
+          )
+        )
+      )
+    )
+  )
+}
+
+get_input_choropleth_settings <- function() {
+  list(
+    plotSettings = list(
+      list(
+        id = scalar("input_choropleth_data_source"),
+        label = scalar(t_("REVIEW_INPUT_DATA_SOURCE")),
+        options = get_input_choropleth_data_source_options()
+      )
+    )
+  )
+}
+
+get_input_choropleth_data_source_options <- function() {
+  list(
+    list(
+      id = scalar("survey"),
+      label = scalar(t_("REVIEW_INPUT_SURVEY")),
+      effect = list(
+        setFilters = list(
+          list(
+            filterId = scalar("map_survey_indicator"),
+            label = scalar(t_("OUTPUT_FILTER_INDICATOR")),
+            stateFilterId = scalar("indicator")
+          ),
+          list(
+            filterId = scalar("map_survey_area_level"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA_LEVEL")),
+            stateFilterId = scalar("detail")
+          ),
+          list(
+            filterId = scalar("area"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA")),
+            stateFilterId = scalar("area")
+          ),
+          list(
+            filterId = scalar("map_survey_sex"),
+            label = scalar(t_("OUTPUT_FILTER_SEX")),
+            stateFilterId = scalar("sex")
+          ),
+          list(
+            filterId = scalar("map_survey_age"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AGE")),
+            stateFilterId = scalar("age")
+          ),
+          list(
+            filterId = scalar("map_survey_surveys"),
+            label = scalar(t_("REVIEW_INPUT_SURVEY")),
+            stateFilterId = scalar("survey_id")
+          )
+        ),
+        setMultiple = list("area")
+      )
+    ),
+    list(
+      id = scalar("programme"),
+      label = scalar(t_("REVIEW_INPUT_PROGRAMME")),
+      effect = list(
+        setFilters = list(
+          list(
+            filterId = scalar("map_programme_indicator"),
+            label = scalar(t_("OUTPUT_FILTER_INDICATOR")),
+            stateFilterId = scalar("indicator")
+          ),
+          list(
+            filterId = scalar("map_area_level"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA_LEVEL")),
+            stateFilterId = scalar("detail")
+          ),
+          list(
+            filterId = scalar("area"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA")),
+            stateFilterId = scalar("area")
+          ),
+          list(
+            filterId = scalar("map_programme_quarter"),
+            label = scalar(t_("OUTPUT_FILTER_PERIOD")),
+            stateFilterId = scalar("period")
+          ),
+          list(
+            filterId = scalar("map_programme_sex"),
+            label = scalar(t_("OUTPUT_FILTER_SEX")),
+            stateFilterId = scalar("sex")
+          ),
+          list(
+            filterId = scalar("map_programme_age"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AGE")),
+            stateFilterId = scalar("age")
+          )
+        ),
+        setMultiple = list("area")
+      )
+    ),
+    list(
+      id = scalar("anc"),
+      label = scalar(t_("REVIEW_INPUT_ANC")),
+      effect = list(
+        setFilters = list(
+          list(
+            filterId = scalar("map_anc_indicator"),
+            label = scalar(t_("OUTPUT_FILTER_INDICATOR")),
+            stateFilterId = scalar("indicator")
+          ),
+          list(
+            filterId = scalar("map_area_level"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA_LEVEL")),
+            stateFilterId = scalar("detail")
+          ),
+          list(
+            filterId = scalar("area"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA")),
+            stateFilterId = scalar("area")
+          ),
+          list(
+            filterId = scalar("map_anc_year"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_YEAR")),
+            stateFilterId = scalar("year")
+          )
+        ),
+        setMultiple = list("area")
+      )
+    )
+  )
+}
+
 model_options_validate <- function(input) {
   input <- jsonlite::fromJSON(input)
   tryCatch({

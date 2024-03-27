@@ -159,6 +159,18 @@ endpoint_input_time_series_plot <- function() {
                                     returning = response)
 }
 
+endpoint_review_input_metadata <- function() {
+  input <- porcelain::porcelain_input_body_json(
+    "input", "ReviewInputFilterMetadataRequest.schema", schema_root())
+  response <- porcelain::porcelain_returning_json(
+    "ReviewInputFilterMetadataResponse.schema", schema_root())
+  porcelain::porcelain_endpoint$new("POST",
+                                    "/review-input/metadata",
+                                    review_input_filter_metadata,
+                                    input,
+                                    returning = response)
+}
+
 returning_json_version <- function(schema = NULL, root = NULL,
                                    status_code = 200L) {
   ## This is the same as porcelain::porcelain_returning_json except we
