@@ -33,9 +33,10 @@ test_that("endpoint_validate_baseline validates the data in the response", {
   input <- validate_baseline_input(file.path("testdata", "Botswana2018.PJNZ"),
                                    "pjnz")
   mock_validate_json_schema <- mockery::mock(TRUE, cycle = TRUE)
-  with_mock(validate_json_schema = mock_validate_json_schema, {
-    response <- validate_baseline(input)
-  })
+  with_mocked_bindings(
+    response <- validate_baseline(input),
+    validate_json_schema = mock_validate_json_schema
+  )
 
   mockery::expect_called(mock_validate_json_schema, 1)
   mockery::expect_args(mock_validate_json_schema, 1, hintr:::to_json(response),
@@ -83,9 +84,10 @@ test_that("error thrown if more than 1 country with a 0 spectrum region code", {
               "zmb_all_pjnz_extract.zip"),
     "pjnz")
   mock_region_code <- mockery::mock(0, cycle = TRUE)
-  with_mock(read_spectrum_region_code = mock_region_code, {
-    error <- expect_error(validate_baseline(input))
-  })
+  with_mocked_bindings(
+    error <- expect_error(validate_baseline(input)),
+    read_spectrum_region_code = mock_region_code
+  )
   expect_equal(error$data[[1]]$error, scalar("INVALID_FILE"))
   expect_match(error$data[[1]]$detail, scalar(paste0(
     "Zip contains 10 PJNZ files with spectrum region code 0. Should be max 1",

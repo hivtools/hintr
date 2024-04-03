@@ -2,8 +2,8 @@
 # hintr
 
 <!-- badges: start -->
-[![Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip)
-[![Build status](https://badge.buildkite.com/c9753af77df495db4ac498034dc51413c343d6837535e36ccb.svg)](https://buildkite.com/mrc-ide/hintr)
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![R-CMD-check](https://github.com/mrc-ide/hintr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mrc-ide/hintr/actions/workflows/R-CMD-check.yaml)
 [![codecov.io](https://codecov.io/github/mrc-ide/hintr/coverage.svg?branch=master)](https://codecov.io/github/mrc-ide/hintr?branch=master)
 <!-- badges: end -->
 

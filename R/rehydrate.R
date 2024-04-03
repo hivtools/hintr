@@ -26,7 +26,7 @@ rehydrate_submit <- function(queue) {
       assert_file_exists(input$file$path)
       list(id = scalar(queue$submit_rehydrate(input$file)))
     }, error = function(e) {
-      hintr_error(e$message, "REHYDRATE_SUBMIT_FAILED")
+      hintr_error(api_error_msg(e), "REHYDRATE_SUBMIT_FAILED")
     })
   }
 }
@@ -35,7 +35,7 @@ rehydrate_result <- function(queue) {
   function(id) {
     res <- queue$result(id)
     if (is_error(res)) {
-      hintr_error(res$message, "PROJECT_REHYDRATE_FAILED")
+      hintr_error(api_error_msg(res), "PROJECT_REHYDRATE_FAILED")
     }
     res
   }

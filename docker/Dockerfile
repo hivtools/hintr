@@ -14,15 +14,13 @@ RUN install_packages --repo=https://mrc-ide.r-universe.dev \
         jsonlite \
         jsonvalidate \
         lgr \
-        mockr \
         naomi.options \
         plumber \
         porcelain \
         ps \
         remotes \
         rlang \
-        rrq \
-        testthat.buildkite
+        rrq
 
 COPY docker/bin /usr/local/bin/
 
@@ -30,8 +28,8 @@ COPY docker/bin /usr/local/bin/
 # github. However, limt this (and prefer updating the drat) as this
 # can hit rate limits as we cannot use a PAT when building the
 # container.
-RUN install_remote \
-    mrc-ide/naomi.options
+# RUN install_remote \
+#    mrc-ide/naomi.options
 
 COPY . /src
 RUN R CMD INSTALL /src/naomi \

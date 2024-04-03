@@ -13,8 +13,11 @@ test_that("prerun returns project state", {
     c("pjnz", "population", "shape", "survey", "programme", "anc"))
   for (data in state$datasets) {
     expect_setequal(names(data), c("path", "filename"))
-    expect_match(data$path,
-                 paste0(substring(prerun_setup$queue$inputs_dir, 2), "/\\w+"))
+    expect_match(
+      normalizePath(data$path, winslash = "/", mustWork = FALSE),
+      paste0(substring(
+        normalizePath(prerun_setup$queue$inputs_dir, winslash = "/"),
+        2), "/\\w+"))
   }
 
   ## Model fit
@@ -77,7 +80,8 @@ test_that("hintr_submit_prerun uploads files and returns output zip", {
   out <- hintr_submit_prerun(prerun_inputs, mock_model, mock_calibrate,
                              "http://localhost", port = server$port,
                              output_zip_path = t)
-  expect_equal(out, t)
+  expect_equal(normalizePath(out, winslash = "/"),
+               normalizePath(t,  winslash = "/"))
 
   expect_equal(length(list.files(inputs_dir)) - existing_inputs, 6)
   expect_equal(length(list.files(results_dir)) - existing_outputs, 3)
@@ -114,7 +118,8 @@ test_that("hintr_submit_prerun uploads plot data as duckdb", {
                              mock_calibrate_v1.1.15,
                              "http://localhost", port = server$port,
                              output_zip_path = t)
-  expect_equal(out, t)
+  expect_equal(normalizePath(out, winslash = "/"),
+               normalizePath(t,  winslash = "/"))
 
   expect_equal(length(list.files(inputs_dir)) - existing_inputs, 6)
   expect_equal(length(list.files(results_dir)) - existing_outputs, 3)
