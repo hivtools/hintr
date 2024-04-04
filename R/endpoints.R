@@ -833,6 +833,21 @@ download_result <- function(queue) {
   }
 }
 
+download_result_path <- function(queue) {
+  function(id) {
+    tryCatch(
+      res <- get_download_result(queue, id, "FAILED_DOWNLOAD"),
+      error = function(e) {
+        if (is_porcelain_error(e)) {
+          stop(e)
+        } else {
+          hintr_error(api_error_msg(e), "FAILED_TO_RETRIEVE_RESULT")
+        }
+      }
+    )
+  }
+}
+
 build_content_disp_header <- function(areas, filename, ext) {
   sprintf('attachment; filename="%s"',
           paste0(paste(c(areas, filename, iso_time_str()), collapse = "_"),

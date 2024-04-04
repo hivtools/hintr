@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "path": { "type": "string" },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "description": { "type": "string" },
+        "areas": { "type": "string" },
+        "type": { "type": "string" }
+      }
+    },
+    "required": [ "description", "areas", "type" ]
+  },
+  "required": [ "path", "metadata" ]
+}
