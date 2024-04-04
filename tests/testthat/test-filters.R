@@ -246,7 +246,7 @@ test_that("error thrown for unknown type", {
 test_that("can get area filter option", {
   test_mock_model_available()
   output <- naomi::read_hintr_output(mock_calibrate$plot_data_path)
-  expect_equal(get_area_level_filter_option(output), list(
+  expect_equal(get_area_id_filter_default(output), list(
     list(
       id = scalar("MWI"),
       label = scalar("Malawi - Demo")
@@ -254,7 +254,7 @@ test_that("can get area filter option", {
   ))
 
   output$area_name[[1]] <- "test"
-  expect_equal(get_area_level_filter_option(output), list(
+  expect_equal(get_area_id_filter_default(output), list(
     list(
       id = scalar("MWI"),
       label = scalar("test")
@@ -262,7 +262,7 @@ test_that("can get area filter option", {
   ))
 
   output <- output[output$area_level != 0, ]
-  expect_equal(get_area_level_filter_option(output), list(
+  expect_equal(get_area_id_filter_default(output), list(
     list(
       id = scalar("MWI_1_1_demo"),
       label = scalar("Northern")

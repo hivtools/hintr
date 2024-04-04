@@ -221,6 +221,16 @@ test_that("do_validate_survey validates survey file", {
   expect_length(data$warnings, 0)
 })
 
+test_that("do_validate_vmmc validates vmmc file", {
+  vmmc <- file_object(test_path("testdata", "vmmc.xlsx"))
+  shape <- file_object(test_path("testdata", "malawi.geojson"))
+  data <- do_validate_vmmc(vmmc, shape)
+  ## Some arbitrary test that the data has actually been returned
+  expect_equal(data, list(data = json_verbatim("null"),
+                          filters = json_verbatim("null"),
+                          warnings = list()))
+})
+
 test_that("do_validate_programme returns useful error from shapefile comparison", {
   programme <- file_object(file.path("testdata", "programme.csv"))
   shape <- file_object(file.path("testdata", "malawi_missing_regions.geojson"))

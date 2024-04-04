@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 "Run a model and save outputs at specified paths
 Usage:
-  run_model (--model-payload=<model-payload> --calibrate-payload=<calibrate-payload> --download-payload=<download-payload> --model-output-path=<output-path> --calibrate-output-path=<calibrate-output-path> --calibrate-plot-path=<calibrate-plot-path> --spectrum-path=<spectrum-path> --coarse-output-path=<coarse-output-path> --summary-report-path=<summary-report-path>)
+  run_model (--model-payload=<model-payload> --calibrate-payload=<calibrate-payload> --download-payload=<download-payload> --model-output-path=<output-path> --calibrate-output-path=<calibrate-output-path> --calibrate-plot-path=<calibrate-plot-path> --spectrum-path=<spectrum-path> --coarse-output-path=<coarse-output-path> --summary-report-path=<summary-report-path> --agyw-path=<agyw-path>)
 
 Options:
   -h --help                                       Show this screen.
@@ -14,6 +14,7 @@ Options:
   --spectrum-path=<spectrum-path>                 Path to spectrum zip download.
   --coarse-output-path=<coarse-output-path>       Path to summary zip download.
   --summary-report-path=<summary-report-path>     Path to summary report download.
+  --agyw-path=<agyw-path>                         Path to AGYW tool download.
 " -> usage
 
 dat <- docopt::docopt(usage)
@@ -71,3 +72,10 @@ summary_report <- naomi::hintr_prepare_summary_report_download(
   calibrated, dat$summary_report_path)
 message(sprintf("Saving summary report at %s",
                 normalizePath(dat$summary_report_path, mustWork = TRUE)))
+
+
+agyw_tool <- naomi::hintr_prepare_agyw_download(calibrated,
+                                                model_payload$data$pjnz,
+                                                dat$agyw_path)
+message(sprintf("Saving AGYW tool at %s",
+                normalizePath(dat$agyw_path, mustWork = TRUE)))

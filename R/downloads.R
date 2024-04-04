@@ -1,5 +1,4 @@
-download <- function(model_output, type, path_results, notes, state,
-                     language = NULL) {
+download <- function(model_output, type, path_results, input, language = NULL) {
   if (!is.null(language)) {
     reset_hintr <- traduire::translator_set_language(language)
     reset_naomi <-
@@ -15,17 +14,23 @@ download <- function(model_output, type, path_results, notes, state,
                      coarse_output = ".zip",
                      summary = ".html",
                      comparison = ".html",
+                     agyw = ".xlsx",
                      hintr_error(t_("INVALID_DOWNLOAD_TYPE", list(type = type)),
                                  "INVALID_DOWNLOAD_TYPE"))
   path_results <- normalizePath(path_results, mustWork = TRUE)
   download_path <- tempfile(type, tmpdir = path_results, fileext = file_ext)
 
   if (type == "spectrum") {
-    out <- naomi::hintr_prepare_spectrum_download(model_output, download_path,
-                                                  notes)
-    if (file_exists(out$path) && !is.null(state)) {
-      add_state_json(out$path, state)
+    out <- naomi::hintr_prepare_spectrum_download(model_output,
+                                                  download_path,
+                                                  input$notes,
+                                                  input$vmmc)
+    if (file_exists(out$path) && !is.null(input$state)) {
+      add_state_json(out$path, input$state)
     }
+  } else if (type == "agyw") {
+    out <- naomi::hintr_prepare_agyw_download(model_output, input$pjnz,
+                                              download_path)
   } else {
     func <- switch(type,
                    coarse_output = naomi::hintr_prepare_coarse_age_group_download,

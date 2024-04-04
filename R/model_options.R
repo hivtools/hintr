@@ -56,7 +56,6 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
   ## ANC options
   anc_year_options <- NULL
   anc_year1_default <- scalar("")
-  anc_year2_default <- scalar("")
   if (has_anc) {
     anc_data <- as.data.frame(naomi::read_anc_testing(anc$path))
     anc_years <- get_years(anc_data)
@@ -64,9 +63,6 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
       list(id = scalar(as.character(year)),
            label = scalar(as.character(year)))
     })
-    if (2022 %in% anc_years) {
-      anc_year2_default <- scalar(as.character(2022))
-    }
     survey_year <- naomi::calendar_quarter_to_year(most_recent_survey_quarter)
     if (survey_year %in% anc_years) {
       anc_year1_default <- scalar(as.character(survey_year))
@@ -95,9 +91,7 @@ do_endpoint_model_options <- function(shape, survey, programme, anc) {
     survey_prevalence = survey_prevalence_options$default,
     survey_art_coverage = survey_art_coverage_options$default,
     anc_prevalence_year1 = anc_year1_default,
-    anc_prevalence_year2 = anc_year2_default,
-    anc_art_coverage_year1 = anc_year1_default,
-    anc_art_coverage_year2 = anc_year2_default
+    anc_art_coverage_year1 = anc_year1_default
   )
 
   additional_control_groups <- NULL
@@ -187,10 +181,10 @@ get_survey_options <- function(survey_data, metadata, indicator) {
                                        indicator)
   if (nrow(indicator_data) == 0) {
     ## Gets serialised to JSON and requires an obj
-    ## for options NULL -> {}
+    ## for options list -> []
     ## a string for default values
     return(list(
-      options = NULL,
+      options = list(),
       default = scalar("")
     ))
   }

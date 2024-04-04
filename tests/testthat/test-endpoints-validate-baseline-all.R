@@ -1,4 +1,10 @@
 test_that("endpoint_validate_baseline_combined correctly validates data", {
+  if (pkgload::is_dev_package("hintr")) {
+    # We're getting intermittent errors on CI related to storr
+    # not being able to open a file, try clear cache and see if this helps
+    hintenv$cache <- list()
+    gc()
+  }
   input <- validate_baseline_all_input(file.path("testdata", "Malawi2019.PJNZ"),
                                        file.path("testdata", "malawi.geojson"),
                                        file.path("testdata", "population.csv"))

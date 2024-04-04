@@ -173,7 +173,7 @@ test_that("model interactions", {
   expect_equal(names(response$data), c("id"))
 
   ## Get the status
-  testthat::try_again(4, {
+  testthat::try_again(10, {
     Sys.sleep(2)
     r <- server$request("GET", paste0("/model/status/", response$data$id))
     expect_equal(httr::status_code(r), 200)
@@ -316,13 +316,16 @@ test_that("real model can be run & calibrated by API", {
   response <- response_from_json(r)
   expect_equal(response$status, "success")
   expect_equal(response$errors, NULL)
-  expect_equal(names(response$data), c("data", "plottingMetadata", "warnings"))
+  expect_equal(names(response$data),
+               c("data", "plottingMetadata", "tableMetadata", "warnings"))
   expect_equal(names(response$data$data[[1]]),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
   expect_true(length(response$data$data) > 84042)
   expect_equal(names(response$data$plottingMetadata),
                c("barchart", "choropleth"))
+  expect_equal(names(response$data$tableMetadata),
+               c("presets"))
 
   ## Get path to result
   r <- test_server$request("GET", paste0("/calibrate/result/path/",
@@ -727,7 +730,7 @@ test_that("crashed worker can be detected", {
   ##
   ## We can use the ps package to get the tree of processes, and find
   ## the most recent one and kill that
-  w <- obj$worker_task_id()
+  w <- rrq::rrq_worker_task_id(controll = obj)
   expect_equal(unname(w), id)
   info <- obj$worker_info()[[names(w)]]
   children <- ps::ps_children(ps::ps_handle(info$pid))

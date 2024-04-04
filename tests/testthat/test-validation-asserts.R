@@ -167,15 +167,18 @@ test_that("can check region file spectrum codes are valid", {
   expect_true(assert_region_codes_valid(json))
 
   mock_contains_property <- mockery::mock(c(FALSE, TRUE, TRUE))
-  with_mock(features_contain_property = mock_contains_property, {
-    expect_true(assert_region_codes_valid(json))
-  })
+  with_mocked_bindings(
+    expect_true(assert_region_codes_valid(json)),
+    features_contain_property = mock_contains_property
+  )
 
   mock_contains_property <- mockery::mock(c(FALSE, FALSE, TRUE))
-  with_mock(features_contain_property = mock_contains_property, {
-    expect_error(assert_region_codes_valid(json),
-                 "Shape file contains 2 regions with missing spectrum region code, code can only be missing for country level region.")
-  })
+  with_mocked_bindings(
+    expect_error(
+      assert_region_codes_valid(json),
+      paste("Shape file contains 2 regions with missing spectrum region code,",
+            "code can only be missing for country level region.")),
+  features_contain_property = mock_contains_property)
 })
 
 test_that("can check a column for expected values", {
@@ -306,8 +309,10 @@ test_that("can check for non NA values", {
 })
 
 test_that("can assert data has to have 1 area level", {
+  testthat::skip_on_covr()
   data <- read_csv("testdata/programme.csv")
-  shape_regions <- read_geojson_data(list(path = "testdata/malawi.geojson"))
+  shape_regions <- read_geojson_data(list(path = "testdata/malawi.geojson",
+                                          hash = "123"))
   expect_true(assert_single_level_per_year(shape_regions, data))
   data$area_id[1] <- "MWI_2_1_demo"
   data$area_id[3] <- "MWI_2_1_demo"
@@ -315,4 +320,12 @@ test_that("can assert data has to have 1 area level", {
                paste0("Data can only be for regions at a single area level ",
                       "per year. In uploaded data year 2011 has area levels ",
                       "2, 4, year 2012 has area levels 2, 4."))
+})
+
+test_that("can assert that excel file has a required sheet", {
+  data <- test_path("testdata", "vmmc.xlsx")
+  expect_error(assert_sheet_exists(data, "My sheet"),
+               paste("Uploaded Excel file is missing required sheet",
+                     "'My sheet'. Please check resource and try again."))
+  expect_true(assert_sheet_exists(data, "Datapack inputs"))
 })

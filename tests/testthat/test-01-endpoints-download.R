@@ -375,7 +375,7 @@ test_that("trying to get download with invalid result returns error", {
   out <- endpoint$run(q$calibrate_id)
   expect_equal(out$error$data[[1]]$error, scalar("OUTPUT_GENERATION_FAILED"))
   expect_match(out$error$data[[1]]$detail,
-               scalar("Failed to generate metadata, output format is invalid"))
+               scalar("Failed to generate download, output format is invalid"))
   expect_equal(out$status_code, 400)
 })
 
@@ -849,4 +849,149 @@ test_that("comparison report download errors for old model output", {
   expect_equal(submit_response$status_code, 500)
   expect_equal(submit_response$value$errors[[1]]$detail, scalar(
     "Model output out of date please re-run model and try again."))
+})
+
+test_that("api can create agyw download", {
+  test_redis_available()
+  test_mock_model_available()
+  q <- test_queue_result()
+  api <- api_build(q$queue)
+
+  ## Prepare body
+  payload <- setup_payload_download_request(include_notes = FALSE,
+                                            include_state = FALSE,
+                                            include_pjnz = TRUE)
+
+  ## Submit download request
+  submit <- api$request("POST",
+                        paste0("/download/submit/agyw/", q$calibrate_id),
+                        body = payload)
+  submit_body <- jsonlite::fromJSON(submit$body)
+  expect_equal(submit$status, 200)
+  expect_true(!is.null(submit_body$data$id))
+
+  ## Status
+  out <- q$queue$queue$task_wait(submit_body$data$id)
+  status <- api$request("GET",
+                        paste0("/download/status/", submit_body$data$id))
+
+  expect_equal(status$status, 200)
+  status_body <- jsonlite::fromJSON(status$body)
+  expect_equal(status_body$data$id, submit_body$data$id)
+  expect_true(status_body$data$done)
+  expect_equal(status_body$data$status, "COMPLETE")
+  expect_true(status_body$data$success)
+  expect_equal(status_body$data$queue, 0)
+  expect_length(status_body$data$progress, 1)
+
+  ## Get result
+  res <- api$request("GET", paste0("/download/result/", submit_body$data$id))
+
+  expect_equal(res$status, 200)
+  expect_equal(res$headers$`Content-Type`, "application/octet-stream")
+  expect_match(res$headers$`Content-Disposition`,
+               'attachment; filename="MWI_AGYW_\\d+-\\d+.xlsx"')
+  ## Size of bytes is close to expected
+  size <- length(res$body)
+  expect_equal(res$headers$`Content-Length`, size)
+
+  ## Get HEAD
+  head_res <- api$request("HEAD",
+                          paste0("/download/result/", submit_body$data$id))
+
+  expect_equal(head_res$status, 200)
+  expect_equal(head_res$headers$`Content-Type`, "application/octet-stream")
+  expect_match(head_res$headers$`Content-Disposition`,
+               'attachment; filename="MWI_AGYW_\\d+-\\d+.xlsx"')
+  expect_equal(head_res$headers$`Content-Length`, size)
+  ## Plumber uses an empty string to represent an empty body
+  expect_null(head_res$body)
+})
+
+
+test_that("api: spectrum download ignores any pjnz passed in", {
+  test_redis_available()
+  test_mock_model_available()
+  q <- test_queue_result()
+  api <- api_build(q$queue)
+
+  ## Submit download request
+  payload <- setup_payload_download_request(include_pjnz = TRUE)
+  submit <- api$request("POST",
+                        paste0("/download/submit/spectrum/", q$calibrate_id),
+                        body = payload)
+  submit_body <- jsonlite::fromJSON(submit$body)
+  expect_equal(submit$status, 200)
+  expect_true(!is.null(submit_body$data$id))
+
+  ## Status
+  out <- q$queue$queue$task_wait(submit_body$data$id)
+  status <- api$request("GET",
+                        paste0("/download/status/", submit_body$data$id))
+
+  expect_equal(status$status, 200)
+  status_body <- jsonlite::fromJSON(status$body)
+  expect_equal(status_body$data$id, submit_body$data$id)
+  expect_true(status_body$data$done)
+  expect_equal(status_body$data$status, "COMPLETE")
+
+  ## Result can be fetched
+  res <- api$request("GET", paste0("/download/result/", submit_body$data$id))
+  expect_equal(res$status, 200)
+})
+
+test_that("api can include vmmc in spectrum download", {
+  test_redis_available()
+  test_mock_model_available()
+  q <- test_queue_result()
+  api <- api_build(q$queue)
+
+  ## Prepare body
+  payload <- setup_payload_download_request(include_vmmc = TRUE)
+
+  ## Submit download request
+  submit <- api$request("POST",
+                        paste0("/download/submit/spectrum/", q$calibrate_id),
+                        body = payload)
+  submit_body <- jsonlite::fromJSON(submit$body)
+  expect_equal(submit$status, 200)
+  expect_true(!is.null(submit_body$data$id))
+
+  ## Status
+  out <- q$queue$queue$task_wait(submit_body$data$id)
+  status <- api$request("GET",
+                        paste0("/download/status/", submit_body$data$id))
+
+  expect_equal(status$status, 200)
+  status_body <- jsonlite::fromJSON(status$body)
+  expect_equal(status_body$data$id, submit_body$data$id)
+  expect_true(status_body$data$done)
+  expect_equal(status_body$data$status, "COMPLETE")
+  expect_true(status_body$data$success)
+  expect_equal(status_body$data$queue, 0)
+  expect_length(status_body$data$progress, 1)
+
+  ## Get result
+  res <- api$request("GET", paste0("/download/result/", submit_body$data$id))
+
+  expect_equal(res$status, 200)
+  expect_equal(res$headers$`Content-Type`, "application/octet-stream")
+  expect_match(res$headers$`Content-Disposition`,
+               'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
+  ## Size of bytes is close to expected
+  size <- length(res$body)
+  expect_equal(res$headers$`Content-Length`, size)
+
+  t <- tempfile()
+  dest <- tempfile()
+  writeBin(as.vector(res$body), t)
+  zip::unzip(t, exdir = dest)
+
+  expect_true(INDICATORS_PATH %in% list.files(dest))
+
+  expect_true(PEPFAR_DATAPACK_PATH %in% list.files(dest))
+  pepfar_data <- read.csv(file.path(dest, PEPFAR_DATAPACK_PATH))
+  expect_true(!any(is.na(pepfar_data)))
+  expect_true(all(c("VMMC_CIRC_SUBNAT.T_1", "VMMC_TOTALCIRC_SUBNAT.T_1") %in%
+                    pepfar_data$indicator_code))
 })

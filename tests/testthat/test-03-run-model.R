@@ -1,11 +1,23 @@
 test_that("model can be run & calibrated and filters extracted", {
   test_mock_model_available()
   res <- process_result(mock_calibrate)
-  expect_equal(names(res), c("data", "plottingMetadata", "warnings"))
+  expect_equal(names(res),
+               c("data", "plottingMetadata", "tableMetadata", "warnings"))
   expect_equal(names(res$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
   expect_true(nrow(res$data) > 84042)
+  expect_equal(names(res$tableMetadata), "presets")
+
+  ## All table metadata rows and columns come from the data
+  data_names <- names(res$data)
+  for (preset in res$tableMetadata$presets) {
+    expect_true(preset$defaults$column$id %in% data_names,
+                sprintf("Column '%s' not a valid data column", preset$column))
+    expect_true(preset$defaults$row$id %in% data_names,
+                sprintf("Row '%s' not a valid data column", preset$row))
+  }
+
   expect_equal(names(res$plottingMetadata), c("barchart", "choropleth"))
   barchart <- res$plottingMetadata$barchart
   expect_equal(names(barchart), c("indicators", "filters", "defaults"))
@@ -22,7 +34,7 @@ test_that("model can be run & calibrated and filters extracted", {
   expect_length(barchart$filters[[2]]$options, 3)
   expect_equal(barchart$filters[[2]]$options[[2]]$id, scalar("CY2018Q3"))
   expect_equal(barchart$filters[[2]]$options[[2]]$label, scalar("September 2018"))
-  expect_equal(nrow(barchart$indicators), 23)
+  expect_equal(nrow(barchart$indicators), 25)
   expect_true(all(c("population", "prevalence", "plhiv", "art_coverage",
                     "art_current_residents", "art_current",
                     "untreated_plhiv_num", "aware_plhiv_prop",
@@ -31,7 +43,8 @@ test_that("model can be run & calibrated and filters extracted", {
                     "anc_clients", "anc_plhiv", "anc_already_art",
                     "anc_art_new", "anc_known_pos",
                     "anc_tested_pos", "anc_tested_neg", "plhiv_attend",
-                    "untreated_plhiv_attend") %in%
+                    "untreated_plhiv_attend", "aware_plhiv_attend",
+                    "unaware_plhiv_attend") %in%
                     barchart$indicators$indicator))
 
   choropleth <- res$plottingMetadata$choropleth
@@ -50,7 +63,7 @@ test_that("model can be run & calibrated and filters extracted", {
   expect_equal(choropleth$filters[[2]]$options[[2]]$id, scalar("CY2018Q3"))
   expect_equal(choropleth$filters[[2]]$options[[2]]$label,
                scalar("September 2018"))
-  expect_equal(nrow(choropleth$indicators), 23)
+  expect_equal(nrow(choropleth$indicators), 25)
   expect_true(all(!is.null(choropleth$indicators$error_low_column)))
   expect_true(all(!is.null(choropleth$indicators$error_high_column)))
   expect_true(all(c("population", "prevalence", "plhiv", "art_coverage",
@@ -61,7 +74,8 @@ test_that("model can be run & calibrated and filters extracted", {
                   "anc_clients", "anc_plhiv", "anc_already_art",
                   "anc_art_new", "anc_known_pos",
                   "anc_tested_pos", "anc_tested_neg", "plhiv_attend",
-                  "untreated_plhiv_attend") %in%
+                  "untreated_plhiv_attend", "aware_plhiv_attend",
+                  "unaware_plhiv_attend") %in%
                   choropleth$indicators$indicator))
 })
 
@@ -69,16 +83,18 @@ test_that("model without national level results can be processed", {
   test_mock_model_available()
   output <- naomi::read_hintr_output(mock_calibrate$plot_data_path)
   output <- output[output$area_level != 0, ]
-  output_temp <- tempfile()
+  output_temp <- tempfile(fileext = ".rds")
   saveRDS(output, output_temp)
   res <- process_result(list(plot_data_path = output_temp))
-  expect_equal(names(res), c("data", "plottingMetadata", "warnings"))
+  expect_equal(names(res),
+               c("data", "plottingMetadata", "tableMetadata", "warnings"))
   expect_equal(names(res$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
   expect_true(nrow(res$data) > 84042)
   expect_equal(as.data.frame(res$data)[1, "area_id"], "MWI_1_1_demo",
                ignore_attr = TRUE)
+  expect_equal(names(res$tableMetadata), "presets")
   expect_equal(names(res$plottingMetadata), c("barchart", "choropleth"))
   barchart <- res$plottingMetadata$barchart
   expect_equal(names(barchart), c("indicators", "filters", "defaults"))
@@ -95,7 +111,7 @@ test_that("model without national level results can be processed", {
   expect_length(barchart$filters[[2]]$options, 3)
   expect_equal(barchart$filters[[2]]$options[[2]]$id, scalar("CY2018Q3"))
   expect_equal(barchart$filters[[2]]$options[[2]]$label, scalar("September 2018"))
-  expect_equal(nrow(barchart$indicators), 23)
+  expect_equal(nrow(barchart$indicators), 25)
   expect_true(all(c("population", "prevalence", "plhiv", "art_coverage",
                     "art_current_residents", "art_current",
                     "untreated_plhiv_num", "aware_plhiv_prop",
@@ -104,7 +120,8 @@ test_that("model without national level results can be processed", {
                     "anc_clients", "anc_plhiv", "anc_already_art",
                     "anc_art_new", "anc_known_pos",
                     "anc_tested_pos", "anc_tested_neg", "plhiv_attend",
-                    "untreated_plhiv_attend") %in%
+                    "untreated_plhiv_attend", "aware_plhiv_attend",
+                    "unaware_plhiv_attend") %in%
                     barchart$indicators$indicator))
 
   choropleth <- res$plottingMetadata$choropleth
@@ -123,7 +140,7 @@ test_that("model without national level results can be processed", {
   expect_equal(choropleth$filters[[2]]$options[[2]]$id, scalar("CY2018Q3"))
   expect_equal(choropleth$filters[[2]]$options[[2]]$label,
                scalar("September 2018"))
-  expect_equal(nrow(choropleth$indicators), 23)
+  expect_equal(nrow(choropleth$indicators), 25)
   expect_true(all(c("population", "prevalence", "plhiv", "art_coverage",
                     "art_current_residents", "art_current",
                     "untreated_plhiv_num", "aware_plhiv_prop",
@@ -132,7 +149,8 @@ test_that("model without national level results can be processed", {
                     "anc_clients", "anc_plhiv", "anc_already_art",
                     "anc_art_new", "anc_known_pos",
                     "anc_tested_pos", "anc_tested_neg", "plhiv_attend",
-                    "untreated_plhiv_attend") %in%
+                    "untreated_plhiv_attend", "aware_plhiv_attend",
+                    "unaware_plhiv_attend") %in%
                     choropleth$indicators$indicator))
 
 })
@@ -214,7 +232,7 @@ test_that("real model can be run with csv2 data", {
     calendar_quarter_t2 = "CY2018Q3",
     calendar_quarter_t3 = "CY2019Q2",
     calendar_quarter_t4 = "CY2022Q3",
-    calendar_quarter_t5 = "CY2023Q3"
+    calendar_quarter_t5 = "CY2023Q3",
     survey_prevalence = c("DEMO2016PHIA", "DEMO2015DHS"),
     survey_art_coverage = "DEMO2016PHIA",
     survey_recently_infected = "DEMO2016PHIA",
@@ -270,7 +288,7 @@ test_that("mock model can be forced to error", {
     calendar_quarter_t2 = "CY2018Q3",
     calendar_quarter_t3 = "CY2019Q2",
     calendar_quarter_t4 = "CY2022Q3",
-    calendar_quarter_t5 = "CY2023Q3"
+    calendar_quarter_t5 = "CY2023Q3",
     survey_prevalence = c("DEMO2016PHIA", "DEMO2015DHS"),
     survey_art_coverage = "DEMO2016PHIA",
     survey_recently_infected = "DEMO2016PHIA",
@@ -302,4 +320,11 @@ test_that("mock model can be forced to error", {
     run_model(data, options, tempdir()),
     "Mock model has errored because option 'mock_model_trigger_error' is TRUE"
   )
+})
+
+test_that("table metadata has been translated", {
+  output <- naomi::read_hintr_output(mock_calibrate$plot_data_path)
+  filters <- get_model_output_filters(output)
+  metadata <- build_output_table_metadata(output, filters)
+  expect_equal(metadata$presets[[1]]$default$label, scalar("Sex by area"))
 })

@@ -62,15 +62,18 @@
     "QUEUE_STOPPING_WORKERS": "Stopping workers",
     "QUEUE_ID_NOT_SET": "Environment variable 'HINTR_QUEUE_ID' is not set",
     "METADATA_BUILD_INDICATOR": "Expected only 1 row for indicator, data type, plot type combination.\nCheck each combination is unique in configuration.",
+    "OUTPUT_FILTER_DETAIL_LEVEL": "Detail",
     "OUTPUT_FILTER_AREA": "Area",
     "OUTPUT_FILTER_PERIOD": "Period",
     "OUTPUT_FILTER_SEX": "Sex",
     "OUTPUT_FILTER_AGE": "Age",
     "OUTPUT_FILTER_DATA_TYPE": "Data type",
+    "OUTPUT_FILTER_AREA_LEVEL": "Area level",
     "MODEL_RESULT_OLD": "Can't download {{type}}, please re-run model and try download again.",
     "OUTPUT_GENERATION_FAILED": "Failed to generate output",
     "INVALID_DOWNLOAD_TYPE": "Failed to generate download for {{type}} type, contact system admin.",
     "FAILED_ADR_METADATA": "Failed to generate metadata, output format is invalid",
+    "FAILED_DOWNLOAD": "Failed to generate download, output format is invalid",
     "UNKNOWN_OUTPUT_TYPE": "Model run returned unknown output type, please contact support.",
     "INVALID_TIME_SERIES_INPUT_TYPE": "Time series data can only be returned for {{types}}, received '{{type}}'.",
     "INPUT_TIME_SERIES_COLUMN_PLOT_TYPE": "Plot type",
@@ -87,5 +90,8 @@
     "QUARTER_4": "Quarter 4",
     "VALIDATION_MULTIPLE_LEVELS_DETAIL": "year {{year}} has area levels {{levels}}",
     "VALIDATION_MULTIPLE_LEVELS": "Data can only be for regions at a single area level per year. In uploaded data {{detail}}.",
-    "FAILED_ZIP_REHYDRATE_SUBMIT": "Cannot load from this zip file, archive missing required information. Please regenerate output zip and try again."
+    "FAILED_ZIP_REHYDRATE_SUBMIT": "Cannot load from this zip file, archive missing required information. Please regenerate output zip and try again.",
+    "TABLE_SEX_BY_AREA": "Sex by area",
+    "TABLE_SEX_BY_5_YEAR_AGE_GROUP": "Sex by 5 year age group",
+    "VALIDATION_SHEET_MISSING": "Uploaded Excel file is missing required sheet '{{sheet_name}}'. Please check resource and try again."
 }

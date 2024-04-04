@@ -25,7 +25,7 @@ model_options <- function(input) {
     ## Get the cache for no reason as this seems to prevent flaky test failure
     ## due to caching, see https://buildkite.com/mrc-ide/hintr/builds/1619
     cache <- get_cache(NULL)
-    hintr_error(e$message, "INVALID_OPTIONS")
+    hintr_error(api_error_msg(e), "INVALID_OPTIONS")
   })
 }
 
@@ -34,7 +34,7 @@ calibration_options <- function(iso3) {
     json_verbatim(
       get_controls_json("calibration", iso3, NULL, NULL))
   }, error = function(e) {
-    hintr_error(e$message, "INVALID_CALIBRATION_OPTIONS")
+    hintr_error(api_error_msg(e), "INVALID_CALIBRATION_OPTIONS")
   })
 }
 
@@ -60,7 +60,7 @@ validate_baseline <- function(input) {
     input_response(validate_func(input$file), input$type, input$file)
   },
   error = function(e) {
-    hintr_error(e$message, "INVALID_FILE")
+    hintr_error(api_error_msg(e), "INVALID_FILE")
   })
 }
 
@@ -79,7 +79,7 @@ validate_baseline_combined <- function(input) {
                          as_file_object(input$population))
   },
   error = function(e) {
-    hintr_error(e$message, "INVALID_BASELINE")
+    hintr_error(api_error_msg(e), "INVALID_BASELINE")
   })
 }
 
@@ -88,7 +88,8 @@ validate_survey_programme <- function(input, strict = TRUE) {
   validate_func <- switch(input$type,
                           programme = do_validate_programme,
                           anc = do_validate_anc,
-                          survey = do_validate_survey)
+                          survey = do_validate_survey,
+                          vmmc = do_validate_vmmc)
   tryCatch({
     shape <- file_object(input$shape)
     assert_file_exists(input$file$path)
@@ -97,7 +98,7 @@ validate_survey_programme <- function(input, strict = TRUE) {
       validate_func(input$file, shape, strict), input$type, input$file)
   },
   error = function(e) {
-    hintr_error(e$message, "INVALID_FILE")
+    hintr_error(api_error_msg(e), "INVALID_FILE")
   })
 }
 
@@ -122,7 +123,7 @@ input_time_series <- function(type, input) {
     get_time_series_data(file, input$data$shape)
   },
   error = function(e) {
-    hintr_error(e$message, "FAILED_TO_GENERATE_TIME_SERIES")
+    hintr_error(api_error_msg(e), "FAILED_TO_GENERATE_TIME_SERIES")
   })
 }
 
@@ -144,7 +145,7 @@ model_options_validate <- function(input) {
     valid$warnings <- warnings_scalar(valid$warnings)
     valid
   }, error = function(e) {
-    hintr_error(e$message, "INVALID_OPTIONS")
+    hintr_error(api_error_msg(e), "INVALID_OPTIONS")
   })
 }
 
@@ -161,7 +162,7 @@ submit_model <- function(queue) {
     tryCatch(
       list(id = scalar(queue$submit_model_run(input$data, input$options))),
       error = function(e) {
-        hintr_error(e$message, "FAILED_TO_QUEUE")
+        hintr_error(api_error_msg(e), "FAILED_TO_QUEUE")
       }
     )
   }
@@ -176,7 +177,7 @@ queue_status <- function(queue) {
       prepare_status_response(out, id)
     },
     error = function(e) {
-      hintr_error(e$message, "FAILED_TO_RETRIEVE_STATUS")
+      hintr_error(api_error_msg(e), "FAILED_TO_RETRIEVE_STATUS")
     })
   }
 }
@@ -206,7 +207,7 @@ submit_calibrate <- function(queue) {
       list(id = scalar(queue$submit_calibrate(queue$result(id),
                                               calibration_options$options))),
       error = function(e) {
-        hintr_error(e$message, "FAILED_TO_QUEUE")
+        hintr_error(api_error_msg(e), "FAILED_TO_QUEUE")
       }
     )
   }
@@ -224,13 +225,16 @@ calibrate_metadata <- function(queue) {
     verify_result_available(queue, id)
     result <- queue$result(id)
     output <- naomi::read_hintr_output(result$plot_data_path)
-    metadata <- build_output_metadata(output)
+    filters <- get_model_output_filters(output)
+    metadata <- build_output_metadata(output, filters)
+    table_metadata <- build_output_table_metadata(output, filters)
     warnings <- list()
     if (!is.null(result$warnings)) {
       warnings <- warnings_scalar(result$warnings)
     }
     list(
       plottingMetadata = metadata,
+      tableMetadata = table_metadata,
       warnings = warnings
     )
   }
@@ -315,7 +319,8 @@ verify_result_available <- function(queue, id, version = NULL) {
     naomi:::assert_model_output_version(result, version = version)
   } else if (task_status == "ERROR") {
     result <- queue$result(id)
-    hintr_error(result$message, "MODEL_RUN_FAILED", job_id = scalar(id))
+    hintr_error(api_error_msg(result), "MODEL_RUN_FAILED",
+                job_id = scalar(id))
   } else if (task_status == "DIED") {
     hintr_error(t_("MODEL_RESULT_CRASH"), "MODEL_RUN_FAILED")
   } else if (task_status == "CANCELLED") {
@@ -332,7 +337,7 @@ model_cancel <- function(queue) {
       json_null()
     },
     error = function(e) {
-      hintr_error(e$message, "FAILED_TO_CANCEL")
+      hintr_error(api_error_msg(e), "FAILED_TO_CANCEL")
     })
   }
 }
@@ -341,7 +346,7 @@ plotting_metadata <- function(iso3 = NULL) {
   tryCatch(
     do_plotting_metadata(iso3),
     error = function(e) {
-      hintr_error(e$message, "FAILED_TO_GET_METADATA")
+      hintr_error(api_error_msg(e), "FAILED_TO_GET_METADATA")
     }
   )
 }
@@ -356,52 +361,65 @@ download_submit <- function(queue) {
       version <- "2.7.16"
     }
     verify_result_available(queue, id, version)
-    notes <- NULL
-    state <- NULL
+    prepared_input <- NULL
     if (!is.null(input)) {
       parsed_input <- jsonlite::fromJSON(input, simplifyVector = FALSE)
       if (!is.null(parsed_input$notes)) {
-        notes <- format_notes(parsed_input$notes)
+        prepared_input$notes <- format_notes(parsed_input$notes)
       }
       if (!is.null(parsed_input$state)) {
         ## Keep this as raw JSON because we want to write it straight out to
         ## the output zip and this way we can avoid unboxing problems
         ## from deserializing and reserializing the data
-        state <- V8::v8()$call("(d) => JSON.stringify(d.state)",
-                               V8::JS(paste0(input, collapse = "\n")))
+        prepared_input$state <- V8::v8()$call(
+          "(d) => JSON.stringify(d.state)",
+          V8::JS(paste0(input, collapse = "\n")))
+      }
+      if (!is.null(parsed_input$pjnz)) {
+        prepared_input$pjnz <- parsed_input$pjnz
+      }
+      if (!is.null(parsed_input$vmmc)) {
+        prepared_input$vmmc <- parsed_input$vmmc
       }
     }
     tryCatch(
       list(id = scalar(
-        queue$submit_download(queue$result(id), type, notes, state))),
+        queue$submit_download(queue$result(id), type, prepared_input))),
       error = function(e) {
-        hintr_error(e$message, "FAILED_TO_QUEUE")
+        hintr_error(api_error_msg(e), "FAILED_TO_QUEUE")
       }
     )
   }
 }
 
+get_download_result <- function(queue, id, error_message) {
+  res <- queue$result(id)
+  if (is_error(res)) {
+    msg <- api_error_msg(res)
+    hintr_error(msg, "OUTPUT_GENERATION_FAILED")
+  } else if (is.null(res$path)) {
+    msg <- t_(error_message)
+    hintr_error(msg, "OUTPUT_GENERATION_FAILED")
+  }
+  res
+}
+
 download_result <- function(queue) {
   function(id) {
     tryCatch({
-      res <- queue$result(id)
-      if (is_error(res) || is.null(res$path)) {
-        msg <- res$message
-        if (is.null(msg)) {
-          msg <- t_("FAILED_ADR_METADATA")
-        }
-        hintr_error(msg, "OUTPUT_GENERATION_FAILED")
-      }
+      res <- get_download_result(queue, id, "FAILED_DOWNLOAD")
       filename <- switch(res$metadata$type,
                          spectrum = "naomi-output",
                          coarse_output = "coarse-output",
                          summary = "summary-report",
-                         comparison = "comparison-report")
+                         comparison = "comparison-report",
+                         agyw = "AGYW")
       ext <- switch(res$metadata$type,
                     spectrum = ".zip",
                     coarse_output = ".zip",
                     summary = ".html",
-                    comparison = ".html")
+                    comparison = ".html",
+                    agyw = ".xlsx")
       bytes <- readBin(res$path, "raw", n = file.size(res$path))
       bytes <- porcelain::porcelain_add_headers(bytes, list(
         "Content-Disposition" = build_content_disp_header(res$metadata$areas,
@@ -413,7 +431,7 @@ download_result <- function(queue) {
       if (is_porcelain_error(e)) {
         stop(e)
       } else {
-        hintr_error(e$message, "FAILED_TO_RETRIEVE_RESULT")
+        hintr_error(api_error_msg(e), "FAILED_TO_RETRIEVE_RESULT")
       }
     })
   }
@@ -483,7 +501,7 @@ download_model_debug <- function(queue) {
       if (is_porcelain_error(e)) {
         stop(e)
       } else {
-        hintr_error(e$message, "INVALID_TASK")
+        hintr_error(api_error_msg(e), "INVALID_TASK")
       }
     })
   }
