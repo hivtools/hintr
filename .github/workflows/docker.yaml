@@ -34,7 +34,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Clone Naomi
-        uses: actions/checkout@master
+        uses: actions/checkout@v4
         with:
           repository: mrc-ide/naomi
           ## ${{ github.token }} is scoped to the current repository, so we
@@ -57,6 +57,7 @@ jobs:
         uses: docker/build-push-action@v5
         if: github.event_name != 'pull_request'
         with:
+          context: .
           file: "./docker/Dockerfile"
           push: true
           tags: |
