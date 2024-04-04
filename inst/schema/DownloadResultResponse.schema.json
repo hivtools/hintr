@@ -9,9 +9,9 @@
         "description": { "type": "string" },
         "areas": { "type": "string" },
         "type": { "type": "string" }
-      }
+      },
+      "required": [ "description", "areas", "type" ]
     },
-    "required": [ "description", "areas", "type" ]
   },
   "required": [ "path", "metadata" ]
 }
