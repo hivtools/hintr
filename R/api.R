@@ -26,6 +26,7 @@ api_build <- function(queue, validate = FALSE, logger = NULL) {
   api$handle(endpoint_download_submit(queue))
   api$handle(endpoint_download_status(queue))
   api$handle(endpoint_download_result(queue))
+  api$handle(endpoint_download_result_path(queue))
   api$handle(endpoint_download_result_head(queue))
   api$handle(endpoint_adr_metadata(queue))
   api$handle(endpoint_rehydrate_submit(queue))
@@ -394,6 +395,15 @@ endpoint_download_result_head <- function(queue) {
                                     download_result(queue),
                                     returning = returning_binary_head(),
                                     validate = FALSE)
+}
+
+endpoint_download_result_path <- function(queue) {
+  response <- porcelain::porcelain_returning_json(
+    "DownloadResultResponse.schema", schema_root())
+  porcelain::porcelain_endpoint$new("GET",
+                                    "/download/result/path/<id>",
+                                    download_result_path(queue),
+                                    returning = response)
 }
 
 endpoint_adr_metadata <- function(queue) {
