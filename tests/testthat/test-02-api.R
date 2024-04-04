@@ -903,7 +903,9 @@ test_that("model calibrate can be queued and result returned", {
   path <- endpoint_model_calibrate_result_path(q$queue)
   path_response <- path$run(status_response$data$id)
   expect_equal(path_response$status_code, 200)
-  expect_true(file.exists(path_response$data$path))
+  withr::with_dir(q$queue$results_dir, {
+    expect_true(file.exists(path_response$data$path))
+  })
 })
 
 test_that("api can call endpoint_model_calibrate", {

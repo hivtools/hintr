@@ -253,8 +253,10 @@ calibrate_result_path <- function(queue) {
   function(id) {
     verify_result_available(queue, id)
     result <- queue$result(id)
+    relative_path <- sub(paste0(queue$results_dir, .Platform$file.sep), "",
+                         result$plot_data_path, perl = TRUE)
     list(
-      path = scalar(result$plot_data_path)
+      path = scalar(relative_path)
     )
   }
 }
