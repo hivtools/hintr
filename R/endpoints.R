@@ -438,7 +438,7 @@ download_result <- function(queue) {
 download_result_path <- function(queue) {
   function(id) {
     tryCatch(
-      res <- get_download_result(queue, id, "FAILED_DOWNLOAD"),
+      recursive_scalar(get_download_result(queue, id, "FAILED_DOWNLOAD")),
       error = function(e) {
         if (is_porcelain_error(e)) {
           stop(e)
