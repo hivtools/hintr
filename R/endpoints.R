@@ -365,7 +365,7 @@ get_time_series_data_source_options <- function(types) {
             stateFilterId = scalar("quarter")
           )
         ),
-        setMultiple = list("time_series_programme_quarter")
+        setMultiple = c("time_series_programme_quarter")
       )
     )))
   }
@@ -448,7 +448,7 @@ get_input_choropleth_data_source_options <- function(types) {
             stateFilterId = scalar("survey_id")
           )
         ),
-        setMultiple = list("area")
+        setMultiple = c("area")
       )
     )))
   }
@@ -489,7 +489,7 @@ get_input_choropleth_data_source_options <- function(types) {
             stateFilterId = scalar("age")
           )
         ),
-        setMultiple = list("area")
+        setMultiple = c("area")
       )
     )))
   }
@@ -520,7 +520,7 @@ get_input_choropleth_data_source_options <- function(types) {
             stateFilterId = scalar("year")
           )
         ),
-        setMultiple = list("area")
+        setMultiple = c("area")
       )
     )))
   }
