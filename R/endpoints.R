@@ -131,7 +131,7 @@ review_input_filter_metadata <- function(input) {
   input <- jsonlite::fromJSON(input)
   types <- names(input$data)
   types <- types[types != "shape"]
-  
+
   time_series_settings <- get_time_series_settings(types)
   if (is.null(time_series_settings)) {
     return(
@@ -148,7 +148,7 @@ review_input_filter_metadata <- function(input) {
     filterTypes = get_review_input_filter_types(input, types),
     indicators = get_review_input_indicators(types),
     plotSettingsControl = list(
-      timeSeries = get_time_series_settings(types),
+      timeSeries = time_series_settings,
       inputChoropleth = get_input_choropleth_settings(types)
     )
   )
@@ -235,7 +235,7 @@ get_programme_time_series_filter_types <- function(input) {
     id = scalar("time_series_programme_area_level"),
     column_id = scalar("area_level"),
     options = get_selected_mappings(columns, "area_level",
-                                  key = "values")
+                                    key = "values")
   )
   quarter_filter <- list(
     id = scalar("time_series_programme_quarter"),
@@ -334,7 +334,7 @@ get_time_series_settings <- function(types) {
       list(
         id = scalar("time_series_data_source"),
         label = scalar(t_("REVIEW_INPUT_DATA_SOURCE")),
-        options = 
+        options = options
       )
     )
   )
