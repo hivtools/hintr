@@ -13,8 +13,8 @@
         "file_extension": { "type": "string" },
         "file_label": { "type": "string" }
       },
-      "required": [ "description", "areas", "type", "file_extension", "file_label" ]
-    },
+      "required": [ "id", "description", "areas", "type", "file_extension", "file_label" ]
+    }
   },
   "required": [ "path", "metadata" ]
 }

@@ -624,8 +624,8 @@ test_that("download streams bytes", {
   expect_equal(httr::status_code(path_res), 200)
   path_r <- response_from_json(path_res)
   expect_true(file.exists(file.path(results_dir, path_r$data$path)))
-  expect_equal(path_r$data$file_label, "naomi-output")
-  expect_equal(path_r$data$file_extension, ".zip")
+  expect_equal(path_r$data$metadata$file_label, "naomi-output")
+  expect_equal(path_r$data$metadata$file_extension, ".zip")
 })
 
 test_that("can quit", {

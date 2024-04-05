@@ -51,7 +51,7 @@ test_that("spectrum download returns bytes", {
   expect_equal(path$metadata$areas, scalar("MWI"))
   expect_match(path$metadata$description,
                "Naomi output uploaded from Naomi web app")
-  expect_equal(path$metadata$id, scalar(status_response$data_id))
+  expect_equal(path$metadata$id, scalar(status_response$data$id))
   expect_equal(path$metadata$file_label, scalar("naomi-output"))
   expect_equal(path$metadata$file_extension, scalar(".zip"))
 })
