@@ -18,6 +18,7 @@ Imports:
     data.table,
     digest,
     docopt,
+    fs,
     geojsonio (>= 0.8.0),
     glue,
     ids,
