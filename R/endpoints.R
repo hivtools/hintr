@@ -136,8 +136,8 @@ review_input_filter_metadata <- function(input) {
     filterTypes = get_review_input_filter_types(input, types),
     indicators = get_review_input_indicators(types),
     plotSettingsControl = list(
-      timeSeries = get_time_series_settings(),
-      inputChoropleth = get_input_choropleth_settings()
+      timeSeries = get_time_series_settings(types),
+      inputChoropleth = get_input_choropleth_settings(types)
     )
   )
 }
@@ -312,21 +312,22 @@ get_survey_map_filter_types <- function(input) {
   list(age_filter, survey_filter, sex_filter, indicator_filter)
 }
 
-get_time_series_settings <- function() {
+get_time_series_settings <- function(types) {
   list(
     plotSettings = list(
       list(
         id = scalar("time_series_data_source"),
         label = scalar(t_("REVIEW_INPUT_DATA_SOURCE")),
-        options = get_time_series_data_source_options()
+        options = get_time_series_data_source_options(types)
       )
     )
   )
 }
 
-get_time_series_data_source_options <- function() {
-  list(
-    list(
+get_time_series_data_source_options <- function(types) {
+  options <- list()
+  if ("programme" %in% types) {
+    options <- append(options, list(
       id = scalar("programme"),
       label = scalar(t_("REVIEW_INPUT_PROGRAMME")),
       effect = list(
@@ -349,8 +350,10 @@ get_time_series_data_source_options <- function() {
         ),
         setMultiple = list("time_series_programme_quarter")
       )
-    ),
-    list(
+    ))
+  }
+  if ("anc" %in% types) {
+    options <- append(options, list(
       id = scalar("anc"),
       label = scalar(t_("REVIEW_INPUT_ANC")),
       effect = list(
@@ -372,25 +375,26 @@ get_time_series_data_source_options <- function() {
           )
         )
       )
-    )
-  )
+    ))
+  }
 }
 
-get_input_choropleth_settings <- function() {
+get_input_choropleth_settings <- function(types) {
   list(
     plotSettings = list(
       list(
         id = scalar("input_choropleth_data_source"),
         label = scalar(t_("REVIEW_INPUT_DATA_SOURCE")),
-        options = get_input_choropleth_data_source_options()
+        options = get_input_choropleth_data_source_options(types)
       )
     )
   )
 }
 
-get_input_choropleth_data_source_options <- function() {
-  list(
-    list(
+get_input_choropleth_data_source_options <- function(types) {
+  options <- list()
+  if ("survey" %in% types) {
+    options <- append(options, list(
       id = scalar("survey"),
       label = scalar(t_("REVIEW_INPUT_SURVEY")),
       effect = list(
@@ -428,8 +432,10 @@ get_input_choropleth_data_source_options <- function() {
         ),
         setMultiple = list("area")
       )
-    ),
-    list(
+    ))
+  }
+  if ("programme" %in% types) {
+    options <- append(options, list(
       id = scalar("programme"),
       label = scalar(t_("REVIEW_INPUT_PROGRAMME")),
       effect = list(
@@ -467,8 +473,10 @@ get_input_choropleth_data_source_options <- function() {
         ),
         setMultiple = list("area")
       )
-    ),
-    list(
+    ))
+  }
+  if ("anc" %in% types) {
+    options <- append(options, list(
       id = scalar("anc"),
       label = scalar(t_("REVIEW_INPUT_ANC")),
       effect = list(
@@ -496,8 +504,8 @@ get_input_choropleth_data_source_options <- function() {
         ),
         setMultiple = list("area")
       )
-    )
-  )
+    ))
+  }
 }
 
 model_options_validate <- function(input) {
