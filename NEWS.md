@@ -1,3 +1,8 @@
+# hintr 1.2.1
+
+* Add new endpoint `/download/result/path/<id>` to return path to the download file on disk
+
+
 # hintr 1.2.0
 
 * Update plot metadata format to make it more generic and generally usable
