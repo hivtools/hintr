@@ -201,7 +201,7 @@ get_anc_time_series_filter_types <- function(input) {
   columns <- get_anc_time_series_columns(data)
   plot_type_filter <- list(
     id = scalar("time_series_anc_plot_type"),
-    column_id = scalar("anc_plot_type"),
+    column_id = scalar("plot"),
     options = get_selected_mappings(columns, "plot_type",
                                     key = "values")
   )
@@ -213,7 +213,7 @@ get_anc_time_series_filter_types <- function(input) {
   )
   age_filter <- list(
     id = scalar("time_series_anc_age"),
-    column_id = scalar("age"),
+    column_id = scalar("age_group"),
     options = get_selected_mappings(columns, "age",
                                     key = "values")
   )
@@ -228,7 +228,7 @@ get_programme_time_series_filter_types <- function(input) {
   columns <- get_programme_time_series_columns(data)
   plot_type_filter <- list(
     id = scalar("time_series_programme_plot_type"),
-    column_id = scalar("programme_plot_type"),
+    column_id = scalar("plot"),
     options = get_selected_mappings(columns, "plot_type",
                                     key = "values")
   )
@@ -264,7 +264,7 @@ get_anc_map_filter_types <- function(input) {
   year_filter <- list(
     id = scalar("map_anc_year"),
     label = scalar(t_("INPUT_TIME_SERIES_COLUMN_YEAR")),
-    column_id = scalar("year"),
+    column_id = scalar("time_period"),
     options = get_year_filters(data)
   )
   indicator_filter <- list(
@@ -284,7 +284,7 @@ get_programme_map_filter_types <- function(input) {
   )
   age_filter <- list(
     id = scalar("map_programme_age"),
-    column_id = scalar("age"),
+    column_id = scalar("age_group"),
     options = get_age_filters(data)
   )
   sex_filter <- list(
@@ -304,12 +304,12 @@ get_survey_map_filter_types <- function(input) {
   data <- read_csv(input$data$survey$path, header = TRUE)
   age_filter <- list(
     id = scalar("map_survey_age"),
-    column_id = scalar("age"),
+    column_id = scalar("age_group"),
     options = get_age_filters(data)
   )
   survey_filter <- list(
     id = scalar("map_survey_surveys"),
-    column_id = scalar("survery_id"),
+    column_id = scalar("survey_id"),
     options = get_survey_filters(data)
   )
   sex_filter <- list(
