@@ -132,6 +132,18 @@ review_input_filter_metadata <- function(input) {
   types <- names(input$data)
   types <- types[types != "shape"]
   
+  time_series_settings <- get_time_series_settings(types)
+  if (is.null(time_series_settings)) {
+    return(
+      list(
+        filterTypes = get_review_input_filter_types(input, types),
+        indicators = get_review_input_indicators(types),
+        plotSettingsControl = list(
+          inputChoropleth = get_input_choropleth_settings(types)
+        )
+      )
+    )
+  }
   list(
     filterTypes = get_review_input_filter_types(input, types),
     indicators = get_review_input_indicators(types),
@@ -313,12 +325,16 @@ get_survey_map_filter_types <- function(input) {
 }
 
 get_time_series_settings <- function(types) {
+  options <- get_time_series_data_source_options(types)
+  if (length(options) == 0) {
+    return(NULL)
+  }
   list(
     plotSettings = list(
       list(
         id = scalar("time_series_data_source"),
         label = scalar(t_("REVIEW_INPUT_DATA_SOURCE")),
-        options = get_time_series_data_source_options(types)
+        options = 
       )
     )
   )
