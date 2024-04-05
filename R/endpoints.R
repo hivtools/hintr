@@ -800,26 +800,34 @@ get_download_result <- function(queue, id, error_message) {
   res
 }
 
+download_file_label <- function(type) {
+  switch(type,
+         spectrum = "naomi-output",
+         coarse_output = "coarse-output",
+         summary = "summary-report",
+         comparison = "comparison-report",
+         agyw = "AGYW")
+}
+
+download_file_extension <- function(type) {
+  switch(type,
+         spectrum = ".zip",
+         coarse_output = ".zip",
+         summary = ".html",
+         comparison = ".html",
+         agyw = ".xlsx")
+}
+
 download_result <- function(queue) {
   function(id) {
     tryCatch({
       res <- get_download_result(queue, id, "FAILED_DOWNLOAD")
-      filename <- switch(res$metadata$type,
-                         spectrum = "naomi-output",
-                         coarse_output = "coarse-output",
-                         summary = "summary-report",
-                         comparison = "comparison-report",
-                         agyw = "AGYW")
-      ext <- switch(res$metadata$type,
-                    spectrum = ".zip",
-                    coarse_output = ".zip",
-                    summary = ".html",
-                    comparison = ".html",
-                    agyw = ".xlsx")
+      file_label <- download_file_label(res$metadata$type)
+      ext <- download_file_extension(res$metadata$type)
       bytes <- readBin(res$path, "raw", n = file.size(res$path))
       bytes <- porcelain::porcelain_add_headers(bytes, list(
         "Content-Disposition" = build_content_disp_header(res$metadata$areas,
-                                                          filename, ext),
+                                                          file_label, ext),
         "Content-Length" = length(bytes)))
       bytes
     },
@@ -840,6 +848,9 @@ download_result_path <- function(queue) {
       relative_path <- sub(paste0(queue$results_dir, .Platform$file.sep), "",
                            res$path, perl = TRUE)
       res$path <- relative_path
+      res$metadata$id <- id
+      res$metadata$file_label <- download_file_label(res$metadata$type)
+      res$metadata$file_extension <- download_file_extension(res$metadata$type)
       recursive_scalar(res)
     },
     error = function(e) {

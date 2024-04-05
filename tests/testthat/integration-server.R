@@ -1,6 +1,10 @@
+results_dir <- tempfile("results")
+dir.create(results_dir)
+
 withr::with_dir(testthat::test_path(), {
   server <- porcelain::porcelain_background$new(
-    api, args = list(queue_id = paste0("hintr:", ids::random_id())))
+    api, args = list(queue_id = paste0("hintr:", ids::random_id()),
+                     results_dir = results_dir))
   server$start()
 })
 
@@ -608,11 +612,20 @@ test_that("download streams bytes", {
 
   ## Can get ADR metadata
   adr_res <- server$request("GET", paste0("/meta/adr/", response$data$id))
-  expect_equal(httr::status_code(r), 200)
+  expect_equal(httr::status_code(adr_res), 200)
   adr_r <- response_from_json(adr_res)
   expect_equal(names(adr_r$data), c("type", "description"))
   expect_equal(adr_r$data$type, "spectrum")
   expect_type(adr_r$data$description, "character")
+
+  ## Can get path to output file
+  path_res <- server$request("GET",
+                             paste0("/download/result/path/", response$data$id))
+  expect_equal(httr::status_code(path_res), 200)
+  path_r <- response_from_json(path_res)
+  expect_true(file.exists(file.path(results_dir, path_r$data$path)))
+  expect_equal(path_r$data$file_label, "naomi-output")
+  expect_equal(path_r$data$file_extension, ".zip")
 })
 
 test_that("can quit", {
