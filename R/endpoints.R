@@ -365,7 +365,7 @@ get_time_series_data_source_options <- function(types) {
             stateFilterId = scalar("quarter")
           )
         ),
-        setMultiple = c("time_series_programme_quarter")
+        setMultiple = c("quarter")
       )
     )))
   }
