@@ -664,7 +664,8 @@ calibrate_result_path <- function(queue) {
   function(id) {
     verify_result_available(queue, id)
     result <- queue$result(id)
-    relative_path <- fs::path_rel(result$plot_data_path, start = queue$results_dir)
+    relative_path <- fs::path_rel(result$plot_data_path,
+                                  start = queue$results_dir)
     list(
       path = scalar(relative_path)
     )
@@ -845,8 +846,7 @@ download_result_path <- function(queue) {
   function(id) {
     tryCatch({
       res <- get_download_result(queue, id, "FAILED_DOWNLOAD")
-      relative_path <- sub(paste0(queue$results_dir, .Platform$file.sep), "",
-                           res$path, perl = TRUE)
+      relative_path <- fs::path_rel(res$path, start = queue$results_dir)
       res$path <- relative_path
       res$metadata$id <- id
       res$metadata$file_label <- download_file_label(res$metadata$type)
