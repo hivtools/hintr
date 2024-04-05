@@ -169,7 +169,8 @@ get_review_input_filter_types <- function(input, types) {
       options = get_level_options(json)
     )
   )
-  Reduce(append_filter_types(input), c(list(NULL), types))
+  other_filter_types <- Reduce(append_filter_types(input), c(list(NULL), types))
+  append(base_filters, other_filter_types)
 }
 
 append_filter_types <- function(input) {
@@ -422,7 +423,7 @@ get_input_choropleth_data_source_options <- function(types) {
             stateFilterId = scalar("indicator")
           ),
           list(
-            filterId = scalar("map_survey_area_level"),
+            filterId = scalar("map_area_level"),
             label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA_LEVEL")),
             stateFilterId = scalar("detail")
           ),
