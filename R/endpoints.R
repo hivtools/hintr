@@ -327,7 +327,7 @@ get_time_series_settings <- function(types) {
 get_time_series_data_source_options <- function(types) {
   options <- list()
   if ("programme" %in% types) {
-    options <- append(options, list(
+    options <- append(options, list(list(
       id = scalar("programme"),
       label = scalar(t_("REVIEW_INPUT_PROGRAMME")),
       effect = list(
@@ -350,10 +350,10 @@ get_time_series_data_source_options <- function(types) {
         ),
         setMultiple = list("time_series_programme_quarter")
       )
-    ))
+    )))
   }
   if ("anc" %in% types) {
-    options <- append(options, list(
+    options <- append(options, list(list(
       id = scalar("anc"),
       label = scalar(t_("REVIEW_INPUT_ANC")),
       effect = list(
@@ -375,7 +375,7 @@ get_time_series_data_source_options <- function(types) {
           )
         )
       )
-    ))
+    )))
   }
 }
 
@@ -394,7 +394,7 @@ get_input_choropleth_settings <- function(types) {
 get_input_choropleth_data_source_options <- function(types) {
   options <- list()
   if ("survey" %in% types) {
-    options <- append(options, list(
+    options <- append(options, list(list(
       id = scalar("survey"),
       label = scalar(t_("REVIEW_INPUT_SURVEY")),
       effect = list(
@@ -432,10 +432,10 @@ get_input_choropleth_data_source_options <- function(types) {
         ),
         setMultiple = list("area")
       )
-    ))
+    )))
   }
   if ("programme" %in% types) {
-    options <- append(options, list(
+    options <- append(options, list(list(
       id = scalar("programme"),
       label = scalar(t_("REVIEW_INPUT_PROGRAMME")),
       effect = list(
@@ -473,10 +473,10 @@ get_input_choropleth_data_source_options <- function(types) {
         ),
         setMultiple = list("area")
       )
-    ))
+    )))
   }
   if ("anc" %in% types) {
-    options <- append(options, list(
+    options <- append(options, list(list(
       id = scalar("anc"),
       label = scalar(t_("REVIEW_INPUT_ANC")),
       effect = list(
@@ -504,7 +504,7 @@ get_input_choropleth_data_source_options <- function(types) {
         ),
         setMultiple = list("area")
       )
-    ))
+    )))
   }
 }
 
