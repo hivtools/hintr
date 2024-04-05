@@ -377,6 +377,7 @@ get_time_series_data_source_options <- function(types) {
       )
     )))
   }
+  options
 }
 
 get_input_choropleth_settings <- function(types) {
@@ -506,6 +507,7 @@ get_input_choropleth_data_source_options <- function(types) {
       )
     )))
   }
+  options
 }
 
 model_options_validate <- function(input) {
