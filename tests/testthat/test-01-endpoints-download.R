@@ -362,6 +362,17 @@ test_that("download result returns formatted error if unexpected issue", {
   expect_equal(error$data[[1]]$detail, scalar("Missing result for task: '1'"))
 })
 
+test_that("download result path returns formatted error if unexpected issue", {
+  queue <- MockQueue$new(workers = 0)
+  download <- download_result_path(queue)
+  error <- expect_error(download("1"))
+
+  expect_equal(error$status_code, 400)
+  expect_equal(names(error$data[[1]]), c("error", "detail", "key"))
+  expect_equal(error$data[[1]]$error, scalar("FAILED_TO_RETRIEVE_RESULT"))
+  expect_equal(error$data[[1]]$detail, scalar("Missing result for task: '1'"))
+})
+
 test_that("download submit returns error if queueing fails", {
   test_redis_available()
   ## Create mocks
