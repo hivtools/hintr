@@ -61,7 +61,7 @@ test_that("queue works as intended", {
   queue$remove(job_id)
   expect_length(rrq::rrq_task_list(controller = ctrl), 0)
 
-  con <- rrq::rrq_con
+  con <- ctrl$con
   key <- queue$controller$keys$worker_id
   expect_equal(con$SCARD(key), 2)
 
@@ -115,19 +115,10 @@ test_that("queue starts up normally without a timeout", {
 })
 
 test_that("queue object starts up 2 queues", {
-  skip("Rob to think about what this is testing")
   queue <- test_queue(workers = 2)
-  expect_equal(rrq::rrq_worker_config_read("localhost")$queue,
+  expect_equal(rrq::rrq_worker_config_read("localhost",
+                                           controller = queue$controller)$queue,
                c(QUEUE_CALIBRATE, QUEUE_RUN, "default"))
-  queue$submit(quote(sin(1)), queue = QUEUE_CALIBRATE)
-  run_id <- queue$submit(quote(sin(1)), queue = QUEUE_RUN)
-  other_id <- queue$submit(quote(sin(1)), queue = "other")
-  rrq::rrq_task_wait(run_id)
-  expect_equal(rrq::rrq_queue_list(QUEUE_RUN), character(0))
-  expect_equal(rrq::rrq_queue_list(QUEUE_CALIBRATE), character(0))
-  ## Task submitted to "other" never gets run because this queue isn't run
-  ## by workers.
-  expect_equal(rrq::rrq_queue_list("other"), other_id)
 })
 
 test_that("calibrate gets run before model running", {
@@ -139,7 +130,7 @@ test_that("calibrate gets run before model running", {
   ## that calibrate & model run get queued and run in the correct order
   calibrate_id <- queue$submit_calibrate(NULL, NULL)
 
-  expect_equal(rrq::rrq_task_status(c(run_id, calibrate_id, controller = ctrl)),
+  expect_equal(rrq::rrq_task_status(c(run_id, calibrate_id), controller = ctrl),
                rep("PENDING", 2))
   expect_equal(
     rrq::rrq_queue_list(QUEUE_RUN, controller = ctrl),
@@ -150,10 +141,10 @@ test_that("calibrate gets run before model running", {
     calibrate_id
   )
   worker$step(TRUE)
-  expect_equal(rrq::rrq_task_status(c(run_id, calibrate_id, controller = ctrl)),
+  expect_equal(rrq::rrq_task_status(c(run_id, calibrate_id), controller = ctrl),
                c("PENDING", "ERROR"))
   worker$step(TRUE)
-  expect_equal(rrq::rrq_task_status(c(run_id, calibrate_id, controller = ctrl)),
+  expect_equal(rrq::rrq_task_status(c(run_id, calibrate_id), controller = ctrl),
                c("COMPLETE", "ERROR"))
 })
 

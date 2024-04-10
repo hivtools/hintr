@@ -96,7 +96,7 @@ Queue <- R6::R6Class(
         hintr:::download(model_output, type, results_dir, input, language),
         queue = QUEUE_CALIBRATE,
         separate_process = TRUE,
-        controller = self$controllers
+        controller = self$controller
       )
     },
 
@@ -105,7 +105,7 @@ Queue <- R6::R6Class(
         hintr:::rehydrate(output_zip),
         queue = QUEUE_CALIBRATE,
         separate_process = TRUE,
-        controller = self$controllers
+        controller = self$controller
       )
     },
 
@@ -158,7 +158,7 @@ Queue <- R6::R6Class(
         clear_cache(self$controller$queue_id)
         if (self$cleanup_on_exit) {
           message(t_("QUEUE_STOPPING_WORKERS"))
-          rrq::rrq_worker_stop(type = "kill", controller = self$controller)
+          worker_stop(type = "kill", controller = self$controller)
           self$destroy()
           self$controller <- NULL
         }

@@ -17,23 +17,26 @@ test_that("endpoint worker status works", {
 })
 
 test_that("stop calls quit and stop_workers", {
-  skip("Rob to fix, just mock for rrq_worker_stop")
   test_redis_available()
   queue <- test_queue(workers = 0)
-  unlockBinding("worker_stop", queue$queue)
-  queue$queue$worker_stop <- mockery::mock()
+  mock_worker_stop <- mockery::mock()
   mock_quit <- mockery::mock()
-  endpoint <- hintr_stop(queue)
-  mockery::stub(endpoint, "quit", mock_quit)
-  endpoint()
+
+  with_mocked_bindings(
+    {
+      endpoint <- hintr_stop(queue)
+      mockery::stub(endpoint, "quit", mock_quit)
+      endpoint()
+    },
+    "worker_stop" = mock_worker_stop,
+  )
 
   ## Quit call:
   mockery::expect_called(mock_quit, 1)
   expect_equal(mockery::mock_calls(mock_quit)[[1]], quote(quit(save = "no")))
 
   ## Worker stop:
-  mockery::expect_called(queue$queue$worker_stop, 1)
-  expect_equal(length(mockery::mock_calls(queue$queue$worker_stop)[[1]]), 1)
+  mockery::expect_called(mock_worker_stop, 1)
 })
 
 test_that("starting API clears any exited workers", {

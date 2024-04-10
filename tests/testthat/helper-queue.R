@@ -13,16 +13,14 @@ MockQueue <- R6::R6Class(
   inherit = Queue,
   cloneable = FALSE,
   public = list(
-    submit = function(job, queue, environment = parent.frame()) {
-      self$queue$enqueue_(quote(cli::cli_abort("test error")))
-    },
-
-    submit_model = function(data, options) {
-      self$queue$enqueue_(quote(stop("test error")))
+    submit_model_run = function(data, options) {
+      rrq::rrq_task_create_expr(stop("test error"),
+                                controller = self$controller)
     },
 
     submit_calibrate = function(data, options) {
-      self$queue$enqueue_(quote(stop("test error")))
+      rrq::rrq_task_create_expr(stop("test error"),
+                                controller = self$controller)
     }
   )
 )

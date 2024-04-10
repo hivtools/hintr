@@ -174,7 +174,8 @@ test_that("only completed tasks are migrated", {
   model_submit <- submit_model(queue)
   response <- model_submit(payload)
   expect_true("id" %in% names(response))
-  out <- queue$task_wait(response$id)
+  queue$task_wait(response$id)
+  out <- queue$status(response$id)
 
   expect_equal(out$status, "ERROR")
 
