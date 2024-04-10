@@ -13,7 +13,7 @@ test_that("endpoint model run queues a model run", {
 
   ## Wait for complete and query for status
   ## Query for status
-  result <- queue$queue$task_wait(response$id)
+  result <- rrq::rrq_task_wait(response$id, controller = queue$controller)
   status_endpoint <- queue_status(queue)
   status <- status_endpoint(response$id)
   expect_equal(status$id, response$id)
@@ -113,7 +113,7 @@ test_that("querying for an orphan task returns sensible error", {
 
   queue <- test_queue()
   id <- ids::random_id()
-  queue$queue$con$HSET(r6_private(queue$queue)$keys$task_status, id, "DIED")
+  queue$controller$con$HSET(queue$controller$keys$task_status, id, "DIED")
   get_model_result <- model_result(queue)
   error <- expect_error(get_model_result(id))
 
@@ -168,7 +168,7 @@ test_that("erroring model run returns useful messages", {
   model_submit <- submit_model(queue)
   response <- model_submit(payload)
   expect_true("id" %in% names(response))
-  out <- queue$queue$task_wait(response$id)
+  out <- rrq::rrq_task_wait(response$id, controller = queue$controller)
 
   ## Get the status
   endpoint_status <- queue_status(queue)
@@ -205,19 +205,25 @@ test_that("model run can be cancelled", {
   ## Mock model run sleeps for 5, sleep here for 1 to ensure it has
   ## started and will be running
   Sys.sleep(1)
-  expect_equal(queue$queue$task_status(id), setNames("RUNNING", id))
+  expect_equal(
+    rrq::rrq_task_status(id, controller = queue$controller),
+    "RUNNING"
+  )
 
   ## Cancel the run
-  worker <- queue$queue$worker_list()
+  worker <- rrq::rrq_worker_list(controller = queue$controller)
   cancel_model <- model_cancel(queue)
   response <- cancel_model(id)
   expect_equal(response, json_null())
 
   testthat::try_again(5, {
     Sys.sleep(1)
-    log <- queue$queue$worker_log_tail(worker, n = Inf)
+    log <- rrq::rrq_worker_log_tail(worker, n = Inf, controller = queue$controller)
     expect_true("CANCEL" %in% log$command)
-    expect_equal(queue$queue$task_status(id), setNames("CANCELLED", id))
+    expect_equal(
+      rrq::rrq_task_status(id, controller = queue$controller),
+      "CANCELLED"
+    )
   })
 
   get_status <- queue_status(queue)
@@ -249,7 +255,7 @@ test_that("translation of progress", {
   id <- response$id
 
   ## Query for status
-  result <- queue$queue$task_wait(id)
+  result <- rrq::rrq_task_wait(id, controller = queue$controller)
   status <- get_status(id)
 
   expect_equal(status$progress[[1]]$name,
@@ -280,7 +286,7 @@ test_that("error messages from naomi are translated", {
     "fr",
     model_submit(readLines(path)))
   id <- response$id
-  queue$queue$task_wait(id)
+  rrq::rrq_task_wait(id, controller = queue$controller)
 
   get_result <- model_result(queue)
   error <- expect_error(get_result(id))

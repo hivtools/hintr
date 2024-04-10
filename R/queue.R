@@ -59,37 +59,54 @@ Queue <- R6::R6Class(
     },
 
     submit = function(job, queue = NULL) {
-      rrq::rrq_task_create_expr(job, queue = queue, separate_process = TRUE,
-                                controller = self$controller)
+      stop("Don't call this directly")
+    },
+
+    task_wait = function(id) {
+      rrq::rrq_task_wait(id, controller = self$controller)
     },
 
     submit_model_run = function(data, options) {
       results_dir <- self$results_dir
       language <- traduire::translator()$language()
-      self$submit(
+      rrq::rrq_task_create_expr(
         hintr:::run_model(data, options, results_dir, language),
-        queue = QUEUE_RUN)
+        queue = QUEUE_RUN,
+        separate_process = TRUE,
+        controller = self$controller
+      )
     },
 
     submit_calibrate = function(model_output, calibration_options) {
       results_dir <- self$results_dir
       language <- traduire::translator()$language()
-      self$submit(
+      rrq::rrq_task_create_expr(
         hintr:::run_calibrate(model_output, calibration_options, results_dir,
                               language),
-        queue = QUEUE_CALIBRATE)
+        queue = QUEUE_CALIBRATE,
+        separate_process = TRUE,
+        controller = self$controller
+      )
     },
 
     submit_download = function(model_output, type, input) {
       results_dir <- self$results_dir
       language <- traduire::translator()$language()
-      self$submit(
+      rrq::rrq_task_create_expr(
         hintr:::download(model_output, type, results_dir, input, language),
-        queue = QUEUE_CALIBRATE)
+        queue = QUEUE_CALIBRATE,
+        separate_process = TRUE,
+        controller = self$controllers
+      )
     },
 
     submit_rehydrate = function(output_zip) {
-      self$submit(hintr:::rehydrate(output_zip), queue = QUEUE_CALIBRATE)
+      rrq::rrq_task_create_expr(
+        hintr:::rehydrate(output_zip),
+        queue = QUEUE_CALIBRATE,
+        separate_process = TRUE,
+        controller = self$controllers
+      )
     },
 
     status = function(id) {

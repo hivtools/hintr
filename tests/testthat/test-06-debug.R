@@ -56,7 +56,7 @@ test_that("Debug endpoint returns debug information for calibrate", {
   expect_true(!is.null(id))
 
   ## Wait for complete status
-  out <- q$queue$queue$task_wait(id)
+  out <- q$queue$task_wait(id)
   status <- endpoint_model_calibrate_status(q$queue)
   status_response <- status$run(id)
   expect_equal(status_response$data$status, scalar("COMPLETE"))
@@ -93,7 +93,7 @@ test_that("Debug endpoint returns debug information for download", {
   expect_true(!is.null(id))
 
   ## Wait for complete status
-  out <- q$queue$queue$task_wait(id)
+  out <- q$queue$task_wait(id)
   status <- endpoint_model_calibrate_status(q$queue)
   status_response <- status$run(id)
   expect_equal(status_response$data$status, scalar("COMPLETE"))

@@ -63,7 +63,7 @@ test_that("download output format is not migrated", {
   submit_response <- submit$run(q$calibrate_id, "coarse_output")
   expect_equal(submit_response$status_code, 200)
   expect_true(!is.null(submit_response$data$id))
-  out <- q$queue$queue$task_wait(submit_response$data$id)
+  out <- q$queue$task_wait(submit_response$data$id)
 
   t <- tempfile()
   dir.create(t)
@@ -102,13 +102,13 @@ test_that("all tasks can be migrated", {
   model_submit <- submit_model(q$queue)
   run_response <- model_submit(model_payload)
   expect_true("id" %in% names(run_response))
-  result <- q$queue$queue$task_wait(run_response$id)
+  result <- q$queue$task_wait(run_response$id)
 
   calibrate_payload <- setup_payload_calibrate()
   model_calibrate <- submit_calibrate(q$queue)
   calibrate_response <- model_calibrate(run_response$id, calibrate_payload)
   expect_true("id" %in% names(calibrate_response))
-  result <- q$queue$queue$task_wait(calibrate_response$id)
+  result <- q$queue$task_wait(calibrate_response$id)
 
   ## Store some data we'll use for testing later
   mock_run_result <- q$queue$result(q$model_run_id)
@@ -174,7 +174,7 @@ test_that("only completed tasks are migrated", {
   model_submit <- submit_model(queue)
   response <- model_submit(payload)
   expect_true("id" %in% names(response))
-  out <- queue$queue$task_wait(response$id)
+  out <- queue$task_wait(response$id)
 
   expect_equal(out$status, "ERROR")
 
@@ -196,13 +196,13 @@ test_that("migration can be run in dry-run mode", {
   model_submit <- submit_model(q$queue)
   run_response <- model_submit(model_payload)
   expect_true("id" %in% names(run_response))
-  result <- q$queue$queue$task_wait(run_response$id)
+  result <- q$queue$task_wait(run_response$id)
 
   calibrate_payload <- setup_payload_calibrate()
   model_calibrate <- submit_calibrate(q$queue)
   calibrate_response <- model_calibrate(run_response$id, calibrate_payload)
   expect_true("id" %in% names(calibrate_response))
-  result <- q$queue$queue$task_wait(calibrate_response$id)
+  result <- q$queue$task_wait(calibrate_response$id)
 
   ## Store some data we'll use for testing later
   mock_run_result <- q$queue$result(q$model_run_id)
