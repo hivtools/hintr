@@ -77,8 +77,8 @@ test_queue_result <- function(model = mock_model, calibrate = mock_calibrate,
       }
     }
   }
-  model_run_id <- queue$submit(quote(identity(model)))
-  calibrate_id <- queue$submit(quote(identity(calibrate)))
+  model_run_id <- queue$submit(identity(model))
+  calibrate_id <- queue$submit(identity(calibrate))
   queue$queue$task_wait(model_run_id)
   queue$queue$task_wait(calibrate_id)
   list(

@@ -169,7 +169,8 @@ submit_model <- function(queue) {
 }
 
 queue_status <- function(queue) {
-  check_orphan <- throttle(queue$queue$worker_detect_exited, 10)
+  check_orphan <- throttle(
+    function() rrq::rrq_worker_detect_exited(controller = queue$controller), 10)
   function(id) {
     no_error(check_orphan())
     tryCatch({
@@ -311,7 +312,7 @@ comparison_plot <- function(queue) {
 }
 
 verify_result_available <- function(queue, id, version = NULL) {
-  task_status <- queue$queue$task_status(id)
+  task_status <- rrq::rrq_task_status(id, controller = queue$controller)
   if (task_status == "COMPLETE") {
     result <- queue$result(id)
     naomi:::assert_model_output_version(result, version = version)
@@ -444,7 +445,7 @@ build_content_disp_header <- function(areas, filename, ext) {
 download_model_debug <- function(queue) {
   function(id) {
     tryCatch({
-      data <- queue$queue$task_data(id)
+      data <- rrq::rrq_task_data(id, controller = queue$controller)
       func <- as.list(data$expr)[[1]]
       if (func == "hintr:::run_model") {
         files <- unique(unlist(lapply(data$objects$data, function(x) {
@@ -507,7 +508,7 @@ download_model_debug <- function(queue) {
 
 worker_status <- function(queue) {
   function() {
-    lapply(queue$queue$worker_status(), scalar)
+    lapply(rrq::rrq_worker_status(controller = queue$controller), scalar)
   }
 }
 
@@ -515,7 +516,7 @@ hintr_stop <- function(queue) {
   force(queue)
   function() {
     message("Stopping workers")
-    queue$queue$worker_stop()
+    rrq::rrq_worker_stop(controller = queue$controller)
     message("Quitting hintr")
     quit(save = "no")
   }

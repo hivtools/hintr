@@ -70,7 +70,7 @@ api <- function(queue_id = NULL, workers = 2,
   queue <- Queue$new(queue_id, workers,
                      results_dir = results_dir,
                      inputs_dir = inputs_dir)
-  queue$queue$worker_delete_exited()
+  rrq::rrq_worker_delete_exited(controller = queue$controller)
   logger <- porcelain::porcelain_logger(log_level)
   api_build(queue, logger = logger)
 }
