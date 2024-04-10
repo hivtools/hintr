@@ -28,7 +28,7 @@ Imports:
     qs,
     R6,
     readxl,
-    rrq (>= 0.7.10),
+    rrq (>= 0.7.9),
     specio (>= 0.1.4),
     storr,
     traduire (>= 0.0.5),
