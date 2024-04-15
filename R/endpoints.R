@@ -522,7 +522,8 @@ hintr_stop <- function(queue) {
   }
 }
 
-## For testing
+## Wrapping this in a separate function for easier mocking
+## during testing
 worker_stop <- function(...) {
   rrq::rrq_worker_stop(...)
 }

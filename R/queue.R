@@ -1,11 +1,6 @@
 Queue <- R6::R6Class(
   "Queue",
   cloneable = FALSE,
-  active = list(
-    queue = function() {
-      stop("Tried to access removed queue component")
-    }
-  ),
   public = list(
     root = NULL,
     cleanup_on_exit = NULL,
