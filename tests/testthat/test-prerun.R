@@ -135,6 +135,6 @@ test_that("hintr_submit_prerun uploads plot data as duckdb", {
   ## able to run it.
   calibrate_id <- state$calibrate$id
   q <- Queue$new(queue_id = queue_id, workers = 0)
-  res <- q$queue$result(calibrate_id)
+  res <- q$result(calibrate_id)
   expect_equal(tools::file_ext(res$plot_data_path), "duckdb")
 })
