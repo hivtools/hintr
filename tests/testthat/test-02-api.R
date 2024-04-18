@@ -903,7 +903,8 @@ test_that("model calibrate can be queued and result returned", {
   path <- endpoint_model_calibrate_result_path(q$queue)
   path_response <- path$run(status_response$data$id)
   expect_equal(path_response$status_code, 200)
-  expect_true(file.exists(path_response$data$path))
+  expect_true(file.exists(file.path(q$queue$results_dir,
+                                    path_response$data$path)))
 })
 
 test_that("api can call endpoint_model_calibrate", {
@@ -979,7 +980,7 @@ test_that("api can call endpoint_model_calibrate", {
                                         status_body$data$id))
   expect_equal(path_res$status, 200)
   path_body <- jsonlite::fromJSON(path_res$body)
-  expect_true(file.exists(path_body$data$path))
+  expect_true(file.exists(file.path(q$queue$results_dir, path_body$data$path)))
 })
 
 test_that("model calibrate result includes warnings", {

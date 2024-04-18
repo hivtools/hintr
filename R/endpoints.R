@@ -254,8 +254,9 @@ calibrate_result_path <- function(queue) {
   function(id) {
     verify_result_available(queue, id)
     result <- queue$result(id)
+    relative_path <- fs::path_rel(result$plot_data_path, start = queue$results_dir)
     list(
-      path = scalar(result$plot_data_path)
+      path = scalar(relative_path)
     )
   }
 }

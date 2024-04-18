@@ -333,7 +333,7 @@ test_that("real model can be run & calibrated by API", {
   response <- response_from_json(r)
   expect_equal(response$status, "success")
   expect_equal(names(response$data), "path")
-  expect_true(file.exists(response$data$path))
+  expect_true(file.exists(file.path(results_dir, response$data$path)))
 })
 
 test_that("plotting metadata is exposed", {
