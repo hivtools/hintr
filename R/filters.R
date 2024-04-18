@@ -395,9 +395,10 @@ get_year_filters <- function(data) {
 
 get_level_labels <- function(json) {
   labels <- lapply(json$features, function(feature) {
+    display <- feature$properties$display %||% TRUE
     list(id = scalar(feature$properties$area_level),
          area_level_label = scalar(feature$properties$area_level_label),
-         display = scalar(as.logical(feature$properties$display)))
+         display = scalar(as.logical(display)))
   })
   unique(labels)
 }
