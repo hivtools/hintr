@@ -13,21 +13,19 @@ MockQueue <- R6::R6Class(
   inherit = Queue,
   cloneable = FALSE,
   public = list(
-    submit = function(job, queue, environment = parent.frame()) {
-      self$queue$enqueue_(quote(cli::cli_abort("test error")))
-    },
-
-    submit_model = function(data, options) {
-      self$queue$enqueue_(quote(stop("test error")))
+    submit_model_run = function(data, options) {
+      rrq::rrq_task_create_expr(stop("test error"),
+                                controller = self$controller)
     },
 
     submit_calibrate = function(data, options) {
-      self$queue$enqueue_(quote(stop("test error")))
+      rrq::rrq_task_create_expr(stop("test error"),
+                                controller = self$controller)
     }
   )
 )
 
-test_queue <- function(workers = 2) {
+test_queue <- function(workers = 0) {
   queue <- Queue$new(workers = workers, timeout = 300)
   withr::defer_parent({
     message("cleaning up workers")
@@ -36,7 +34,7 @@ test_queue <- function(workers = 2) {
   queue
 }
 
-create_blocking_worker <- function(queue, worker_name = NULL) {
+create_blocking_worker <- function(controller, worker_name = NULL) {
   ## Set config for a blocking worker
   blocking_worker_cfg <- rrq::rrq_worker_config(
     queue = c(QUEUE_CALIBRATE, QUEUE_RUN),
@@ -44,8 +42,9 @@ create_blocking_worker <- function(queue, worker_name = NULL) {
     timeout_idle = 300,
     heartbeat_period = 3,
     verbose = TRUE)
-  queue$worker_config_save("blocking", blocking_worker_cfg)
-  rrq:::rrq_worker$new(queue$queue_id, "blocking",
+  rrq::rrq_worker_config_save2("blocking", blocking_worker_cfg,
+                               controller = controller)
+  rrq:::rrq_worker$new(controller$queue_id, "blocking",
                        worker_id = worker_name)
 }
 
@@ -77,10 +76,14 @@ test_queue_result <- function(model = mock_model, calibrate = mock_calibrate,
       }
     }
   }
-  model_run_id <- queue$submit(quote(identity(model)))
-  calibrate_id <- queue$submit(quote(identity(calibrate)))
-  queue$queue$task_wait(model_run_id)
-  queue$queue$task_wait(calibrate_id)
+  model_run_id <- rrq::rrq_task_create_expr(
+    identity(model),
+    controller = queue$controller)
+  calibrate_id <- rrq::rrq_task_create_expr(
+    identity(calibrate),
+    controller = queue$controller)
+  rrq::rrq_task_wait(model_run_id, controller = queue$controller)
+  rrq::rrq_task_wait(calibrate_id, controller = queue$controller)
   list(
     queue = queue,
     model_run_id = model_run_id,

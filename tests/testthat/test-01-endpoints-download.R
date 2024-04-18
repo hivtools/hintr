@@ -10,7 +10,7 @@ test_that("spectrum download returns bytes", {
   expect_true(!is.null(submit_response$data$id))
 
   ## Status
-  out <- q$queue$queue$task_wait(submit_response$data$id)
+  out <- q$queue$task_wait(submit_response$data$id)
   status <- endpoint_download_status(q$queue)
   status_response <- status$run(submit_response$data$id)
 
@@ -56,7 +56,7 @@ test_that("api can call spectrum download", {
   expect_true(!is.null(submit_body$data$id))
 
   ## Status
-  out <- q$queue$queue$task_wait(submit_body$data$id)
+  out <- q$queue$task_wait(submit_body$data$id)
   status <- api$request("GET",
                         paste0("/download/status/", submit_body$data$id))
 
@@ -105,7 +105,7 @@ test_that("coarse output download returns bytes", {
   expect_true(!is.null(submit_response$data$id))
 
   ## Status
-  out <- q$queue$queue$task_wait(submit_response$data$id)
+  out <- q$queue$task_wait(submit_response$data$id)
   status <- endpoint_download_status(q$queue)
   status_response <- status$run(submit_response$data$id)
 
@@ -142,7 +142,7 @@ test_that("api can call coarse_output download", {
   expect_true(!is.null(submit_body$data$id))
 
   ## Status
-  out <- q$queue$queue$task_wait(submit_body$data$id)
+  out <- q$queue$task_wait(submit_body$data$id)
   status <- api$request("GET",
                         paste0("/download/status/", submit_body$data$id))
 
@@ -182,7 +182,7 @@ test_that("summary report download returns bytes", {
   expect_true(!is.null(submit_response$data$id))
 
   ## Status
-  out <- q$queue$queue$task_wait(submit_response$data$id)
+  out <- q$queue$task_wait(submit_response$data$id)
   status <- endpoint_download_status(q$queue)
   status_response <- status$run(submit_response$data$id)
 
@@ -221,7 +221,7 @@ test_that("api can call summary report download", {
   expect_true(!is.null(submit_body$data$id))
 
   ## Status
-  out <- q$queue$queue$task_wait(submit_body$data$id)
+  out <- q$queue$task_wait(submit_body$data$id)
   status <- api$request("GET",
                         paste0("/download/status/", submit_body$data$id))
 
@@ -272,7 +272,7 @@ test_that("download returns useful error if model run fails", {
     expect_true("id" %in% names(response))
   })
 
-  out <- queue$queue$task_wait(response$id)
+  out <- queue$task_wait(response$id)
   download <- download_submit(queue)
   error <- expect_error(download(response$id, "spectrum"))
   expect_equal(error$data[[1]]$error, scalar("MODEL_RUN_FAILED"))
@@ -318,7 +318,7 @@ test_that("trying to download result for errored model run returns error", {
   model_submit <- submit_model(queue)
   response <- model_submit(payload)
   expect_true("id" %in% names(response))
-  out <- queue$queue$task_wait(response$id)
+  out <- queue$task_wait(response$id)
 
   download <- download_result(queue)
   error <- expect_error(download(response$id))
@@ -391,7 +391,7 @@ test_that("comparison report download returns bytes", {
   expect_true(!is.null(submit_response$data$id))
 
   ## Status
-  out <- q$queue$queue$task_wait(submit_response$data$id)
+  out <- q$queue$task_wait(submit_response$data$id)
   status <- endpoint_download_status(q$queue)
   status_response <- status$run(submit_response$data$id)
 
@@ -430,7 +430,7 @@ test_that("api can call comparison report download", {
   expect_true(!is.null(submit_body$data$id))
 
   ## Status
-  out <- q$queue$queue$task_wait(submit_body$data$id)
+  out <- q$queue$task_wait(submit_body$data$id)
   status <- api$request("GET",
                         paste0("/download/status/", submit_body$data$id))
 
@@ -471,7 +471,7 @@ test_that("spectrum download can include notes", {
   expect_true(!is.null(submit_response$data$id))
 
   ## Status
-  out <- q$queue$queue$task_wait(submit_response$data$id)
+  out <- q$queue$task_wait(submit_response$data$id)
   status <- endpoint_download_status(q$queue)
   status_response <- status$run(submit_response$data$id)
 
@@ -531,7 +531,7 @@ test_that("api: spectrum download can include notes", {
   expect_true(!is.null(submit_body$data$id))
 
   ## Status
-  out <- q$queue$queue$task_wait(submit_body$data$id)
+  out <- q$queue$task_wait(submit_body$data$id)
   status <- api$request("GET",
                         paste0("/download/status/", submit_body$data$id))
 
@@ -583,7 +583,7 @@ test_that("sending notes to non-spectrum download doesn't fail", {
   expect_true(!is.null(submit_response$data$id))
 
   ## Status
-  out <- q$queue$queue$task_wait(submit_response$data$id)
+  out <- q$queue$task_wait(submit_response$data$id)
   status <- endpoint_download_status(q$queue)
   status_response <- status$run(submit_response$data$id)
 
@@ -614,7 +614,7 @@ test_that("spectrum download can include project state", {
   expect_true(!is.null(submit_response$data$id))
 
   ## Status
-  out <- q$queue$queue$task_wait(submit_response$data$id)
+  out <- q$queue$task_wait(submit_response$data$id)
   status <- endpoint_download_status(q$queue)
   status_response <- status$run(submit_response$data$id)
 
@@ -660,7 +660,7 @@ test_that("api: spectrum download can include project state", {
   expect_true(!is.null(submit_body$data$id))
 
   ## Status
-  out <- q$queue$queue$task_wait(submit_body$data$id)
+  out <- q$queue$task_wait(submit_body$data$id)
   status <- api$request("GET",
                         paste0("/download/status/", submit_body$data$id))
 
@@ -701,7 +701,7 @@ test_that("api: spectrum download can include notes and state", {
   expect_true(!is.null(submit_body$data$id))
 
   ## Status
-  out <- q$queue$queue$task_wait(submit_body$data$id)
+  out <- q$queue$task_wait(submit_body$data$id)
   status <- api$request("GET",
                         paste0("/download/status/", submit_body$data$id))
 
@@ -769,7 +769,7 @@ test_that("api: programme and anc files are optional in spectrum download", {
   expect_true(!is.null(submit_body$data$id))
 
   ## Status
-  out <- q$queue$queue$task_wait(submit_body$data$id)
+  out <- q$queue$task_wait(submit_body$data$id)
   status <- api$request("GET",
                         paste0("/download/status/", submit_body$data$id))
 
@@ -807,7 +807,7 @@ test_that("spectrum download is translated", {
   expect_true(!is.null(submit_response$data$id))
 
   ## Status
-  out <- q$queue$queue$task_wait(submit_response$data$id)
+  out <- q$queue$task_wait(submit_response$data$id)
   status <- endpoint_download_status(q$queue)
   status_response <- status$run(submit_response$data$id)
 
@@ -871,7 +871,7 @@ test_that("api can create agyw download", {
   expect_true(!is.null(submit_body$data$id))
 
   ## Status
-  out <- q$queue$queue$task_wait(submit_body$data$id)
+  out <- q$queue$task_wait(submit_body$data$id)
   status <- api$request("GET",
                         paste0("/download/status/", submit_body$data$id))
 
@@ -925,7 +925,7 @@ test_that("api: spectrum download ignores any pjnz passed in", {
   expect_true(!is.null(submit_body$data$id))
 
   ## Status
-  out <- q$queue$queue$task_wait(submit_body$data$id)
+  out <- q$queue$task_wait(submit_body$data$id)
   status <- api$request("GET",
                         paste0("/download/status/", submit_body$data$id))
 
@@ -958,7 +958,7 @@ test_that("api can include vmmc in spectrum download", {
   expect_true(!is.null(submit_body$data$id))
 
   ## Status
-  out <- q$queue$queue$task_wait(submit_body$data$id)
+  out <- q$queue$task_wait(submit_body$data$id)
   status <- api$request("GET",
                         paste0("/download/status/", submit_body$data$id))
 

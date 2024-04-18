@@ -410,7 +410,7 @@ test_that("endpoint_model_status can be run", {
   expect_true(!is.null(run_response$data$id))
 
   endpoint <- endpoint_model_status(queue)
-  out <- queue$queue$task_wait(run_response$data$id)
+  out <- queue$task_wait(run_response$data$id)
   response <- endpoint$run(run_response$data$id)
   expect_equal(response$status_code, 200)
   expect_equal(response$data$id, run_response$data$id)
@@ -439,7 +439,7 @@ test_that("api can call endpoint_model_status", {
   expect_equal(body$status, "success")
   expect_true(!is.null(body$data$id))
 
-  out <- queue$queue$task_wait(body$data$id)
+  out <- queue$task_wait(body$data$id)
   res <- api$request("GET", sprintf("/model/status/%s", body$data$id))
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body)
@@ -469,7 +469,7 @@ test_that("endpoint_model_result can be run", {
   expect_true(!is.null(run_response$data$id))
 
   endpoint <- endpoint_model_result(queue)
-  out <- queue$queue$task_wait(run_response$data$id)
+  out <- queue$task_wait(run_response$data$id)
   response <- endpoint$run(run_response$data$id)
 
   expect_equal(response$status_code, 200)
@@ -497,7 +497,7 @@ test_that("api can call endpoint_model_result", {
   expect_equal(submit_body$status, "success")
   expect_true(!is.null(submit_body$data$id))
 
-  out <- queue$queue$task_wait(submit_body$data$id)
+  out <- queue$task_wait(submit_body$data$id)
   res <- api$request("GET", sprintf("/model/result/%s", submit_body$data$id))
   expect_equal(res$status, 200)
   body <- jsonlite::fromJSON(res$body,  simplifyVector = FALSE)
@@ -568,7 +568,7 @@ test_that("erroring model run returns useful messages", {
   expect_equal(body$status, "success")
   expect_true(!is.null(body$data$id))
 
-  out <- queue$queue$task_wait(body$data$id)
+  out <- queue$task_wait(body$data$id)
   res <- api$request("GET", sprintf("/model/result/%s", body$data$id))
   expect_equal(res$status, 400)
   body <- jsonlite::fromJSON(res$body)
@@ -717,7 +717,7 @@ test_that("endpoint_model_debug can be run", {
   run_response <- run_endpoint$run(payload)
 
   expect_equal(run_response$status_code, 200)
-  out <- queue$queue$task_wait(run_response$data$id)
+  out <- queue$task_wait(run_response$data$id)
 
   endpoint <- endpoint_model_debug(queue)
   response <- endpoint$run(run_response$data$id)
@@ -742,7 +742,7 @@ test_that("api can call endpoint_model_debug", {
 
   expect_equal(res$status, 200)
   response <- jsonlite::fromJSON(res$body)
-  out <- queue$queue$task_wait(response$data$id)
+  out <- queue$task_wait(response$data$id)
 
   ## Get result
   res <- api$request("GET", paste0("/model/debug/", response$data$id))
@@ -854,7 +854,7 @@ test_that("model calibrate can be queued and result returned", {
   expect_true(!is.null(submit_response$data$id))
 
   ## Status
-  out <- q$queue$queue$task_wait(submit_response$data$id)
+  out <- q$queue$task_wait(submit_response$data$id)
   status <- endpoint_model_calibrate_status(q$queue)
   status_response <- status$run(submit_response$data$id)
 
@@ -922,7 +922,7 @@ test_that("api can call endpoint_model_calibrate", {
   expect_true(!is.null(submit_body$data$id))
 
   ## Status
-  out <- q$queue$queue$task_wait(submit_body$data$id)
+  out <- q$queue$task_wait(submit_body$data$id)
   status_res <- api$request("GET",
                             paste0("/calibrate/status/", submit_body$data$id))
 

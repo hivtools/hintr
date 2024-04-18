@@ -31,12 +31,12 @@ test_that("Debug endpoint returns debug information", {
     c("data.rds", "files"))
   info <- readRDS(file.path(dest, id, "data.rds"))
   ## Smoke test options are passed through
-  expect_true(length(info$objects$options) > 25)
-  expect_true(list(area_scope = "MWI") %in% info$objects$options)
+  expect_true(length(info$variables$options) > 25)
+  expect_true(list(area_scope = "MWI") %in% info$variables$options)
   expect_s3_class(info$sessionInfo, "sessionInfo")
-  expect_equal(names(info$objects$data),
+  expect_equal(names(info$variables$data),
                c("pjnz", "shape", "population", "survey", "programme", "anc"))
-  expect_equal(names(info$objects$data$pjnz), c("path", "hash", "filename"))
+  expect_equal(names(info$variables$data$pjnz), c("path", "hash", "filename"))
   expect_setequal(
     dir(file.path(dest, id, "files")),
     c("anc.csv", "malawi.geojson", "Malawi2019.PJNZ", "population.csv",
@@ -56,7 +56,7 @@ test_that("Debug endpoint returns debug information for calibrate", {
   expect_true(!is.null(id))
 
   ## Wait for complete status
-  out <- q$queue$queue$task_wait(id)
+  out <- q$queue$task_wait(id)
   status <- endpoint_model_calibrate_status(q$queue)
   status_response <- status$run(id)
   expect_equal(status_response$data$status, scalar("COMPLETE"))
@@ -73,12 +73,12 @@ test_that("Debug endpoint returns debug information for calibrate", {
     c("data.rds", "files"))
   info <- readRDS(file.path(dest, id, "data.rds"))
 
-  expect_s3_class(info$objects$model_output, "hintr_output")
-  expect_true(length(info$objects$calibration_options) > 5)
+  expect_s3_class(info$variables$model_output, "hintr_output")
+  expect_true(length(info$variables$calibration_options) > 5)
   expect_s3_class(info$sessionInfo, "sessionInfo")
-  expect_equal(info$objects$model_output$model_output_path,
+  expect_equal(info$variables$model_output$model_output_path,
                dir(file.path(dest, id, "files")))
-  expect_null(info$objects$model_output$plot_data_path)
+  expect_null(info$variables$model_output$plot_data_path)
 })
 
 test_that("Debug endpoint returns debug information for download", {
@@ -93,7 +93,7 @@ test_that("Debug endpoint returns debug information for download", {
   expect_true(!is.null(id))
 
   ## Wait for complete status
-  out <- q$queue$queue$task_wait(id)
+  out <- q$queue$task_wait(id)
   status <- endpoint_model_calibrate_status(q$queue)
   status_response <- status$run(id)
   expect_equal(status_response$data$status, scalar("COMPLETE"))
@@ -110,11 +110,11 @@ test_that("Debug endpoint returns debug information for download", {
     c("data.rds", "files"))
   info <- readRDS(file.path(dest, id, "data.rds"))
 
-  expect_s3_class(info$objects$model_output, "hintr_output")
-  expect_equal(info$objects$type, "spectrum")
+  expect_s3_class(info$variables$model_output, "hintr_output")
+  expect_equal(info$variables$type, "spectrum")
   expect_s3_class(info$sessionInfo, "sessionInfo")
-  files <- c(info$objects$model_output$model_output_path,
-             info$objects$model_output$plot_data_path)
+  files <- c(info$variables$model_output$model_output_path,
+             info$variables$model_output$plot_data_path)
   expect_setequal(files, dir(file.path(dest, id, "files")))
 })
 

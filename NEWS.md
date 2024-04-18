@@ -1,3 +1,7 @@
+# hintr 1.1.23
+
+* Update to use new rrq free functions added in v0.7.10
+
 # hintr 1.1.22
 
 * Remove hardcoded year2 value for ANC prevalance and ANC ART coverage
