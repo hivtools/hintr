@@ -6,6 +6,12 @@ on:
   pull_request:
     branches: [main, master]
 
+env:
+  TAG_SERVER_DH: mrcide/hintr
+  TAG_WORKER_DH: mrcide/hintr-worker
+  TAG_SERVER_GHCR: mrc-ide/hintr
+  TAG_WORKER_GHCR: mrc-ide/hintr-worker
+
 jobs:
   docker:
     runs-on: ubuntu-latest
@@ -48,10 +54,11 @@ jobs:
         with:
           context: .
           file: "./docker/Dockerfile"
+          load: true
           push: true
           tags: |
-            mrcide/hintr:${{steps.extract_branch.outputs.branch}}
-            ghcr.io/${{github.repository}}:${{steps.extract_branch.outputs.branch}}
+            ${{env.TAG_SERVER_DH}}:${{steps.extract_branch.outputs.branch}}
+            ghcr.io/${{env.TAG_SERVER_GHCR}}:${{steps.extract_branch.outputs.branch}}
 
       - name: Build and push prod containers
         uses: docker/build-push-action@v5
@@ -59,9 +66,41 @@ jobs:
         with:
           context: .
           file: "./docker/Dockerfile"
+          load: true
           push: true
           tags: |
-            mrcide/hintr:latest
-            mrcide/hintr:${{steps.extract_branch.outputs.branch}}
-            ghcr.io/${{github.repository}}:latest
-            ghcr.io/${{github.repository}}:${{steps.extract_branch.outputs.branch}}
+            ${{env.TAG_SERVER_DH}}:latest
+            ${{env.TAG_SERVER_DH}}:${{steps.extract_branch.outputs.branch}}
+            ghcr.io/${{env.TAG_SERVER_GHCR}}:latest
+            ghcr.io/${{env.TAG_SERVER_GHCR}}:${{steps.extract_branch.outputs.branch}}
+
+      - name: Create worker Dockerfile
+        run: |
+          cat << EOF > ./docker/Dockerfile.worker
+          FROM ghcr.io/${{env.TAG_SERVER_GHCR}}:${{steps.extract_branch.outputs.branch}}
+          ENTRYPOINT ["/usr/local/bin/hintr_worker"]
+          EOF
+
+      - name: Build and push dev worker containers
+        uses: docker/build-push-action@v5
+        if: github.event_name == 'pull_request'
+        with:
+          context: .
+          file: "./docker/Dockerfile.worker"
+          push: true
+          tags: |
+            ${{env.TAG_WORKER_DH}}:${{steps.extract_branch.outputs.branch}}
+            ghcr.io/${{env.TAG_WORKER_GHCR}}:${{steps.extract_branch.outputs.branch}}
+
+      - name: Build and push prod worker containers
+        uses: docker/build-push-action@v5
+        if: github.event_name != 'pull_request'
+        with:
+          context: .
+          file: "./docker/Dockerfile"
+          push: true
+          tags: |
+            ${{env.TAG_WORKER_DH}}:latest
+            ${{env.TAG_WORKER_DH}}:${{steps.extract_branch.outputs.branch}}
+            ghcr.io/${{env.TAG_WORKER_GHCR}}:latest
+            ghcr.io/${{env.TAG_WORKER_GHCR}}:${{steps.extract_branch.outputs.branch}}
