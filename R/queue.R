@@ -21,17 +21,17 @@ Queue <- R6::R6Class(
 
       message(t_("QUEUE_STARTING"))
       queue_id <- hintr_queue_id(queue_id)
-      self$controller <- rrq::rrq_controller2(queue_id, con = con)
+      self$controller <- rrq::rrq_controller(queue_id, con = con)
       default_worker_cfg <- rrq::rrq_worker_config(
         heartbeat_period = 10,
         queue = c(QUEUE_CALIBRATE, QUEUE_RUN))
       calibrate_worker_cfg <- rrq::rrq_worker_config(
         heartbeat_period = 10,
         queue = QUEUE_CALIBRATE)
-      rrq::rrq_worker_config_save2("localhost", default_worker_cfg,
-                                   controller = self$controller)
-      rrq::rrq_worker_config_save2("calibrate_only", calibrate_worker_cfg,
-                                   controller = self$controller)
+      rrq::rrq_worker_config_save("localhost", default_worker_cfg,
+                                  controller = self$controller)
+      rrq::rrq_worker_config_save("calibrate_only", calibrate_worker_cfg,
+                                  controller = self$controller)
 
       self$start(workers, timeout)
 
@@ -43,8 +43,8 @@ Queue <- R6::R6Class(
 
     start = function(workers, timeout) {
       if (workers > 0L) {
-        worker_manager <- rrq::rrq_worker_spawn2(workers,
-                                                 controller = self$controller)
+        worker_manager <- rrq::rrq_worker_spawn(workers,
+                                                controller = self$controller)
         if (is.finite(timeout) && timeout > 0) {
           rrq::rrq_message_send_and_wait("TIMEOUT_SET", timeout,
                                          worker_manager$id,
