@@ -20,7 +20,6 @@ jobs:
 
       - id: extract_branch
         name: Setup Environment
-        if: ${{ github.event_name == 'pull_request' }}
         shell: bash
         run: |
           if [ "${{github.event_name}}" = "pull_request" ];
