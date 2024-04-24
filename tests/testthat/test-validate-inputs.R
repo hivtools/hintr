@@ -45,6 +45,13 @@ test_that("do_validate_shape validates shape and returns geojson as list", {
   expect_equal(json$filters$regions$children[[3]]$label, scalar("Southern"))
 })
 
+test_that("do_validate_shape returns if display property is missing", {
+  shape <- file_object(file.path("testdata", "malawi_missing_display.geojson"))
+  json <- do_validate_shape(shape)
+  expect_s3_class(json$data, "json")
+  expect_equal(json$filters$level_labels[[1]]$display, scalar(TRUE))
+})
+
 test_that("do_validate_population validates population file", {
   population <- file_object(file.path("testdata", "population.csv"))
   pop <- do_validate_population(population)

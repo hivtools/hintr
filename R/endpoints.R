@@ -559,7 +559,7 @@ submit_model <- function(queue) {
     if (!is_current_version(input$version)) {
       hintr_error(t_("MODEL_SUBMIT_OLD"), "VERSION_OUT_OF_DATE")
     }
-    tryCatch(
+    withCallingHandlers(
       list(id = scalar(queue$submit_model_run(input$data, input$options))),
       error = function(e) {
         hintr_error(api_error_msg(e), "FAILED_TO_QUEUE")
@@ -569,7 +569,8 @@ submit_model <- function(queue) {
 }
 
 queue_status <- function(queue) {
-  check_orphan <- throttle(queue$queue$worker_detect_exited, 10)
+  check_orphan <- throttle(
+    function() rrq::rrq_worker_detect_exited(controller = queue$controller), 10)
   function(id) {
     no_error(check_orphan())
     tryCatch({
@@ -603,7 +604,7 @@ submit_calibrate <- function(queue) {
     if (!is_current_version(calibration_options$version)) {
       hintr_error(t_("CALIBRATE_SUBMIT_OLD"), "VERSION_OUT_OF_DATE")
     }
-    tryCatch(
+    withCallingHandlers(
       list(id = scalar(queue$submit_calibrate(queue$result(id),
                                               calibration_options$options))),
       error = function(e) {
@@ -651,8 +652,9 @@ calibrate_result_path <- function(queue) {
   function(id) {
     verify_result_available(queue, id)
     result <- queue$result(id)
+    relative_path <- fs::path_rel(result$plot_data_path, start = queue$results_dir)
     list(
-      path = scalar(result$plot_data_path)
+      path = scalar(relative_path)
     )
   }
 }
@@ -709,7 +711,7 @@ comparison_plot <- function(queue) {
 }
 
 verify_result_available <- function(queue, id, version = NULL) {
-  task_status <- queue$queue$task_status(id)
+  task_status <- rrq::rrq_task_status(id, controller = queue$controller)
   if (task_status == "COMPLETE") {
     result <- queue$result(id)
     naomi:::assert_model_output_version(result, version = version)
@@ -778,7 +780,7 @@ download_submit <- function(queue) {
         prepared_input$vmmc <- parsed_input$vmmc
       }
     }
-    tryCatch(
+    withCallingHandlers(
       list(id = scalar(
         queue$submit_download(queue$result(id), type, prepared_input))),
       error = function(e) {
@@ -842,15 +844,15 @@ build_content_disp_header <- function(areas, filename, ext) {
 download_model_debug <- function(queue) {
   function(id) {
     tryCatch({
-      data <- queue$queue$task_data(id)
+      data <- rrq::rrq_task_data(id, controller = queue$controller)
       func <- as.list(data$expr)[[1]]
       if (func == "hintr:::run_model") {
-        files <- unique(unlist(lapply(data$objects$data, function(x) {
+        files <- unique(unlist(lapply(data$variables$data, function(x) {
           if (!is.null(x)) {
             x$path
           }
         }), FALSE, FALSE))
-        data$objects$data <- lapply(data$objects$data, function(x) {
+        data$variables$data <- lapply(data$variables$data, function(x) {
           if (!is.null(x)) {
             list(path = basename(x$path), hash = x$hash, filename = x$filename)
           }
@@ -859,14 +861,14 @@ download_model_debug <- function(queue) {
         ## Calibrate, file download requests have format of "hintr_output"
         ## object from naomi. They have files at plot_data_path
         ## and model_output_path
-        files <- data$objects$model_output$model_output_path
-        data$objects$model_output$model_output_path <- basename(
-          data$objects$model_output$model_output_path)
-        if (!is.null(data$objects$model_output$plot_data_path)) {
+        files <- data$variables$model_output$model_output_path
+        data$variables$model_output$model_output_path <- basename(
+          data$variables$model_output$model_output_path)
+        if (!is.null(data$variables$model_output$plot_data_path)) {
           ## This file only exists after calibrate has been run
-          files <- c(files, data$objects$model_output$plot_data_path)
-          data$objects$model_output$plot_data_path <- basename(
-            data$objects$model_output$plot_data_path)
+          files <- c(files, data$variables$model_output$plot_data_path)
+          data$variables$model_output$plot_data_path <- basename(
+            data$variables$model_output$plot_data_path)
         }
       }
       tmp <- tempfile()
@@ -905,7 +907,7 @@ download_model_debug <- function(queue) {
 
 worker_status <- function(queue) {
   function() {
-    lapply(queue$queue$worker_status(), scalar)
+    lapply(rrq::rrq_worker_status(controller = queue$controller), scalar)
   }
 }
 
@@ -913,10 +915,16 @@ hintr_stop <- function(queue) {
   force(queue)
   function() {
     message("Stopping workers")
-    queue$queue$worker_stop()
+    worker_stop(controller = queue$controller)
     message("Quitting hintr")
     quit(save = "no")
   }
+}
+
+## Wrapping this in a separate function for easier mocking
+## during testing
+worker_stop <- function(...) {
+  rrq::rrq_worker_stop(...)
 }
 
 prepare_status_response <- function(value, id) {

@@ -26,7 +26,7 @@ test_that("rehydrate endpoint returns json", {
   expect_true(!is.null(submit_response$data$id))
 
   ## Status
-  out <- q$queue$queue$task_wait(submit_response$data$id)
+  out <- q$queue$task_wait(submit_response$data$id)
   status <- endpoint_rehydrate_status(q$queue)
   status_response <- status$run(submit_response$data$id)
 
@@ -65,7 +65,7 @@ test_that("api can call spectrum download", {
   expect_true(!is.null(submit_body$data$id))
 
   ## Status
-  out <- q$queue$queue$task_wait(submit_body$data$id)
+  out <- q$queue$task_wait(submit_body$data$id)
   status <- api$request("GET",
                         paste0("/rehydrate/status/", submit_body$data$id))
 
@@ -104,7 +104,7 @@ test_that("rehydrate returns useful error if cannot rehydrate from zip", {
   expect_equal(submit_response$status_code, 200)
 
   ## Get result
-  out <- q$queue$queue$task_wait(submit_response$data$id)
+  out <- q$queue$task_wait(submit_response$data$id)
   result <- endpoint_rehydrate_result(q$queue)
   response <- result$run(submit_response$data$id)
   expect_equal(response$status_code, 400)

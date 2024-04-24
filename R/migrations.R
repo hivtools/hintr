@@ -1,13 +1,13 @@
 run_migration <- function(queue, log_dir, to_version, dry_run = TRUE) {
-  log_dir <- normalizePath(log_dir, winslash = "/", mustWork = TRUE)
-  tasks <- queue$queue$task_list()
-  status <- queue$queue$task_status(tasks)
+  log_dir <- normalizePath(log_dir, mustWork = TRUE)
+  tasks <- rrq::rrq_task_list(controller = queue$controller)
+  status <- rrq::rrq_task_status(tasks, controller = queue$controller)
 
   running_tasks <- tasks[status %in% c("RUNNING", "PENDING")]
   for (task in running_tasks) {
     ## Wait for running tasks to finish before attempting migration
     message(sprintf("Waiting for task %s", task))
-    queue$queue$task_wait(task)
+    rrq::rrq_task_wait(task, controller = queue$controller)
   }
 
   completed_tasks <- tasks[status == "COMPLETE"]
@@ -37,7 +37,7 @@ run_migration <- function(queue, log_dir, to_version, dry_run = TRUE) {
 
 migrate_task <- function(task_id, queue, to_version, dry_run) {
   message(sprintf("Migrating %s", task_id))
-  res <- queue$queue$task_result(task_id)
+  res <- rrq::rrq_task_result(task_id, controller = queue$controller)
   if (!naomi:::is_hintr_output(res) ||
       !all(c("plot_data_path", "model_output_path") %in% names(res))) {
     is_download <- "path" %in% names(res)
@@ -116,11 +116,10 @@ migrate_task <- function(task_id, queue, to_version, dry_run) {
     ## 2. Save the hash into redis as the `task_result`
     ## The object store is an internal part of rrq and not exposed so
     ## we need to be a big naughty here use ::: to access it.
-    store <- rrq:::rrq_object_store(queue$queue$con,
-                                    r6_private(queue$queue)$keys)
+    store <- queue$controller$store
     hash <- store$set(new_res, task_id)
-    queue$queue$con$HSET(r6_private(queue$queue)$keys$task_result, task_id,
-                         hash)
+    queue$controller$con$HSET(queue$controller$keys$task_result, task_id,
+                              hash)
   }
   out <- list(
     id = task_id,

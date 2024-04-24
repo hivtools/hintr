@@ -10,7 +10,7 @@ test_that("can return upload metadata for ADR spectrum", {
   expect_true(!is.null(submit_response$data$id))
 
   ## Status
-  out <- q$queue$queue$task_wait(submit_response$data$id)
+  out <- q$queue$task_wait(submit_response$data$id)
   status <- endpoint_download_status(q$queue)
   status_response <- status$run(submit_response$data$id)
 
@@ -40,7 +40,7 @@ test_that("can return upload metadata for ADR coarse-output", {
   expect_true(!is.null(submit_response$data$id))
 
   ## Status
-  out <- q$queue$queue$task_wait(submit_response$data$id)
+  out <- q$queue$task_wait(submit_response$data$id)
   status <- endpoint_download_status(q$queue)
   status_response <- status$run(submit_response$data$id)
 
@@ -70,7 +70,7 @@ test_that("can return upload metadata for ADR summary report", {
   expect_true(!is.null(submit_response$data$id))
 
   ## Status
-  out <- q$queue$queue$task_wait(submit_response$data$id)
+  out <- q$queue$task_wait(submit_response$data$id)
   status <- endpoint_download_status(q$queue)
   status_response <- status$run(submit_response$data$id)
 
@@ -100,7 +100,7 @@ test_that("can return upload metadata for comparison report", {
   expect_true(!is.null(submit_response$data$id))
 
   ## Status
-  out <- q$queue$queue$task_wait(submit_response$data$id)
+  out <- q$queue$task_wait(submit_response$data$id)
   status <- endpoint_download_status(q$queue)
   status_response <- status$run(submit_response$data$id)
 
