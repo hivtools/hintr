@@ -137,7 +137,7 @@ review_input_filter_metadata <- function(input) {
     return(
       list(
         filterTypes = get_review_input_filter_types(input, types),
-        indicators = get_review_input_indicators(types),
+        indicators = get_review_input_indicators(types, input$iso3),
         plotSettingsControl = list(
           inputChoropleth = get_input_choropleth_settings(types)
         )
@@ -180,8 +180,8 @@ append_filter_types <- function(input) {
   }
 }
 
-get_review_input_indicators <- function(types) {
-  metadata <- naomi::get_metadata()
+get_review_input_indicators <- function(types, iso3) {
+  metadata <- naomi::get_plotting_metadata(iso3)
   indicators <- metadata[metadata$data_type %in% types, ]
 }
 
