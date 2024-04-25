@@ -29,7 +29,7 @@ Imports:
     qs,
     R6,
     readxl,
-    rrq (>= 0.7.14),
+    rrq (>= 0.7.15),
     specio (>= 0.1.4),
     storr,
     traduire (>= 0.0.5),
@@ -51,7 +51,6 @@ Suggests:
     tidyselect,
     withr
 Remotes:
-    mrc-ide/naomi,
-    mrc-ide/rrq@mrc-5271
+    mrc-ide/naomi
 Config/testthat/edition: 3
 Config/testthat/parallel: true
