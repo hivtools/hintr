@@ -18,7 +18,7 @@ build_plot_type_metadata <- function(metadata) {
   list(indicators =
          lapply(metadata$indicator, function(indicator) {
            build_indicator_metadata(metadata[metadata$indicator == indicator, ])
-           }))
+         }))
 }
 
 build_indicator_metadata <- function(metadata) {
@@ -51,7 +51,8 @@ get_barchart_metadata <- function(output, data_type = "output") {
     metadata$data_type == data_type & metadata$plot_type == "barchart",
     c("indicator", "value_column", "error_low_column", "error_high_column",
       "indicator_column", "indicator_value", "indicator_sort_order",
-      "name", "scale", "accuracy", "format")]
+      "name", "scale", "accuracy", "format")
+  ]
   metadata[order(metadata$indicator_sort_order), ]
 }
 
@@ -63,7 +64,8 @@ get_choropleth_metadata <- function(output) {
     c("indicator", "value_column", "error_low_column", "error_high_column",
       "indicator_column", "indicator_value", "indicator_sort_order",
       "name", "min", "max", "colour",
-      "invert_scale", "scale", "accuracy", "format")]
+      "invert_scale", "scale", "accuracy", "format")
+  ]
   metadata[order(metadata$indicator_sort_order), ]
 }
 
@@ -84,31 +86,23 @@ get_plot_settings_control <- function() {
 get_choropleth_settings <- function() {
   filter_ids <- c("indicator", "detail", "area", "period", "sex", "age")
   list(
-    defaultFilterTypes = lapply(filter_ids, get_filter_from_id),
-    plotSettings = list(
-      list(
-        id = scalar("default"),
-        label = scalar(""),
-        options = list(
-          list(
-            id = scalar(""),
-            label = scalar(""),
-            effect = list(
-              setMultiple = "area"
-            )
-          )
-        )
-      )
-    )
+    defaultEffect = list(
+      setFilters = lapply(filter_ids, get_filter_from_id),
+      setMultiple = "area"
+    ),
+    plotSettings = list()
   )
 }
 
 get_barchart_settings <- function() {
   base_filter_ids <- c("area", "period", "sex", "age")
   all_filter_ids <- c(c("indicator", "detail"), base_filter_ids)
-  x_axis_or_disagg_by_options <- lapply(base_filter_ids, get_x_axis_or_disagg_by_option)
+  x_axis_or_disagg_by_options <- lapply(base_filter_ids,
+                                        get_x_axis_or_disagg_by_option)
   list(
-    defaultFilterTypes = lapply(all_filter_ids, get_filter_from_id),
+    defaultEffect = list(
+      setFilters = lapply(all_filter_ids, get_filter_from_id)
+    ),
     plotSettings = list(
       list(
         id = scalar("x_axis"),
@@ -152,7 +146,8 @@ get_table_presets <- function() {
       id = scalar("sex_by_area"),
       label = scalar(t_("TABLE_SEX_BY_AREA")),
       effect = list(
-        setFilters = lapply(c("indicator", "detail", "period", "sex", "age"), get_filter_from_id),
+        setFilters = lapply(c("indicator", "detail", "period", "sex", "age"),
+                            get_filter_from_id),
         setMultiple = c("sex")
       )
     ),
@@ -160,7 +155,8 @@ get_table_presets <- function() {
       id = scalar("sex_by_5_year_age_group"),
       label = scalar(t_("TABLE_SEX_BY_5_YEAR_AGE_GROUP")),
       effect = list(
-        setFilters = lapply(c("indicator", "area", "period", "sex", "age"), get_filter_from_id),
+        setFilters = lapply(c("indicator", "area", "period", "sex", "age"),
+                            get_filter_from_id),
         setMultiple = c("sex", "age"),
         setFilterValues = list(
           age = naomi::get_five_year_age_groups()
@@ -183,24 +179,14 @@ get_bubble_settings <- function() {
       stateFilterId = scalar("colourIndicator")
     )
   )
-  base_filter_ids <- lapply(c("detail", "area", "period", "sex", "age"), get_filter_from_id)
+  base_filter_ids <- lapply(c("detail", "area", "period", "sex", "age"),
+                            get_filter_from_id)
   list(
-    defaultFilterTypes = c(indicators, base_filter_ids),
-    plotSettings = list(
-      list(
-        id = scalar("default"),
-        label = scalar(""),
-        options = list(
-          list(
-            id = scalar(""),
-            label = scalar(""),
-            effect = list(
-              setMultiple = "area"
-            )
-          )
-        )
-      )
-    )
+    defaultEffect = list(
+      setFilters = c(indicators, base_filter_ids),
+      setMultiple = "area"
+    ),
+    plotSettings = list()
   )
 }
 
