@@ -146,7 +146,7 @@ review_input_filter_metadata <- function(input) {
   }
   list(
     filterTypes = get_review_input_filter_types(input, types),
-    indicators = get_review_input_indicators(types),
+    indicators = get_review_input_indicators(types, input$iso3),
     plotSettingsControl = list(
       timeSeries = time_series_settings,
       inputChoropleth = get_input_choropleth_settings(types)
@@ -279,7 +279,7 @@ get_programme_map_filter_types <- function(input) {
   data <- read_csv(input$data$programme$path, header = TRUE)
   quarter_filter <- list(
     id = scalar("map_programme_quarter"),
-    column_id = scalar("quarter"),
+    column_id = scalar("calendar_quarter"),
     options = get_quarter_filters(data)
   )
   age_filter <- list(
