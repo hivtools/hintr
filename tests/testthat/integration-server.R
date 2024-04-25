@@ -236,9 +236,9 @@ test_that("real model can be run & calibrated by API", {
   test_server$start()
 
   ## Workers started mock model off
-  controller <- rrq::rrq_controller$new(queue_id = queue_id)
-  res <- controller$message_send_and_wait("EVAL",
-                                          "Sys.getenv('USE_MOCK_MODEL')")
+  controller <- rrq::rrq_controller(queue_id = queue_id)
+  res <- rrq::rrq_message_send_and_wait("EVAL", "Sys.getenv('USE_MOCK_MODEL')",
+                                        controller = controller)
   expect_equal(res, list("false", "false"), ignore_attr = TRUE)
 
   ## Submit a model run
@@ -718,8 +718,9 @@ test_that("crashed worker can be detected", {
   id <- response_from_json(r)$data$id
 
   Sys.sleep(2)
-  obj <- rrq::rrq_controller$new(queue_id = queue_id)
-  expect_equal(obj$task_status(id), setNames("RUNNING", id))
+  obj <- rrq::rrq_controller(queue_id = queue_id)
+  expect_equal(rrq::rrq_task_status(id, controller = obj),
+               "RUNNING")
 
   ## There's quite a chore here to try and identify the actual running
   ## job. The worker process will (eventually) have 3 running
@@ -730,9 +731,9 @@ test_that("crashed worker can be detected", {
   ##
   ## We can use the ps package to get the tree of processes, and find
   ## the most recent one and kill that
-  w <- rrq::rrq_worker_task_id(controll = obj)
+  w <- rrq::rrq_worker_task_id(controller = obj)
   expect_equal(unname(w), id)
-  info <- obj$worker_info()[[names(w)]]
+  info <- rrq::rrq_worker_info(controller = obj)[[names(w)]]
   children <- ps::ps_children(ps::ps_handle(info$pid))
   ps_task <- children[[which.max(vapply(children, ps::ps_pid, numeric(1)))]]
   ps::ps_send_signal(ps_task, ps::signals()$SIGTERM)

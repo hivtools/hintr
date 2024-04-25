@@ -1,3 +1,7 @@
+# hintr 1.1.25
+
+* Use new rrq functions
+
 # hintr 1.1.24
 
 * Return calibrate result path from `/calibrate/result/path/<id>` relative to the results directory
