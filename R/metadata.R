@@ -79,7 +79,8 @@ get_plot_settings_control <- function() {
     choropleth = get_choropleth_settings(),
     barchart = get_barchart_settings(),
     table = get_table_settings(),
-    bubble = get_bubble_settings()
+    bubble = get_bubble_settings(),
+    calibrate = get_calbration_plot_settings()
   )
 }
 
@@ -115,6 +116,16 @@ get_barchart_settings <- function() {
         options = x_axis_or_disagg_by_options
       )
     )
+  )
+}
+
+get_calbration_plot_settings <- function() {
+  filterIds <- c("calibrate_indicator", "period", "sex", "age")
+  list(
+    defaultEffect = list(
+      setFilters = lapply(filterIds, get_filter_from_id)
+    ),
+    plotSettings = list()
   )
 }
 

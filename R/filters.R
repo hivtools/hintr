@@ -74,6 +74,18 @@ get_output_indicator_filters <- function() {
   indicator_metadata[order(ordering), ]
 }
 
+get_calibrate_indicator_filters <- function() {
+  metadata <- naomi::get_metadata()
+  indicator_metadata <- metadata[
+    metadata$data_type == "calibrate" & metadata$plot_type == "barchart",
+    c("indicator", "name")]
+  names(indicator_metadata) <- c("id", "label")
+  ordering <- metadata[
+    metadata$data_type == "calibrate" & metadata$plot_type == "barchart",
+    c("indicator_sort_order")]
+  indicator_metadata[order(ordering), ]
+}
+
 #' Read filters from wide format data
 #'
 #' Expect input data with headers like
@@ -156,6 +168,11 @@ get_model_output_filters <- function(data) {
       id = scalar("indicator"),
       column_id = scalar("indicator"),
       options = get_output_indicator_filters()
+    ),
+    list(
+      id = scalar("calibrate_indicator"),
+      column_id = scalar("indicator"),
+      options = get_calibrate_indicator_filters()
     )
   )
 }
