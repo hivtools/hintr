@@ -13,6 +13,10 @@ run_migration <- function(queue, log_dir, to_version, dry_run = TRUE) {
   completed_tasks <- tasks[status == "COMPLETE"]
   migrations <- lapply(completed_tasks, migrate_task, queue,
                        to_version, dry_run)
+  write_migration_log(migrations, log_dir)
+}
+
+write_migration_log <- function(migrations, log_dir) {
   summary <- lapply(migrations, function(migration) {
     list(
       id = migration$id,
@@ -148,4 +152,72 @@ migrate <- function(res, new_version, dry_run) {
 
 r6_private <- function(x) {
   x[[".__enclos_env__"]]$private
+}
+
+
+run_task_data_migration <- function(queue, log_dir, to_version, dry_run = TRUE) {
+  log_dir <- normalizePath(log_dir, mustWork = TRUE)
+  tasks <- rrq::rrq_task_list(controller = queue$controller)
+
+  migrations <- lapply(tasks, migrate_task_data, queue$controller,
+                       to_version, dry_run)
+  write_migration_log(migrations, log_dir)
+}
+
+migrate_task_data <- function(task_id, controller, to_version, dry_run) {
+  message(sprintf("Migrating %s", task_id))
+
+  con <- controller$con
+  keys <- controller$keys
+  expr <- con$HGET(keys$task_expr, task_id)
+  task <- redux::bin_to_object(expr)
+
+  expected_keys_old <- c("expr", "objects")
+  expected_keys_new <- c("expr", "variables", "type")
+  is_old_task <- has_keys(task, expected_keys_old)
+  is_new_task <- has_keys(task, expected_keys_new)
+  if (is_old_task) {
+    new_res <- task
+    new_res$type <- "expr"
+    new_res$variables <- new_res$objects
+    new_res$objects <- NULL
+
+    ## Test we can read it with rrq
+    t <- rrq:::task_load_from_store(new_res, controller$store)
+    if (!has_keys(t, expected_keys_new)) {
+      stop(sprintf("Failed to migrate task %s", task_id))
+    }
+  } else if (is_new_task) {
+    message(sprintf("Not migrating %s, this is already a new task", task_id))
+    return(list(
+      id = task_id,
+      prev_res = task,
+      action = "Not migrating, this is already a new task"
+    ))
+  } else {
+    message(sprintf("Not migrating %s, unknown task type", task_id))
+    return(list(
+      id = task_id,
+      prev_res = task,
+      action = "Not migrating, unknown task type"
+    ))
+  }
+
+  if (!dry_run) {
+    new_expr <- redux::object_to_bin(new_res)
+    con$HSET(keys$task_expr, task_id, new_expr)
+  }
+  out <- list(
+    id = task_id,
+    prev_res = task,
+    new_res = new_res,
+    to = to_version,
+    action = "Successfully migrated"
+  )
+  message(sprintf("Successfully migrated %s", task_id))
+  out
+}
+
+has_keys <- function(what, keys) {
+  length(names(what)) == length(keys) && all(names(what) %in% keys)
 }
