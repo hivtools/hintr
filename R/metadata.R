@@ -120,10 +120,16 @@ get_barchart_settings <- function() {
 }
 
 get_calbration_plot_settings <- function() {
-  filterIds <- c("calibrate_indicator", "period", "sex", "age")
+  calibrate_indicator_setting <- list(
+    filterId = scalar("calibrate_indicator"),
+    label = scalar(get_label_for_id("calibrate_indicator")),
+    stateFilterId = scalar("indicator")
+  )
+  filterIds <- c("period", "sex", "age")
   list(
     defaultEffect = list(
-      setFilters = lapply(filterIds, get_filter_from_id)
+      setFilters = c(list(calibrate_indicator_setting),
+                     lapply(filterIds, get_filter_from_id))
     ),
     plotSettings = list()
   )
@@ -217,7 +223,8 @@ get_label_for_id <- function(id) {
       "sex" = "OUTPUT_FILTER_SEX",
       "age" = "OUTPUT_FILTER_AGE",
       "detail" = "OUTPUT_FILTER_AREA_LEVEL",
-      "indicator" = "OUTPUT_FILTER_INDICATOR"
+      "indicator" = "OUTPUT_FILTER_INDICATOR",
+      "calibrate_indicator" = "OUTPUT_FILTER_INDICATOR"
     )
   )
 }
