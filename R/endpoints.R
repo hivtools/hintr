@@ -264,7 +264,7 @@ get_anc_map_filter_types <- function(input) {
   year_filter <- list(
     id = scalar("map_anc_year"),
     label = scalar(t_("INPUT_TIME_SERIES_COLUMN_YEAR")),
-    column_id = scalar("time_period"),
+    column_id = scalar("year"),
     options = get_year_filters(data)
   )
   indicator_filter <- list(
