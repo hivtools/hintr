@@ -670,16 +670,8 @@ calibrate_plot <- function(queue) {
     is_ratio <- grepl("\\w+_ratio", data$data_type)
     data$indicator[is_ratio] <- paste0(data$indicator[is_ratio], "_ratio")
     data$spectrum_region_code <- as.character(data$spectrum_region_code)
-    filters <- get_calibrate_plot_output_filters(data)
     list(
-      data = data,
-      plottingMetadata = list(
-        barchart = list(
-          indicators = get_barchart_metadata(data, "calibrate"),
-          filters = filters,
-          defaults = get_calibrate_barchart_defaults(filters)
-        )
-      )
+      data = data
     )
   }
 }

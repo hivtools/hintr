@@ -2,16 +2,8 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "data": { "$ref": "CalibratePlotData.schema.json" },
-    "plottingMetadata": {
-      "type": "object",
-      "properties": {
-        "barchart": { "$ref": "BarchartMetadata.schema.json" }
-      },
-      "additionalProperties": false,
-      "required": [ "barchart" ]
-    }
+    "data": { "$ref": "CalibratePlotData.schema.json" }
   },
   "additionalProperties": false,
-  "required": [ "data", "plottingMetadata" ]
+  "required": [ "data" ]
 }

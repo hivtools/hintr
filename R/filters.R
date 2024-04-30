@@ -177,41 +177,6 @@ get_model_output_filters <- function(data) {
   )
 }
 
-get_calibrate_plot_output_filters <- function(data) {
-  list(
-    list(
-      id = scalar("spectrum_region"),
-      column_id = scalar("spectrum_region_code"),
-      label = scalar(t_("OUTPUT_FILTER_AREA")),
-      options = get_spectrum_region_filters(data)
-    ),
-    list(
-      id = scalar("quarter"),
-      column_id = scalar("calendar_quarter"),
-      label = scalar(t_("OUTPUT_FILTER_PERIOD")),
-      options = get_quarter_filters(data)
-    ),
-    list(
-      id = scalar("sex"),
-      column_id = scalar("sex"),
-      label = scalar(t_("OUTPUT_FILTER_SEX")),
-      options = get_sex_filters(data)
-    ),
-    list(
-      id = scalar("age"),
-      column_id = scalar("age_group"),
-      label = scalar(t_("OUTPUT_FILTER_AGE")),
-      options = get_age_filters(data)
-    ),
-    list(
-      id = scalar("type"),
-      column_id = scalar("data_type"),
-      label = scalar(t_("OUTPUT_FILTER_DATA_TYPE")),
-      options = get_data_type_filters(data)
-    )
-  )
-}
-
 get_comparison_plot_filters <- function(data) {
   list(
     list(
