@@ -74,13 +74,13 @@ get_country_iso3 <- function(area_ids) {
   sub("([A-Z]{3}).*", "\\1", area_ids[1])
 }
 
-get_plot_settings_control <- function() {
+get_plot_settings_control <- function(filter_types) {
   list(
     choropleth = get_choropleth_settings(),
     barchart = get_barchart_settings(),
     table = get_table_settings(),
     bubble = get_bubble_settings(),
-    calibrate = get_calbration_plot_settings()
+    calibrate = get_calbration_plot_settings(filter_types)
   )
 }
 
@@ -119,7 +119,7 @@ get_barchart_settings <- function() {
   )
 }
 
-get_calbration_plot_settings <- function() {
+get_calbration_plot_settings <- function(filter_types) {
   calibrate_indicator_setting <- list(
     filterId = scalar("calibrate_indicator"),
     label = scalar(get_label_for_id("calibrate_indicator")),
@@ -129,10 +129,32 @@ get_calbration_plot_settings <- function() {
   list(
     defaultEffect = list(
       setFilters = c(list(calibrate_indicator_setting),
-                     lapply(filterIds, get_filter_from_id))
+                     lapply(filterIds, get_filter_from_id)),
+      setFilterValues = list(
+        indicator = scalar("prevalence"),
+        quarter = get_filter_option_ids(filter_types, "quarter")[2],
+        sex = get_filter_option_ids(filter_types, "sex")[1],
+        age = scalar("Y015-049")
+      )
     ),
     plotSettings = list()
   )
+}
+
+get_filter_option_ids <- function(filter_types, type) {
+  selected <- NULL
+  for (filter in filter_types) {
+    if (filter$id == type) {
+      selected <- mapping[[key]]
+      break
+    }
+  }
+  if (is.null(selected)) {
+    stop(t_("MAPPING_NO_MATCHING", list(type = type)))
+  }
+  lapply(selected$options, function(opt) {
+    scalar(opt$id)
+  })
 }
 
 get_x_axis_or_disagg_by_option <- function(id) {

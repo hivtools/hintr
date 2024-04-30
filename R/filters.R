@@ -228,21 +228,6 @@ get_barchart_defaults <- function(output, output_filters) {
   )
 }
 
-get_calibrate_barchart_defaults <- function(filters) {
-  list(
-    indicator_id = scalar("prevalence"),
-    x_axis_id = scalar("spectrum_region"),
-    disaggregate_by_id = scalar("type"),
-    selected_filter_options = list(
-      quarter = get_selected_mappings(filters, "quarter")[2],
-      sex = get_selected_mappings(filters, "sex")[1],
-      age = get_selected_mappings(filters, "age", "Y015_049"),
-      spectrum_region = get_selected_mappings(filters, "spectrum_region"),
-      type = get_selected_mappings(filters, "type")
-    )
-  )
-}
-
 get_comparison_barchart_selections <- function(output, filters) {
   area_default <- get_area_id_filter_default(output)
   five_year_age_groups <- get_selected_mappings(

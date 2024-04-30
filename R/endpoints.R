@@ -622,6 +622,8 @@ calibrate_result <- function(queue) {
 }
 
 calibrate_metadata <- function(queue) {
+  ## TODO add a test that checks that for the ids used for all filters
+  ## and filter options exist in the filterTypes
   function(id) {
     verify_result_available(queue, id)
     result <- queue$result(id)
@@ -630,10 +632,11 @@ calibrate_metadata <- function(queue) {
     if (!is.null(result$warnings)) {
       warnings <- warnings_scalar(result$warnings)
     }
+    filter_types <-  get_model_output_filters(output)
     list(
-      filterTypes = get_model_output_filters(output),
+      filterTypes = filter_types,
       indicators = get_choropleth_metadata(output),
-      plotSettingsControl = get_plot_settings_control(),
+      plotSettingsControl = get_plot_settings_control(filter_types),
       warnings = warnings
     )
   }
