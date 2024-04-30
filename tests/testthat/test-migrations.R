@@ -253,3 +253,42 @@ test_that("migration can be run in dry-run mode", {
   expect_equal(migrated_real_run_result, real_run_result)
   expect_equal(migrated_real_calibrate_result, real_calibrate_result)
 })
+
+test_that("can migrate task data", {
+  q <- test_queue_result()
+
+  ## Create a fake old-result
+  ## bit of a backward test but it will do for a one-off bit of code
+  old_task <- q$calibrate_id
+  controller <- q$queue$controller
+  expr <- controller$con$HGET(controller$keys$task_expr, old_task)
+  task <- redux::bin_to_object(expr)
+  task$type <- NULL
+  task$objects <- task$variables
+  task$variables <- NULL
+
+  new_expr <- redux::object_to_bin(task)
+  controller$con$HSET(controller$keys$task_expr, old_task, new_expr)
+
+  ## Create a new invalid task
+  new_task_id <- rrq::rrq_task_create_expr(
+    2 + 2,
+    controller = controller)
+  rrq::rrq_task_wait(new_task_id, controller = controller)
+
+  broken_expr <- redux::object_to_bin(list(broken = "task"))
+  controller$con$HSET(controller$keys$task_expr, new_task_id, broken_expr)
+
+  log_dir <- tempfile()
+  dir.create(log_dir)
+
+  capture_messages(
+    out <- run_task_data_migration(q$queue, log_dir, "1.1.25", FALSE))
+
+  log <- qs::qread(out$log_path)
+  expect_length(log, 3)
+  actions <- lapply(log, "[[", "action")
+  expect_setequal(actions, c("Not migrating, this is already a new task",
+                             "Not migrating, unknown task type",
+                             "Successfully migrated"))
+})
