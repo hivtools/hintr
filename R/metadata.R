@@ -132,7 +132,7 @@ get_calbration_plot_settings <- function(filter_types) {
                      lapply(filterIds, get_filter_from_id)),
       setFilterValues = list(
         indicator = scalar("prevalence"),
-        quarter = get_filter_option_ids(filter_types, "quarter")[2],
+        period = get_filter_option_ids(filter_types, "period")[2],
         sex = get_filter_option_ids(filter_types, "sex")[1],
         age = scalar("Y015-049")
       )
