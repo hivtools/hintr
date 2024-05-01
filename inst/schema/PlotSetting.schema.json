@@ -11,6 +11,9 @@
         "options": {
             "type": "array",
             "items": { "$ref": "PlotSettingOption.schema.json" }
+        },
+        "visible": {
+            "type": "boolean"
         }
     },
     "additionalProperties": false,

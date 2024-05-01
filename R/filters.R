@@ -136,7 +136,7 @@ read_long_indicator_filters <- function(data, type) {
   construct_filter(present_indicators, "indicator", "name")
 }
 
-get_model_output_filters <- function(data) {
+get_model_output_filters <- function(data, calibrate_plot_data) {
   list(
     list(
       id = scalar("area"),
@@ -173,6 +173,18 @@ get_model_output_filters <- function(data) {
       id = scalar("calibrate_indicator"),
       column_id = scalar("indicator"),
       options = get_calibrate_indicator_filters()
+    ),
+    list(
+      id = scalar("calibrate_type"),
+      column_id = scalar("data_type"),
+      options = get_data_type_filters(),
+      visible = scalar(FALSE)
+    ),
+    list(
+      id = scalar("spectrum_region"),
+      column_id = scalar("spectrum_region_code"),
+      options = get_spectrum_region_filters(calibrate_plot_data),
+      visible = scalar(FALSE)
     )
   )
 }
@@ -411,7 +423,7 @@ get_spectrum_region_filters <- function(data) {
   })
 }
 
-get_data_type_filters <- function(data) {
+get_data_type_filters <- function() {
   recursive_scalar(naomi::data_type_labels())
 }
 

@@ -628,11 +628,12 @@ calibrate_metadata <- function(queue) {
     verify_result_available(queue, id)
     result <- queue$result(id)
     output <- naomi::read_hintr_output(result$plot_data_path)
+    calibrate_plot_data <- naomi::hintr_calibrate_plot(result)
     warnings <- list()
     if (!is.null(result$warnings)) {
       warnings <- warnings_scalar(result$warnings)
     }
-    filter_types <-  get_model_output_filters(output)
+    filter_types <-  get_model_output_filters(output, calibrate_plot_data)
     list(
       filterTypes = filter_types,
       indicators = get_choropleth_metadata(output),

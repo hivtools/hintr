@@ -120,15 +120,27 @@ get_barchart_settings <- function() {
 }
 
 get_calbration_plot_settings <- function(filter_types) {
-  calibrate_indicator_setting <- list(
-    filterId = scalar("calibrate_indicator"),
-    label = scalar(get_label_for_id("calibrate_indicator")),
-    stateFilterId = scalar("indicator")
+  calibrate_only_settings <- list(
+    list(
+      filterId = scalar("calibrate_indicator"),
+      label = scalar(get_label_for_id("calibrate_indicator")),
+      stateFilterId = scalar("indicator")
+    ),
+    list(
+      filterId = scalar("calibrate_type"),
+      label = scalar("Type"), # filter is always invisible so label never shown
+      stateFilterId = scalar("calibrate_type")
+    ),
+    list(
+      filterId = scalar("spectrum_region"),
+      label = scalar("Region"), # filter is always invisible, label never shown
+      stateFilterId = scalar("spectrum_region")
+    )
   )
   filterIds <- c("period", "sex", "age")
   list(
     defaultEffect = list(
-      setFilters = c(list(calibrate_indicator_setting),
+      setFilters = c(calibrate_only_settings,
                      lapply(filterIds, get_filter_from_id)),
       setFilterValues = list(
         indicator = scalar("prevalence"),
@@ -137,7 +149,22 @@ get_calbration_plot_settings <- function(filter_types) {
         age = scalar("Y015-049")
       )
     ),
-    plotSettings = list()
+    ## x-axis and disaggregate plot settings are not visible as users cannot
+    ## change these in the calibrate plot
+    plotSettings = list(
+      list(
+        id = scalar("x_axis"),
+        label = scalar(t_("OUTPUT_BARCHART_X_AXIS")),
+        options = "spectrum_region",
+        visible = scalar(FALSE)
+      ),
+      list(
+        id = scalar("disagg_by"),
+        label = scalar(t_("OUTPUT_BARCHART_DISAGG_BY")),
+        options = "calibrate_type",
+        visible = scalar(FALSE)
+      )
+    )
   )
 }
 
@@ -145,7 +172,7 @@ get_filter_option_ids <- function(filter_types, type) {
   selected <- NULL
   for (filter in filter_types) {
     if (filter$id == type) {
-      selected <- mapping[[key]]
+      selected <- filter
       break
     }
   }
