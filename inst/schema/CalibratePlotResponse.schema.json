@@ -2,8 +2,9 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "data": { "$ref": "CalibratePlotData.schema.json" }
+    "data": { "$ref": "CalibratePlotData.schema.json" },
+    "metadata": { "$ref": "CalibratePlotMetadata.schema.json" }
   },
   "additionalProperties": false,
-  "required": [ "data" ]
+  "required": [ "data", "metadata" ]
 }

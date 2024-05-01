@@ -4,7 +4,7 @@ get_filter_option_mocks <- function() {
     get_quarter_filters = mock("quarter_filters"),
     get_sex_filters = mock("sex_filters"),
     get_age_filters = mock("age_filters"),
-    get_output_indicator_filters = mock("indicator_filters")
+    get_indicator_options = mock("indicator_filters")
   )
 }
 

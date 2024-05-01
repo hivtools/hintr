@@ -628,16 +628,14 @@ calibrate_metadata <- function(queue) {
     verify_result_available(queue, id)
     result <- queue$result(id)
     output <- naomi::read_hintr_output(result$plot_data_path)
-    calibrate_plot_data <- naomi::hintr_calibrate_plot(result)
     warnings <- list()
     if (!is.null(result$warnings)) {
       warnings <- warnings_scalar(result$warnings)
     }
-    filter_types <-  get_model_output_filters(output, calibrate_plot_data)
     list(
-      filterTypes = filter_types,
-      indicators = get_choropleth_metadata(output),
-      plotSettingsControl = get_plot_settings_control(filter_types),
+      filterTypes = get_model_output_filters(output),
+      indicators = get_indicator_metadata("output", "choropleth", output),
+      plotSettingsControl = get_output_plot_settings_control(),
       warnings = warnings
     )
   }
@@ -674,8 +672,16 @@ calibrate_plot <- function(queue) {
     is_ratio <- grepl("\\w+_ratio", data$data_type)
     data$indicator[is_ratio] <- paste0(data$indicator[is_ratio], "_ratio")
     data$spectrum_region_code <- as.character(data$spectrum_region_code)
+
+    browser()
+    filter_types <- get_calibrate_plot_filters(data)
     list(
-      data = data
+      data = data,
+      metadata = list(
+        filterTypes = filter_types,
+        indicators = get_indicator_metadata("calibrate", "barchart", data),
+        plotSettingsControl = get_calibrate_plot_settings_control(filter_types)
+      )
     )
   }
 }

@@ -16,11 +16,10 @@
         "choropleth": { "$ref": "PlotSettingsControl.schema.json" },
         "barchart": { "$ref": "PlotSettingsControl.schema.json" },
         "table": { "$ref": "PlotSettingsControl.schema.json" },
-        "bubble": { "$ref": "PlotSettingsControl.schema.json" },
-        "calibrate": { "$ref": "PlotSettingsControl.schema.json" }
+        "bubble": { "$ref": "PlotSettingsControl.schema.json" }
       },
       "additionalProperties": false,
-      "required": ["choropleth", "barchart", "table", "bubble", "calibrate" ]
+      "required": ["choropleth", "barchart", "table", "bubble"]
     },
     "warnings": {
       "type": "array",

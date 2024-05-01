@@ -70,6 +70,8 @@
     "OUTPUT_FILTER_DATA_TYPE": "Data type",
     "OUTPUT_FILTER_AREA_LEVEL": "Area level",
     "OUTPUT_FILTER_INDICATOR": "Indicator",
+    "OUTPUT_FILTER_TYPE": "Type",
+    "OUTPUT_FILTER_SPECTRUM_REGION": "Region",
     "OUTPUT_BARCHART_X_AXIS": "X Axis",
     "OUTPUT_BARCHART_DISAGG_BY": "Disaggregate By",
     "OUTPUT_TABLE_PRESETS": "Presets",

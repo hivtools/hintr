@@ -62,26 +62,14 @@ get_area_level_filters <- function(data) {
   })
 }
 
-get_output_indicator_filters <- function() {
+get_indicator_options <- function(data_type) {
   metadata <- naomi::get_metadata()
   indicator_metadata <- metadata[
-    metadata$data_type == "output" & metadata$plot_type == "barchart",
+    metadata$data_type == data_type & metadata$plot_type == "barchart",
     c("indicator", "name")]
   names(indicator_metadata) <- c("id", "label")
   ordering <- metadata[
-    metadata$data_type == "output" & metadata$plot_type == "barchart",
-    c("indicator_sort_order")]
-  indicator_metadata[order(ordering), ]
-}
-
-get_calibrate_indicator_filters <- function() {
-  metadata <- naomi::get_metadata()
-  indicator_metadata <- metadata[
-    metadata$data_type == "calibrate" & metadata$plot_type == "barchart",
-    c("indicator", "name")]
-  names(indicator_metadata) <- c("id", "label")
-  ordering <- metadata[
-    metadata$data_type == "calibrate" & metadata$plot_type == "barchart",
+    metadata$data_type == data_type & metadata$plot_type == "barchart",
     c("indicator_sort_order")]
   indicator_metadata[order(ordering), ]
 }
@@ -136,7 +124,7 @@ read_long_indicator_filters <- function(data, type) {
   construct_filter(present_indicators, "indicator", "name")
 }
 
-get_model_output_filters <- function(data, calibrate_plot_data) {
+get_model_output_filters <- function(data) {
   list(
     list(
       id = scalar("area"),
@@ -167,15 +155,35 @@ get_model_output_filters <- function(data, calibrate_plot_data) {
     list(
       id = scalar("indicator"),
       column_id = scalar("indicator"),
-      options = get_output_indicator_filters()
+      options = get_indicator_options("output")
+    )
+  )
+}
+
+get_calibrate_plot_filters <- function(data) {
+  list(
+    list(
+      id = scalar("period"),
+      column_id = scalar("calendar_quarter"),
+      options = get_quarter_filters(data)
+    ),
+    list(
+      id = scalar("sex"),
+      column_id = scalar("sex"),
+      options = get_sex_filters(data)
+    ),
+    list(
+      id = scalar("age"),
+      column_id = scalar("age_group"),
+      options = get_age_filters(data)
     ),
     list(
       id = scalar("calibrate_indicator"),
       column_id = scalar("indicator"),
-      options = get_calibrate_indicator_filters()
+      options = get_indicator_options("calibrate")
     ),
     list(
-      id = scalar("calibrate_type"),
+      id = scalar("type"),
       column_id = scalar("data_type"),
       options = get_data_type_filters(),
       visible = scalar(FALSE)
@@ -183,7 +191,7 @@ get_model_output_filters <- function(data, calibrate_plot_data) {
     list(
       id = scalar("spectrum_region"),
       column_id = scalar("spectrum_region_code"),
-      options = get_spectrum_region_filters(calibrate_plot_data),
+      options = get_spectrum_region_filters(data),
       visible = scalar(FALSE)
     )
   )

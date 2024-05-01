@@ -56,11 +56,11 @@ get_barchart_metadata <- function(output, data_type = "output") {
   metadata[order(metadata$indicator_sort_order), ]
 }
 
-get_choropleth_metadata <- function(output) {
-  iso3 <- get_country_iso3(output$area_id)
+get_indicator_metadata <- function(data_type, plot_type, data) {
+  iso3 <- get_country_iso3(data$area_id)
   metadata <- get_plotting_metadata(iso3)
   metadata <- metadata[
-    metadata$data_type == "output" & metadata$plot_type == "choropleth",
+    metadata$data_type == data_type & metadata$plot_type == plot_type,
     c("indicator", "value_column", "error_low_column", "error_high_column",
       "indicator_column", "indicator_value", "indicator_sort_order",
       "name", "min", "max", "colour",
@@ -69,18 +69,22 @@ get_choropleth_metadata <- function(output) {
   metadata[order(metadata$indicator_sort_order), ]
 }
 
-
 get_country_iso3 <- function(area_ids) {
   sub("([A-Z]{3}).*", "\\1", area_ids[1])
 }
 
-get_plot_settings_control <- function(filter_types) {
+get_output_plot_settings_control <- function() {
   list(
     choropleth = get_choropleth_settings(),
     barchart = get_barchart_settings(),
     table = get_table_settings(),
-    bubble = get_bubble_settings(),
-    calibrate = get_calbration_plot_settings(filter_types)
+    bubble = get_bubble_settings()
+  )
+}
+
+get_calibrate_plot_settings_control <- function(filter_types) {
+  list(
+    calibrate = get_calibration_plot_settings(filter_types)
   )
 }
 
@@ -119,34 +123,26 @@ get_barchart_settings <- function() {
   )
 }
 
-get_calbration_plot_settings <- function(filter_types) {
+get_calibration_plot_settings <- function(filter_types) {
   calibrate_only_settings <- list(
     list(
       filterId = scalar("calibrate_indicator"),
       label = scalar(get_label_for_id("calibrate_indicator")),
       stateFilterId = scalar("indicator")
-    ),
-    list(
-      filterId = scalar("calibrate_type"),
-      label = scalar("Type"), # filter is always invisible so label never shown
-      stateFilterId = scalar("calibrate_type")
-    ),
-    list(
-      filterId = scalar("spectrum_region"),
-      label = scalar("Region"), # filter is always invisible, label never shown
-      stateFilterId = scalar("spectrum_region")
     )
   )
-  filterIds <- c("period", "sex", "age")
+  filterIds <- c("spectrum_region", "type", "period", "sex", "age")
   list(
     defaultEffect = list(
       setFilters = c(calibrate_only_settings,
                      lapply(filterIds, get_filter_from_id)),
       setFilterValues = list(
-        indicator = scalar("prevalence"),
+        indicator = c("prevalence"),
         period = get_filter_option_ids(filter_types, "period")[2],
         sex = get_filter_option_ids(filter_types, "sex")[1],
-        age = scalar("Y015-049")
+        age = c("Y015-049"),
+        calibrate_type = get_filter_option_ids(filter_types, "type"),
+        spectrum_region = get_filter_option_ids(filter_types, "spectrum_region")
       )
     ),
     ## x-axis and disaggregate plot settings are not visible as users cannot
@@ -155,13 +151,13 @@ get_calbration_plot_settings <- function(filter_types) {
       list(
         id = scalar("x_axis"),
         label = scalar(t_("OUTPUT_BARCHART_X_AXIS")),
-        options = "spectrum_region",
+        options = list(get_x_axis_or_disagg_by_option("spectrum_region")),
         visible = scalar(FALSE)
       ),
       list(
         id = scalar("disagg_by"),
         label = scalar(t_("OUTPUT_BARCHART_DISAGG_BY")),
-        options = "calibrate_type",
+        options = list(get_x_axis_or_disagg_by_option("type")),
         visible = scalar(FALSE)
       )
     )
@@ -180,7 +176,7 @@ get_filter_option_ids <- function(filter_types, type) {
     stop(t_("MAPPING_NO_MATCHING", list(type = type)))
   }
   lapply(selected$options, function(opt) {
-    scalar(opt$id)
+    opt$id
   })
 }
 
@@ -273,7 +269,9 @@ get_label_for_id <- function(id) {
       "age" = "OUTPUT_FILTER_AGE",
       "detail" = "OUTPUT_FILTER_AREA_LEVEL",
       "indicator" = "OUTPUT_FILTER_INDICATOR",
-      "calibrate_indicator" = "OUTPUT_FILTER_INDICATOR"
+      "calibrate_indicator" = "OUTPUT_FILTER_INDICATOR",
+      "type" = "OUTPUT_FILTER_TYPE",
+      "spectrum_region" = "OUTPUT_FILTER_SPECTRUM_REGION"
     )
   )
 }
