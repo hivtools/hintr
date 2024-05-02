@@ -140,7 +140,7 @@ get_calibration_plot_settings <- function(filter_types) {
         indicator = c("prevalence"),
         period = get_filter_option_ids(filter_types, "period")[2],
         sex = get_filter_option_ids(filter_types, "sex")[1],
-        age = c("Y015-049"),
+        age = c("Y015_049"),
         calibrate_type = get_filter_option_ids(filter_types, "type"),
         spectrum_region = get_filter_option_ids(filter_types, "spectrum_region")
       )
