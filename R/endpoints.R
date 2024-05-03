@@ -695,17 +695,14 @@ comparison_plot <- function(queue) {
     data <- data[, c("area_id", "area_name", "age_group", "sex",
                    "calendar_quarter", "indicator", "source", "mean",
                    "lower", "upper")]
-    filters <- get_comparison_plot_filters(data)
-    selections <- get_comparison_barchart_selections(data, filters)
+
+    filter_types <- get_comparison_plot_filters(data)
     list(
       data = data,
-      plottingMetadata = list(
-        barchart = list(
-          indicators = get_barchart_metadata(data, "comparison"),
-          filters = filters,
-          defaults = selections[[1]],
-          selections = selections
-        )
+      metadata = list(
+        filterTypes = filter_types,
+        indicators = get_indicator_metadata("comparison", "barchart", data),
+        plotSettingsControl = get_comparison_plot_settings_control(data, filter_types)
       )
     )
   }

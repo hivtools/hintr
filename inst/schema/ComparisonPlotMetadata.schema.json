@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "filterTypes": {
+      "type": "array",
+      "items": { "$ref": "FilterTypes.schema.json" }
+    },
+    "indicators": {
+      "type": "array",
+      "items": { "$ref": "ChoroplethIndicatorMetadata.schema.json" }
+    },
+    "plotSettingsControl": {
+      "type": "object",
+      "properties": {
+        "comparison": { "$ref": "PlotSettingsControl.schema.json" }
+      },
+      "additionalProperties": false,
+      "required": [ "comparison" ]
+    }
+  },
+  "required": [ "filterTypes", "indicators", "plotSettingsControl" ]
+}
