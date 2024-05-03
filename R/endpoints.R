@@ -695,7 +695,7 @@ comparison_plot <- function(queue) {
 
     filter_types <- get_comparison_plot_filters(data)
     list(
-      data = data[, c("area_id", "area_name", "age_group", "sex",
+      data = data[, c("area_id", "area_name", "area_level", "age_group", "sex",
                       "calendar_quarter", "indicator", "source", "mean",
                       "lower", "upper")],
       metadata = list(
