@@ -171,7 +171,7 @@ get_comparison_plot_settings_control <- function(plot_data, filter_types) {
 
 get_comparison_plot_settings <- function(plot_data, filter_types) {
   base_filter_ids <- c("area", "period", "sex", "age")
-  all_filter_ids <- c(c("indicator", "detail"), base_filter_ids)
+  all_filter_ids <- c(c("indicator", "detail", "source"), base_filter_ids)
   ## TODO: In current plot when you change indicator, it updates
   ## the filters. We could support this same behaviour by making
   ## indicator a plot control which updates the filter values
