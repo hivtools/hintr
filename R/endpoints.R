@@ -692,13 +692,12 @@ comparison_plot <- function(queue) {
     ## Strip tibble class to work with helper functions which rely on
     ## converting to vector when selecting 1 column
     data <- as.data.frame(data)
-    data <- data[, c("area_id", "area_name", "age_group", "sex",
-                   "calendar_quarter", "indicator", "source", "mean",
-                   "lower", "upper")]
 
     filter_types <- get_comparison_plot_filters(data)
     list(
-      data = data,
+      data = data[, c("area_id", "area_name", "age_group", "sex",
+                      "calendar_quarter", "indicator", "source", "mean",
+                      "lower", "upper")],
       metadata = list(
         filterTypes = filter_types,
         indicators = get_indicator_metadata("comparison", "barchart", data),

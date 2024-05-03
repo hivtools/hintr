@@ -198,10 +198,20 @@ get_calibrate_plot_filters <- function(data) {
 get_comparison_plot_filters <- function(data) {
   list(
     list(
+      id = scalar("indicator"),
+      column_id = scalar("indicator"),
+      options = get_indicator_options("comparison")
+    ),
+    list(
       id = scalar("area"),
       column_id = scalar("area_id"),
       options = json_verbatim("null"),
       use_shape_regions = scalar(TRUE)
+    ),
+    list(
+      id = scalar("detail"),
+      column_id = scalar("area_level"),
+      options = get_area_level_filters(data)
     ),
     list(
       id = scalar("period"),
