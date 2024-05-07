@@ -170,8 +170,20 @@ get_comparison_plot_settings_control <- function(plot_data, filter_types) {
 }
 
 get_comparison_plot_settings <- function(plot_data, filter_types) {
-  base_filter_ids <- c("area", "period", "sex", "age")
-  all_filter_ids <- c(c("indicator", "detail", "source"), base_filter_ids)
+  x_axis_filters <- c("period", "sex", "age")
+  default_filter_ids <- c(c("indicator", "area", "source"),
+                          base_filter_ids)
+  default_filters <- lapply(default_filter_ids, get_filter_from_id)
+  all_filters <- c(default_filters, get_filter_from_id("detail"))
+
+  area_x_axis_effect <- list(
+    id = scalar("area"),
+    label = scalar(get_label_for_id("area")),
+    effect = list(
+      setMultiple = "area",
+      setFilters = all_filters
+    )
+  )
   ## TODO: In current plot when you change indicator, it updates
   ## the filters. We could support this same behaviour by making
   ## indicator a plot control which updates the filter values
@@ -182,7 +194,7 @@ get_comparison_plot_settings <- function(plot_data, filter_types) {
   ## TODO: Set the x-axis default value to "age"
   list(
     defaultEffect = list(
-      setFilters = lapply(all_filter_ids, get_filter_from_id),
+      setFilters = default_filters,
       setFilterValues = list(
         indicator = c("prevalence"),
         area = get_area_id_filter_default(plot_data),
@@ -201,7 +213,8 @@ get_comparison_plot_settings <- function(plot_data, filter_types) {
       list(
         id = scalar("x_axis"),
         label = scalar(t_("OUTPUT_BARCHART_X_AXIS")),
-        options = lapply(base_filter_ids, get_x_axis_or_disagg_by_option)
+        options = c(lapply(x_axis_filters, get_x_axis_or_disagg_by_option),
+                    area_x_axis_effect)
       ),
       list(
         id = scalar("disagg_by"),
