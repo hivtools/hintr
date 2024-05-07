@@ -231,8 +231,7 @@ get_comparison_plot_filters <- function(data) {
     list(
       id = scalar("source"),
       column_id = scalar("source"),
-      options = get_source_filters(data),
-      visible = scalar(FALSE)
+      options = get_source_filters(data)
     )
   )
 }

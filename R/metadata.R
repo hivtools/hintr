@@ -190,6 +190,9 @@ get_comparison_plot_settings <- function(plot_data, filter_types) {
         sex = c("both"),
         age = naomi::get_five_year_age_groups(),
         source = get_filter_option_ids(filter_types, "source")
+      ),
+      setHidden = c(
+        "source"
       )
     ),
     ## disaggregate plot settings are not visible as users cannot
