@@ -143,6 +143,9 @@ get_calibration_plot_settings <- function(filter_types) {
         age = c("Y015_049"),
         calibrate_type = get_filter_option_ids(filter_types, "type"),
         spectrum_region = get_filter_option_ids(filter_types, "spectrum_region")
+      ),
+      setHidden = c(
+        "type", "spectrum_region"
       )
     ),
     ## x-axis and disaggregate plot settings are not visible as users cannot

@@ -185,14 +185,12 @@ get_calibrate_plot_filters <- function(data) {
     list(
       id = scalar("type"),
       column_id = scalar("data_type"),
-      options = get_data_type_filters(),
-      visible = scalar(FALSE)
+      options = get_data_type_filters()
     ),
     list(
       id = scalar("spectrum_region"),
       column_id = scalar("spectrum_region_code"),
-      options = get_spectrum_region_filters(data),
-      visible = scalar(FALSE)
+      options = get_spectrum_region_filters(data)
     )
   )
 }

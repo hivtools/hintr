@@ -14,9 +14,6 @@
         },
         "use_shape_regions": {
             "type": "boolean"
-        },
-        "visible": {
-            "type": "boolean"
         }
     },
     "additionalProperties": false,
