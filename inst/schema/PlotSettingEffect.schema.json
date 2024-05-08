@@ -1,5 +1,26 @@
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
+    "definitions": {
+        "tableEffect": {
+            "type": "object",
+            "properties": {
+                "row": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "column": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "additionalProperties": false,
+            "required": [ "row", "column" ]
+        }
+    },
     "type": "object",
     "properties": {
         "setFilters": {
@@ -27,6 +48,11 @@
             "items": {
                 "type": "string"
             }
+        },
+        "plotEffect": {
+          "oneOf": [
+              { "$ref": "#/definitions/tableEffect" }
+          ]
         }
     },
     "additionalProperties": false

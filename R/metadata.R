@@ -73,11 +73,11 @@ get_country_iso3 <- function(area_ids) {
   sub("([A-Z]{3}).*", "\\1", area_ids[1])
 }
 
-get_output_plot_settings_control <- function(output) {
+get_output_plot_settings_control <- function(filter_types) {
   list(
     choropleth = get_choropleth_settings(),
     barchart = get_barchart_settings(),
-    table = get_table_settings(output),
+    table = get_table_settings(filter_types),
     bubble = get_bubble_settings()
   )
 }
@@ -249,25 +249,26 @@ get_x_axis_or_disagg_by_option <- function(id) {
   )
 }
 
-get_table_settings <- function() {
+get_table_settings <- function(filter_types) {
   list(
     defaultEffect = list(
       setFilterValues = list(
-        indicator = "prevalence"
-      ),
+        indicator = c("prevalence"),
+        period = get_filter_option_ids(filter_types, "period")[2]
+      )
     ),
     plotSettings = list(
       list(
         id = scalar("presets"),
         label = scalar(t_("OUTPUT_TABLE_PRESETS")),
-        options = get_table_presets(output)
+        options = get_table_presets(filter_types)
       )
     )
   )
 }
 
-get_table_presets <- function(output) {
-  browser()
+get_table_presets <- function(filter_types) {
+  detail_options <- get_filter_option_ids(filter_types, "detail")
   list(
     list(
       id = scalar("sex_by_area"),
@@ -277,9 +278,11 @@ get_table_presets <- function(output) {
                             get_filter_from_id),
         setMultiple = c("sex"),
         setFilterValues = list(
-          detail = "lowst",
-          period = "last",
-          age = "Y015-049"
+          detail = detail_options[length(detail_options)]
+        ),
+        plotEffect = list(
+          row = c("area"),
+          column = c("sex")
         )
       )
     ),
@@ -292,6 +295,10 @@ get_table_presets <- function(output) {
         setMultiple = c("sex", "age"),
         setFilterValues = list(
           age = naomi::get_five_year_age_groups()
+        ),
+        plotEffect = list(
+          row = c("age"),
+          column = c("sex")
         )
       )
     )
