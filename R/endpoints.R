@@ -635,7 +635,7 @@ calibrate_metadata <- function(queue) {
     list(
       filterTypes = get_model_output_filters(output),
       indicators = get_indicator_metadata("output", "choropleth", output),
-      plotSettingsControl = get_output_plot_settings_control(),
+      plotSettingsControl = get_output_plot_settings_control(output),
       warnings = warnings
     )
   }

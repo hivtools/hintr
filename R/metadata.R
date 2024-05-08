@@ -73,11 +73,11 @@ get_country_iso3 <- function(area_ids) {
   sub("([A-Z]{3}).*", "\\1", area_ids[1])
 }
 
-get_output_plot_settings_control <- function() {
+get_output_plot_settings_control <- function(output) {
   list(
     choropleth = get_choropleth_settings(),
     barchart = get_barchart_settings(),
-    table = get_table_settings(),
+    table = get_table_settings(output),
     bubble = get_bubble_settings()
   )
 }
@@ -251,17 +251,23 @@ get_x_axis_or_disagg_by_option <- function(id) {
 
 get_table_settings <- function() {
   list(
+    defaultEffect = list(
+      setFilterValues = list(
+        indicator = "prevalence"
+      ),
+    ),
     plotSettings = list(
       list(
         id = scalar("presets"),
         label = scalar(t_("OUTPUT_TABLE_PRESETS")),
-        options = get_table_presets()
+        options = get_table_presets(output)
       )
     )
   )
 }
 
-get_table_presets <- function() {
+get_table_presets <- function(output) {
+  browser()
   list(
     list(
       id = scalar("sex_by_area"),
@@ -269,7 +275,12 @@ get_table_presets <- function() {
       effect = list(
         setFilters = lapply(c("indicator", "detail", "period", "sex", "age"),
                             get_filter_from_id),
-        setMultiple = c("sex")
+        setMultiple = c("sex"),
+        setFilterValues = list(
+          detail = "lowst",
+          period = "last",
+          age = "Y015-049"
+        )
       )
     ),
     list(
