@@ -21,6 +21,12 @@
                     "type": "string"
                 }
             }
+        },
+        "setHidden": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
         }
     },
     "additionalProperties": false

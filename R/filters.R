@@ -62,14 +62,14 @@ get_area_level_filters <- function(data) {
   })
 }
 
-get_output_indicator_filters <- function() {
+get_indicator_options <- function(data_type) {
   metadata <- naomi::get_metadata()
   indicator_metadata <- metadata[
-    metadata$data_type == "output" & metadata$plot_type == "barchart",
+    metadata$data_type == data_type & metadata$plot_type == "barchart",
     c("indicator", "name")]
   names(indicator_metadata) <- c("id", "label")
   ordering <- metadata[
-    metadata$data_type == "output" & metadata$plot_type == "barchart",
+    metadata$data_type == data_type & metadata$plot_type == "barchart",
     c("indicator_sort_order")]
   indicator_metadata[order(ordering), ]
 }
@@ -155,42 +155,42 @@ get_model_output_filters <- function(data) {
     list(
       id = scalar("indicator"),
       column_id = scalar("indicator"),
-      options = get_output_indicator_filters()
+      options = get_indicator_options("output")
     )
   )
 }
 
-get_calibrate_plot_output_filters <- function(data) {
+get_calibrate_plot_filters <- function(data) {
   list(
     list(
-      id = scalar("spectrum_region"),
-      column_id = scalar("spectrum_region_code"),
-      label = scalar(t_("OUTPUT_FILTER_AREA")),
-      options = get_spectrum_region_filters(data)
-    ),
-    list(
-      id = scalar("quarter"),
+      id = scalar("period"),
       column_id = scalar("calendar_quarter"),
-      label = scalar(t_("OUTPUT_FILTER_PERIOD")),
       options = get_quarter_filters(data)
     ),
     list(
       id = scalar("sex"),
       column_id = scalar("sex"),
-      label = scalar(t_("OUTPUT_FILTER_SEX")),
       options = get_sex_filters(data)
     ),
     list(
       id = scalar("age"),
       column_id = scalar("age_group"),
-      label = scalar(t_("OUTPUT_FILTER_AGE")),
       options = get_age_filters(data)
+    ),
+    list(
+      id = scalar("calibrate_indicator"),
+      column_id = scalar("indicator"),
+      options = get_indicator_options("calibrate")
     ),
     list(
       id = scalar("type"),
       column_id = scalar("data_type"),
-      label = scalar(t_("OUTPUT_FILTER_DATA_TYPE")),
-      options = get_data_type_filters(data)
+      options = get_data_type_filters()
+    ),
+    list(
+      id = scalar("spectrum_region"),
+      column_id = scalar("spectrum_region_code"),
+      options = get_spectrum_region_filters(data)
     )
   )
 }
@@ -242,21 +242,6 @@ get_barchart_defaults <- function(output, output_filters) {
       sex = get_selected_mappings(output_filters, "sex", c("female", "male")),
       age = get_selected_mappings(output_filters, "age",
                                   naomi::get_five_year_age_groups())
-    )
-  )
-}
-
-get_calibrate_barchart_defaults <- function(filters) {
-  list(
-    indicator_id = scalar("prevalence"),
-    x_axis_id = scalar("spectrum_region"),
-    disaggregate_by_id = scalar("type"),
-    selected_filter_options = list(
-      quarter = get_selected_mappings(filters, "quarter")[2],
-      sex = get_selected_mappings(filters, "sex")[1],
-      age = get_selected_mappings(filters, "age", "Y015_049"),
-      spectrum_region = get_selected_mappings(filters, "spectrum_region"),
-      type = get_selected_mappings(filters, "type")
     )
   )
 }
@@ -444,7 +429,7 @@ get_spectrum_region_filters <- function(data) {
   })
 }
 
-get_data_type_filters <- function(data) {
+get_data_type_filters <- function() {
   recursive_scalar(naomi::data_type_labels())
 }
 

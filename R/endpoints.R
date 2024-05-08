@@ -622,6 +622,8 @@ calibrate_result <- function(queue) {
 }
 
 calibrate_metadata <- function(queue) {
+  ## TODO add a test that checks that for the ids used for all filters
+  ## and filter options exist in the filterTypes
   function(id) {
     verify_result_available(queue, id)
     result <- queue$result(id)
@@ -632,8 +634,8 @@ calibrate_metadata <- function(queue) {
     }
     list(
       filterTypes = get_model_output_filters(output),
-      indicators = get_choropleth_metadata(output),
-      plotSettingsControl = get_plot_settings_control(),
+      indicators = get_indicator_metadata("output", "choropleth", output),
+      plotSettingsControl = get_output_plot_settings_control(),
       warnings = warnings
     )
   }
@@ -670,15 +672,14 @@ calibrate_plot <- function(queue) {
     is_ratio <- grepl("\\w+_ratio", data$data_type)
     data$indicator[is_ratio] <- paste0(data$indicator[is_ratio], "_ratio")
     data$spectrum_region_code <- as.character(data$spectrum_region_code)
-    filters <- get_calibrate_plot_output_filters(data)
+
+    filter_types <- get_calibrate_plot_filters(data)
     list(
       data = data,
-      plottingMetadata = list(
-        barchart = list(
-          indicators = get_barchart_metadata(data, "calibrate"),
-          filters = filters,
-          defaults = get_calibrate_barchart_defaults(filters)
-        )
+      metadata = list(
+        filterTypes = filter_types,
+        indicators = get_indicator_metadata("calibrate", "barchart", data),
+        plotSettingsControl = get_calibrate_plot_settings_control(filter_types)
       )
     )
   }

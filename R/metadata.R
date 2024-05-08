@@ -56,11 +56,11 @@ get_barchart_metadata <- function(output, data_type = "output") {
   metadata[order(metadata$indicator_sort_order), ]
 }
 
-get_choropleth_metadata <- function(output) {
-  iso3 <- get_country_iso3(output$area_id)
+get_indicator_metadata <- function(data_type, plot_type, data) {
+  iso3 <- get_country_iso3(data$area_id)
   metadata <- get_plotting_metadata(iso3)
   metadata <- metadata[
-    metadata$data_type == "output" & metadata$plot_type == "choropleth",
+    metadata$data_type == data_type & metadata$plot_type == plot_type,
     c("indicator", "value_column", "error_low_column", "error_high_column",
       "indicator_column", "indicator_value", "indicator_sort_order",
       "name", "min", "max", "colour",
@@ -69,17 +69,22 @@ get_choropleth_metadata <- function(output) {
   metadata[order(metadata$indicator_sort_order), ]
 }
 
-
 get_country_iso3 <- function(area_ids) {
   sub("([A-Z]{3}).*", "\\1", area_ids[1])
 }
 
-get_plot_settings_control <- function() {
+get_output_plot_settings_control <- function() {
   list(
     choropleth = get_choropleth_settings(),
     barchart = get_barchart_settings(),
     table = get_table_settings(),
     bubble = get_bubble_settings()
+  )
+}
+
+get_calibrate_plot_settings_control <- function(filter_types) {
+  list(
+    calibrate = get_calibration_plot_settings(filter_types)
   )
 }
 
@@ -116,6 +121,62 @@ get_barchart_settings <- function() {
       )
     )
   )
+}
+
+get_calibration_plot_settings <- function(filter_types) {
+  calibrate_only_settings <- list(
+    list(
+      filterId = scalar("calibrate_indicator"),
+      label = scalar(get_label_for_id("calibrate_indicator")),
+      stateFilterId = scalar("indicator")
+    )
+  )
+  filterIds <- c("spectrum_region", "type", "period", "sex", "age")
+  list(
+    defaultEffect = list(
+      setFilters = c(calibrate_only_settings,
+                     lapply(filterIds, get_filter_from_id)),
+      setFilterValues = list(
+        indicator = c("prevalence"),
+        period = get_filter_option_ids(filter_types, "period")[2]
+      ),
+      setHidden = c(
+        "type", "spectrum_region"
+      )
+    ),
+    ## x-axis and disaggregate plot settings are hidden as users cannot
+    ## change these in the calibrate plot
+    plotSettings = list(
+      list(
+        id = scalar("x_axis"),
+        label = scalar(t_("OUTPUT_BARCHART_X_AXIS")),
+        options = list(get_x_axis_or_disagg_by_option("spectrum_region")),
+        hidden = scalar(TRUE)
+      ),
+      list(
+        id = scalar("disagg_by"),
+        label = scalar(t_("OUTPUT_BARCHART_DISAGG_BY")),
+        options = list(get_x_axis_or_disagg_by_option("type")),
+        hidden = scalar(TRUE)
+      )
+    )
+  )
+}
+
+get_filter_option_ids <- function(filter_types, type) {
+  selected <- NULL
+  for (filter in filter_types) {
+    if (filter$id == type) {
+      selected <- filter
+      break
+    }
+  }
+  if (is.null(selected)) {
+    stop(t_("MAPPING_NO_MATCHING", list(type = type)))
+  }
+  lapply(selected$options, function(opt) {
+    opt$id
+  })
 }
 
 get_x_axis_or_disagg_by_option <- function(id) {
@@ -206,7 +267,10 @@ get_label_for_id <- function(id) {
       "sex" = "OUTPUT_FILTER_SEX",
       "age" = "OUTPUT_FILTER_AGE",
       "detail" = "OUTPUT_FILTER_AREA_LEVEL",
-      "indicator" = "OUTPUT_FILTER_INDICATOR"
+      "indicator" = "OUTPUT_FILTER_INDICATOR",
+      "calibrate_indicator" = "OUTPUT_FILTER_INDICATOR",
+      "type" = "OUTPUT_FILTER_TYPE",
+      "spectrum_region" = "OUTPUT_FILTER_SPECTRUM_REGION"
     )
   )
 }

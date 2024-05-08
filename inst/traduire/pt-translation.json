@@ -30,6 +30,8 @@
     "OUTPUT_FILTER_SEX": "Género",
     "OUTPUT_FILTER_AREA_LEVEL": "Nível de área",
     "OUTPUT_FILTER_INDICATOR": "Indicador",
+    "OUTPUT_FILTER_TYPE": "Tipo",
+    "OUTPUT_FILTER_SPECTRUM_REGION": "Região",
     "OUTPUT_BARCHART_X_AXIS": "Eixo X",
     "OUTPUT_BARCHART_DISAGG_BY": "Desagregar Por",
     "OUTPUT_TABLE_PRESETS": "Predefinições",

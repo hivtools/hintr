@@ -3,15 +3,8 @@
   "type": "object",
   "properties": {
     "data": { "$ref": "CalibratePlotData.schema.json" },
-    "plottingMetadata": {
-      "type": "object",
-      "properties": {
-        "barchart": { "$ref": "BarchartMetadata.schema.json" }
-      },
-      "additionalProperties": false,
-      "required": [ "barchart" ]
-    }
+    "metadata": { "$ref": "CalibratePlotMetadata.schema.json" }
   },
   "additionalProperties": false,
-  "required": [ "data", "plottingMetadata" ]
+  "required": [ "data", "metadata" ]
 }
