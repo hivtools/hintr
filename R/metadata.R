@@ -138,30 +138,26 @@ get_calibration_plot_settings <- function(filter_types) {
                      lapply(filterIds, get_filter_from_id)),
       setFilterValues = list(
         indicator = c("prevalence"),
-        period = get_filter_option_ids(filter_types, "period")[2],
-        sex = get_filter_option_ids(filter_types, "sex")[1],
-        age = c("Y015_049"),
-        calibrate_type = get_filter_option_ids(filter_types, "type"),
-        spectrum_region = get_filter_option_ids(filter_types, "spectrum_region")
+        period = get_filter_option_ids(filter_types, "period")[2]
       ),
       setHidden = c(
         "type", "spectrum_region"
       )
     ),
-    ## x-axis and disaggregate plot settings are not visible as users cannot
+    ## x-axis and disaggregate plot settings are hidden as users cannot
     ## change these in the calibrate plot
     plotSettings = list(
       list(
         id = scalar("x_axis"),
         label = scalar(t_("OUTPUT_BARCHART_X_AXIS")),
         options = list(get_x_axis_or_disagg_by_option("spectrum_region")),
-        visible = scalar(FALSE)
+        hidden = scalar(TRUE)
       ),
       list(
         id = scalar("disagg_by"),
         label = scalar(t_("OUTPUT_BARCHART_DISAGG_BY")),
         options = list(get_x_axis_or_disagg_by_option("type")),
-        visible = scalar(FALSE)
+        hidden = scalar(TRUE)
       )
     )
   )

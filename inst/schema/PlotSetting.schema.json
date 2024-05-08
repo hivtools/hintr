@@ -12,7 +12,7 @@
             "type": "array",
             "items": { "$ref": "PlotSettingOption.schema.json" }
         },
-        "visible": {
+        "hidden": {
             "type": "boolean"
         }
     },
