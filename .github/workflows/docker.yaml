@@ -2,9 +2,9 @@ name: Build Docker Image
 
 on:
   push:
-    branches: [main, master, tmp-epic-plot-cleanup-input, new-calibrate-metadata]
+    branches: [main, master, tmp-epic-plot-cleanup-input, comparison-metadata]
   pull_request:
-    branches: [main, master, tmp-epic-plot-cleanup-input, new-calibrate-metadata]
+    branches: [main, master, tmp-epic-plot-cleanup-input, comparison-metadata]
 
 jobs:
   docker:
