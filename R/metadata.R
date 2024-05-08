@@ -280,7 +280,7 @@ get_table_presets <- function(filter_types) {
         setFilterValues = list(
           detail = detail_options[length(detail_options)]
         ),
-        plotEffect = list(
+        customPlotEffect = list(
           row = c("area"),
           column = c("sex")
         )
@@ -296,7 +296,7 @@ get_table_presets <- function(filter_types) {
         setFilterValues = list(
           age = naomi::get_five_year_age_groups()
         ),
-        plotEffect = list(
+        customPlotEffect = list(
           row = c("age"),
           column = c("sex")
         )
