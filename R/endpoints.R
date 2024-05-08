@@ -701,7 +701,7 @@ comparison_plot <- function(queue) {
       metadata = list(
         filterTypes = filter_types,
         indicators = get_indicator_metadata("comparison", "barchart", data),
-        plotSettingsControl = get_comparison_plot_settings_control(data, filter_types)
+        plotSettingsControl = get_comparison_plot_settings_control(filter_types)
       )
     )
   }

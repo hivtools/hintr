@@ -236,21 +236,6 @@ get_comparison_plot_filters <- function(data) {
   )
 }
 
-get_barchart_defaults <- function(output, output_filters) {
-  list(
-    indicator_id = scalar("prevalence"),
-    x_axis_id = scalar("age"),
-    disaggregate_by_id = scalar("sex"),
-    selected_filter_options = list(
-      area = get_area_id_filter_default(output),
-      period = get_selected_mappings(output_filters, "period")[2],
-      sex = get_selected_mappings(output_filters, "sex", c("female", "male")),
-      age = get_selected_mappings(output_filters, "age",
-                                  naomi::get_five_year_age_groups())
-    )
-  )
-}
-
 #' Get selected id-label mapping from list of filter options or column mappings
 #'
 #' Gets the id to label mapping of a particular type matching a set of IDs.
@@ -282,13 +267,6 @@ get_selected_mappings <- function(mappings, type, ids = NULL, key = "options") {
     selected <- selected[keep_mapping]
   }
   selected
-}
-
-get_area_id_filter_default <- function(output) {
-  ## We expect the areas to be returned in order - return the first region
-  ## level as the default
-  option <- output[1, c("area_id", "area_name")]
-  c(option$area_id)
 }
 
 get_quarter_filters <- function(data) {

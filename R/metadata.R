@@ -163,16 +163,16 @@ get_calibration_plot_settings <- function(filter_types) {
   )
 }
 
-get_comparison_plot_settings_control <- function(plot_data, filter_types) {
+get_comparison_plot_settings_control <- function(filter_types) {
   list(
-    comparison = get_comparison_plot_settings(plot_data, filter_types)
+    comparison = get_comparison_plot_settings(filter_types)
   )
 }
 
-get_comparison_plot_settings <- function(plot_data, filter_types) {
+get_comparison_plot_settings <- function(filter_types) {
   x_axis_filters <- c("period", "sex", "age")
   default_filter_ids <- c(c("indicator", "area", "source"),
-                          base_filter_ids)
+                          x_axis_filters)
   default_filters <- lapply(default_filter_ids, get_filter_from_id)
   all_filters <- c(default_filters, get_filter_from_id("detail"))
 
@@ -197,11 +197,8 @@ get_comparison_plot_settings <- function(plot_data, filter_types) {
       setFilters = default_filters,
       setFilterValues = list(
         indicator = c("prevalence"),
-        area = get_area_id_filter_default(plot_data),
         period = get_filter_option_ids(filter_types, "period")[2],
-        sex = c("both"),
-        age = naomi::get_five_year_age_groups(),
-        source = get_filter_option_ids(filter_types, "source")
+        age = naomi::get_five_year_age_groups()
       ),
       setHidden = c(
         "source"
@@ -214,13 +211,13 @@ get_comparison_plot_settings <- function(plot_data, filter_types) {
         id = scalar("x_axis"),
         label = scalar(t_("OUTPUT_BARCHART_X_AXIS")),
         options = c(lapply(x_axis_filters, get_x_axis_or_disagg_by_option),
-                    area_x_axis_effect)
+                    list(area_x_axis_effect))
       ),
       list(
         id = scalar("disagg_by"),
         label = scalar(t_("OUTPUT_BARCHART_DISAGG_BY")),
         options = list(get_x_axis_or_disagg_by_option("source")),
-        visible = scalar(FALSE)
+        hidden = scalar(TRUE)
       )
     )
   )
