@@ -274,8 +274,10 @@ get_table_presets <- function(filter_types) {
       id = scalar("sex_by_area"),
       label = scalar(t_("TABLE_SEX_BY_AREA")),
       effect = list(
-        setFilters = lapply(c("indicator", "detail", "period", "sex", "age"),
-                            get_filter_from_id),
+        setFilters = lapply(
+          c("indicator", "area", "detail", "period", "sex", "age"),
+          get_filter_from_id),
+        setHidden = c("area"),
         setMultiple = c("sex"),
         setFilterValues = list(
           detail = detail_options[length(detail_options)]
