@@ -277,6 +277,10 @@ get_table_presets <- function(filter_types) {
         setFilters = lapply(
           c("indicator", "area", "detail", "period", "sex", "age"),
           get_filter_from_id),
+        ## Hide the area ID as we want people to just select the detail level
+        ## and see all rows within that level. Having the area filter available
+        ## too makes this confusing, but we need area to exist for picking
+        ## up the row labels
         setHidden = c("area"),
         setMultiple = c("sex", "area"),
         setFilterValues = list(
