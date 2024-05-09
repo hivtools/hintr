@@ -278,7 +278,7 @@ get_table_presets <- function(filter_types) {
           c("indicator", "area", "detail", "period", "sex", "age"),
           get_filter_from_id),
         setHidden = c("area"),
-        setMultiple = c("sex"),
+        setMultiple = c("sex", "area"),
         setFilterValues = list(
           detail = detail_options[length(detail_options)]
         ),
