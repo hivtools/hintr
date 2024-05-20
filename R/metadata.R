@@ -200,10 +200,10 @@ get_comparison_plot_settings_control <- function(filter_types) {
 
 get_comparison_plot_settings <- function(filter_types) {
   x_axis_filters <- c("period", "sex", "age")
-  default_filter_ids <- c(c("indicator", "area", "source"),
-                          x_axis_filters)
+  default_filter_ids <- c(c("source", "indicator", "area"), x_axis_filters)
+  all_filter_ids <- c(c("source", "indicator", "detail", "area"))
   default_filters <- lapply(default_filter_ids, get_filter_from_id)
-  all_filters <- c(default_filters, list(get_filter_from_id("detail")))
+  all_filters <- lapply(all_filter_ids, get_filter_from_id)
 
   area_x_axis_effect <- list(
     id = scalar("area"),
