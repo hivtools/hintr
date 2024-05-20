@@ -73,11 +73,11 @@ get_country_iso3 <- function(area_ids) {
   sub("([A-Z]{3}).*", "\\1", area_ids[1])
 }
 
-get_output_plot_settings_control <- function() {
+get_output_plot_settings_control <- function(filter_types) {
   list(
     choropleth = get_choropleth_settings(),
     barchart = get_barchart_settings(),
-    table = get_table_settings(),
+    table = get_table_settings(filter_types),
     bubble = get_bubble_settings()
   )
 }
@@ -249,27 +249,47 @@ get_x_axis_or_disagg_by_option <- function(id) {
   )
 }
 
-get_table_settings <- function() {
+get_table_settings <- function(filter_types) {
   list(
+    defaultEffect = list(
+      setFilterValues = list(
+        indicator = c("prevalence"),
+        period = get_filter_option_ids(filter_types, "period")[2]
+      )
+    ),
     plotSettings = list(
       list(
         id = scalar("presets"),
         label = scalar(t_("OUTPUT_TABLE_PRESETS")),
-        options = get_table_presets()
+        options = get_table_presets(filter_types)
       )
     )
   )
 }
 
-get_table_presets <- function() {
+get_table_presets <- function(filter_types) {
+  detail_options <- get_filter_option_ids(filter_types, "detail")
   list(
     list(
       id = scalar("sex_by_area"),
       label = scalar(t_("TABLE_SEX_BY_AREA")),
       effect = list(
-        setFilters = lapply(c("indicator", "detail", "period", "sex", "age"),
-                            get_filter_from_id),
-        setMultiple = c("sex")
+        setFilters = lapply(
+          c("indicator", "area", "detail", "period", "sex", "age"),
+          get_filter_from_id),
+        ## Hide the area ID as we want people to just select the detail level
+        ## and see all rows within that level. Having the area filter available
+        ## too makes this confusing, but we need area to exist for picking
+        ## up the row labels
+        setHidden = c("area"),
+        setMultiple = c("sex", "area"),
+        setFilterValues = list(
+          detail = detail_options[length(detail_options)]
+        ),
+        customPlotEffect = list(
+          row = c("area"),
+          column = c("sex")
+        )
       )
     ),
     list(
@@ -281,6 +301,10 @@ get_table_presets <- function() {
         setMultiple = c("sex", "age"),
         setFilterValues = list(
           age = naomi::get_five_year_age_groups()
+        ),
+        customPlotEffect = list(
+          row = c("age"),
+          column = c("sex")
         )
       )
     )
