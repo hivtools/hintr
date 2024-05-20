@@ -27,7 +27,8 @@
             "items": {
                 "type": "string"
             }
-        }
+        },
+        "customPlotEffect": { "$ref": "CustomPlotMetadata.schema.json" }
     },
     "additionalProperties": false
 }
