@@ -99,14 +99,14 @@ get_choropleth_settings <- function(filter_types) {
 }
 
 get_barchart_settings <- function(filter_types) {
-  base_filter_ids <- c("area", "period", "sex", "age")
-  default_filter_ids <- c("indicator", base_filter_ids)
-  all_filter_ids <- c(c("indicator", "detail"), base_filter_ids)
+  base_filter_ids <- c("period", "sex", "age")
+  default_filter_ids <- c("indicator", "area", base_filter_ids)
+  all_filter_ids <- c("indicator", "detail", "area", base_filter_ids)
 
   x_axis_or_disagg_by_options <- lapply(base_filter_ids,
                                         get_x_axis_or_disagg_by_option)
   default_filters <- lapply(default_filter_ids, get_filter_from_id)
-  all_filters <- c(default_filters, list(get_filter_from_id("detail")))
+  all_filters <- lapply(all_filter_ids, get_filter_from_id)
 
   area_x_axis_disaggregate_effect <- list(
     id = scalar("area"),
@@ -131,15 +131,15 @@ get_barchart_settings <- function(filter_types) {
       list(
         id = scalar("x_axis"),
         label = scalar(t_("OUTPUT_BARCHART_X_AXIS")),
-        options = c(x_axis_or_disagg_by_options,
-                    list(area_x_axis_disaggregate_effect)),
+        options = c(list(area_x_axis_disaggregate_effect),
+                    x_axis_or_disagg_by_options),
         value = scalar("age")
       ),
       list(
         id = scalar("disagg_by"),
         label = scalar(t_("OUTPUT_BARCHART_DISAGG_BY")),
-        options = c(x_axis_or_disagg_by_options,
-                    list(area_x_axis_disaggregate_effect)),
+        options = c(list(area_x_axis_disaggregate_effect),
+                    x_axis_or_disagg_by_options),
         value = scalar("sex")
       )
     )
@@ -200,8 +200,8 @@ get_comparison_plot_settings_control <- function(filter_types) {
 
 get_comparison_plot_settings <- function(filter_types) {
   x_axis_filters <- c("period", "sex", "age")
-  default_filter_ids <- c(c("source", "indicator", "area"), x_axis_filters)
-  all_filter_ids <- c(c("source", "indicator", "detail", "area"))
+  default_filter_ids <- c("source", "indicator", "area", x_axis_filters)
+  all_filter_ids <- c("source", "indicator", "detail", "area")
   default_filters <- lapply(default_filter_ids, get_filter_from_id)
   all_filters <- lapply(all_filter_ids, get_filter_from_id)
 
