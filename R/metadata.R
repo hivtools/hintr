@@ -82,12 +82,6 @@ get_output_plot_settings_control <- function() {
   )
 }
 
-get_calibrate_plot_settings_control <- function(filter_types) {
-  list(
-    calibrate = get_calibration_plot_settings(filter_types)
-  )
-}
-
 get_choropleth_settings <- function() {
   filter_ids <- c("indicator", "detail", "area", "period", "sex", "age")
   list(
@@ -120,6 +114,12 @@ get_barchart_settings <- function() {
         options = x_axis_or_disagg_by_options
       )
     )
+  )
+}
+
+get_calibrate_plot_settings_control <- function(filter_types) {
+  list(
+    calibrate = get_calibration_plot_settings(filter_types)
   )
 }
 
@@ -157,6 +157,66 @@ get_calibration_plot_settings <- function(filter_types) {
         id = scalar("disagg_by"),
         label = scalar(t_("OUTPUT_BARCHART_DISAGG_BY")),
         options = list(get_x_axis_or_disagg_by_option("type")),
+        hidden = scalar(TRUE)
+      )
+    )
+  )
+}
+
+get_comparison_plot_settings_control <- function(filter_types) {
+  list(
+    comparison = get_comparison_plot_settings(filter_types)
+  )
+}
+
+get_comparison_plot_settings <- function(filter_types) {
+  x_axis_filters <- c("period", "sex", "age")
+  default_filter_ids <- c(c("indicator", "area", "source"),
+                          x_axis_filters)
+  default_filters <- lapply(default_filter_ids, get_filter_from_id)
+  all_filters <- c(default_filters, list(get_filter_from_id("detail")))
+
+  area_x_axis_effect <- list(
+    id = scalar("area"),
+    label = scalar(get_label_for_id("area")),
+    effect = list(
+      setMultiple = "area",
+      setFilters = all_filters
+    )
+  )
+  ## TODO: In current plot when you change indicator, it updates
+  ## the filters. We could support this same behaviour by making
+  ## indicator a plot control which updates the filter values
+  ## including a hidden "indicator" filter which would be the value
+  ## actually used for filtering the data. But let's check what we
+  ## actually want to do. Would have to set the x-axis too, which I don't
+  ## think we can support yet.
+  ## TODO: Set the x-axis default value to "age"
+  list(
+    defaultEffect = list(
+      setFilters = default_filters,
+      setFilterValues = list(
+        indicator = c("prevalence"),
+        period = get_filter_option_ids(filter_types, "period")[2],
+        age = naomi::get_five_year_age_groups()
+      ),
+      setHidden = c(
+        "source"
+      )
+    ),
+    ## disaggregate plot settings are not visible as users cannot
+    ## change these in the comparison plot
+    plotSettings = list(
+      list(
+        id = scalar("x_axis"),
+        label = scalar(t_("OUTPUT_BARCHART_X_AXIS")),
+        options = c(lapply(x_axis_filters, get_x_axis_or_disagg_by_option),
+                    list(area_x_axis_effect))
+      ),
+      list(
+        id = scalar("disagg_by"),
+        label = scalar(t_("OUTPUT_BARCHART_DISAGG_BY")),
+        options = list(get_x_axis_or_disagg_by_option("source")),
         hidden = scalar(TRUE)
       )
     )
@@ -270,7 +330,8 @@ get_label_for_id <- function(id) {
       "indicator" = "OUTPUT_FILTER_INDICATOR",
       "calibrate_indicator" = "OUTPUT_FILTER_INDICATOR",
       "type" = "OUTPUT_FILTER_TYPE",
-      "spectrum_region" = "OUTPUT_FILTER_SPECTRUM_REGION"
+      "spectrum_region" = "OUTPUT_FILTER_SPECTRUM_REGION",
+      "source" = "OUTPUT_FILTER_DATA_TYPE"
     )
   )
 }
