@@ -174,7 +174,7 @@ get_comparison_plot_settings <- function(filter_types) {
   default_filter_ids <- c(c("indicator", "area", "source"),
                           x_axis_filters)
   default_filters <- lapply(default_filter_ids, get_filter_from_id)
-  all_filters <- c(default_filters, get_filter_from_id("detail"))
+  all_filters <- c(default_filters, list(get_filter_from_id("detail")))
 
   area_x_axis_effect <- list(
     id = scalar("area"),
