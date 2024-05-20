@@ -100,12 +100,26 @@ get_choropleth_settings <- function(filter_types) {
 
 get_barchart_settings <- function(filter_types) {
   base_filter_ids <- c("area", "period", "sex", "age")
+  default_filter_ids <- c("indicator", base_filter_ids)
   all_filter_ids <- c(c("indicator", "detail"), base_filter_ids)
+
   x_axis_or_disagg_by_options <- lapply(base_filter_ids,
                                         get_x_axis_or_disagg_by_option)
+  default_filters <- lapply(default_filter_ids, get_filter_from_id)
+  all_filters <- c(default_filters, list(get_filter_from_id("detail")))
+
+  area_x_axis_disaggregate_effect <- list(
+    id = scalar("area"),
+    label = scalar(get_label_for_id("area")),
+    effect = list(
+      setMultiple = "area",
+      setFilters = all_filters
+    )
+  )
+
   list(
     defaultEffect = list(
-      setFilters = lapply(all_filter_ids, get_filter_from_id),
+      setFilters = default_filters,
       setFilterValues = list(
         indicator = c("prevalence"),
         period = get_filter_option_ids(filter_types, "period")[2],
@@ -117,13 +131,15 @@ get_barchart_settings <- function(filter_types) {
       list(
         id = scalar("x_axis"),
         label = scalar(t_("OUTPUT_BARCHART_X_AXIS")),
-        options = x_axis_or_disagg_by_options,
+        options = c(x_axis_or_disagg_by_options,
+                    list(area_x_axis_disaggregate_effect)),
         value = scalar("age")
       ),
       list(
         id = scalar("disagg_by"),
         label = scalar(t_("OUTPUT_BARCHART_DISAGG_BY")),
-        options = x_axis_or_disagg_by_options,
+        options = c(x_axis_or_disagg_by_options,
+                    list(area_x_axis_disaggregate_effect)),
         value = scalar("sex")
       )
     )
