@@ -99,22 +99,54 @@ get_choropleth_settings <- function(filter_types) {
 }
 
 get_barchart_settings <- function(filter_types) {
-  base_filter_ids <- c("period", "sex", "age")
-  default_filter_ids <- c("indicator", "area", base_filter_ids)
-  all_filter_ids <- c("indicator", "detail", "area", base_filter_ids)
-
-  x_axis_or_disagg_by_options <- lapply(base_filter_ids,
-                                        get_x_axis_or_disagg_by_option)
+  default_filter_ids <- c("indicator", "area", "period", "sex", "age")
+  all_filter_ids <- c("indicator", "detail", "area", "period", "sex", "age")
   default_filters <- lapply(default_filter_ids, get_filter_from_id)
   all_filters <- lapply(all_filter_ids, get_filter_from_id)
 
-  area_x_axis_disaggregate_effect <- list(
+  area_effect <- list(
     id = scalar("area"),
     label = scalar(get_label_for_id("area")),
     effect = list(
       setMultiple = "area",
       setFilters = all_filters
     )
+  )
+  age_effect <- list(
+    id = scalar("age"),
+    label = scalar(get_label_for_id("age")),
+    effect = list(
+      setMultiple = "age",
+      setFilterValues = list(
+        age = naomi::get_five_year_age_groups()
+      )
+    )
+  )
+  period_effect <- list(
+    id = scalar("period"),
+    label = scalar(get_label_for_id("period")),
+    effect = list(
+      setMultiple = "period",
+      setFilterValues = list(
+        period = get_filter_option_ids(filter_types, "period")
+      )
+    )
+  )
+  sex_effect <- list(
+    id = scalar("sex"),
+    label = scalar(get_label_for_id("sex")),
+    effect = list(
+      setMultiple = "sex",
+      setFilterValues = list(
+        sex = c("male", "female")
+      )
+    )
+  )
+  x_axis_or_disagg_by_options <- list(
+    area_effect,
+    period_effect,
+    sex_effect,
+    age_effect
   )
 
   list(
@@ -123,23 +155,20 @@ get_barchart_settings <- function(filter_types) {
       setFilterValues = list(
         indicator = c("prevalence"),
         period = get_filter_option_ids(filter_types, "period")[2],
-        sex = c("male", "female"),
-        age = naomi::get_five_year_age_groups()
+        sex = c("both")
       )
     ),
     plotSettings = list(
       list(
         id = scalar("x_axis"),
         label = scalar(t_("OUTPUT_BARCHART_X_AXIS")),
-        options = c(list(area_x_axis_disaggregate_effect),
-                    x_axis_or_disagg_by_options),
+        options = x_axis_or_disagg_by_options,
         value = scalar("age")
       ),
       list(
         id = scalar("disagg_by"),
         label = scalar(t_("OUTPUT_BARCHART_DISAGG_BY")),
-        options = c(list(area_x_axis_disaggregate_effect),
-                    x_axis_or_disagg_by_options),
+        options = x_axis_or_disagg_by_options,
         value = scalar("sex")
       )
     )
@@ -199,12 +228,41 @@ get_comparison_plot_settings_control <- function(filter_types) {
 }
 
 get_comparison_plot_settings <- function(filter_types) {
-  x_axis_filters <- c("period", "sex", "age")
-  default_filter_ids <- c("source", "indicator", "area", x_axis_filters)
+  default_filter_ids <- c("source", "indicator", "area", "age", "period", "sex")
   all_filter_ids <- c("source", "indicator", "detail", "area")
   default_filters <- lapply(default_filter_ids, get_filter_from_id)
   all_filters <- lapply(all_filter_ids, get_filter_from_id)
 
+  period_x_axis_effect <- list(
+    id = scalar("period"),
+    label = scalar(get_label_for_id("period")),
+    effect = list(
+      setMultiple = "period",
+      setFilterValues = list(
+        period = get_filter_option_ids(filter_types, "period")
+      )
+    )
+  )
+  sex_x_axis_effect <- list(
+    id = scalar("sex"),
+    label = scalar(get_label_for_id("sex")),
+    effect = list(
+      setMultiple = "sex",
+      setFilterValues = list(
+        sex = get_filter_option_ids(filter_types, "sex")
+      )
+    )
+  )
+  age_x_axis_effect <- list(
+    id = scalar("age"),
+    label = scalar(get_label_for_id("age")),
+    effect = list(
+      setMultiple = "age",
+      setFilterValues = list(
+        age = naomi::get_five_year_age_groups()
+      )
+    )
+  )
   area_x_axis_effect <- list(
     id = scalar("area"),
     label = scalar(get_label_for_id("area")),
@@ -212,6 +270,12 @@ get_comparison_plot_settings <- function(filter_types) {
       setMultiple = "area",
       setFilters = all_filters
     )
+  )
+  x_axis_settings <- list(
+    area_x_axis_effect,
+    period_x_axis_effect,
+    sex_x_axis_effect,
+    age_x_axis_effect
   )
   ## TODO: In current plot when you change indicator, it updates
   ## the filters. We could support this same behaviour by making
@@ -225,8 +289,7 @@ get_comparison_plot_settings <- function(filter_types) {
       setFilters = default_filters,
       setFilterValues = list(
         indicator = c("prevalence"),
-        period = get_filter_option_ids(filter_types, "period")[2],
-        age = naomi::get_five_year_age_groups()
+        period = get_filter_option_ids(filter_types, "period")[2]
       ),
       setHidden = c(
         "source"
@@ -238,8 +301,7 @@ get_comparison_plot_settings <- function(filter_types) {
       list(
         id = scalar("x_axis"),
         label = scalar(t_("OUTPUT_BARCHART_X_AXIS")),
-        options = c(lapply(x_axis_filters, get_x_axis_or_disagg_by_option),
-                    list(area_x_axis_effect)),
+        options = x_axis_settings,
         value = scalar("age")
       ),
       list(
