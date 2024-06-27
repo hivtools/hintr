@@ -30,7 +30,7 @@ jobs:
             LONG_SHA=${GITHUB_SHA}
             echo "CI_BRANCH=${{ github.ref_name }}" >> $GITHUB_OUTPUT
           fi
-          echo "CI_SHA=${long_sha:0:7}" >> $GITHUB_OUTPUT
+          echo "CI_SHA=${LONG_SHA:0:7}" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
