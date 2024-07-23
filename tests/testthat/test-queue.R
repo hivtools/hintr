@@ -149,6 +149,39 @@ test_that("calibrate gets run before model running", {
 })
 
 test_that("queue has handle on uploads dir", {
+  test_redis_available()
   queue <- Queue$new(workers = 0, inputs_dir = tempdir())
   expect_equal(queue$inputs_dir, tempdir())
+})
+
+test_that("queue can run health checks before using controller", {
+  test_redis_available()
+  con <- redux::hiredis()
+  mock_reconnect <- mockery::mock(cycle = TRUE)
+  con$reconnect <- mock_reconnect
+  with_mocked_bindings({
+    queue <- Queue$new(workers = 0, health_check_interval = 1)
+  },
+    hiredis = function() con
+  )
+  queue$health_check()
+  mockery::expect_called(mock_reconnect, 0)
+  Sys.sleep(1)
+  queue$health_check()
+  mockery::expect_called(mock_reconnect, 1)
+
+  # Health check run from other functions
+  Sys.sleep(1)
+  queue$status("123")
+  mockery::expect_called(mock_reconnect, 2)
+
+  # Reconnect not run if health check is off
+  with_mocked_bindings({
+    queue <- Queue$new(workers = 0, health_check_interval = 0)
+  },
+  hiredis = function() con
+  )
+  Sys.sleep(1)
+  queue$health_check()
+  mockery::expect_called(mock_reconnect, 2)
 })
