@@ -72,6 +72,21 @@ api_postserialize <- function(data, req, res, value) {
 api <- function(queue_id = NULL, workers = 2,
                 results_dir = tempdir(), inputs_dir = NULL,
                 log_level = "info", health_check_interval = 0) {
+  logger <- porcelain::porcelain_logger(log_level)
+  start_api_log <- c("Starting API with:",
+                     "  - queue_id: '%s'",
+                     "  - workers: '%s'",
+                     "  - results_dir: '%s'",
+                     "  - inputs_dir: '%s'",
+                     "  - log_level: '%s'",
+                     "  - health_check_interval: '%s'")
+  logger$info(paste(start_api_log, collapse = "\n"),
+              queue_id %||% "NULL",
+              workers,
+              results_dir %||% "NULL",
+              inputs_dir %||% "NULL",
+              log_level,
+              health_check_interval  %||% "NULL")
   queue <- Queue$new(queue_id, workers,
                      results_dir = results_dir,
                      inputs_dir = inputs_dir,

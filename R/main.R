@@ -29,7 +29,8 @@ Options:
 main_api <- function(args = commandArgs(TRUE)) {
   # nocov start
   dat <- main_api_args(args)
-  api <- api(dat$queue_id, dat$workers, dat$results_dir, dat$inputs_dir)
+  api <- api(dat$queue_id, dat$workers, dat$results_dir, dat$inputs_dir,
+             health_check_interval = dat$health_check_interval)
   api$run(host = "0.0.0.0", port = dat$port)
   # nocov end
 }

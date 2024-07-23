@@ -45,7 +45,7 @@ test_that("change language based on header", {
 
 test_that("can build api", {
   test_redis_available()
-  api <- api(workers = 0)
+  msg <- capture_output(api <- api(workers = 0))
   expect_s3_class(api, "porcelain")
   out <- capture_output(res <- api$request("GET", "/"))
   expect_match(out, "request GET /")
