@@ -37,15 +37,18 @@ api_build <- function(queue, validate = FALSE, logger = NULL) {
   api$handle(endpoint_hintr_version())
   api$handle(endpoint_hintr_worker_status(queue))
   api$handle(endpoint_hintr_stop(queue))
-  api$registerHook("preroute", api_preroute)
+  api$registerHook("preroute", api_preroute(queue))
   api$registerHook("postserialize", api_postserialize)
   api$set404Handler(hintr_404_handler)
   api$setDocs(FALSE)
   api
 }
 
-api_preroute <- function(data, req, res, value) {
-  api_set_language(data, req, res)
+api_preroute <- function(queue) {
+  function(data, req, res, value) {
+    api_set_language(data, req, res)
+    queue$health_check()
+  }
 }
 
 api_postserialize <- function(data, req, res, value) {

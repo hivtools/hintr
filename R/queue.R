@@ -65,7 +65,6 @@ Queue <- R6::R6Class(
     },
 
     start = function(workers, timeout) {
-      self$health_check()
       if (workers > 0L) {
         worker_manager <- rrq::rrq_worker_spawn(workers,
                                                 controller = self$controller)
@@ -82,12 +81,10 @@ Queue <- R6::R6Class(
     },
 
     task_wait = function(id) {
-      self$health_check()
       rrq::rrq_task_wait(id, controller = self$controller)
     },
 
     submit_model_run = function(data, options) {
-      self$health_check()
       results_dir <- self$results_dir
       language <- traduire::translator()$language()
       rrq::rrq_task_create_expr(
@@ -99,7 +96,6 @@ Queue <- R6::R6Class(
     },
 
     submit_calibrate = function(model_output, calibration_options) {
-      self$health_check()
       results_dir <- self$results_dir
       language <- traduire::translator()$language()
       rrq::rrq_task_create_expr(
@@ -112,7 +108,6 @@ Queue <- R6::R6Class(
     },
 
     submit_download = function(model_output, type, input) {
-      self$health_check()
       results_dir <- self$results_dir
       language <- traduire::translator()$language()
       rrq::rrq_task_create_expr(
@@ -124,7 +119,6 @@ Queue <- R6::R6Class(
     },
 
     submit_rehydrate = function(output_zip) {
-      self$health_check()
       rrq::rrq_task_create_expr(
         hintr:::rehydrate(output_zip),
         queue = QUEUE_CALIBRATE,
@@ -134,7 +128,6 @@ Queue <- R6::R6Class(
     },
 
     status = function(id) {
-      self$health_check()
       status <- unname(rrq::rrq_task_status(id, controller = self$controller))
       done <- c("ERROR", "DIED", "CANCELLED", "TIMEOUT", "COMPLETE")
       incomplete <- c("MISSING")
@@ -161,29 +154,24 @@ Queue <- R6::R6Class(
     },
 
     result = function(id) {
-      self$health_check()
       rrq::rrq_task_result(id, controller = self$controller)
     },
 
     cancel = function(id) {
-      self$health_check()
       rrq::rrq_task_cancel(id, controller = self$controller)
     },
 
     ## Not part of the api exposed functions, used in tests
     remove = function(id) {
-      self$health_check()
       rrq::rrq_task_delete(id, controller = self$controller)
     },
 
     ## Not part of the api exposed functions, used in tests
     destroy = function() {
-      self$health_check()
       rrq::rrq_destroy(delete = TRUE, controller = self$controller)
     },
 
     cleanup = function() {
-      self$health_check()
       if (!is.null(self$controller)) {
         clear_cache(self$controller$queue_id)
         if (self$cleanup_on_exit) {
