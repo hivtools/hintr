@@ -27,9 +27,9 @@ The aim is to unify these differences into one framework that can support all th
 The structure we settled on is the backend (this repository) sending the frontend json reponse that tells it how to construct the UI and also how to dynamically update it based on the value of the dropdowns.
 
 Note: For each tab there is a different response that specifies the metadata:
-* [`Review output`](inst/schema/CalibrateMetadataResponse.schema.json)
-* [`Calibrate model`](inst/schema/CalibratePlotMetadata.schema.json)
-* [`Review inputs`](inst/schema/ReviewInputFilterMetadataResponse.schema.json)
+* [`Review output`](../inst/schema/CalibrateMetadataResponse.schema.json)
+* [`Calibrate model`](../inst/schema/CalibratePlotMetadata.schema.json)
+* [`Review inputs`](../inst/schema/ReviewInputFilterMetadataResponse.schema.json)
 
 The structure of these are the same bar the keys to the `plotSettingsControl` which identifies the plot. In the bullet points above there are two main types of dropdowns that we want:
 1. Dropdowns that influence other dropdowns - we will call these `controls` and call their values `settings`
