@@ -8,16 +8,20 @@ Queue <- R6::R6Class(
     results_dir = NULL,
     inputs_dir = NULL,
 
+    health_check_interval = NULL,
+    next_health_check = NULL,
+
     initialize = function(queue_id = NULL, workers = 2,
                           cleanup_on_exit = workers > 0,
                           results_dir = tempdir(),
                           inputs_dir = NULL,
-                          timeout = Inf) {
+                          timeout = Inf,
+                          health_check_interval = 0) {
       self$cleanup_on_exit <- cleanup_on_exit
       self$results_dir <- results_dir
 
       message(t_("QUEUE_CONNECTING", list(redis = redux::redis_config()$url)))
-      con <- redux::hiredis()
+      con <- hiredis()
 
       message(t_("QUEUE_STARTING"))
       queue_id <- hintr_queue_id(queue_id)
@@ -39,6 +43,25 @@ Queue <- R6::R6Class(
       set_cache(queue_id)
 
       self$inputs_dir <- inputs_dir
+
+      self$health_check_interval <- health_check_interval
+      if (health_check_interval > 0) {
+        self$next_health_check <- Sys.time() + health_check_interval
+      }
+    },
+
+    # On cloud services tcp connections are closed after sitting idle.
+    # And using tcp_keepalive doesn't work. The client itself needs to
+    # reconnect if this has dropped. See
+    # https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-best-practices-connection#idle-timeout
+    # Would be nice if we could do this in a background process when we form the
+    # but it's hard to share a connection between processes, and indeed callr
+    # cannot serialize the redis connection.
+    health_check = function() {
+      if (!is.null(self$next_health_check) &&
+          Sys.time() > self$next_health_check) {
+        self$controller$con$reconnect()
+      }
     },
 
     start = function(workers, timeout) {
@@ -180,4 +203,9 @@ hintr_queue_id <- function(queue_id, worker = FALSE) {
     id <- sprintf("hintr:%s", ids::random_id())
   }
   id
+}
+
+# Separate function only for mocking in tests
+hiredis <- function() {
+  redux::hiredis()
 }

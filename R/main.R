@@ -3,11 +3,12 @@ main_api_args <- function(args = commandArgs(TRUE)) {
   hintr_api [options] [<queue_id>]
 
 Options:
---workers=N         Number of workers to spawn [default: 2]
---port=PORT         Port to use [default: 8888]
---results-dir=PATH  Directory to store model results in
---prerun-dir=PATH   Directory to find prerun results in
---inputs-dir=PATH   Directory to find input files in"
+--workers=N               Number of workers to spawn [default: 2]
+--port=PORT               Port to use [default: 8888]
+--results-dir=PATH        Directory to store model results in
+--prerun-dir=PATH         Directory to find prerun results in
+--inputs-dir=PATH         Directory to find input files in
+--health-check-interval=N Interval in seconds, after which next time redis connection is used the connection will be reset. 0 for no reconnection. [default: 0]"
 
   validate_path <- function(path) {
     if (is.null(path)) {
@@ -21,13 +22,15 @@ Options:
        queue_id = dat$queue_id,
        workers = as.integer(dat$workers),
        results_dir = validate_path(dat[["results_dir"]]),
-       inputs_dir = validate_path(dat[["inputs_dir"]]))
+       inputs_dir = validate_path(dat[["inputs_dir"]]),
+       health_check_interval = as.integer(dat$health_check_interval))
 }
 
 main_api <- function(args = commandArgs(TRUE)) {
   # nocov start
   dat <- main_api_args(args)
-  api <- api(dat$queue_id, dat$workers, dat$results_dir, dat$inputs_dir)
+  api <- api(dat$queue_id, dat$workers, dat$results_dir, dat$inputs_dir,
+             health_check_interval = dat$health_check_interval)
   api$run(host = "0.0.0.0", port = dat$port)
   # nocov end
 }
