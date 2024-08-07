@@ -55,3 +55,22 @@ test_that("main worker single job can create a fit only worker", {
   expect_equal(args[[1]], "queue_id")
   expect_equal(args$name_config, "fit_only")
 })
+
+test_that("can run a single job using worker", {
+  test_redis_available()
+  test_mock_model_available()
+
+  queue_id <- hintr_queue_id(NULL)
+  queue <- test_queue(queue_id, workers = 0)
+  run_endpoint <- endpoint_model_submit(queue)
+  payload <- setup_payload_submit()
+  run_response <- run_endpoint$run(payload)
+
+  expect_equal(run_response$status_code, 200)
+
+  expect_equal(queue$status(run_response$data$id)$status, "PENDING")
+  msg <- capture_messages(res <- worker_single_job(queue_id, "localhost"))
+
+  expect_true(res)
+  expect_equal(queue$status(run_response$data$id)$status, "COMPLETE")
+})

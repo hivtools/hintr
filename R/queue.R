@@ -38,7 +38,7 @@ Queue <- R6::R6Class(
         queue = QUEUE_CALIBRATE)
       fit_worker_cfg <- rrq::rrq_worker_config(
         heartbeat_period = 10,
-        queue = c(QUEUE_RUN))
+        queue = QUEUE_RUN)
       rrq::rrq_worker_config_save("localhost", default_worker_cfg,
                                   controller = self$controller)
       rrq::rrq_worker_config_save("calibrate_only", calibrate_worker_cfg,

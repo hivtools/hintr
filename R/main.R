@@ -84,11 +84,14 @@ main_worker_single_job <- function(args = commandArgs(TRUE)) {
   if (args$fit_only) {
     worker_config <- "fit_only"
   }
-  worker <- rrq_worker_new(hintr_queue_id(args$queue_id, TRUE),
-                           name_config = worker_config)
+  worker_single_job(hintr_queue_id(args$queue_id, TRUE), worker_config)
+  # nocov end
+}
+
+worker_single_job <- function(queue_id, config) {
+  worker <- rrq_worker_new(queue_id, name_config = config)
   worker$step(immediate = TRUE)
   invisible(TRUE)
-  # nocov end
 }
 
 docopt_parse <- function(usage, args) {
