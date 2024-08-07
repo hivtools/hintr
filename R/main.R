@@ -66,6 +66,31 @@ rrq_worker_new <- function(...) {
   # nocov end
 }
 
+main_worker_single_job_args <- function(args = commandArgs(TRUE)) {
+  usage <- "Usage:
+hintr_worker_single_job [options] [<queue_id>]
+
+Options:
+--fit-only  Start a worker which will only run model fit"
+  dat <- docopt_parse(usage, args)
+  list(queue_id = dat$queue_id,
+       fit_only = dat$fit_only)
+}
+
+main_worker_single_job <- function(args = commandArgs(TRUE)) {
+  # nocov start
+  args <- main_worker_single_job_args(args)
+  worker_config <- "localhost"
+  if (args$fit_only) {
+    worker_config <- "fit_only"
+  }
+  worker <- rrq_worker_new(hintr_queue_id(args$queue_id, TRUE),
+                           name_config = worker_config)
+  worker$step(immediate = TRUE)
+  invisible(TRUE)
+  # nocov end
+}
+
 docopt_parse <- function(usage, args) {
   dat <- docopt::docopt(usage, args)
   names(dat) <- gsub("-", "_", names(dat), fixed = TRUE)

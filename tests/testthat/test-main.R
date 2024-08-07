@@ -44,3 +44,14 @@ test_that("main worker can create a calibrate only worker", {
   expect_equal(args$name_config, "calibrate_only")
 })
 
+test_that("main worker single job can create a fit only worker", {
+  mock_rrq_worker <- mockery::mock(
+    list(step = function(immediate) TRUE, cycle = TRUE))
+  with_mocked_bindings(
+    worker <- main_worker_single_job(c("--fit-only", "queue_id")),
+    rrq_worker_new = mock_rrq_worker
+  )
+  args <- mockery::mock_args(mock_rrq_worker)[[1]]
+  expect_equal(args[[1]], "queue_id")
+  expect_equal(args$name_config, "fit_only")
+})
