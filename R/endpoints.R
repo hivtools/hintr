@@ -132,30 +132,34 @@ review_input_filter_metadata <- function(input) {
   types <- names(input$data)
   types <- types[types != "shape"]
 
-  time_series_settings <- get_time_series_settings(types)
+  json <- hintr_geojson_read(input$data$shape)
+  area_level_options <- get_level_options(json)
+  default_area_level <- list(
+    area_level_options[[length(area_level_options)]]$id)
+  time_series_settings <- get_time_series_settings(types, default_area_level)
+
   if (is.null(time_series_settings)) {
     return(
       list(
-        filterTypes = get_review_input_filter_types(input, types),
+        filterTypes = get_review_input_filter_types(input, types, area_level_options),
         indicators = get_review_input_indicators(types, input$iso3),
         plotSettingsControl = list(
-          inputChoropleth = get_input_choropleth_settings(types)
+          inputChoropleth = get_input_choropleth_settings(types, default_area_level)
         )
       )
     )
   }
   list(
-    filterTypes = get_review_input_filter_types(input, types),
+    filterTypes = get_review_input_filter_types(input, types, area_level_options),
     indicators = get_review_input_indicators(types, input$iso3),
     plotSettingsControl = list(
       timeSeries = time_series_settings,
-      inputChoropleth = get_input_choropleth_settings(types)
+      inputChoropleth = get_input_choropleth_settings(types, default_area_level)
     )
   )
 }
 
-get_review_input_filter_types <- function(input, types) {
-  json <- hintr_geojson_read(input$data$shape)
+get_review_input_filter_types <- function(input, types, area_level_options) {
   base_filters <- list(
     list(
       id = scalar("area"),
@@ -166,7 +170,7 @@ get_review_input_filter_types <- function(input, types) {
     list(
       id = scalar("map_area_level"),
       column_id = scalar("area_level"),
-      options = get_level_options(json)
+      options = area_level_options
     )
   )
   other_filter_types <- Reduce(append_filter_types(input), c(list(NULL), types))
@@ -325,8 +329,8 @@ get_survey_map_filter_types <- function(input) {
   list(age_filter, survey_filter, sex_filter, indicator_filter)
 }
 
-get_time_series_settings <- function(types) {
-  options <- get_time_series_data_source_options(types)
+get_time_series_settings <- function(types, default_area_level) {
+  options <- get_time_series_data_source_options(types, default_area_level)
   if (length(options) == 0) {
     return(NULL)
   }
@@ -341,7 +345,7 @@ get_time_series_settings <- function(types) {
   )
 }
 
-get_time_series_data_source_options <- function(types) {
+get_time_series_data_source_options <- function(types, default_area_level) {
   options <- list()
   if ("programme" %in% types) {
     options <- append(options, list(list(
@@ -365,7 +369,10 @@ get_time_series_data_source_options <- function(types) {
             stateFilterId = scalar("quarter")
           )
         ),
-        setMultiple = c("quarter")
+        setMultiple = c("quarter"),
+        setFilterValues = list(
+          detail = default_area_level
+        )
       )
     )))
   }
@@ -390,6 +397,9 @@ get_time_series_data_source_options <- function(types) {
             label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AGE")),
             stateFilterId = scalar("age")
           )
+        ),
+        setFilterValues = list(
+          detail = default_area_level
         )
       )
     )))
@@ -397,19 +407,19 @@ get_time_series_data_source_options <- function(types) {
   options
 }
 
-get_input_choropleth_settings <- function(types) {
+get_input_choropleth_settings <- function(types, default_area_level) {
   list(
     plotSettings = list(
       list(
         id = scalar("input_choropleth_data_source"),
         label = scalar(t_("REVIEW_INPUT_DATA_SOURCE")),
-        options = get_input_choropleth_data_source_options(types)
+        options = get_input_choropleth_data_source_options(types, default_area_level)
       )
     )
   )
 }
 
-get_input_choropleth_data_source_options <- function(types) {
+get_input_choropleth_data_source_options <- function(types, default_area_level) {
   options <- list()
   if ("survey" %in% types) {
     options <- append(options, list(list(
@@ -448,7 +458,10 @@ get_input_choropleth_data_source_options <- function(types) {
             stateFilterId = scalar("survey_id")
           )
         ),
-        setMultiple = c("area")
+        setMultiple = c("area"),
+        setFilterValues = list(
+          detail = default_area_level
+        )
       )
     )))
   }
@@ -489,7 +502,10 @@ get_input_choropleth_data_source_options <- function(types) {
             stateFilterId = scalar("age")
           )
         ),
-        setMultiple = c("area")
+        setMultiple = c("area"),
+        setFilterValues = list(
+          detail = default_area_level
+        )
       )
     )))
   }
@@ -520,7 +536,10 @@ get_input_choropleth_data_source_options <- function(types) {
             stateFilterId = scalar("year")
           )
         ),
-        setMultiple = c("area")
+        setMultiple = c("area"),
+        setFilterValues = list(
+          detail = default_area_level
+        )
       )
     )))
   }
