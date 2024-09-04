@@ -10,9 +10,7 @@
     },
     "children": {
       "type": "array",
-      "items": {
-        "type": "object"
-      }
+      "items": { "$ref": "#" }
     }
   },
   "additionalProperties": false,
