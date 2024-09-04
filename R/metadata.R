@@ -229,7 +229,8 @@ get_comparison_plot_settings_control <- function(filter_types) {
 
 get_comparison_plot_settings <- function(filter_types) {
   default_filter_ids <- c("source", "indicator", "area", "age", "period", "sex")
-  all_filter_ids <- c("source", "indicator", "detail", "area")
+  all_filter_ids <- c("source", "indicator", "detail", "area",
+                      "age", "period", "sex")
   default_filters <- lapply(default_filter_ids, get_filter_from_id)
   all_filters <- lapply(all_filter_ids, get_filter_from_id)
 
@@ -277,27 +278,48 @@ get_comparison_plot_settings <- function(filter_types) {
     sex_x_axis_effect,
     age_x_axis_effect
   )
-  ## TODO: In current plot when you change indicator, it updates
-  ## the filters. We could support this same behaviour by making
-  ## indicator a plot control which updates the filter values
-  ## including a hidden "indicator" filter which would be the value
-  ## actually used for filtering the data. But let's check what we
-  ## actually want to do. Would have to set the x-axis too, which I don't
-  ## think we can support yet.
+
+  indicator_ids <- vcapply(filter_types, "[[", "id")
+  indicator_filter <- filter_types[indicator_ids == "indicator"][[1]]
+  indicator_filter_to_control <- function(row_num) {
+    row <- indicator_filter$options[row_num, ]
+    list(
+      id = scalar(row$id),
+      label = scalar(row$label),
+      effect = list(
+        setFilterValues = list(
+          indicator = row$id
+        )
+      )
+    )
+  }
+  indicator_control_settings <- lapply(
+    seq_len(nrow(indicator_filter$options)),
+    indicator_filter_to_control)
+
+  ## Source hidden as we always disaggregate by this
+  ## Indicator hidden as we have a special plot control which shadows it
+  ## science want the plot to update based on indicator, so elevating this
+  ## to a plot control.
   list(
     defaultEffect = list(
       setFilters = default_filters,
       setFilterValues = list(
-        indicator = c("prevalence"),
         period = get_filter_option_ids(filter_types, "period")[2]
       ),
       setHidden = c(
-        "source"
+        "source", "indicator"
       )
     ),
     ## disaggregate plot settings are not visible as users cannot
     ## change these in the comparison plot
     plotSettings = list(
+      list(
+        id = scalar("indicator_control"),
+        label = scalar(get_label_for_id("indicator")),
+        options = indicator_control_settings,
+        value = scalar("prevalence")
+      ),
       list(
         id = scalar("x_axis"),
         label = scalar(t_("OUTPUT_BARCHART_X_AXIS")),

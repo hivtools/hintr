@@ -1118,7 +1118,7 @@ test_that("can get comparison plot data", {
   response_data <- response$data
   expect_setequal(names(response_data), c("data", "metadata"))
   expect_setequal(names(response_data$data),
-                  c("area_id", "area_name", "age_group", "sex",
+                  c("area_id", "area_name", "area_level", "age_group", "sex",
                     "calendar_quarter", "indicator", "source", "mean",
                     "lower", "upper"))
   expect_true(nrow(response_data$data) > 0)
