@@ -8,7 +8,7 @@
     },
     "indicators": {
       "type": "array",
-      "items": { "$ref": "ChoroplethIndicatorMetadata.schema.json" }
+      "items": { "$ref": "IndicatorMetadata.schema.json" }
     },
     "plotSettingsControl": {
       "type": "object",
