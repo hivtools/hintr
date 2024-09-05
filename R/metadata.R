@@ -238,30 +238,21 @@ get_comparison_plot_settings <- function(filter_types) {
     id = scalar("period"),
     label = scalar(get_label_for_id("period")),
     effect = list(
-      setMultiple = "period",
-      setFilterValues = list(
-        period = get_filter_option_ids(filter_types, "period")
-      )
+      setMultiple = "period"
     )
   )
   sex_x_axis_effect <- list(
     id = scalar("sex"),
     label = scalar(get_label_for_id("sex")),
     effect = list(
-      setMultiple = "sex",
-      setFilterValues = list(
-        sex = get_filter_option_ids(filter_types, "sex")
-      )
+      setMultiple = "sex"
     )
   )
   age_x_axis_effect <- list(
     id = scalar("age"),
     label = scalar(get_label_for_id("age")),
     effect = list(
-      setMultiple = "age",
-      setFilterValues = list(
-        age = naomi::get_five_year_age_groups()
-      )
+      setMultiple = "age"
     )
   )
   area_x_axis_effect <- list(
@@ -280,6 +271,28 @@ get_comparison_plot_settings <- function(filter_types) {
   )
 
   indicator_ids <- vcapply(filter_types, "[[", "id")
+  indicator_id_to_filter_values <- list(
+    "prevalence" = list(
+      indicator = "prevalence",
+      age = naomi::get_five_year_age_groups()
+    ),
+    "art_coverage" = list(
+      indicator = "art_coverage",
+      age = naomi::get_five_year_age_groups()
+    ),
+    "art_current" = list(
+      indicator = "art_current",
+      age = "Y015_999"
+    ),
+    "anc_prevalence_age_matched" = list(
+      indicator = "anc_prevalence_age_matched",
+      sex = "female"
+    ),
+    "anc_art_coverage_age_matched" = list(
+      indicator = "anc_art_coverage_age_matched",
+      sex = "female"
+    )
+  )
   indicator_filter <- filter_types[indicator_ids == "indicator"][[1]]
   indicator_filter_to_control <- function(row_num) {
     row <- indicator_filter$options[row_num, ]
@@ -287,9 +300,7 @@ get_comparison_plot_settings <- function(filter_types) {
       id = scalar(row$id),
       label = scalar(row$label),
       effect = list(
-        setFilterValues = list(
-          indicator = row$id
-        )
+        setFilterValues = indicator_id_to_filter_values[[row$id]]
       )
     )
   }
@@ -305,7 +316,8 @@ get_comparison_plot_settings <- function(filter_types) {
     defaultEffect = list(
       setFilters = default_filters,
       setFilterValues = list(
-        period = get_filter_option_ids(filter_types, "period")[2]
+        period = get_filter_option_ids(filter_types, "period")[2],
+        age = "Y015_049"
       ),
       setHidden = c(
         "source", "indicator"
