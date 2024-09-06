@@ -38,15 +38,18 @@ api_build <- function(queue, validate = FALSE, logger = NULL) {
   api$handle(endpoint_hintr_version())
   api$handle(endpoint_hintr_worker_status(queue))
   api$handle(endpoint_hintr_stop(queue))
-  api$registerHook("preroute", api_preroute)
+  api$registerHook("preroute", api_preroute(queue))
   api$registerHook("postserialize", api_postserialize)
   api$set404Handler(hintr_404_handler)
   api$setDocs(FALSE)
   api
 }
 
-api_preroute <- function(data, req, res, value) {
-  api_set_language(data, req, res)
+api_preroute <- function(queue) {
+  function(data, req, res, value) {
+    api_set_language(data, req, res)
+    queue$health_check()
+  }
 }
 
 api_postserialize <- function(data, req, res, value) {
@@ -62,15 +65,36 @@ api_postserialize <- function(data, req, res, value) {
 #' @param results_dir The dir for results to be saved to
 #' @param inputs_dir THe directory where input files are stored
 #' @param log_level The "lgr" log level to use
+#' @param health_check_interval Interval in seconds, after which the next time
+#'   the redis connection is used the connection will be reset. 0 for no
+#'   reconnection. This is used on cloud services where the TCP connections
+#'   have an idle timeout and must be manually kept alive or restarted by the
+#'   client.
 #'
 #' @return Running API
 #' @export
 api <- function(queue_id = NULL, workers = 2,
                 results_dir = tempdir(), inputs_dir = NULL,
-                log_level = "info") {
+                log_level = "info", health_check_interval = 0) {
+  logger <- porcelain::porcelain_logger(log_level)
+  start_api_log <- c("Starting API with:",
+                     "  - queue_id: '%s'",
+                     "  - workers: '%s'",
+                     "  - results_dir: '%s'",
+                     "  - inputs_dir: '%s'",
+                     "  - log_level: '%s'",
+                     "  - health_check_interval: '%s'")
+  logger$info(paste(start_api_log, collapse = "\n"),
+              queue_id %||% "NULL",
+              workers,
+              results_dir %||% "NULL",
+              inputs_dir %||% "NULL",
+              log_level,
+              health_check_interval  %||% "NULL")
   queue <- Queue$new(queue_id, workers,
                      results_dir = results_dir,
-                     inputs_dir = inputs_dir)
+                     inputs_dir = inputs_dir,
+                     health_check_interval = health_check_interval)
   rrq::rrq_worker_delete_exited(controller = queue$controller)
   logger <- porcelain::porcelain_logger(log_level)
   api_build(queue, logger = logger)

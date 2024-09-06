@@ -42,8 +42,8 @@ create_blocking_worker <- function(controller, worker_name = NULL) {
     timeout_idle = 300,
     heartbeat_period = 3,
     verbose = TRUE)
-  rrq::rrq_worker_config_save2("blocking", blocking_worker_cfg,
-                               controller = controller)
+  rrq::rrq_worker_config_save("blocking", blocking_worker_cfg,
+                              controller = controller)
   rrq:::rrq_worker$new(controller$queue_id, "blocking",
                        worker_id = worker_name)
 }

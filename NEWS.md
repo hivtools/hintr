@@ -1,3 +1,11 @@
+# hintr 1.1.16
+
+* Add an optional arg to API startup to turn on a health-check. If set, the interval after which the next time the redis connection is used the connection will be reset. 0 for no reconnection. This is needed for running on cloud services as they close idle tcp connections after a set time. On Azure it if 4 mins, so we need to the client to be able to reconnect if this interval has passed.
+
+# hintr 1.1.25
+
+* Use new rrq functions
+
 # hintr 1.1.24
 
 * Return calibrate result path from `/calibrate/result/path/<id>` relative to the results directory

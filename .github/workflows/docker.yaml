@@ -6,6 +6,12 @@ on:
   pull_request:
     branches: [main, master, tmp-epic-plot-cleanup-input]
 
+env:
+  TAG_SERVER_DH: mrcide/hintr
+  TAG_WORKER_DH: mrcide/hintr-worker
+  TAG_SERVER_GHCR: mrc-ide/hintr
+  TAG_WORKER_GHCR: mrc-ide/hintr-worker
+
 jobs:
   docker:
     runs-on: ubuntu-latest
@@ -13,9 +19,18 @@ jobs:
       - uses: actions/checkout@v4
 
       - id: extract_branch
-        name: Extract branch name
+        name: Setup Environment
         shell: bash
-        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        run: |
+          if [ "${{github.event_name}}" = "pull_request" ];
+          then
+            LONG_SHA=${{ github.event.pull_request.head.sha }}
+            echo "CI_BRANCH=${{ github.head_ref }}" >> $GITHUB_OUTPUT
+          else
+            LONG_SHA=${GITHUB_SHA}
+            echo "CI_BRANCH=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          fi
+          echo "CI_SHA=${LONG_SHA:0:7}" >> $GITHUB_OUTPUT
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -53,8 +68,8 @@ jobs:
           file: "./docker/Dockerfile"
           push: true
           tags: |
-            mrcide/hintr:${{steps.extract_branch.outputs.branch}}
-            ghcr.io/${{github.repository}}:${{steps.extract_branch.outputs.branch}}
+            ${{env.TAG_SERVER_DH}}:${{steps.extract_branch.outputs.CI_BRANCH}}
+            ghcr.io/${{env.TAG_SERVER_GHCR}}:${{steps.extract_branch.outputs.CI_BRANCH}}
 
       - name: Build and push prod containers
         uses: docker/build-push-action@v5
@@ -64,7 +79,38 @@ jobs:
           file: "./docker/Dockerfile"
           push: true
           tags: |
-            mrcide/hintr:latest
-            mrcide/hintr:${{steps.extract_branch.outputs.branch}}
-            ghcr.io/${{github.repository}}:latest
-            ghcr.io/${{github.repository}}:${{steps.extract_branch.outputs.branch}}
+            ${{env.TAG_SERVER_DH}}:latest
+            ${{env.TAG_SERVER_DH}}:${{steps.extract_branch.outputs.CI_BRANCH}}
+            ghcr.io/${{env.TAG_SERVER_GHCR}}:latest
+            ghcr.io/${{env.TAG_SERVER_GHCR}}:${{steps.extract_branch.outputs.CI_BRANCH}}
+
+      - name: Create worker Dockerfile
+        run: |
+          cat << EOF > ./docker/Dockerfile.worker
+          FROM ghcr.io/${{env.TAG_SERVER_GHCR}}:${{steps.extract_branch.outputs.CI_BRANCH}}
+          ENTRYPOINT ["/usr/local/bin/hintr_worker"]
+          EOF
+
+      - name: Build and push dev worker containers
+        uses: docker/build-push-action@v5
+        if: github.event_name == 'pull_request'
+        with:
+          context: .
+          file: "./docker/Dockerfile.worker"
+          push: true
+          tags: |
+            ${{env.TAG_WORKER_DH}}:${{steps.extract_branch.outputs.CI_BRANCH}}
+            ghcr.io/${{env.TAG_WORKER_GHCR}}:${{steps.extract_branch.outputs.CI_BRANCH}}
+
+      - name: Build and push prod worker containers
+        uses: docker/build-push-action@v5
+        if: github.event_name != 'pull_request'
+        with:
+          context: .
+          file: "./docker/Dockerfile.worker"
+          push: true
+          tags: |
+            ${{env.TAG_WORKER_DH}}:latest
+            ${{env.TAG_WORKER_DH}}:${{steps.extract_branch.outputs.CI_BRANCH}}
+            ghcr.io/${{env.TAG_WORKER_GHCR}}:latest
+            ghcr.io/${{env.TAG_WORKER_GHCR}}:${{steps.extract_branch.outputs.CI_BRANCH}}
