@@ -1,11 +1,3 @@
-do_plotting_metadata <- function(iso3) {
-  metadata <- get_plotting_metadata(iso3)
-  metadata <- metadata[metadata$data_type %in%
-                         c("survey", "anc", "output", "programme"), ]
-  metadata <- metadata[order(metadata$indicator_sort_order), ]
-  lapply(split(metadata, metadata$data_type), build_data_type_metadata)
-}
-
 get_plotting_metadata <- function(...) {
   naomi::get_plotting_metadata(...)
 }

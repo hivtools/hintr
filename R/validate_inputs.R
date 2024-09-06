@@ -137,9 +137,6 @@ do_validate_programme <- function(programme, shape, strict = TRUE) {
   assert_column_positive_numeric(data, "art_current")
   assert_calendar_quarter_column(data)
   list(data = data,
-       filters = list("age" = get_age_filters(data),
-                      "calendar_quarter" = get_quarter_filters(data),
-                      "indicators" = get_indicator_filters(data, "programme")),
        warnings = list())
 }
 
@@ -178,8 +175,6 @@ do_validate_anc <- function(anc, shape, strict = TRUE) {
   }
   data <- naomi::calculate_prevalence_art_coverage(data)
   list(data = data,
-       filters = list("year" = get_year_filters(data),
-                      "indicators" = get_indicator_filters(data, "anc")),
        warnings = list())
 }
 
@@ -220,9 +215,6 @@ do_validate_survey <- function(survey, shape, strict = TRUE) {
                                  c("n_observations", "n_eff_kish", "estimate",
                                    "std_error", "ci_lower", "ci_upper"))
   list(data = data,
-       filters = list("age" = get_age_filters(data),
-                      "surveys" = get_survey_filters(data),
-                      "indicators" = get_indicator_filters(data, "survey")),
        warnings = list())
 }
 
@@ -256,7 +248,6 @@ do_validate_vmmc <- function(vmmc, shape, strict = TRUE) {
                             unique(data$area_id),
                             "vmmc")
   list(data = json_verbatim("null"),
-       filters = json_verbatim("null"),
        warnings = list())
 }
 

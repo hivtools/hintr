@@ -314,7 +314,7 @@ test_that("failed cancel sends reasonable message", {
   expect_equal(error$status_code, 400)
 })
 
-test_that("getting result returns empty warnings with old run", {
+test_that("getting result metadata empty warnings with old run", {
   test_redis_available()
   test_mock_model_available()
 
@@ -327,7 +327,7 @@ test_that("getting result returns empty warnings with old run", {
   expect_equal(res$status_code, 200)
   expect_equal(res$data$warnings, list())
 
-  calibrate_result <- endpoint_model_calibrate_result(q$queue)
+  calibrate_result <- endpoint_model_calibrate_metadata(q$queue)
   res <- calibrate_result$run(q$calibrate_id)
   expect_equal(res$status_code, 200)
   expect_equal(res$data$warnings, list())

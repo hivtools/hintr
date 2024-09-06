@@ -16,14 +16,11 @@ api_build <- function(queue, validate = FALSE, logger = NULL) {
   api$handle(endpoint_model_calibrate_options())
   api$handle(endpoint_model_calibrate_submit(queue))
   api$handle(endpoint_model_calibrate_status(queue))
-  api$handle(endpoint_model_calibrate_result(queue))
   api$handle(endpoint_model_calibrate_metadata(queue))
   api$handle(endpoint_model_calibrate_data(queue))
   api$handle(endpoint_model_calibrate_result_path(queue))
   api$handle(endpoint_model_calibrate_plot(queue))
   api$handle(endpoint_comparison_plot(queue))
-  api$handle(endpoint_plotting_metadata_iso3())
-  api$handle(endpoint_plotting_metadata_default())
   api$handle(endpoint_download_submit(queue))
   api$handle(endpoint_download_status(queue))
   api$handle(endpoint_download_result(queue))
@@ -368,23 +365,6 @@ endpoint_comparison_plot <- function(queue) {
   porcelain::porcelain_endpoint$new("GET",
                                     "/comparison/plot/<id>",
                                     comparison_plot(queue),
-                                    returning = response)
-}
-
-endpoint_plotting_metadata_iso3 <- function() {
-  endpoint_plotting_metadata("/meta/plotting/<iso3>")
-}
-
-endpoint_plotting_metadata_default <- function() {
-  endpoint_plotting_metadata("/meta/plotting")
-}
-
-endpoint_plotting_metadata <- function(path) {
-  response <- porcelain::porcelain_returning_json(
-    "PlottingMetadataResponse.schema", schema_root())
-  porcelain::porcelain_endpoint$new("GET",
-                                    path,
-                                    plotting_metadata,
                                     returning = response)
 }
 

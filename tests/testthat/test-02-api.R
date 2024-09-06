@@ -612,52 +612,6 @@ test_that("endpoint_calibrate_options works", {
   expect_true(all(grepl("^(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$", body$version)))
 })
 
-test_that("endpoint_plotting_metadata_iso3 can be run", {
-  endpoint <- endpoint_plotting_metadata_iso3()
-  response <- endpoint$run("MWI")
-
-  expect_equal(response$status_code, 200)
-  expect_null(response$error)
-  expect_true(all(names(response$data) %in%
-                    c("survey", "anc", "output", "programme")))
-})
-
-test_that("endpoint_plotting_metadata_default can be run", {
-  endpoint <- endpoint_plotting_metadata_default()
-  response <- endpoint$run()
-
-  expect_equal(response$status_code, 200)
-  expect_null(response$error)
-  expect_true(all(names(response$data) %in%
-                    c("survey", "anc", "output", "programme")))
-})
-
-test_that("api can call endpoint_plotting_metadata with iso3", {
-  test_redis_available()
-  queue <- test_queue(workers = 0)
-  api <- api_build(queue)
-  res <- api$request("GET", "/meta/plotting/MWI")
-  expect_equal(res$status, 200)
-  body <- jsonlite::fromJSON(res$body)
-  expect_equal(body$status, "success")
-  expect_null(body$errors)
-  expect_true(all(names(body$data) %in%
-                    c("survey", "anc", "output", "programme")))
-})
-
-test_that("api can call endpoint_plotting_metadata without iso3", {
-  test_redis_available()
-  queue <- test_queue(workers = 0)
-  api <- api_build(queue)
-  res <- api$request("GET", "/meta/plotting")
-  expect_equal(res$status, 200)
-  body <- jsonlite::fromJSON(res$body)
-  expect_equal(body$status, "success")
-  expect_null(body$errors)
-  expect_true(all(names(body$data) %in%
-                    c("survey", "anc", "output", "programme")))
-})
-
 test_that("returning_json_version adds version", {
   returning_with_version <- returning_json_version(
     "ValidateInputResponse.schema", schema_root())
@@ -867,15 +821,6 @@ test_that("model calibrate can be queued and result returned", {
   expect_match(status_response$data$progress[[1]],
                "Saving outputs - [\\d.m\\s]+s elapsed", perl = TRUE)
 
-  ## Get result & metadata together
-  result <- endpoint_model_calibrate_result(q$queue)
-  response <- result$run(status_response$data$id)
-  expect_equal(response$status_code, 200)
-  expect_equal(colnames(response$data$data),
-               c("area_id", "sex", "age_group", "calendar_quarter",
-                 "indicator", "mode", "mean", "lower", "upper"))
-  expect_true(nrow(response$data$data) > 84042)
-
   ## Get metadata
   metadata <- endpoint_model_calibrate_metadata(q$queue)
   metadata_response <- metadata$run(status_response$data$id)
@@ -885,8 +830,10 @@ test_that("model calibrate can be queued and result returned", {
   ## Get data alone
   data <- endpoint_model_calibrate_data(q$queue)
   data_response <- data$run(status_response$data$id)
-  expect_equal(data_response$data$data,
-               response$data$data)
+  expect_equal(colnames(data_response$data$data),
+               c("area_id", "sex", "age_group", "calendar_quarter",
+                 "indicator", "mode", "mean", "lower", "upper"))
+  expect_true(nrow(data_response$data$data) > 84042)
 
   ## Get path to data
   path <- endpoint_model_calibrate_result_path(q$queue)
@@ -926,20 +873,6 @@ test_that("api can call endpoint_model_calibrate", {
   expect_match(status_body$data$progress[[1]],
                "Saving outputs - [\\d.m\\s]+s elapsed", perl = TRUE)
 
-  ## Get result
-  result_res <- api$request("GET",
-                            paste0("/calibrate/result/", status_body$data$id))
-
-  expect_equal(result_res$status, 200)
-  result_body <- jsonlite::fromJSON(result_res$body)
-  expect_null(result_body$errors)
-  expect_equal(names(result_body$data),
-               c("data", "warnings"))
-  expect_equal(colnames(result_body$data$data),
-               c("area_id", "sex", "age_group", "calendar_quarter",
-                 "indicator", "mode", "mean", "lower", "upper"))
-  expect_true(nrow(result_body$data$data) > 84042)
-
   ## Get metadata
   metadata_res <- api$request("GET", paste0("/calibrate/result/metadata/",
                                             status_body$data$id))
@@ -953,8 +886,10 @@ test_that("api can call endpoint_model_calibrate", {
                                         status_body$data$id))
   expect_equal(data_res$status, 200)
   data_body <- jsonlite::fromJSON(data_res$body)
-  expect_equal(data_body$data$data,
-               result_body$data$data)
+  expect_equal(colnames(data_body$data$data),
+               c("area_id", "sex", "age_group", "calendar_quarter",
+                 "indicator", "mode", "mean", "lower", "upper"))
+  expect_true(nrow(data_body$data$data) > 84042)
 
   ## Get path to data
   path_res <- api$request("GET", paste0("/calibrate/result/path/",
@@ -962,24 +897,6 @@ test_that("api can call endpoint_model_calibrate", {
   expect_equal(path_res$status, 200)
   path_body <- jsonlite::fromJSON(path_res$body)
   expect_true(file.exists(file.path(q$queue$results_dir, path_body$data$path)))
-})
-
-test_that("model calibrate result includes warnings", {
-  test_mock_model_available()
-  q <- test_queue_result()
-
-  result <- endpoint_model_calibrate_result(q$queue)
-  response <- result$run(q$calibrate_id)
-
-  expect_equal(response$status_code, 200)
-  expect_length(response$data$warnings, 2)
-  expect_equal(response$data$warnings[[1]]$text,
-               scalar("ART coverage greater than 100% for 10 age groups"))
-  expect_equal(response$data$warnings[[1]]$locations, "model_calibrate")
-  expect_equal(response$data$warnings[[2]]$text,
-               scalar("Prevalence greater than 40%"))
-  expect_equal(response$data$warnings[[2]]$locations,
-               c("model_calibrate", "review_output"))
 })
 
 test_that("can get calibrate plot data", {
@@ -992,13 +909,13 @@ test_that("can get calibrate plot data", {
 
   expect_equal(response$status_code, 200)
   response_data <- response$data
-  expect_setequal(names(response_data), c("data", "plottingMetadata"))
+  expect_setequal(names(response_data), c("data", "metadata"))
   expect_setequal(names(response_data$data),
                   c("data_type", "spectrum_region_code", "spectrum_region_name",
                     "sex", "age_group", "calendar_quarter", "indicator",
                     "mean"))
   expect_true(nrow(response_data$data) > 0)
-  expect_equal(names(response_data$plottingMetadata), "barchart")
+  expect_equal(names(response_data$metadata), "barchart")
   expect_setequal(names(response_data$plottingMetadata$barchart),
                   c("indicators", "filters", "defaults"))
 

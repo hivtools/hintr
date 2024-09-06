@@ -757,15 +757,6 @@ model_cancel <- function(queue) {
   }
 }
 
-plotting_metadata <- function(iso3 = NULL) {
-  tryCatch(
-    do_plotting_metadata(iso3),
-    error = function(e) {
-      hintr_error(api_error_msg(e), "FAILED_TO_GET_METADATA")
-    }
-  )
-}
-
 download_submit <- function(queue) {
   function(id, type, input = NULL) {
     ## API path should be - separated but we
