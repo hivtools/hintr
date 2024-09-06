@@ -3,15 +3,8 @@
   "type": "object",
   "properties": {
     "data": { "$ref": "ComparisonPlotData.schema.json" },
-    "plottingMetadata": {
-      "type": "object",
-      "properties": {
-        "barchart": { "$ref": "ComparisonBarchartMetadata.schema.json" }
-      },
-      "additionalProperties": false,
-      "required": [ "barchart" ]
-    }
+    "metadata": { "$ref": "ComparisonPlotMetadata.schema.json" }
   },
   "additionalProperties": false,
-  "required": [ "data", "plottingMetadata" ]
+  "required": [ "data", "metadata" ]
 }

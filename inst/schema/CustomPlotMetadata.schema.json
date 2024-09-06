@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions": {
+    "tableMetadata": {
+      "type": "object",
+      "properties": {
+        "row": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "column": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [ "row", "column" ]
+    }
+  },
+  "type": "object",
+  "oneOf": [
+    { "$ref": "#/definitions/tableMetadata" }
+  ]
+}

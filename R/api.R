@@ -5,6 +5,7 @@ api_build <- function(queue, validate = FALSE, logger = NULL) {
   api$handle(endpoint_baseline_combined())
   api$handle(endpoint_validate_survey_programme())
   api$handle(endpoint_input_time_series_plot())
+  api$handle(endpoint_review_input_metadata())
   api$handle(endpoint_model_options())
   api$handle(endpoint_model_options_validate())
   api$handle(endpoint_model_submit(queue))
@@ -70,7 +71,7 @@ api <- function(queue_id = NULL, workers = 2,
   queue <- Queue$new(queue_id, workers,
                      results_dir = results_dir,
                      inputs_dir = inputs_dir)
-  queue$queue$worker_delete_exited()
+  rrq::rrq_worker_delete_exited(controller = queue$controller)
   logger <- porcelain::porcelain_logger(log_level)
   api_build(queue, logger = logger)
 }
@@ -155,6 +156,18 @@ endpoint_input_time_series_plot <- function() {
   porcelain::porcelain_endpoint$new("POST",
                                     "/chart-data/input-time-series/<type>",
                                     input_time_series,
+                                    input,
+                                    returning = response)
+}
+
+endpoint_review_input_metadata <- function() {
+  input <- porcelain::porcelain_input_body_json(
+    "input", "ReviewInputFilterMetadataRequest.schema", schema_root())
+  response <- porcelain::porcelain_returning_json(
+    "ReviewInputFilterMetadataResponse.schema", schema_root())
+  porcelain::porcelain_endpoint$new("POST",
+                                    "/review-input/metadata",
+                                    review_input_filter_metadata,
                                     input,
                                     returning = response)
 }

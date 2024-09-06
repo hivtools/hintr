@@ -10,7 +10,7 @@
             "indicators": {
               "type": "array",
               "items": {
-                "$ref": "ChoroplethIndicatorMetadata.schema.json"
+                "$ref": "IndicatorMetadata.schema.json"
               }
             }
           },

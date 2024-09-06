@@ -1,6 +1,10 @@
+# hintr 1.1.24
+
+* Return calibrate result path from `/calibrate/result/path/<id>` relative to the results directory
+
 # hintr 1.1.23
 
-* Refactor model calibrate metadata to new style with `plotControlSettings` as part of plot cleanup epic.
+* Update to use new rrq free functions added in v0.7.10
 
 # hintr 1.1.22
 

@@ -21,7 +21,14 @@
                     "type": "string"
                 }
             }
-        }
+        },
+        "setHidden": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "customPlotEffect": { "$ref": "CustomPlotMetadata.schema.json" }
     },
     "additionalProperties": false
 }

@@ -127,6 +127,425 @@ input_time_series <- function(type, input) {
   })
 }
 
+review_input_filter_metadata <- function(input) {
+  input <- jsonlite::fromJSON(input)
+  types <- names(input$data)
+  types <- types[types != "shape"]
+
+  json <- hintr_geojson_read(input$data$shape)
+  area_level_options <- get_level_options(json)
+  default_area_level <- list(
+    area_level_options[[length(area_level_options)]]$id)
+  time_series_settings <- get_time_series_settings(types, default_area_level)
+
+  if (is.null(time_series_settings)) {
+    return(
+      list(
+        filterTypes = get_review_input_filter_types(input, types, area_level_options),
+        indicators = get_review_input_indicators(types, input$iso3),
+        plotSettingsControl = list(
+          inputChoropleth = get_input_choropleth_settings(types, default_area_level)
+        )
+      )
+    )
+  }
+  list(
+    filterTypes = get_review_input_filter_types(input, types, area_level_options),
+    indicators = get_review_input_indicators(types, input$iso3),
+    plotSettingsControl = list(
+      timeSeries = time_series_settings,
+      inputChoropleth = get_input_choropleth_settings(types, default_area_level)
+    )
+  )
+}
+
+get_review_input_filter_types <- function(input, types, area_level_options) {
+  base_filters <- list(
+    list(
+      id = scalar("area"),
+      column_id = scalar("area_id"),
+      optons = json_verbatim("null"),
+      use_shape_regions = scalar(TRUE)
+    ),
+    list(
+      id = scalar("map_area_level"),
+      column_id = scalar("area_level"),
+      options = area_level_options
+    )
+  )
+  other_filter_types <- Reduce(append_filter_types(input), c(list(NULL), types))
+  append(base_filters, other_filter_types)
+}
+
+append_filter_types <- function(input) {
+  function(filter_types, type) {
+    append(filter_types, c(get_time_series_filter_types(input, type),
+                           get_map_filter_types(input, type)))
+  }
+}
+
+get_review_input_indicators <- function(types, iso3) {
+  metadata <- naomi::get_plotting_metadata(iso3)
+  indicators <- metadata[metadata$data_type %in% types, ]
+}
+
+get_time_series_filter_types <- function(input, type) {
+  if (type == "anc") {
+    get_anc_time_series_filter_types(input)
+  } else if (type == "programme") {
+    get_programme_time_series_filter_types(input)
+  }
+}
+
+get_anc_time_series_filter_types <- function(input) {
+  data <- naomi::prepare_input_time_series_anc(
+    input$data$anc$path, input$data$shape$path
+  )
+  data <- as.data.frame(data, stringsAsFactors = FALSE)
+  columns <- get_anc_time_series_columns(data)
+  plot_type_filter <- list(
+    id = scalar("time_series_anc_plot_type"),
+    column_id = scalar("plot"),
+    options = get_selected_mappings(columns, "plot_type",
+                                    key = "values")
+  )
+  area_level_filter <- list(
+    id = scalar("time_series_anc_area_level"),
+    column_id = scalar("area_level"),
+    options = get_selected_mappings(columns, "area_level",
+                                    key = "values")
+  )
+  age_filter <- list(
+    id = scalar("time_series_anc_age"),
+    column_id = scalar("age_group"),
+    options = get_selected_mappings(columns, "age",
+                                    key = "values")
+  )
+  list(plot_type_filter, area_level_filter, age_filter)
+}
+
+get_programme_time_series_filter_types <- function(input) {
+  data <- naomi::prepare_input_time_series_art(
+    input$data$programme$path, input$data$shape$path
+  )
+  data <- as.data.frame(data, stringsAsFactors = FALSE)
+  columns <- get_programme_time_series_columns(data)
+  plot_type_filter <- list(
+    id = scalar("time_series_programme_plot_type"),
+    column_id = scalar("plot"),
+    options = get_selected_mappings(columns, "plot_type",
+                                    key = "values")
+  )
+  area_level_filter <- list(
+    id = scalar("time_series_programme_area_level"),
+    column_id = scalar("area_level"),
+    options = get_selected_mappings(columns, "area_level",
+                                    key = "values")
+  )
+  quarter_filter <- list(
+    id = scalar("time_series_programme_quarter"),
+    column_id = scalar("quarter"),
+    options = get_selected_mappings(columns, "quarter",
+                                    key = "values")
+  )
+  filter_types <- list(plot_type_filter, area_level_filter,
+                       quarter_filter)
+}
+
+get_map_filter_types <- function(input, type) {
+  if (type == "anc") {
+    get_anc_map_filter_types(input)
+  } else if (type == "programme") {
+    get_programme_map_filter_types(input)
+  } else if (type == "survey") {
+    get_survey_map_filter_types(input)
+  }
+}
+
+get_anc_map_filter_types <- function(input) {
+  data <- as.data.frame(naomi::read_anc_testing(input$data$anc$path))
+  data <- naomi::calculate_prevalence_art_coverage(data)
+  year_filter <- list(
+    id = scalar("map_anc_year"),
+    label = scalar(t_("INPUT_TIME_SERIES_COLUMN_YEAR")),
+    column_id = scalar("year"),
+    options = get_year_filters(data)
+  )
+  indicator_filter <- list(
+    id = scalar("map_anc_indicator"),
+    column_id = scalar("indicator"),
+    options = get_indicator_filters(data, "anc")
+  )
+  list(year_filter, indicator_filter)
+}
+
+get_programme_map_filter_types <- function(input) {
+  data <- read_csv(input$data$programme$path, header = TRUE)
+  quarter_filter <- list(
+    id = scalar("map_programme_quarter"),
+    column_id = scalar("calendar_quarter"),
+    options = get_quarter_filters(data)
+  )
+  age_filter <- list(
+    id = scalar("map_programme_age"),
+    column_id = scalar("age_group"),
+    options = get_age_filters(data)
+  )
+  sex_filter <- list(
+    id = scalar("map_programme_sex"),
+    column_id = scalar("sex"),
+    options = get_sex_filters(data)
+  )
+  indicator_filter <- list(
+    id = scalar("map_programme_indicator"),
+    column_id = scalar("indicator"),
+    options = get_indicator_filters(data, "programme")
+  )
+  list(quarter_filter, age_filter, sex_filter, indicator_filter)
+}
+
+get_survey_map_filter_types <- function(input) {
+  data <- read_csv(input$data$survey$path, header = TRUE)
+  age_filter <- list(
+    id = scalar("map_survey_age"),
+    column_id = scalar("age_group"),
+    options = get_age_filters(data)
+  )
+  survey_filter <- list(
+    id = scalar("map_survey_surveys"),
+    column_id = scalar("survey_id"),
+    options = get_survey_filters(data)
+  )
+  sex_filter <- list(
+    id = scalar("map_survey_sex"),
+    column_id = scalar("sex"),
+    options = get_sex_filters(data)
+  )
+  indicator_filter <- list(
+    id = scalar("map_survey_indicator"),
+    column_id = scalar("indicator"),
+    options = get_indicator_filters(data, "survey")
+  )
+  list(age_filter, survey_filter, sex_filter, indicator_filter)
+}
+
+get_time_series_settings <- function(types, default_area_level) {
+  options <- get_time_series_data_source_options(types, default_area_level)
+  if (length(options) == 0) {
+    return(NULL)
+  }
+  list(
+    plotSettings = list(
+      list(
+        id = scalar("time_series_data_source"),
+        label = scalar(t_("REVIEW_INPUT_DATA_SOURCE")),
+        options = options
+      )
+    )
+  )
+}
+
+get_time_series_data_source_options <- function(types, default_area_level) {
+  options <- list()
+  if ("programme" %in% types) {
+    options <- append(options, list(list(
+      id = scalar("programme"),
+      label = scalar(t_("REVIEW_INPUT_PROGRAMME")),
+      effect = list(
+        setFilters = list(
+          list(
+            filterId = scalar("time_series_programme_plot_type"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_PLOT_TYPE")),
+            stateFilterId = scalar("plotType")
+          ),
+          list(
+            filterId = scalar("time_series_programme_area_level"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA_LEVEL")),
+            stateFilterId = scalar("detail")
+          ),
+          list(
+            filterId = scalar("time_series_programme_quarter"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_QUARTER")),
+            stateFilterId = scalar("quarter")
+          )
+        ),
+        setMultiple = c("quarter"),
+        setFilterValues = list(
+          detail = default_area_level
+        )
+      )
+    )))
+  }
+  if ("anc" %in% types) {
+    options <- append(options, list(list(
+      id = scalar("anc"),
+      label = scalar(t_("REVIEW_INPUT_ANC")),
+      effect = list(
+        setFilters = list(
+          list(
+            filterId = scalar("time_series_anc_plot_type"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_PLOT_TYPE")),
+            stateFilterId = scalar("plotType")
+          ),
+          list(
+            filterId = scalar("time_series_anc_area_level"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA_LEVEL")),
+            stateFilterId = scalar("detail")
+          ),
+          list(
+            filterId = scalar("time_series_anc_age"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AGE")),
+            stateFilterId = scalar("age")
+          )
+        ),
+        setFilterValues = list(
+          detail = default_area_level
+        )
+      )
+    )))
+  }
+  options
+}
+
+get_input_choropleth_settings <- function(types, default_area_level) {
+  list(
+    plotSettings = list(
+      list(
+        id = scalar("input_choropleth_data_source"),
+        label = scalar(t_("REVIEW_INPUT_DATA_SOURCE")),
+        options = get_input_choropleth_data_source_options(types, default_area_level)
+      )
+    )
+  )
+}
+
+get_input_choropleth_data_source_options <- function(types, default_area_level) {
+  options <- list()
+  if ("survey" %in% types) {
+    options <- append(options, list(list(
+      id = scalar("survey"),
+      label = scalar(t_("REVIEW_INPUT_SURVEY")),
+      effect = list(
+        setFilters = list(
+          list(
+            filterId = scalar("map_survey_indicator"),
+            label = scalar(t_("OUTPUT_FILTER_INDICATOR")),
+            stateFilterId = scalar("indicator")
+          ),
+          list(
+            filterId = scalar("map_area_level"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA_LEVEL")),
+            stateFilterId = scalar("detail")
+          ),
+          list(
+            filterId = scalar("area"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA")),
+            stateFilterId = scalar("area")
+          ),
+          list(
+            filterId = scalar("map_survey_sex"),
+            label = scalar(t_("OUTPUT_FILTER_SEX")),
+            stateFilterId = scalar("sex")
+          ),
+          list(
+            filterId = scalar("map_survey_age"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AGE")),
+            stateFilterId = scalar("age")
+          ),
+          list(
+            filterId = scalar("map_survey_surveys"),
+            label = scalar(t_("REVIEW_INPUT_SURVEY")),
+            stateFilterId = scalar("survey_id")
+          )
+        ),
+        setMultiple = c("area"),
+        setFilterValues = list(
+          detail = default_area_level
+        )
+      )
+    )))
+  }
+  if ("programme" %in% types) {
+    options <- append(options, list(list(
+      id = scalar("programme"),
+      label = scalar(t_("REVIEW_INPUT_PROGRAMME")),
+      effect = list(
+        setFilters = list(
+          list(
+            filterId = scalar("map_programme_indicator"),
+            label = scalar(t_("OUTPUT_FILTER_INDICATOR")),
+            stateFilterId = scalar("indicator")
+          ),
+          list(
+            filterId = scalar("map_area_level"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA_LEVEL")),
+            stateFilterId = scalar("detail")
+          ),
+          list(
+            filterId = scalar("area"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA")),
+            stateFilterId = scalar("area")
+          ),
+          list(
+            filterId = scalar("map_programme_quarter"),
+            label = scalar(t_("OUTPUT_FILTER_PERIOD")),
+            stateFilterId = scalar("period")
+          ),
+          list(
+            filterId = scalar("map_programme_sex"),
+            label = scalar(t_("OUTPUT_FILTER_SEX")),
+            stateFilterId = scalar("sex")
+          ),
+          list(
+            filterId = scalar("map_programme_age"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AGE")),
+            stateFilterId = scalar("age")
+          )
+        ),
+        setMultiple = c("area"),
+        setFilterValues = list(
+          detail = default_area_level
+        )
+      )
+    )))
+  }
+  if ("anc" %in% types) {
+    options <- append(options, list(list(
+      id = scalar("anc"),
+      label = scalar(t_("REVIEW_INPUT_ANC")),
+      effect = list(
+        setFilters = list(
+          list(
+            filterId = scalar("map_anc_indicator"),
+            label = scalar(t_("OUTPUT_FILTER_INDICATOR")),
+            stateFilterId = scalar("indicator")
+          ),
+          list(
+            filterId = scalar("map_area_level"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA_LEVEL")),
+            stateFilterId = scalar("detail")
+          ),
+          list(
+            filterId = scalar("area"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA")),
+            stateFilterId = scalar("area")
+          ),
+          list(
+            filterId = scalar("map_anc_year"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_YEAR")),
+            stateFilterId = scalar("year")
+          )
+        ),
+        setMultiple = c("area"),
+        setFilterValues = list(
+          detail = default_area_level
+        )
+      )
+    )))
+  }
+  options
+}
+
 model_options_validate <- function(input) {
   input <- jsonlite::fromJSON(input)
   tryCatch({
@@ -159,7 +578,7 @@ submit_model <- function(queue) {
     if (!is_current_version(input$version)) {
       hintr_error(t_("MODEL_SUBMIT_OLD"), "VERSION_OUT_OF_DATE")
     }
-    tryCatch(
+    withCallingHandlers(
       list(id = scalar(queue$submit_model_run(input$data, input$options))),
       error = function(e) {
         hintr_error(api_error_msg(e), "FAILED_TO_QUEUE")
@@ -169,7 +588,8 @@ submit_model <- function(queue) {
 }
 
 queue_status <- function(queue) {
-  check_orphan <- throttle(queue$queue$worker_detect_exited, 10)
+  check_orphan <- throttle(
+    function() rrq::rrq_worker_detect_exited(controller = queue$controller), 10)
   function(id) {
     no_error(check_orphan())
     tryCatch({
@@ -203,7 +623,7 @@ submit_calibrate <- function(queue) {
     if (!is_current_version(calibration_options$version)) {
       hintr_error(t_("CALIBRATE_SUBMIT_OLD"), "VERSION_OUT_OF_DATE")
     }
-    tryCatch(
+    withCallingHandlers(
       list(id = scalar(queue$submit_calibrate(queue$result(id),
                                               calibration_options$options))),
       error = function(e) {
@@ -221,6 +641,8 @@ calibrate_result <- function(queue) {
 }
 
 calibrate_metadata <- function(queue) {
+  ## TODO add a test that checks that for the ids used for all filters
+  ## and filter options exist in the filterTypes
   function(id) {
     verify_result_available(queue, id)
     result <- queue$result(id)
@@ -229,10 +651,11 @@ calibrate_metadata <- function(queue) {
     if (!is.null(result$warnings)) {
       warnings <- warnings_scalar(result$warnings)
     }
+    filter_types <- get_model_output_filters(output)
     list(
-      filterTypes = get_model_output_filters(output),
-      indicators = get_choropleth_metadata(output),
-      plotSettingsControl = get_plot_settings_control(),
+      filterTypes = filter_types,
+      indicators = get_indicator_metadata("output", "choropleth", output),
+      plotSettingsControl = get_output_plot_settings_control(filter_types),
       warnings = warnings
     )
   }
@@ -251,8 +674,9 @@ calibrate_result_path <- function(queue) {
   function(id) {
     verify_result_available(queue, id)
     result <- queue$result(id)
+    relative_path <- fs::path_rel(result$plot_data_path, start = queue$results_dir)
     list(
-      path = scalar(result$plot_data_path)
+      path = scalar(relative_path)
     )
   }
 }
@@ -268,15 +692,14 @@ calibrate_plot <- function(queue) {
     is_ratio <- grepl("\\w+_ratio", data$data_type)
     data$indicator[is_ratio] <- paste0(data$indicator[is_ratio], "_ratio")
     data$spectrum_region_code <- as.character(data$spectrum_region_code)
-    filters <- get_calibrate_plot_output_filters(data)
+
+    filter_types <- get_calibrate_plot_filters(data)
     list(
       data = data,
-      plottingMetadata = list(
-        barchart = list(
-          indicators = get_barchart_metadata(data, "calibrate"),
-          filters = filters,
-          defaults = get_calibrate_barchart_defaults(filters)
-        )
+      metadata = list(
+        filterTypes = filter_types,
+        indicators = get_indicator_metadata("calibrate", "barchart", data),
+        plotSettingsControl = get_calibrate_plot_settings_control(filter_types)
       )
     )
   }
@@ -289,27 +712,23 @@ comparison_plot <- function(queue) {
     ## Strip tibble class to work with helper functions which rely on
     ## converting to vector when selecting 1 column
     data <- as.data.frame(data)
-    data <- data[, c("area_id", "area_name", "age_group", "sex",
-                   "calendar_quarter", "indicator", "source", "mean",
-                   "lower", "upper")]
-    filters <- get_comparison_plot_filters(data)
-    selections <- get_comparison_barchart_selections(data, filters)
+
+    filter_types <- get_comparison_plot_filters(data)
     list(
-      data = data,
-      plottingMetadata = list(
-        barchart = list(
-          indicators = get_barchart_metadata(data, "comparison"),
-          filters = filters,
-          defaults = selections[[1]],
-          selections = selections
-        )
+      data = data[, c("area_id", "area_name", "area_level", "age_group", "sex",
+                      "calendar_quarter", "indicator", "source", "mean",
+                      "lower", "upper")],
+      metadata = list(
+        filterTypes = filter_types,
+        indicators = get_indicator_metadata("comparison", "barchart", data),
+        plotSettingsControl = get_comparison_plot_settings_control(filter_types)
       )
     )
   }
 }
 
 verify_result_available <- function(queue, id, version = NULL) {
-  task_status <- queue$queue$task_status(id)
+  task_status <- rrq::rrq_task_status(id, controller = queue$controller)
   if (task_status == "COMPLETE") {
     result <- queue$result(id)
     naomi:::assert_model_output_version(result, version = version)
@@ -378,7 +797,7 @@ download_submit <- function(queue) {
         prepared_input$vmmc <- parsed_input$vmmc
       }
     }
-    tryCatch(
+    withCallingHandlers(
       list(id = scalar(
         queue$submit_download(queue$result(id), type, prepared_input))),
       error = function(e) {
@@ -442,15 +861,15 @@ build_content_disp_header <- function(areas, filename, ext) {
 download_model_debug <- function(queue) {
   function(id) {
     tryCatch({
-      data <- queue$queue$task_data(id)
+      data <- rrq::rrq_task_data(id, controller = queue$controller)
       func <- as.list(data$expr)[[1]]
       if (func == "hintr:::run_model") {
-        files <- unique(unlist(lapply(data$objects$data, function(x) {
+        files <- unique(unlist(lapply(data$variables$data, function(x) {
           if (!is.null(x)) {
             x$path
           }
         }), FALSE, FALSE))
-        data$objects$data <- lapply(data$objects$data, function(x) {
+        data$variables$data <- lapply(data$variables$data, function(x) {
           if (!is.null(x)) {
             list(path = basename(x$path), hash = x$hash, filename = x$filename)
           }
@@ -459,14 +878,14 @@ download_model_debug <- function(queue) {
         ## Calibrate, file download requests have format of "hintr_output"
         ## object from naomi. They have files at plot_data_path
         ## and model_output_path
-        files <- data$objects$model_output$model_output_path
-        data$objects$model_output$model_output_path <- basename(
-          data$objects$model_output$model_output_path)
-        if (!is.null(data$objects$model_output$plot_data_path)) {
+        files <- data$variables$model_output$model_output_path
+        data$variables$model_output$model_output_path <- basename(
+          data$variables$model_output$model_output_path)
+        if (!is.null(data$variables$model_output$plot_data_path)) {
           ## This file only exists after calibrate has been run
-          files <- c(files, data$objects$model_output$plot_data_path)
-          data$objects$model_output$plot_data_path <- basename(
-            data$objects$model_output$plot_data_path)
+          files <- c(files, data$variables$model_output$plot_data_path)
+          data$variables$model_output$plot_data_path <- basename(
+            data$variables$model_output$plot_data_path)
         }
       }
       tmp <- tempfile()
@@ -505,7 +924,7 @@ download_model_debug <- function(queue) {
 
 worker_status <- function(queue) {
   function() {
-    lapply(queue$queue$worker_status(), scalar)
+    lapply(rrq::rrq_worker_status(controller = queue$controller), scalar)
   }
 }
 
@@ -513,10 +932,16 @@ hintr_stop <- function(queue) {
   force(queue)
   function() {
     message("Stopping workers")
-    queue$queue$worker_stop()
+    worker_stop(controller = queue$controller)
     message("Quitting hintr")
     quit(save = "no")
   }
+}
+
+## Wrapping this in a separate function for easier mocking
+## during testing
+worker_stop <- function(...) {
+  rrq::rrq_worker_stop(...)
 }
 
 prepare_status_response <- function(value, id) {

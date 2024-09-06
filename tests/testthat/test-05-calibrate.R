@@ -39,7 +39,7 @@ test_that("can calibrate a model result", {
   expect_true(!is.null(res$id))
 
   ## Get status
-  out <- q$queue$queue$task_wait(res$id)
+  out <- q$queue$task_wait(res$id)
   status <- queue_status(q$queue)
   res_status <- status(res$id)
   expect_equal(res_status$id, res$id)

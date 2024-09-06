@@ -208,7 +208,7 @@ test_that("model interactions", {
   expect_setequal(dir(file.path(tmp, response$data$id)),
                   c("data.rds", "files"))
   dat <- readRDS(file.path(tmp, response$data$id, "data.rds"))
-  expect_equal(dat$objects$data$pjnz$filename, "Malawi2019.PJNZ")
+  expect_equal(dat$variables$data$pjnz$filename, "Malawi2019.PJNZ")
 
   ## Get the result
   r <- server$request("GET", paste0("/model/result/", response$data$id))
@@ -329,7 +329,7 @@ test_that("real model can be run & calibrated by API", {
   response <- response_from_json(r)
   expect_equal(response$status, "success")
   expect_equal(names(response$data), "path")
-  expect_true(file.exists(response$data$path))
+  expect_true(file.exists(file.path(results_dir, response$data$path)))
 })
 
 test_that("plotting metadata is exposed", {
