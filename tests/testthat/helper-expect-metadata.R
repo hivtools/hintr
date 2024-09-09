@@ -124,19 +124,20 @@ expect_valid_metadata <- function(metadata) {
   plot_names <- names(metadata$plotSettingsControl)
   for (plot in plot_names) {
     default_effects <- metadata$plotSettingsControl[[plot]]$defaultEffect
-    default_filter_map <- validate_effects(
-      filter_types,
-      metadata$plotSettingsControl[[plot]]$defaultEffect,
-      paste0("plot: '", plot, "', default effects"))
-    for (plot_setting in metadata$plotSettingsControl[[plot]]$plotSettings) {
-      for (option in plot_setting$options) {
-        validate_effects(
-          filter_types,
-          plot_setting$options$effect,
-          paste0("plot: '",  plot,
-                 "', setting: '", plot_setting$id,
-                 "', option: '", option$id, "'"),
-          default_filter_map)
+    if (length(metadata$plotSettingsControl[[plot]]$plotSettings) == 0) {
+      validate_effects(filter_types, default_effects, list(),
+                       paste0("plot: '", plot, "', default effects"))
+    } else {
+      for (plot_setting in metadata$plotSettingsControl[[plot]]$plotSettings) {
+        for (option in plot_setting$options) {
+          validate_effects(
+            filter_types,
+            option$effect,
+            default_effects,
+            paste0("plot: '",  plot,
+                  "', setting: '", plot_setting$id,
+                  "', option: '", option$id, "'"))
+        }
       }
     }
   }
@@ -155,53 +156,64 @@ expect_valid_metadata <- function(metadata) {
 #'
 #' @param filter_types Named filter types
 #' @param effects Effects to check
+#' @param default_effects Default effects applied for every plot option
+#'   must be validated together as effects are additive
 #' @param context Additional context appended to any test failure messages
-#' @param state_filter_map Map of state filter ID to filter ID. See above for
-#'   details. Used to check that effects refer to a filter which exists.
 #'
 #' @return Nothing, called for side effect
 #' @noRd
-validate_effects <- function(filter_types, effects, context,
-                             state_filter_map = list()) {
-  if (!is.null(effects$setFilters)) {
-    filter_ids <- vcapply(effects$setFilters, "[[", "filterId")
-    expect_filter_exists(names(filter_types),
-                         filter_ids,
-                         paste(context, "setFilters"))
-    state_filter_ids <- vcapply(effects$setFilters, "[[", "stateFilterId")
-    state_filter_map <- c(state_filter_map,
-                          setNames(filter_ids, state_filter_ids))
-    expect_state_filter_id_unique(state_filter_map)
-  } else if (length(state_filter_map) == 0) {
-    ## This is kind of gross but logic is, if setFilters is not included
-    ## in an effect, then use all the available filters. So have to replicate
-    ## this here for validation
-    state_filter_map <- setNames(names(filter_types), names(filter_types))
+validate_effects <- function(filter_types, effects, default_effects, context) {
+  ## Effects are additive, except for setFilters where effects on an
+  ## individual filter override the defaults
+  set_filters <- effects$setFilters
+  if (length(effects$setFilters) == 0) {
+    set_filters <- default_effects$setFilters
   }
-  if (!is.null(effects$setMultiple)) {
+  expect(length(set_filters) > 0,
+         paste(context, "setFilters must be set in plot setting or",
+               "default settings."))
+
+  state_filter_ids <- vcapply(set_filters, "[[", "stateFilterId")
+  filter_ids <- vcapply(set_filters, "[[", "filterId")
+  state_filter_map <- setNames(filter_ids, state_filter_ids)
+  expect_filter_exists(names(filter_types),
+                       filter_ids,
+                       paste(context, "setFilters"))
+  expect_state_filter_id_unique(state_filter_map, paste(context, "setFilters"))
+
+  set_multiple <- unlist(c(effects$setMultiple, default_effects$setMultiple))
+  if (length(set_multiple) > 0) {
     expect_filter_exists(names(filter_types),
-                         state_filter_map[unlist(effects$setMultiple)],
+                         state_filter_map[set_multiple],
                          paste(context, "setMultiple"))
   }
-  if (!is.null(effects$setFilterValues)) {
+
+  set_filter_values <- c(effects$setFilterValues,
+                         default_effects$setFilterValues)
+  if (length(set_filter_values) > 0) {
     expect_filter_exists(names(filter_types),
-                         state_filter_map[names(effects$setFilterValues)],
+                         state_filter_map[names(set_filter_values)],
                          paste(context, "setFilterValues"))
-    for (state_filter_id in names(effects$setFilterValues)) {
+    for (state_filter_id in names(set_filter_values)) {
       filter_id <- state_filter_map[[state_filter_id]]
-      if (isTRUE(filter_types[[filter_id]])) {
+      if (isTRUE(filter_types[[filter_id]]$use_shape_regions)) {
+        ## If we're referring to a filter which uses regions from
+        ## shape file, we have no options in metadata. So skip this check.
+        browser()
         break
       }
       all_option_ids <- get_filter_option_ids(filter_types[[filter_id]]$options)
       expect_option_exists(all_option_ids,
-                           effects$setFilterValues[[state_filter_id]],
+                           set_filter_values[[state_filter_id]],
                            paste(context, "setFilterValues"),
-                           effect$id)
+                           state_filter_id)
     }
   }
-  if (!is.null(effects$setHidden)) {
+
+  set_hidden <- unlist(c(effects$setHidden, default_effects$setHidden))
+  if (length(set_hidden) > 0) {
     expect_filter_exists(names(filter_types),
-                         state_filter_map[unlist(effects$setHidden)],
+                         state_filter_map[set_hidden],
                          paste(context, "setHidden"))
   }
   state_filter_map

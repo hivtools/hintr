@@ -227,15 +227,19 @@ get_comparison_plot_settings <- function(filter_types) {
     age_x_axis_effect
   )
 
-  indicator_ids <- vcapply(filter_types, "[[", "id")
+  filter_ids <- vcapply(filter_types, "[[", "id")
+  possible_age_options <- vcapply(
+    filter_types[filter_ids == "age"][[1]]$options, "[[", "id")
+  five_year_age_groups <- naomi::get_five_year_age_groups()
+  age_options <- five_year_age_groups[five_year_age_groups %in% possible_age_options]
   indicator_id_to_filter_values <- list(
     "prevalence" = list(
       indicator = "prevalence",
-      age = naomi::get_five_year_age_groups()
+      age = age_options
     ),
     "art_coverage" = list(
       indicator = "art_coverage",
-      age = naomi::get_five_year_age_groups()
+      age = age_options
     ),
     "art_current" = list(
       indicator = "art_current",
@@ -250,7 +254,7 @@ get_comparison_plot_settings <- function(filter_types) {
       sex = "female"
     )
   )
-  indicator_filter <- filter_types[indicator_ids == "indicator"][[1]]
+  indicator_filter <- filter_types[filter_ids == "indicator"][[1]]
   indicator_filter_to_control <- function(row_num) {
     row <- indicator_filter$options[row_num, ]
     list(
