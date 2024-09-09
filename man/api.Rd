@@ -9,7 +9,8 @@ api(
   workers = 2,
   results_dir = tempdir(),
   inputs_dir = NULL,
-  log_level = "info"
+  log_level = "info",
+  health_check_interval = 0
 )
 }
 \arguments{
@@ -23,6 +24,12 @@ if NULL}
 \item{inputs_dir}{THe directory where input files are stored}
 
 \item{log_level}{The "lgr" log level to use}
+
+\item{health_check_interval}{Interval in seconds, after which the next time
+the redis connection is used the connection will be reset. 0 for no
+reconnection. This is used on cloud services where the TCP connections
+have an idle timeout and must be manually kept alive or restarted by the
+client.}
 }
 \value{
 Running API

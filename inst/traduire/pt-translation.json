@@ -16,7 +16,6 @@
     "INVALID_COUNTRY": "País inválido",
     "INVALID_ISO3": "Não é possível ler o país a partir de dados do tipo {{type}}",
     "INVALID_REGIONS": "Não é possível ler regiões a partir de dados do tipo {{type}}",
-    "METADATA_BUILD_INDICATOR": "Espera-se apenas 1 linha para a combinação de indicador, tipo de dados e tipo de lote. Garanta que todas as combinações são únicas na configuração.",
     "MODEL_OPTIONS_FAIL": "Falha na construção de opções de modelo a partir de modelo e parâms: {{message}}",
     "MODEL_RESULT_CRASH": "O trabalhador falhou - os detalhes do erro não estão disponíveis",
     "MODEL_RESULT_MISSING": "Falha na obtenção do resultado",

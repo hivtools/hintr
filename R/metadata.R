@@ -2,41 +2,6 @@ get_plotting_metadata <- function(...) {
   naomi::get_plotting_metadata(...)
 }
 
-build_data_type_metadata <- function(metadata) {
-  lapply(split(metadata, metadata$plot_type), build_plot_type_metadata)
-}
-
-build_plot_type_metadata <- function(metadata) {
-  list(indicators =
-         lapply(metadata$indicator, function(indicator) {
-           build_indicator_metadata(metadata[metadata$indicator == indicator, ])
-         }))
-}
-
-build_indicator_metadata <- function(metadata) {
-  if (nrow(metadata) != 1) {
-    stop(t_("METADATA_BUILD_INDICATOR"))
-  }
-  list(
-    indicator = scalar(metadata$indicator),
-    value_column = scalar(metadata$value_column),
-    indicator_column = scalar(metadata$indicator_column),
-    indicator_value = scalar(metadata$indicator_value),
-    name = scalar(metadata$name),
-    min = scalar(metadata$min),
-    max = scalar(metadata$max),
-    colour = scalar(metadata$colour),
-    invert_scale = scalar(metadata$invert_scale),
-    scale = scalar(metadata$scale),
-    accuracy = if (is.na(metadata$accuracy)) {
-      json_null()
-    } else {
-      scalar(metadata$accuracy)
-    },
-    format = scalar(metadata$format)
-  )
-}
-
 get_barchart_metadata <- function(output, data_type = "output") {
   metadata <- naomi::get_metadata()
   metadata <- metadata[

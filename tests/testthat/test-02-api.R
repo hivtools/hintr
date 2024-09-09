@@ -821,11 +821,12 @@ test_that("model calibrate can be queued and result returned", {
   expect_match(status_response$data$progress[[1]],
                "Saving outputs - [\\d.m\\s]+s elapsed", perl = TRUE)
 
-  ## Get metadata
+  ## Get metadata which includes warnings
   metadata <- endpoint_model_calibrate_metadata(q$queue)
   metadata_response <- metadata$run(status_response$data$id)
   expect_equal(metadata_response$data,
                calibrate_metadata(q$queue)(status_response$data$id))
+  expect_valid_metadata(metadata_response$data)
 
   ## Get data alone
   data <- endpoint_model_calibrate_data(q$queue)
@@ -915,28 +916,7 @@ test_that("can get calibrate plot data", {
                     "sex", "age_group", "calendar_quarter", "indicator",
                     "mean"))
   expect_true(nrow(response_data$data) > 0)
-  expect_equal(names(response_data$metadata), "barchart")
-  expect_setequal(names(response_data$plottingMetadata$barchart),
-                  c("indicators", "filters", "defaults"))
-
-  expect_setequal(names(response_data$plottingMetadata$barchart$indicators),
-                  c("indicator", "value_column", "error_low_column",
-                    "error_high_column", "indicator_column", "indicator_value",
-                    "indicator_sort_order", "name", "scale", "accuracy",
-                    "format"))
-  expect_true(nrow(response_data$plottingMetadata$barchart$indicators) > 0)
-
-  filters <- lapply(response_data$plottingMetadata$barchart$filters, "[[",
-                    "column_id")
-  expect_equal(filters[[1]], scalar("spectrum_region_code"))
-  expect_equal(filters[[2]], scalar("calendar_quarter"))
-  expect_equal(filters[[3]], scalar("sex"))
-  expect_equal(filters[[4]], scalar("age_group"))
-  expect_equal(filters[[5]], scalar("data_type"))
-
-  expect_setequal(names(response_data$plottingMetadata$barchart$defaults),
-                  c("indicator_id", "x_axis_id", "disaggregate_by_id",
-                    "selected_filter_options"))
+  expect_calibrate_plot_metadata(response_data$metadata)
 })
 
 test_that("API can return calibration plotting data", {
@@ -952,37 +932,14 @@ test_that("API can return calibration plotting data", {
   expect_null(body$errors)
 
   response_data <- body$data
-  expect_setequal(names(response_data), c("data", "plottingMetadata"))
+  expect_setequal(names(response_data), c("data", "metadata"))
   data <- do.call(rbind, response_data$data)
   expect_setequal(colnames(data),
                   c("data_type", "spectrum_region_code", "spectrum_region_name",
                     "sex", "age_group", "calendar_quarter", "indicator",
                     "mean"))
   expect_true(nrow(data) > 0)
-  expect_equal(names(response_data$plottingMetadata), "barchart")
-  expect_setequal(names(response_data$plottingMetadata$barchart),
-                  c("indicators", "filters", "defaults"))
-
-  barchart_indicators <- do.call(
-    rbind, response_data$plottingMetadata$barchart$indicators)
-  expect_setequal(colnames(barchart_indicators),
-                  c("indicator", "value_column", "error_low_column",
-                    "error_high_column", "indicator_column", "indicator_value",
-                    "indicator_sort_order", "name", "scale", "accuracy",
-                    "format"))
-  expect_true(nrow(barchart_indicators) > 0)
-
-  filters <- lapply(response_data$plottingMetadata$barchart$filters, "[[",
-                    "column_id")
-  expect_equal(filters[[1]], "spectrum_region_code")
-  expect_equal(filters[[2]], "calendar_quarter")
-  expect_equal(filters[[3]], "sex")
-  expect_equal(filters[[4]], "age_group")
-  expect_equal(filters[[5]], "data_type")
-
-  expect_setequal(names(response_data$plottingMetadata$barchart$defaults),
-                  c("indicator_id", "x_axis_id", "disaggregate_by_id",
-                    "selected_filter_options"))
+  expect_calibrate_plot_metadata(response_data$metadata)
 })
 
 test_that("error returned from calibrate_plot for old model output", {
@@ -998,6 +955,24 @@ test_that("error returned from calibrate_plot for old model output", {
                "Model output out of date please re-run model and try again."))
 })
 
+test_that("model calibrate metadata includes warnings", {
+  test_mock_model_available()
+  q <- test_queue_result()
+
+  result <- endpoint_model_calibrate_metadata(q$queue)
+  response <- result$run(q$calibrate_id)
+
+  expect_equal(response$status_code, 200)
+  expect_length(response$data$warnings, 2)
+  expect_equal(response$data$warnings[[1]]$text,
+               scalar("ART coverage greater than 100% for 10 age groups"))
+  expect_equal(response$data$warnings[[1]]$locations, "model_calibrate")
+  expect_equal(response$data$warnings[[2]]$text,
+               scalar("Prevalence greater than 40%"))
+  expect_equal(response$data$warnings[[2]]$locations,
+               c("model_calibrate", "review_output"))
+})
+
 test_that("calibrate plot metadata is translated", {
   test_mock_model_available()
   test_redis_available()
@@ -1010,17 +985,13 @@ test_that("calibrate plot metadata is translated", {
 
   expect_equal(response$status_code, 200)
 
-  filters <- response$data$plottingMetadata$barchart$filters
-  expect_equal(filters[[1]]$label, scalar("Zone"))
-  expect_equal(filters[[1]]$options[[1]]$label, scalar("Malawi"))
-  expect_equal(filters[[2]]$label, scalar("Période"))
-  expect_equal(filters[[2]]$options[[1]]$label, scalar("Juin 2019"))
-  expect_equal(filters[[3]]$label, scalar("Sexe"))
-  expect_equal(filters[[3]]$options[[1]]$label, scalar("Both"))
-  expect_equal(filters[[4]]$label, scalar("Âge"))
-  expect_equal(filters[[4]]$options[[1]]$label, scalar("15-49"))
-  expect_equal(filters[[5]]$label, scalar("Type de données"))
-  expect_equal(filters[[5]]$options[[2]]$label, scalar("Étalonné"))
+  filters <- response$data$metadata$filterTypes
+  expect_equal(filters[[1]]$options[[1]]$label, scalar("Juin 2019"))
+  expect_equal(filters[[2]]$options[[1]]$label, scalar("Both"))
+  expect_equal(filters[[3]]$options[[1]]$label, scalar("15-49"))
+  expect_equal(filters[[4]]$options[1, "label"], "Population")
+  expect_equal(filters[[5]]$options[[1]]$label, scalar("Spectrum"))
+  expect_equal(filters[[6]]$options[[1]]$label, scalar("Malawi"))
 })
 
 test_that("can get comparison plot data", {
@@ -1039,35 +1010,7 @@ test_that("can get comparison plot data", {
                     "calendar_quarter", "indicator", "source", "mean",
                     "lower", "upper"))
   expect_true(nrow(response_data$data) > 0)
-  expect_equal(names(response_data$metadata), "barchart")
-  expect_setequal(names(response_data$plottingMetadata$barchart),
-                  c("indicators", "filters", "defaults", "selections"))
-
-  expect_setequal(names(response_data$plottingMetadata$barchart$indicators),
-                  c("indicator", "value_column", "error_low_column",
-                    "error_high_column", "indicator_column", "indicator_value",
-                    "indicator_sort_order", "name", "scale", "accuracy",
-                    "format"))
-  expect_true(nrow(response_data$plottingMetadata$barchart$indicators) > 0)
-
-  filters <- lapply(response_data$plottingMetadata$barchart$filters, "[[",
-                    "column_id")
-  expect_equal(filters[[1]], scalar("area_id"))
-  expect_equal(filters[[2]], scalar("calendar_quarter"))
-  expect_equal(filters[[3]], scalar("sex"))
-  expect_equal(filters[[4]], scalar("age_group"))
-  expect_equal(filters[[5]], scalar("source"))
-
-  expect_setequal(names(response_data$plottingMetadata$barchart$defaults),
-                  c("indicator_id", "x_axis_id", "disaggregate_by_id",
-                    "selected_filter_options"))
-
-  expect_true(length(response_data$plottingMetadata$barchart$selections) >= 5)
-  for (selection in response_data$plottingMetadata$barchart$selections) {
-    expect_setequal(names(selection),
-                    c("indicator_id", "x_axis_id", "disaggregate_by_id",
-                      "selected_filter_options"))
-  }
+  expect_comparison_metadata(response_data$metadata)
 })
 
 test_that("API can return comparison plotting data", {
@@ -1083,42 +1026,12 @@ test_that("API can return comparison plotting data", {
   expect_null(body$errors)
 
   response_data <- body$data
-  expect_setequal(names(response_data), c("data", "plottingMetadata"))
+  expect_setequal(names(response_data), c("data", "metadata"))
   data <- do.call(rbind, response_data$data)
   expect_setequal(colnames(data),
-                  c("area_id", "area_name", "age_group", "sex",
+                  c("area_id", "area_name", "area_level", "age_group", "sex",
                     "calendar_quarter", "indicator", "source", "mean",
                     "lower", "upper"))
   expect_true(nrow(data) > 0)
-  expect_equal(names(response_data$plottingMetadata), "barchart")
-  expect_setequal(names(response_data$plottingMetadata$barchart),
-                  c("indicators", "filters", "defaults", "selections"))
-
-  barchart_indicators <- do.call(
-    rbind, response_data$plottingMetadata$barchart$indicators)
-  expect_setequal(colnames(barchart_indicators),
-                  c("indicator", "value_column", "error_low_column",
-                    "error_high_column", "indicator_column", "indicator_value",
-                    "indicator_sort_order", "name", "scale", "accuracy",
-                    "format"))
-  expect_true(nrow(barchart_indicators) > 0)
-
-  filters <- lapply(response_data$plottingMetadata$barchart$filters, "[[",
-                    "column_id")
-  expect_equal(filters[[1]], "area_id")
-  expect_equal(filters[[2]], "calendar_quarter")
-  expect_equal(filters[[3]], "sex")
-  expect_equal(filters[[4]], "age_group")
-  expect_equal(filters[[5]], "source")
-
-  expect_setequal(names(response_data$plottingMetadata$barchart$defaults),
-                  c("indicator_id", "x_axis_id", "disaggregate_by_id",
-                    "selected_filter_options"))
-
-  expect_true(length(response_data$plottingMetadata$barchart$selections) >= 5)
-  for (selection in response_data$plottingMetadata$barchart$selections) {
-    expect_setequal(names(selection),
-                    c("indicator_id", "x_axis_id", "disaggregate_by_id",
-                      "selected_filter_options"))
-  }
+  expect_comparison_metadata(response_data$metadata)
 })
