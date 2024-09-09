@@ -180,7 +180,7 @@ validate_effects <- function(filter_types, effects, context,
   }
   if (!is.null(effects$setMultiple)) {
     expect_filter_exists(names(filter_types),
-                         state_filter_map[effects$setMultiple],
+                         state_filter_map[unlist(effects$setMultiple)],
                          paste(context, "setMultiple"))
   }
   if (!is.null(effects$setFilterValues)) {
@@ -201,7 +201,7 @@ validate_effects <- function(filter_types, effects, context,
   }
   if (!is.null(effects$setHidden)) {
     expect_filter_exists(names(filter_types),
-                         effects$setHidden,
+                         state_filter_map[unlist(effects$setHidden)],
                          paste(context, "setHidden"))
   }
   state_filter_map

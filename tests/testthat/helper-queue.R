@@ -149,6 +149,6 @@ setup_prerun_queue <- function() {
 }
 
 
-response_from_json <- function(x) {
-  jsonlite::parse_json(httr::content(x, "text", encoding = "UTF-8"))
+response_from_json <- function(x, ...) {
+  jsonlite::parse_json(httr::content(x, "text", encoding = "UTF-8"), ...)
 }
