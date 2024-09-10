@@ -2,9 +2,9 @@ name: Build Docker Image
 
 on:
   push:
-    branches: [main, master, tmp-epic-plot-cleanup]
+    branches: [main, master]
   pull_request:
-    branches: [main, master, tmp-epic-plot-cleanup]
+    branches: [main, master]
 
 env:
   TAG_SERVER_DH: mrcide/hintr
