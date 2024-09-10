@@ -1,48 +1,5 @@
-do_plotting_metadata <- function(iso3) {
-  metadata <- get_plotting_metadata(iso3)
-  metadata <- metadata[metadata$data_type %in%
-                         c("survey", "anc", "output", "programme"), ]
-  metadata <- metadata[order(metadata$indicator_sort_order), ]
-  lapply(split(metadata, metadata$data_type), build_data_type_metadata)
-}
-
 get_plotting_metadata <- function(...) {
   naomi::get_plotting_metadata(...)
-}
-
-build_data_type_metadata <- function(metadata) {
-  lapply(split(metadata, metadata$plot_type), build_plot_type_metadata)
-}
-
-build_plot_type_metadata <- function(metadata) {
-  list(indicators =
-         lapply(metadata$indicator, function(indicator) {
-           build_indicator_metadata(metadata[metadata$indicator == indicator, ])
-         }))
-}
-
-build_indicator_metadata <- function(metadata) {
-  if (nrow(metadata) != 1) {
-    stop(t_("METADATA_BUILD_INDICATOR"))
-  }
-  list(
-    indicator = scalar(metadata$indicator),
-    value_column = scalar(metadata$value_column),
-    indicator_column = scalar(metadata$indicator_column),
-    indicator_value = scalar(metadata$indicator_value),
-    name = scalar(metadata$name),
-    min = scalar(metadata$min),
-    max = scalar(metadata$max),
-    colour = scalar(metadata$colour),
-    invert_scale = scalar(metadata$invert_scale),
-    scale = scalar(metadata$scale),
-    accuracy = if (is.na(metadata$accuracy)) {
-      json_null()
-    } else {
-      scalar(metadata$accuracy)
-    },
-    format = scalar(metadata$format)
-  )
 }
 
 get_barchart_metadata <- function(output, data_type = "output") {
@@ -270,15 +227,19 @@ get_comparison_plot_settings <- function(filter_types) {
     age_x_axis_effect
   )
 
-  indicator_ids <- vcapply(filter_types, "[[", "id")
+  filter_ids <- vcapply(filter_types, "[[", "id")
+  possible_age_options <- vcapply(
+    filter_types[filter_ids == "age"][[1]]$options, "[[", "id")
+  five_year_age_groups <- naomi::get_five_year_age_groups()
+  age_options <- five_year_age_groups[five_year_age_groups %in% possible_age_options]
   indicator_id_to_filter_values <- list(
     "prevalence" = list(
       indicator = "prevalence",
-      age = naomi::get_five_year_age_groups()
+      age = age_options
     ),
     "art_coverage" = list(
       indicator = "art_coverage",
-      age = naomi::get_five_year_age_groups()
+      age = age_options
     ),
     "art_current" = list(
       indicator = "art_current",
@@ -293,7 +254,7 @@ get_comparison_plot_settings <- function(filter_types) {
       sex = "female"
     )
   )
-  indicator_filter <- filter_types[indicator_ids == "indicator"][[1]]
+  indicator_filter <- filter_types[filter_ids == "indicator"][[1]]
   indicator_filter_to_control <- function(row_num) {
     row <- indicator_filter$options[row_num, ]
     list(

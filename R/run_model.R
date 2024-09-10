@@ -67,12 +67,18 @@ run_model <- function(data, options, path_results, language = NULL) {
                                 fileext = ".qs")
 
   ## Fix some labels to match what naomi requires
+  data <- relabel_files_for_naomi(data)
+
+  naomi::hintr_run_model(data, options, model_output_path, validate = FALSE)
+}
+
+## Update labels for files so we match what Naomi requires
+relabel_files_for_naomi <- function(data) {
   data$art_number <- data$programme
   data$programme <- NULL
   data$anc_testing <- data$anc
   data$anc <- NULL
-
-  naomi::hintr_run_model(data, options, model_output_path, validate = FALSE)
+  data
 }
 
 select_data <- function(data) {

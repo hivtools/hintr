@@ -549,15 +549,7 @@ get_input_choropleth_data_source_options <- function(types, default_area_level) 
 model_options_validate <- function(input) {
   input <- jsonlite::fromJSON(input)
   tryCatch({
-    ## Update some labels to match what naomi requires
-    ## TODO: Some of this is shared between model running and here so we
-    ## should use use common code when we merge this back into hintr.
-    ## This endpoint currently isn't called see mrc-592.
-    data <- input$data
-    data$art_number <- data$programme
-    data$programme <- NULL
-    data$anc_testing <- data$anc
-    data$anc <- NULL
+    data <- relabel_files_for_naomi(input$data)
     data <- naomi:::format_data_input(data)
     valid <- validate_model_options(data, input$options)
     valid$valid <- scalar(valid$valid)
@@ -641,8 +633,6 @@ calibrate_result <- function(queue) {
 }
 
 calibrate_metadata <- function(queue) {
-  ## TODO add a test that checks that for the ids used for all filters
-  ## and filter options exist in the filterTypes
   function(id) {
     verify_result_available(queue, id)
     result <- queue$result(id)
@@ -755,15 +745,6 @@ model_cancel <- function(queue) {
       hintr_error(api_error_msg(e), "FAILED_TO_CANCEL")
     })
   }
-}
-
-plotting_metadata <- function(iso3 = NULL) {
-  tryCatch(
-    do_plotting_metadata(iso3),
-    error = function(e) {
-      hintr_error(api_error_msg(e), "FAILED_TO_GET_METADATA")
-    }
-  )
 }
 
 download_submit <- function(queue) {

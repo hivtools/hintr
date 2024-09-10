@@ -1,18 +1,20 @@
 test_that("plumber api can be built", {
   api <- api_build(NULL)
   expect_s3_class(api, "Plumber")
-  expect_length(api$routes, 11)
+  expect_length(api$routes, 12)
   expect_setequal(names(api$routes),
-                 c("", "validate", "model", "calibrate", "comparison", "meta",
-                   "download", "hintr", "chart-data", "rehydrate", "internal"))
+                 c("", "validate", "review-input", "model", "calibrate",
+                   "comparison", "meta", "download", "hintr", "chart-data",
+                   "rehydrate", "internal"))
   expect_setequal(names(api$routes$validate),
                   c("baseline-individual", "baseline-combined",
                     "survey-and-programme", "options"))
+  expect_setequal(names(api$routes$`review-input`), "metadata")
   expect_setequal(names(api$routes$model),
                   c("options", "submit", "status", "result", "cancel", "debug"))
   expect_setequal(names(api$routes$calibrate),
                   c("options", "submit", "status", "result", "plot"))
-  expect_setequal(names(api$routes$meta), c("plotting", "adr"))
+  expect_setequal(names(api$routes$meta), "adr")
   expect_equal(names(api$routes$`chart-data`), "input-time-series")
   expect_setequal(names(api$routes$rehydrate), c("submit", "status", "result"))
   expect_equal(names(api$routes$comparison), "plot")
@@ -125,66 +127,6 @@ test_that("schemas always contain a type", {
   for (f in files) {
     expect_error(check_types(jsonlite::fromJSON(f), f), NA, label = f)
   }
-})
-
-test_that("endpoint_plotting_metadata gets metadata", {
-  response <- plotting_metadata("MWI")
-
-  expect_true(all(names(response) %in%
-                    c("survey", "anc", "output", "programme")))
-  expect_equal(names(response$survey), "choropleth")
-  expect_equal(names(response$anc), "choropleth")
-  expect_equal(names(response$output), c("barchart", "choropleth"))
-  expect_equal(names(response$programme), "choropleth")
-  expect_length(response$anc$choropleth$indicators, 2)
-  expect_equal(response$anc$choropleth$indicators[[1]]$indicator,
-               scalar("anc_prevalence"))
-  expect_equal(response$anc$choropleth$indicators[[2]]$indicator,
-               scalar("anc_art_coverage"))
-  expect_equal(response$anc$choropleth$indicators[[1]]$name,
-               scalar("ANC HIV prevalence"))
-  expect_equal(response$anc$choropleth$indicators[[2]]$name,
-               scalar("ANC prior ART coverage"))
-})
-
-test_that("endpoint_plotting_metadata returns default data for missing country", {
-  response <- plotting_metadata("Missing Country")
-
-  expect_true(all(names(response) %in%
-                    c("survey", "anc", "output", "programme")))
-  expect_equal(names(response$survey), "choropleth")
-  expect_equal(names(response$anc), "choropleth")
-  expect_equal(names(response$output), c("barchart", "choropleth"))
-  expect_equal(names(response$programme), "choropleth")
-  expect_length(response$anc$choropleth$indicators, 2)
-  expect_equal(response$anc$choropleth$indicators[[1]]$indicator,
-               scalar("anc_prevalence"))
-  expect_equal(response$anc$choropleth$indicators[[2]]$indicator,
-               scalar("anc_art_coverage"))
-  expect_equal(response$anc$choropleth$indicators[[1]]$name,
-               scalar("ANC HIV prevalence"))
-  expect_equal(response$anc$choropleth$indicators[[2]]$name,
-               scalar("ANC prior ART coverage"))
-})
-
-test_that("endpoint_plotting_metadata returns default data for NULL country", {
-  response <- plotting_metadata()
-
-  expect_true(all(names(response) %in%
-                    c("survey", "anc", "output", "programme")))
-  expect_equal(names(response$survey), "choropleth")
-  expect_equal(names(response$anc), "choropleth")
-  expect_equal(names(response$output), c("barchart", "choropleth"))
-  expect_equal(names(response$programme), "choropleth")
-  expect_length(response$anc$choropleth$indicators, 2)
-  expect_equal(response$anc$choropleth$indicators[[1]]$indicator,
-               scalar("anc_prevalence"))
-  expect_equal(response$anc$choropleth$indicators[[2]]$indicator,
-               scalar("anc_art_coverage"))
-  expect_equal(response$anc$choropleth$indicators[[1]]$name,
-               scalar("ANC HIV prevalence"))
-  expect_equal(response$anc$choropleth$indicators[[2]]$name,
-               scalar("ANC prior ART coverage"))
 })
 
 test_that("can convert model status to scalar", {

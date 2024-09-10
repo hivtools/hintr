@@ -40,6 +40,7 @@ Suggests:
     callr,
     cli,
     covr,
+    duckdb,
     httr,
     jsonvalidate,
     mockery,

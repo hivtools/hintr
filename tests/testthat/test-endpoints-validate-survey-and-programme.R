@@ -91,121 +91,6 @@ test_that("endpoint_validate_survey_programme returns error on invalid survey da
   expect_equal(error$status_code, 400)
 })
 
-test_that("possible filters are returned for data", {
-  input <- validate_programme_survey_input(
-    file.path("testdata", "programme.csv"),
-    "programme",
-    file.path("testdata", "malawi.geojson"))
-  response <- validate_survey_programme(input)
-
-  expect_equal(names(response$filters), c("age", "calendar_quarter", "indicators"))
-  expect_length(response$filters$age, 2)
-  expect_equal(response$filters$age, list(
-    list(
-      id = scalar("Y015_999"),
-      label = scalar("15+")
-    ),
-    list(
-      id = scalar("Y000_014"),
-      label = scalar("0-14")
-    )
-  ))
-  expect_length(response$filters$calendar_quarter, 8)
-  expect_equal(response$filters$calendar_quarter[[1]]$id, scalar("CY2018Q4"))
-  expect_equal(response$filters$calendar_quarter[[1]]$label, scalar("December 2018"))
-
-  expect_length(response$filters$indicators, 4)
-  expect_equal(response$filters$indicators[[1]]$id, scalar("art_current"))
-  expect_equal(response$filters$indicators[[1]]$label,
-               scalar("ART number (attending)"))
-  expect_equal(response$filters$indicators[[2]]$id, scalar("art_new"))
-  expect_equal(response$filters$indicators[[2]]$label,
-               scalar("ART new"))
-  expect_equal(response$filters$indicators[[3]]$id, scalar("vl_tested_12mos"))
-  expect_equal(response$filters$indicators[[3]]$label,
-               scalar("VL tested"))
-  expect_equal(response$filters$indicators[[4]]$id, scalar("vl_suppressed_12mos"))
-  expect_equal(response$filters$indicators[[4]]$label,
-               scalar("VL tests suppressed"))
-
-
-  input <- validate_programme_survey_input(
-    file.path("testdata", "anc.csv"),
-    "anc",
-    file.path("testdata", "malawi.geojson"))
-  response <- validate_survey_programme(input)
-
-  expect_equal(names(response$filters), c("year", "indicators"))
-  expect_length(response$filters$year, 8)
-  expect_equal(response$filters$year[[1]]$id, scalar("2018"))
-  expect_equal(response$filters$year[[1]]$label, scalar("2018"))
-
-  expect_length(response$filters$indicators, 2)
-  expect_equal(response$filters$indicators[[1]]$id, scalar("anc_prevalence"))
-  expect_equal(response$filters$indicators[[1]]$label, scalar("ANC HIV prevalence"))
-  expect_equal(response$filters$indicators[[2]]$id, scalar("anc_art_coverage"))
-  expect_equal(response$filters$indicators[[2]]$label, scalar("ANC prior ART coverage"))
-
-  input <- validate_programme_survey_input(
-    file.path("testdata", "survey.csv"),
-    "survey",
-    file.path("testdata", "malawi.geojson"))
-  response <- validate_survey_programme(input)
-
-  expect_equal(names(response$filters), c("age", "surveys", "indicators"))
-  expect_length(response$filters$age, 23)
-  expect_length(response$filters$surveys, 4)
-  expect_equal(response$filters$surveys, list(
-    list(
-      id = scalar("DEMO2016PHIA"),
-      label = scalar("DEMO2016PHIA")
-    ),
-    list(
-      id = scalar("DEMO2015DHS"),
-      label = scalar("DEMO2015DHS")
-    ),
-    list(
-      id = scalar("DEMO2010DHS"),
-      label = scalar("DEMO2010DHS")
-    ),
-    list(
-      id = scalar("DEMO2004DHS"),
-      label = scalar("DEMO2004DHS")
-    )
-  ))
-
-  expect_length(response$filters$indicators, 4)
-  expect_equal(response$filters$indicators[[1]]$id, scalar("prevalence"))
-  expect_equal(response$filters$indicators[[1]]$label, scalar("HIV prevalence"))
-  expect_equal(response$filters$indicators[[2]]$id, scalar("art_coverage"))
-  expect_equal(response$filters$indicators[[2]]$label, scalar("ART coverage"))
-  expect_equal(response$filters$indicators[[3]]$id, scalar("recent_infected"))
-  expect_equal(response$filters$indicators[[3]]$label,
-               scalar("Proportion recently infected"))
-  expect_equal(response$filters$indicators[[4]]$id, scalar("viral_suppression_plhiv"))
-  expect_equal(response$filters$indicators[[4]]$label,
-               scalar("Viral load suppression"))
-})
-
-test_that("filters not returned if indicator missing from input data", {
-  input <- validate_programme_survey_input(
-    file.path("testdata", "programme_no_vls.csv"),
-    "programme",
-    file.path("testdata", "malawi.geojson"))
-  response <- validate_survey_programme(input)
-
-  expect_equal(names(response$filters),
-               c("age", "calendar_quarter", "indicators"))
-
-  expect_length(response$filters$indicators, 2)
-  expect_equal(response$filters$indicators[[1]]$id, scalar("art_current"))
-  expect_equal(response$filters$indicators[[1]]$label,
-               scalar("ART number (attending)"))
-  expect_equal(response$filters$indicators[[2]]$id, scalar("art_new"))
-  expect_equal(response$filters$indicators[[2]]$label,
-               scalar("ART new"))
-})
-
 test_that("endpoint_validate_survey_programme programme", {
   endpoint <- endpoint_validate_survey_programme()
   response <- endpoint$run(
@@ -325,7 +210,6 @@ test_that("endpoint_validate_survey_programme vmmc", {
   expect_equal(response$data$fromADR, scalar(FALSE))
   ## No data returned from this endpoint
   expect_equal(response$data$data, json_verbatim("null"))
-  expect_equal(response$data$filters, json_verbatim("null"))
   expect_equal(response$data$warnings, list())
 })
 
