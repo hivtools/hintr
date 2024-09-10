@@ -52,6 +52,6 @@ Suggests:
     tidyselect,
     withr
 Remotes:
-    mrc-ide/naomi
+    mrc-ide/naomi@faster-input-time-series-data
 Config/testthat/edition: 3
 Config/testthat/parallel: true
