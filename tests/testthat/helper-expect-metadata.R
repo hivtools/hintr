@@ -169,6 +169,12 @@ validate_effects <- function(filter_types, effects, default_effects, context) {
   if (length(effects$setFilters) == 0) {
     set_filters <- default_effects$setFilters
   }
+  ## Note that this is currently true but is not necessary
+  ## If we have e.g. plot control A and B and a default effect C.
+  ## We could have A setFilters for all its settings and B and C do not
+  ## contain a setFilters. In this case this test would fail for control B
+  ## See https://github.com/mrc-ide/hintr/pull/523#discussion_r1751782412
+  ## for dicussion. This is fine for now, but relax this if we need to.
   expect(length(set_filters) > 0,
          paste(context, "setFilters must be set in plot setting or",
                "default settings."))
@@ -199,7 +205,6 @@ validate_effects <- function(filter_types, effects, default_effects, context) {
       if (isTRUE(filter_types[[filter_id]]$use_shape_regions)) {
         ## If we're referring to a filter which uses regions from
         ## shape file, we have no options in metadata. So skip this check.
-        browser()
         break
       }
       all_option_ids <- get_filter_option_ids(filter_types[[filter_id]]$options)
