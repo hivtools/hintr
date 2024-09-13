@@ -1,7 +1,7 @@
 ## -*-sh-*-
 PACKAGE_ROOT=$(realpath $HERE/..)
 PACKAGE_NAME=hintr
-PACKAGE_ORG=mrcide
+PACKAGE_ORG=hivtools
 PACKAGE_VERSION=$(cat $PACKAGE_ROOT/DESCRIPTION | \
                       grep '^Version:' | sed 's/^.*: *//')
 
