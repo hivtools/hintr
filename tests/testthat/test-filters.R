@@ -1,3 +1,13 @@
+get_filter_option_mocks <- function() {
+  list(
+    get_area_level_filters = mock("area_level_filters"),
+    get_quarter_filters = mock("quarter_filters"),
+    get_sex_filters = mock("sex_filters"),
+    get_age_filters = mock("age_filters"),
+    get_indicator_options = mock("indicator_filters")
+  )
+}
+
 test_that("get_age_label correctly maps to label and returns useful error", {
   expect_equal(get_age_labels("Y050_054"),
                data_frame(age_group = "Y050_054",
@@ -243,78 +253,6 @@ test_that("error thrown for unknown type", {
                "Can't get indicator filters for data type unknown.")
 })
 
-test_that("can get area filter option", {
-  test_mock_model_available()
-  output <- naomi::read_hintr_output(mock_calibrate$plot_data_path)
-  expect_equal(get_area_id_filter_default(output), list(
-    list(
-      id = scalar("MWI"),
-      label = scalar("Malawi - Demo")
-    )
-  ))
-
-  output$area_name[[1]] <- "test"
-  expect_equal(get_area_id_filter_default(output), list(
-    list(
-      id = scalar("MWI"),
-      label = scalar("test")
-    )
-  ))
-
-  output <- output[output$area_level != 0, ]
-  expect_equal(get_area_id_filter_default(output), list(
-    list(
-      id = scalar("MWI_1_1_demo"),
-      label = scalar("Northern")
-    )
-  ))
-})
-
-test_that("can get defaults for bar chart", {
-  test_mock_model_available()
-  output <- naomi::read_hintr_output(mock_calibrate$plot_data_path)
-  filters <- get_model_output_filters(output)
-  defaults <- get_barchart_defaults(output, filters)
-
-  expect_equal(names(defaults), c("indicator_id", "x_axis_id",
-                                  "disaggregate_by_id",
-                                  "selected_filter_options"))
-  expect_equal(names(defaults$selected_filter_options),
-               c("area", "quarter", "sex", "age"))
-  expect_equal(defaults$selected_filter_options$area, list(
-    list(
-      id = scalar("MWI"),
-      label = scalar("Malawi - Demo")
-    )
-  ))
-  expect_equal(defaults$selected_filter_options$quarter, list(
-    list(
-      id = scalar("CY2018Q3"),
-      label = scalar("September 2018")
-    )
-  ))
-  expect_equal(defaults$selected_filter_options$sex, list(
-    list(
-      id = scalar("female"),
-      label = scalar("Female")
-    ),
-    list(
-      id = scalar("male"),
-      label = scalar("Male")
-    )
-  ))
-  age_options <- defaults$selected_filter_options$age
-  expect_length(age_options, 17)
-  expect_equal(age_options[[1]], list(
-    id = scalar("Y000_004"),
-    label = scalar("0-4")
-  ))
-  expect_equal(age_options[[length(age_options)]], list(
-    id = scalar("Y080_999"),
-    label = scalar("80+")
-  ))
-})
-
 test_that("can get selected filter options", {
   test_mock_model_available()
   output <- naomi::read_hintr_output(mock_calibrate$plot_data_path)
@@ -366,4 +304,51 @@ test_that("get_spectrum_region_filters gets regions from data", {
   expect_equal(filters[[1]]$label, scalar("Northern"))
   expect_equal(filters[[2]]$id, scalar("1"))
   expect_equal(filters[[2]]$label, scalar("Southern"))
+})
+
+test_that("can get model output filters", {
+  mocks <- get_filter_option_mocks()
+  filters <- call_with_mocks_object({
+    get_model_output_filters("test_data")
+  }, mocks)
+  expect_args(mocks$get_area_level_filters, 1, "test_data")
+  expect_args(mocks$get_quarter_filters, 1, "test_data")
+  expect_args(mocks$get_sex_filters, 1, "test_data")
+  expect_args(mocks$get_age_filters, 1, "test_data")
+
+  expect_equal(filters,
+    list(
+      list(
+        id = scalar("area"),
+        column_id = scalar("area_id"),
+        options = json_verbatim("null"),
+        use_shape_regions = scalar(TRUE)
+      ),
+      list(
+        id = scalar("detail"),
+        column_id = scalar("area_level"),
+        options = "area_level_filters"
+      ),
+      list(
+        id = scalar("period"),
+        column_id = scalar("calendar_quarter"),
+        options = "quarter_filters"
+      ),
+      list(
+        id = scalar("sex"),
+        column_id = scalar("sex"),
+        options = "sex_filters"
+      ),
+      list(
+        id = scalar("age"),
+        column_id = scalar("age_group"),
+        options = "age_filters"
+      ),
+      list(
+        id = scalar("indicator"),
+        column_id = scalar("indicator"),
+        options = "indicator_filters"
+      )
+    )
+  )
 })

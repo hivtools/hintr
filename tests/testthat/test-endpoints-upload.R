@@ -1,6 +1,7 @@
 test_that("can upload input files", {
   inputs_dir <- tempfile()
   dir.create(inputs_dir)
+  inputs_dir <- normalizePath(inputs_dir, winslash = "/")
   q <- Queue$new(workers = 0, inputs_dir = inputs_dir)
 
   file <- "col1,col2\nval1,val2"
@@ -10,7 +11,8 @@ test_that("can upload input files", {
   expect_equal(res$status_code, 200)
   expect_null(res$errors)
   expect_equal(res$data$filename, scalar("survey_data.csv"))
-  expect_match(res$data$path, paste0(inputs_dir, "/[A-Z0-9]{32}.csv"))
+  expect_match(normalizePath(res$data$path, winslash = "/"),
+               paste0(inputs_dir, "/[A-Z0-9]{32}.csv"))
 
   ## file has been uploaded
   expect_length(list.files(inputs_dir), 1)
@@ -18,7 +20,7 @@ test_that("can upload input files", {
   ## Uploading again
   res2 <- endpoint$run(charToRaw(file), "survey_data.csv")
 
-  expect_equal(res, res2)
+  expect_equal(res$body, res2$body)
 
   ## File has not been uploaded
   expect_length(list.files(inputs_dir), 1)
@@ -28,6 +30,7 @@ test_that("can upload input files", {
 test_that("api can upload input files", {
   inputs_dir <- tempfile()
   dir.create(inputs_dir)
+  inputs_dir <- normalizePath(inputs_dir, winslash = "/")
   q <- Queue$new(workers = 0, inputs_dir = inputs_dir)
   api <- api_build(q)
 
@@ -38,7 +41,8 @@ test_that("api can upload input files", {
   body <- jsonlite::fromJSON(res$body, simplifyVector = FALSE)
   expect_null(body$error)
   expect_equal(body$data$filename, "survey_data.csv")
-  expect_match(body$data$path, paste0(inputs_dir, "/[A-Z0-9]{32}.csv"))
+  expect_match(normalizePath(body$data$path, winslash = "/"),
+               paste0(inputs_dir, "/[A-Z0-9]{32}.csv"))
 
   ## file has been uploaded
   expect_length(list.files(inputs_dir), 1)
@@ -56,6 +60,7 @@ test_that("api can upload input files", {
 test_that("can upload output files", {
   results_dir <- tempfile()
   dir.create(results_dir)
+  results_dir <- normalizePath(results_dir, winslash = "/")
   q <- Queue$new(workers = 0, results_dir = results_dir)
 
   file <- "col1,col2\nval1,val2"
@@ -65,7 +70,8 @@ test_that("can upload output files", {
   expect_equal(res$status_code, 200)
   expect_null(res$errors)
   expect_equal(res$data$filename, scalar("survey_data.csv"))
-  expect_match(res$data$path, paste0(results_dir, "/[A-Z0-9]{32}.csv"))
+  expect_match(normalizePath(res$data$path, winslash = "/"),
+               paste0(results_dir, "/[A-Z0-9]{32}.csv"))
 
   ## file has been uploaded
   expect_length(list.files(results_dir), 1)
@@ -83,6 +89,7 @@ test_that("can upload output files", {
 test_that("api can upload output files", {
   results_dir <- tempfile()
   dir.create(results_dir)
+  results_dir <- normalizePath(results_dir, winslash = "/")
   q <- Queue$new(workers = 0, results_dir = results_dir)
   api <- api_build(q)
 
@@ -93,7 +100,8 @@ test_that("api can upload output files", {
   body <- jsonlite::fromJSON(res$body, simplifyVector = FALSE)
   expect_null(body$error)
   expect_equal(body$data$filename, "survey_data.csv")
-  expect_match(body$data$path, paste0(results_dir, "/[A-Z0-9]{32}.csv"))
+  expect_match(normalizePath(body$data$path, winslash = "/"),
+               paste0(results_dir, "/[A-Z0-9]{32}.csv"))
 
   ## file has been uploaded
   expect_length(list.files(results_dir), 1)

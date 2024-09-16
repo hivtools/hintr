@@ -53,122 +53,11 @@ test_that("can calibrate a model result", {
   get_result <- calibrate_result(q$queue)
   result <- get_result(res$id)
   expect_equal(names(result),
-               c("data", "plottingMetadata", "tableMetadata", "warnings"))
+               c("data", "warnings"))
   expect_equal(colnames(result$data),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
   expect_true(nrow(result$data) > 84042)
-  expect_equal(names(result$plottingMetadata), c("barchart", "choropleth"))
-
-  ## Barchart
-  barchart <- result$plottingMetadata$barchart
-  expect_equal(names(barchart), c("indicators", "filters", "defaults"))
-  expect_length(barchart$filters, 4)
-  expect_equal(names(barchart$filters[[1]]),
-               c("id", "column_id", "label", "options", "use_shape_regions"))
-  expect_equal(names(barchart$filters[[2]]),
-               c("id", "column_id", "label", "options"))
-  ## Choropleth has the correct filters in correct order
-  filters <- lapply(barchart$filters, function(filter) {
-    filter$column_id
-  })
-  expect_equal(filters[[1]], scalar("area_id"))
-  expect_equal(filters[[2]], scalar("calendar_quarter"))
-  expect_equal(filters[[3]], scalar("sex"))
-  expect_equal(filters[[4]], scalar("age_group"))
-  expect_length(barchart$filters[[2]]$options, 3)
-  expect_equal(barchart$filters[[2]]$options[[2]]$id, scalar("CY2018Q3"))
-  expect_equal(barchart$filters[[2]]$options[[2]]$label,
-               scalar("September 2018"))
-  expect_true(length(barchart$filters[[4]]$options) >= 29)
-  expect_equal(nrow(barchart$indicators), 25)
-
-  ## Quarters are in descending order
-  calendar_quarters <-
-    lapply(barchart$filters[[2]]$options, function(option) {
-      option$id
-    })
-  expect_equal(unlist(calendar_quarters),
-               sort(unlist(calendar_quarters), decreasing = TRUE))
-
-
-  ## Barchart indicators are in numeric id order
-  expect_equal(barchart$indicators$indicator,
-               c("population", "prevalence", "plhiv", "art_coverage",
-                 "art_current_residents", "art_current",
-                 "untreated_plhiv_num", "aware_plhiv_prop",
-                 "unaware_plhiv_num", "aware_plhiv_num", "plhiv_attend",
-                 "untreated_plhiv_attend", "aware_plhiv_attend",
-                 "unaware_plhiv_attend", "incidence",
-                 "infections", "anc_prevalence", "anc_art_coverage",
-                 "anc_clients", "anc_plhiv", "anc_already_art",
-                 "anc_art_new", "anc_known_pos",
-                 "anc_tested_pos", "anc_tested_neg"))
-
-  ## Choropleth
-  choropleth <- result$plottingMetadata$choropleth
-  expect_equal(names(choropleth), c("indicators", "filters"))
-  expect_length(choropleth$filters, 4)
-  expect_equal(names(choropleth$filters[[1]]),
-               c("id", "column_id", "label", "options", "use_shape_regions"))
-  expect_equal(names(choropleth$filters[[2]]),
-               c("id", "column_id", "label", "options"))
-  ## Choropleth has the correct filters in correct order
-  filters <- lapply(choropleth$filters, function(filter) {
-    filter$column_id
-  })
-  expect_equal(filters[[1]], scalar("area_id"))
-  expect_equal(filters[[2]], scalar("calendar_quarter"))
-  expect_equal(filters[[3]], scalar("sex"))
-  expect_equal(filters[[4]], scalar("age_group"))
-  expect_length(choropleth$filters[[2]]$options, 3)
-  expect_equal(choropleth$filters[[2]]$options[[2]]$id, scalar("CY2018Q3"))
-  expect_equal(choropleth$filters[[2]]$options[[2]]$label,
-               scalar("September 2018"))
-  expect_true(length(choropleth$filters[[4]]$options) >= 29)
-  expect_equal(nrow(choropleth$indicators), 25)
-
-  ## Quarters are in descending order
-  calendar_quarters <-
-    lapply(choropleth$filters[[2]]$options, function(option) {
-      option$id
-    })
-  expect_equal(unlist(calendar_quarters),
-               sort(unlist(calendar_quarters), decreasing = TRUE))
-
-  ## Choropleth indicators are in numeric id order
-  expect_equal(choropleth$indicators$indicator,
-               c("population", "prevalence", "plhiv", "art_coverage",
-                 "art_current_residents", "art_current",
-                 "untreated_plhiv_num", "aware_plhiv_prop",
-                 "unaware_plhiv_num", "aware_plhiv_num", "plhiv_attend",
-                 "untreated_plhiv_attend", "aware_plhiv_attend",
-                 "unaware_plhiv_attend", "incidence",
-                 "infections", "anc_prevalence", "anc_art_coverage",
-                 "anc_clients", "anc_plhiv", "anc_already_art",
-                 "anc_art_new", "anc_known_pos",
-                 "anc_tested_pos", "anc_tested_neg"))
-
-  ## Table metadata is returned
-  expect_equal(names(result$tableMetadata), "presets")
-  expect_length(result$tableMetadata$presets, 2)
-  expect_equal(names(result$tableMetadata$presets[[1]]$default),
-               c("id", "label", "column", "row"))
-
-  table_filters1 <- result$tableMetadata$presets[[1]]$filters
-  filter_ids1 <- vcapply(table_filters1, "[[", "id")
-  expect_setequal(filter_ids1, c("area_level", "quarter", "sex", "age"))
-  area_level_filter <- table_filters1[filter_ids1 == "area_level"][[1]]
-  expect_equal(area_level_filter$column_id, scalar("area_level"))
-  expect_equal(area_level_filter$options[[1]],
-               list(id = scalar("0"), label = scalar("Country")))
-  other_table_filters <- table_filters1[filter_ids1 != "area_level"]
-  expect_true(all(other_table_filters %in% barchart$filters))
-
-  table_filters2 <- result$tableMetadata$presets[[2]]$filters
-  filter_ids2 <- vcapply(table_filters2, "[[", "id")
-  expect_setequal(filter_ids2, c("area", "quarter", "sex", "age"))
-  expect_equal(table_filters2, barchart$filters)
 })
 
 test_that("model calibration fails is version out of date", {
@@ -226,35 +115,12 @@ test_that("can get data for calibration plot", {
 
   endpoint <- calibrate_plot(q$queue)
   res <- endpoint(q$calibrate_id)
-  expect_setequal(names(res), c("data", "plottingMetadata"))
+  expect_setequal(names(res), c("data", "metadata"))
   expect_setequal(names(res$data),
                   c("data_type", "spectrum_region_code", "spectrum_region_name",
                     "sex", "age_group", "calendar_quarter", "indicator",
                     "mean"))
   expect_true(nrow(res$data) > 0)
-  expect_equal(names(res$plottingMetadata), "barchart")
-  expect_setequal(names(res$plottingMetadata$barchart),
-                  c("indicators", "filters", "defaults"))
-
-  expect_setequal(names(res$plottingMetadata$barchart$indicators),
-                  c("indicator", "value_column", "error_low_column",
-                    "error_high_column", "indicator_column", "indicator_value",
-                    "indicator_sort_order", "name", "scale", "accuracy",
-                    "format"))
-  expect_true(nrow(res$plottingMetadata$barchart$indicators) > 0)
-
-  filters <- lapply(res$plottingMetadata$barchart$filters, function(filter) {
-    filter$column_id
-  })
-  expect_equal(filters[[1]], scalar("spectrum_region_code"))
-  expect_equal(filters[[2]], scalar("calendar_quarter"))
-  expect_equal(filters[[3]], scalar("sex"))
-  expect_equal(filters[[4]], scalar("age_group"))
-  expect_equal(filters[[5]], scalar("data_type"))
-
-  expect_setequal(names(res$plottingMetadata$barchart$defaults),
-                 c("indicator_id", "x_axis_id", "disaggregate_by_id",
-                   "selected_filter_options"))
-
   expect_false(any(is.na(res$data$mean)))
+  expect_calibrate_plot_metadata(res$metadata)
 })

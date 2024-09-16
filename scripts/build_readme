@@ -4,7 +4,7 @@ setup <- function() {
   nw <- docker$network$create("hintr_nw")
   redis <- docker$container$run("redis", name = "redis",
                                 network = nw, detach = TRUE, rm = TRUE)
-  hintr <- docker$container$run("mrcide/hintr:master", name = "hintr",
+  hintr <- docker$container$run("ghcr.io/hivtools/hintr:latest", name = "hintr",
                                 ports = "8888:8888",
                                 env = c(REDIS_URL = "redis://redis:6379",
                                         USE_MOCK_MODEL = "true"),

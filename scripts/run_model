@@ -32,16 +32,19 @@ output <- naomi::hintr_run_model(model_payload$data,
                                  dat$model_output_path)
 
 message(sprintf("Saving model output at %s",
-                normalizePath(dat$model_output_path, mustWork = TRUE)))
+                normalizePath(dat$model_output_path, winslash = "/",
+                              mustWork = TRUE)))
 
 calibrate_payload <- jsonlite::fromJSON(dat$calibrate_payload)
 calibrated <- naomi::hintr_calibrate(output, calibrate_payload$options,
                                      dat$calibrate_plot_path,
                                      dat$calibrate_output_path)
 message(sprintf("Saving calibrate output at %s",
-                normalizePath(dat$calibrate_output_path, mustWork = TRUE)))
+                normalizePath(dat$calibrate_output_path,
+                              winslash = "/", mustWork = TRUE)))
 message(sprintf("Saving calibrate plot data at %s",
-                normalizePath(dat$calibrate_plot_path, mustWork = TRUE)))
+                normalizePath(dat$calibrate_plot_path,
+                              winslash = "/", mustWork = TRUE)))
 
 download_payload <- jsonlite::fromJSON(dat$download_payload,
                                         simplifyVector = FALSE)
@@ -61,21 +64,25 @@ writeLines(jsonlite::prettify(state), state_path)
 zip::zip_append(spectrum$path, dirname(state_path), mode = "cherry-pick")
 message(
   sprintf("Saving spectrum download at %s", normalizePath(dat$spectrum_path,
+                                                          winslash = "/",
                                                           mustWork = TRUE)))
 
 coarse_age <- naomi::hintr_prepare_coarse_age_group_download(
   calibrated, dat$coarse_output_path)
 message(sprintf("Saving coarse output at %s",
-                normalizePath(dat$coarse_output_path, mustWork = TRUE)))
+                normalizePath(dat$coarse_output_path,
+                              winslash = "/", mustWork = TRUE)))
 
 summary_report <- naomi::hintr_prepare_summary_report_download(
   calibrated, dat$summary_report_path)
 message(sprintf("Saving summary report at %s",
-                normalizePath(dat$summary_report_path, mustWork = TRUE)))
+                normalizePath(dat$summary_report_path,
+                              winslash = "/", mustWork = TRUE)))
 
 
 agyw_tool <- naomi::hintr_prepare_agyw_download(calibrated,
                                                 model_payload$data$pjnz,
                                                 dat$agyw_path)
 message(sprintf("Saving AGYW tool at %s",
-                normalizePath(dat$agyw_path, mustWork = TRUE)))
+                normalizePath(dat$agyw_path,
+                              winslash = "/", mustWork = TRUE)))

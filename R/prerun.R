@@ -112,7 +112,9 @@ prerun <- function(queue) {
         file <- missing_files[[name]]
         sprintf(
           "File '%s' at path '%s' with original name '%s' does not exist.",
-          name, file$path, file$filename)
+          name,
+          normalizePath(file$path, winslash = "/", mustWork = FALSE),
+          file$filename)
       }, character(1))
       hintr_error(paste0(
         paste(msg, collapse = "\n"), "\n",

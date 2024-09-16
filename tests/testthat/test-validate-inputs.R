@@ -57,7 +57,6 @@ test_that("do_validate_population validates population file", {
   pop <- do_validate_population(population)
   ## No actual data to return but has been validated
   expect_equal(pop$data, json_verbatim("null"))
-  expect_equal(pop$filters, json_verbatim("null"))
 })
 
 test_that("empty rows are ignored in validation", {
@@ -88,7 +87,6 @@ test_that("empty rows are ignored in validation", {
   pop <- do_validate_population(population)
   ## No actual data to return but has been validated
   expect_equal(pop$data, json_verbatim("null"))
-  expect_equal(pop$filters, json_verbatim("null"))
 })
 
 test_that("do_validate_programme validates programme file", {
@@ -98,31 +96,6 @@ test_that("do_validate_programme validates programme file", {
   ## Some arbitrary test that the data has actually been returned
   expect_true(nrow(data$data) > 200)
   expect_type(data$data$art_current, "double")
-
-  expect_equal(names(data$filters), c("age", "calendar_quarter", "indicators"))
-  expected_age_filters <- list(
-    list(id = scalar("Y015_999"),
-         label = scalar("15+")),
-    list(id = scalar("Y000_014"),
-         label = scalar("0-14"))
-  )
-  expect_equal(data$filters$age, expected_age_filters)
-  expect_length(data$filters$calendar_quarter, 8)
-  expect_equal(data$filters$calendar_quarter[[1]]$id, scalar("CY2018Q4"))
-  expect_equal(data$filters$calendar_quarter[[1]]$label, scalar("December 2018"))
-
-  expect_length(data$filters$indicators, 4)
-  expect_equal(data$filters$indicators[[1]]$id, scalar("art_current"))
-  expect_equal(data$filters$indicators[[1]]$label,
-               scalar("ART number (attending)"))
-  expect_equal(data$filters$indicators[[2]]$id, scalar("art_new"))
-  expect_equal(data$filters$indicators[[2]]$label, scalar("ART new"))
-  expect_equal(data$filters$indicators[[3]]$id, scalar("vl_tested_12mos"))
-  expect_equal(data$filters$indicators[[3]]$label, scalar("VL tested"))
-  expect_equal(data$filters$indicators[[4]]$id, scalar("vl_suppressed_12mos"))
-  expect_equal(data$filters$indicators[[4]]$label,
-               scalar("VL tests suppressed"))
-
   expect_length(data$warnings, 0)
 })
 
@@ -134,19 +107,6 @@ test_that("do_validate_anc validates ANC file and gets data for plotting", {
   expect_true(nrow(data$data) > 200)
   expect_type(data$data$area_id, "character")
   expect_true(all(c("anc_prevalence", "anc_art_coverage") %in% colnames(data$data)))
-
-  expect_equal(names(data$filters), c("year", "indicators"))
-  expect_length(data$filters$year, 8)
-  expect_equal(data$filters$year[[1]]$id, scalar("2018"))
-  expect_equal(data$filters$year[[1]]$label, scalar("2018"))
-
-  expect_length(data$filters$indicators, 2)
-  expect_equal(data$filters$indicators[[1]]$id, scalar("anc_prevalence"))
-  expect_equal(data$filters$indicators[[1]]$label, scalar("ANC HIV prevalence"))
-  expect_equal(data$filters$indicators[[2]]$id, scalar("anc_art_coverage"))
-  expect_equal(data$filters$indicators[[2]]$label, scalar("ANC prior ART coverage"))
-
-  expect_length(data$warnings, 0)
 })
 
 test_that("do_validate_anc can include anc_hiv_status column", {
@@ -161,17 +121,6 @@ test_that("do_validate_anc can include anc_hiv_status column", {
   expect_true(nrow(data$data) > 200)
   expect_type(data$data$area_id, "character")
   expect_true(all(c("anc_prevalence", "anc_art_coverage") %in% colnames(data$data)))
-
-  expect_equal(names(data$filters), c("year", "indicators"))
-  expect_length(data$filters$year, 8)
-  expect_equal(data$filters$year[[1]]$id, scalar("2018"))
-  expect_equal(data$filters$year[[1]]$label, scalar("2018"))
-
-  expect_length(data$filters$indicators, 2)
-  expect_equal(data$filters$indicators[[1]]$id, scalar("anc_prevalence"))
-  expect_equal(data$filters$indicators[[1]]$label, scalar("ANC HIV prevalence"))
-  expect_equal(data$filters$indicators[[2]]$id, scalar("anc_art_coverage"))
-  expect_equal(data$filters$indicators[[2]]$label, scalar("ANC prior ART coverage"))
 })
 
 test_that("do_validate_anc adds default anc_known_neg column", {
@@ -196,45 +145,15 @@ test_that("do_validate_survey validates survey file", {
   ## Some arbitrary test that the data has actually been returned
   expect_true(nrow(data$data) > 20000)
   expect_type(data$data$estimate, "double")
-  expect_equal(names(data$filters), c("age", "surveys", "indicators"))
-  expected_ages <- list(id = scalar("Y015_049"),
-                        label = scalar("15-49"))
-  expected_survey <- list(
-    list(id = scalar("DEMO2016PHIA"),
-         label = scalar("DEMO2016PHIA")),
-    list(id = scalar("DEMO2015DHS"),
-         label = scalar("DEMO2015DHS")),
-    list(id = scalar("DEMO2010DHS"),
-         label = scalar("DEMO2010DHS")),
-    list(id = scalar("DEMO2004DHS"),
-         label = scalar("DEMO2004DHS"))
-  )
-  expect_equal(data$filters$age[[1]], expected_ages)
-  expect_length(data$filters$age, 23)
-  expect_equal(data$filters$surveys, expected_survey)
-
-  expect_length(data$filters$indicators, 4)
-  expect_equal(data$filters$indicators[[1]]$id, scalar("prevalence"))
-  expect_equal(data$filters$indicators[[1]]$label, scalar("HIV prevalence"))
-  expect_equal(data$filters$indicators[[2]]$id, scalar("art_coverage"))
-  expect_equal(data$filters$indicators[[2]]$label, scalar("ART coverage"))
-  expect_equal(data$filters$indicators[[3]]$id, scalar("recent_infected"))
-  expect_equal(data$filters$indicators[[3]]$label,
-               scalar("Proportion recently infected"))
-  expect_equal(data$filters$indicators[[4]]$id, scalar("viral_suppression_plhiv"))
-  expect_equal(data$filters$indicators[[4]]$label,
-               scalar("Viral load suppression"))
-
   expect_length(data$warnings, 0)
 })
 
 test_that("do_validate_vmmc validates vmmc file", {
-  vmmc <- file_object(test_path("testdata", "vmmc.xlsx"))
-  shape <- file_object(test_path("testdata", "malawi.geojson"))
+  vmmc <- file_object(file.path("testdata", "vmmc.xlsx"))
+  shape <- file_object(file.path("testdata", "malawi.geojson"))
   data <- do_validate_vmmc(vmmc, shape)
   ## Some arbitrary test that the data has actually been returned
   expect_equal(data, list(data = json_verbatim("null"),
-                          filters = json_verbatim("null"),
                           warnings = list()))
 })
 

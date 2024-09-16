@@ -9,7 +9,7 @@ assert_no_na(data, column_name)
 \arguments{
 \item{data}{data to be checked}
 
-\item{column_names}{column name to be checked}
+\item{column_name}{column name to be checked}
 }
 \value{
 TRUE if column contains no NA values else throws error

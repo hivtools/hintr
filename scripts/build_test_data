@@ -15,8 +15,9 @@ invisible(lapply(paths, function(path) {
   }
 }))
 
-out <- system2("./scripts/run_model",
+out <- system2("Rscript",
   args = c(
+    "./scripts/run_model",
     "--model-payload", "./scripts/model_payload.json",
     "--calibrate-payload", "./scripts/calibrate_payload.json",
     "--download-payload", "./scripts/download_payload.json",

@@ -88,11 +88,7 @@ test_that("validate programme", {
   expect_equal(response$data$resource_url, NULL)
   expect_true(length(response$data$data) >= 500)
   expect_type(response$data$data[[1]]$art_current, "integer")
-  expect_equal(names(response$data$filters),
-               c("age", "calendar_quarter", "indicators"))
-  expect_length(response$data$filters$age, 2)
-  expect_length(response$data$filters$calendar_quarter, 8)
-  expect_length(response$data$filters$indicators, 4)
+  expect_null(response$data$filters)
   expect_length(response$data$warnings, 0)
 })
 
@@ -114,9 +110,7 @@ test_that("validate ANC", {
                "https://adr.unaids.org/file/123.csv")
   expect_true(length(response$data$data) >= 200)
   expect_type(response$data$data[[1]]$anc_clients, "integer")
-  expect_equal(names(response$data$filters), c("year", "indicators"))
-  expect_length(response$data$filters$year, 8)
-  expect_length(response$data$filters$indicators, 2)
+  expect_null(response$data$filters)
   expect_length(response$data$warnings, 0)
 })
 
@@ -137,10 +131,7 @@ test_that("validate survey", {
   expect_equal(response$data$resource_url, NULL)
   expect_true(length(response$data$data) >= 20000)
   expect_type(response$data$data[[1]]$estimate, "double")
-  expect_equal(names(response$data$filters), c("age", "surveys", "indicators"))
-  expect_length(response$data$filters$age, 23)
-  expect_length(response$data$filters$surveys, 4)
-  expect_length(response$data$filters$indicators, 4)
+  expect_null(response$data$filters)
   expect_length(response$data$warnings, 0)
 })
 
@@ -155,6 +146,21 @@ test_that("validate baseline", {
   expect_equal(response$status, "success")
   expect_equal(response$errors, NULL)
   expect_equal(response$data$consistent, TRUE)
+})
+
+test_that("review input metadata", {
+  payload <- setup_payload_review_inputs_metadata(test_path("testdata"))
+  r <- server$request(
+    "POST", "/review-input/metadata",
+    body = payload,
+    httr::content_type_json()
+  )
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
+  expect_equal(response$status, "success")
+  expect_input_metadata(response$data,
+                        c("survey", "programme", "anc"),
+                        c("programme", "anc"))
 })
 
 test_that("model interactions", {
@@ -310,22 +316,18 @@ test_that("real model can be run & calibrated by API", {
                  "Saving outputs - [\\d.m\\s]+s elapsed", perl = TRUE)
   })
 
-  ## Calibrate result
-  r <- test_server$request("GET", paste0("/calibrate/result/", calibrate_id))
+  ## Calibrate result data
+  r <- test_server$request("GET", paste0("/calibrate/result/data/",
+                                         calibrate_id))
   ## Response has same structure content as model result endpoint
   response <- response_from_json(r)
   expect_equal(response$status, "success")
   expect_equal(response$errors, NULL)
-  expect_equal(names(response$data),
-               c("data", "plottingMetadata", "tableMetadata", "warnings"))
+  expect_equal(names(response$data), "data")
   expect_equal(names(response$data$data[[1]]),
                c("area_id", "sex", "age_group", "calendar_quarter",
                  "indicator", "mode", "mean", "lower", "upper"))
   expect_true(length(response$data$data) > 84042)
-  expect_equal(names(response$data$plottingMetadata),
-               c("barchart", "choropleth"))
-  expect_equal(names(response$data$tableMetadata),
-               c("presets"))
 
   ## Get path to result
   r <- test_server$request("GET", paste0("/calibrate/result/path/",
@@ -334,52 +336,13 @@ test_that("real model can be run & calibrated by API", {
   expect_equal(response$status, "success")
   expect_equal(names(response$data), "path")
   expect_true(file.exists(file.path(results_dir, response$data$path)))
-})
 
-test_that("plotting metadata is exposed", {
-  r <- server$request("GET", paste0("/meta/plotting/", "MWI"))
-  expect_equal(httr::status_code(r), 200)
-  response <- response_from_json(r)
+  ## Get metadata
+  r <- test_server$request("GET", paste0("/calibrate/result/metadata/",
+                                         calibrate_id))
+  response <- response_from_json(r, simplifyVector = FALSE)
   expect_equal(response$status, "success")
-
-  expect_true(all(names(response$data) %in%
-                    c("survey", "anc", "output", "programme")))
-  expect_equal(names(response$data$survey), "choropleth")
-  expect_equal(names(response$data$anc), "choropleth")
-  expect_equal(names(response$data$output), c("barchart", "choropleth"))
-  expect_equal(names(response$data$programme), "choropleth")
-  expect_length(response$data$anc$choropleth$indicators, 2)
-  expect_equal(response$data$anc$choropleth$indicators[[1]]$indicator,
-               "anc_prevalence")
-  expect_equal(response$data$anc$choropleth$indicators[[2]]$indicator,
-               "anc_art_coverage")
-  expect_equal(response$data$anc$choropleth$indicators[[1]]$name,
-               "ANC HIV prevalence")
-  expect_equal(response$data$anc$choropleth$indicators[[2]]$name,
-               "ANC prior ART coverage")
-})
-
-test_that("default plotting metadata is exposed", {
-  r <- server$request("GET", "/meta/plotting")
-  expect_equal(httr::status_code(r), 200)
-  response <- response_from_json(r)
-  expect_equal(response$status, "success")
-
-  expect_true(all(names(response$data) %in%
-                    c("survey", "anc", "output", "programme")))
-  expect_equal(names(response$data$survey), "choropleth")
-  expect_equal(names(response$data$anc), "choropleth")
-  expect_equal(names(response$data$output), c("barchart", "choropleth"))
-  expect_equal(names(response$data$programme), "choropleth")
-  expect_length(response$data$anc$choropleth$indicators, 2)
-  expect_equal(response$data$anc$choropleth$indicators[[1]]$indicator,
-               "anc_prevalence")
-  expect_equal(response$data$anc$choropleth$indicators[[2]]$indicator,
-               "anc_art_coverage")
-  expect_equal(response$data$anc$choropleth$indicators[[1]]$name,
-               "ANC HIV prevalence")
-  expect_equal(response$data$anc$choropleth$indicators[[2]]$name,
-               "ANC prior ART coverage")
+  expect_valid_metadata(response$data)
 })
 
 test_that("model run options are exposed", {

@@ -1,0 +1,13 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+        "defaultEffect": { "$ref": "PlotSettingEffect.schema.json" },
+        "plotSettings": {
+            "type": "array",
+            "items": { "$ref": "PlotSetting.schema.json" }
+        }
+    },
+    "additionalProperties": false,
+    "required": [ "plotSettings" ]
+}

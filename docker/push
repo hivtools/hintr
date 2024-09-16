@@ -15,7 +15,7 @@ docker push $TAG_BRANCH
 docker tag $TAG_WORKER_SHA $TAG_WORKER_BRANCH
 docker push $TAG_WORKER_BRANCH
 
-if [ $GIT_BRANCH == "master" ]; then
+if [ $GIT_BRANCH == "main" ]; then
    docker tag $TAG_SHA $TAG_LATEST
    docker tag $TAG_SHA $TAG_VERSION
    docker push $TAG_LATEST

@@ -116,7 +116,7 @@ setup_prerun_queue <- function() {
 
   as_file <- function(filename, dir) {
     list(
-      path = scalar(normalizePath(file.path(dir, filename))),
+      path = scalar(normalizePath(file.path(dir, filename), winslash = "/")),
       filename = scalar(filename)
     )
   }
@@ -149,6 +149,6 @@ setup_prerun_queue <- function() {
 }
 
 
-response_from_json <- function(x) {
-  jsonlite::parse_json(httr::content(x, "text", encoding = "UTF-8"))
+response_from_json <- function(x, ...) {
+  jsonlite::parse_json(httr::content(x, "text", encoding = "UTF-8"), ...)
 }

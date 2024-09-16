@@ -62,6 +62,18 @@ get_area_level_filters <- function(data) {
   })
 }
 
+get_indicator_options <- function(data_type) {
+  metadata <- naomi::get_metadata()
+  indicator_metadata <- metadata[
+    metadata$data_type == data_type & metadata$plot_type == "barchart",
+    c("indicator", "name")]
+  names(indicator_metadata) <- c("id", "label")
+  ordering <- metadata[
+    metadata$data_type == data_type & metadata$plot_type == "barchart",
+    c("indicator_sort_order")]
+  indicator_metadata[order(ordering), ]
+}
+
 #' Read filters from wide format data
 #'
 #' Expect input data with headers like
@@ -117,62 +129,68 @@ get_model_output_filters <- function(data) {
     list(
       id = scalar("area"),
       column_id = scalar("area_id"),
-      label = scalar(t_("OUTPUT_FILTER_AREA")),
       options = json_verbatim("null"),
       use_shape_regions = scalar(TRUE)
     ),
     list(
-      id = scalar("quarter"),
+      id = scalar("detail"),
+      column_id = scalar("area_level"),
+      options = get_area_level_filters(data)
+    ),
+    list(
+      id = scalar("period"),
       column_id = scalar("calendar_quarter"),
-      label = scalar(t_("OUTPUT_FILTER_PERIOD")),
       options = get_quarter_filters(data)
     ),
     list(
       id = scalar("sex"),
       column_id = scalar("sex"),
-      label = scalar(t_("OUTPUT_FILTER_SEX")),
       options = get_sex_filters(data)
     ),
     list(
       id = scalar("age"),
       column_id = scalar("age_group"),
-      label = scalar(t_("OUTPUT_FILTER_AGE")),
       options = get_age_filters(data)
+    ),
+    list(
+      id = scalar("indicator"),
+      column_id = scalar("indicator"),
+      options = get_indicator_options("output")
     )
   )
 }
 
-get_calibrate_plot_output_filters <- function(data) {
+get_calibrate_plot_filters <- function(data) {
   list(
     list(
-      id = scalar("spectrum_region"),
-      column_id = scalar("spectrum_region_code"),
-      label = scalar(t_("OUTPUT_FILTER_AREA")),
-      options = get_spectrum_region_filters(data)
-    ),
-    list(
-      id = scalar("quarter"),
+      id = scalar("period"),
       column_id = scalar("calendar_quarter"),
-      label = scalar(t_("OUTPUT_FILTER_PERIOD")),
       options = get_quarter_filters(data)
     ),
     list(
       id = scalar("sex"),
       column_id = scalar("sex"),
-      label = scalar(t_("OUTPUT_FILTER_SEX")),
       options = get_sex_filters(data)
     ),
     list(
       id = scalar("age"),
       column_id = scalar("age_group"),
-      label = scalar(t_("OUTPUT_FILTER_AGE")),
       options = get_age_filters(data)
+    ),
+    list(
+      id = scalar("calibrate_indicator"),
+      column_id = scalar("indicator"),
+      options = get_indicator_options("calibrate")
     ),
     list(
       id = scalar("type"),
       column_id = scalar("data_type"),
-      label = scalar(t_("OUTPUT_FILTER_DATA_TYPE")),
-      options = get_data_type_filters(data)
+      options = get_data_type_filters()
+    ),
+    list(
+      id = scalar("spectrum_region"),
+      column_id = scalar("spectrum_region_code"),
+      options = get_spectrum_region_filters(data)
     )
   )
 }
@@ -180,148 +198,40 @@ get_calibrate_plot_output_filters <- function(data) {
 get_comparison_plot_filters <- function(data) {
   list(
     list(
+      id = scalar("indicator"),
+      column_id = scalar("indicator"),
+      options = get_indicator_options("comparison")
+    ),
+    list(
       id = scalar("area"),
       column_id = scalar("area_id"),
-      label = scalar(t_("OUTPUT_FILTER_AREA")),
       options = json_verbatim("null"),
       use_shape_regions = scalar(TRUE)
     ),
     list(
-      id = scalar("quarter"),
+      id = scalar("detail"),
+      column_id = scalar("area_level"),
+      options = get_area_level_filters(data)
+    ),
+    list(
+      id = scalar("period"),
       column_id = scalar("calendar_quarter"),
-      label = scalar(t_("OUTPUT_FILTER_PERIOD")),
       options = get_quarter_filters(data)
     ),
     list(
       id = scalar("sex"),
       column_id = scalar("sex"),
-      label = scalar(t_("OUTPUT_FILTER_SEX")),
       options = get_sex_filters(data)
     ),
     list(
       id = scalar("age"),
       column_id = scalar("age_group"),
-      label = scalar(t_("OUTPUT_FILTER_AGE")),
       options = get_age_filters(data)
     ),
     list(
       id = scalar("source"),
       column_id = scalar("source"),
-      label = scalar(t_("OUTPUT_FILTER_DATA_TYPE")),
       options = get_source_filters(data)
-    )
-  )
-}
-
-get_area_level_filter <- function(data) {
-  list(
-    id = scalar("area_level"),
-    column_id = scalar("area_level"),
-    label = scalar(t_("OUTPUT_FILTER_DETAIL_LEVEL")),
-    options = get_area_level_filters(data)
-  )
-}
-
-get_barchart_defaults <- function(output, output_filters) {
-  list(
-    indicator_id = scalar("prevalence"),
-    x_axis_id = scalar("age"),
-    disaggregate_by_id = scalar("sex"),
-    selected_filter_options = list(
-      area = get_area_id_filter_default(output),
-      quarter = get_selected_mappings(output_filters, "quarter")[2],
-      sex = get_selected_mappings(output_filters, "sex", c("female", "male")),
-      age = get_selected_mappings(output_filters, "age",
-                                  naomi::get_five_year_age_groups())
-    )
-  )
-}
-
-get_calibrate_barchart_defaults <- function(filters) {
-  list(
-    indicator_id = scalar("prevalence"),
-    x_axis_id = scalar("spectrum_region"),
-    disaggregate_by_id = scalar("type"),
-    selected_filter_options = list(
-      quarter = get_selected_mappings(filters, "quarter")[2],
-      sex = get_selected_mappings(filters, "sex")[1],
-      age = get_selected_mappings(filters, "age", "Y015_049"),
-      spectrum_region = get_selected_mappings(filters, "spectrum_region"),
-      type = get_selected_mappings(filters, "type")
-    )
-  )
-}
-
-get_comparison_barchart_selections <- function(output, filters) {
-  area_default <- get_area_id_filter_default(output)
-  five_year_age_groups <- get_selected_mappings(
-    filters, "age", naomi::get_five_year_age_groups())
-  all_sexes <- get_selected_mappings(filters, "sex")
-  both <- get_selected_mappings(filters, "sex", "both")
-  female <- get_selected_mappings(filters, "sex", "female")
-  survey_quarter <- get_selected_mappings(filters, "quarter")[2]
-  source = get_selected_mappings(filters, "source")
-  fifteen_to_49 <- get_selected_mappings(filters, "age", "Y015_049")
-  list(
-    list(
-      indicator_id = scalar("prevalence"),
-      x_axis_id = scalar("age"),
-      disaggregate_by_id = scalar("source"),
-      selected_filter_options = list(
-        area = area_default,
-        quarter = survey_quarter,
-        sex = both,
-        age = five_year_age_groups,
-        source = source
-      )
-    ),
-    list(
-      indicator_id = scalar("art_coverage"),
-      x_axis_id = scalar("age"),
-      disaggregate_by_id = scalar("source"),
-      selected_filter_options = list(
-        area = area_default,
-        quarter = survey_quarter,
-        sex = both,
-        age = five_year_age_groups,
-        source = source
-      )
-    ),
-    list(
-      indicator_id = scalar("art_current"),
-      x_axis_id = scalar("sex"),
-      disaggregate_by_id = scalar("source"),
-      selected_filter_options = list(
-        area = area_default,
-        quarter = survey_quarter,
-        sex = all_sexes,
-        age = get_selected_mappings(filters, "age", "Y015_999"),
-        source = source
-      )
-    ),
-    list(
-      indicator_id = scalar("anc_prevalence_age_matched"),
-      x_axis_id = scalar("sex"),
-      disaggregate_by_id = scalar("source"),
-      selected_filter_options = list(
-        area = area_default,
-        quarter = survey_quarter,
-        sex = female,
-        age = fifteen_to_49,
-        source = source
-      )
-    ),
-    list(
-      indicator_id = scalar("anc_art_coverage_age_matched"),
-      x_axis_id = scalar("sex"),
-      disaggregate_by_id = scalar("source"),
-      selected_filter_options = list(
-        area = area_default,
-        quarter = survey_quarter,
-        sex = female,
-        age = fifteen_to_49,
-        source = source
-      )
     )
   )
 }
@@ -357,18 +267,6 @@ get_selected_mappings <- function(mappings, type, ids = NULL, key = "options") {
     selected <- selected[keep_mapping]
   }
   selected
-}
-
-get_area_id_filter_default <- function(output) {
-  ## We expect the areas to be returned in order - return the first region
-  ## level as the default
-  option <- output[1, c("area_id", "area_name")]
-  list(
-    list(
-      id = scalar(option$area_id),
-      label = scalar(option$area_name)
-    )
-  )
 }
 
 get_quarter_filters <- function(data) {
@@ -435,7 +333,7 @@ get_spectrum_region_filters <- function(data) {
   })
 }
 
-get_data_type_filters <- function(data) {
+get_data_type_filters <- function() {
   recursive_scalar(naomi::data_type_labels())
 }
 

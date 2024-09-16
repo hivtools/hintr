@@ -5,6 +5,7 @@ api_build <- function(queue, validate = FALSE, logger = NULL) {
   api$handle(endpoint_baseline_combined())
   api$handle(endpoint_validate_survey_programme())
   api$handle(endpoint_input_time_series_plot())
+  api$handle(endpoint_review_input_metadata())
   api$handle(endpoint_model_options())
   api$handle(endpoint_model_options_validate())
   api$handle(endpoint_model_submit(queue))
@@ -15,14 +16,11 @@ api_build <- function(queue, validate = FALSE, logger = NULL) {
   api$handle(endpoint_model_calibrate_options())
   api$handle(endpoint_model_calibrate_submit(queue))
   api$handle(endpoint_model_calibrate_status(queue))
-  api$handle(endpoint_model_calibrate_result(queue))
   api$handle(endpoint_model_calibrate_metadata(queue))
   api$handle(endpoint_model_calibrate_data(queue))
   api$handle(endpoint_model_calibrate_result_path(queue))
   api$handle(endpoint_model_calibrate_plot(queue))
   api$handle(endpoint_comparison_plot(queue))
-  api$handle(endpoint_plotting_metadata_iso3())
-  api$handle(endpoint_plotting_metadata_default())
   api$handle(endpoint_download_submit(queue))
   api$handle(endpoint_download_status(queue))
   api$handle(endpoint_download_result(queue))
@@ -179,6 +177,18 @@ endpoint_input_time_series_plot <- function() {
   porcelain::porcelain_endpoint$new("POST",
                                     "/chart-data/input-time-series/<type>",
                                     input_time_series,
+                                    input,
+                                    returning = response)
+}
+
+endpoint_review_input_metadata <- function() {
+  input <- porcelain::porcelain_input_body_json(
+    "input", "ReviewInputFilterMetadataRequest.schema", schema_root())
+  response <- porcelain::porcelain_returning_json(
+    "ReviewInputFilterMetadataResponse.schema", schema_root())
+  porcelain::porcelain_endpoint$new("POST",
+                                    "/review-input/metadata",
+                                    review_input_filter_metadata,
                                     input,
                                     returning = response)
 }
@@ -355,23 +365,6 @@ endpoint_comparison_plot <- function(queue) {
   porcelain::porcelain_endpoint$new("GET",
                                     "/comparison/plot/<id>",
                                     comparison_plot(queue),
-                                    returning = response)
-}
-
-endpoint_plotting_metadata_iso3 <- function() {
-  endpoint_plotting_metadata("/meta/plotting/<iso3>")
-}
-
-endpoint_plotting_metadata_default <- function() {
-  endpoint_plotting_metadata("/meta/plotting")
-}
-
-endpoint_plotting_metadata <- function(path) {
-  response <- porcelain::porcelain_returning_json(
-    "PlottingMetadataResponse.schema", schema_root())
-  porcelain::porcelain_endpoint$new("GET",
-                                    path,
-                                    plotting_metadata,
                                     returning = response)
 }
 

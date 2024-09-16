@@ -1,6 +1,6 @@
 Package: hintr
 Title: R API for calling naomi district level HIV model
-Version: 1.1.26
+Version: 1.2.0
 Authors@R: 
     person(given = "Robert",
            family = "Ashton",
@@ -23,7 +23,7 @@ Imports:
     glue,
     ids,
     jsonlite (>= 1.2.2),
-    naomi (>= 2.9.24),
+    naomi (>= 2.9.27),
     naomi.options (>= 1.1.0),
     porcelain (>= 0.1.8),
     qs,
@@ -40,6 +40,7 @@ Suggests:
     callr,
     cli,
     covr,
+    duckdb,
     httr,
     jsonvalidate,
     mockery,

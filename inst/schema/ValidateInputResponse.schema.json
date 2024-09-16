@@ -76,14 +76,14 @@
           "enum": [ "programme" ]
         },
         "data": { "$ref": "ProgrammeResponseData.schema.json" },
-        "filters": { "$ref": "ProgrammeFilters.schema.json" },
+        "filters": { "type": "null" },
         "warnings": {
           "type": "array",
           "items": { "$ref": "Warning.schema.json"  }
         }
       },
       "additionalProperties": false,
-      "required": ["filename", "hash", "type", "data", "filters", "warnings"]
+      "required": ["filename", "hash", "type", "data", "warnings"]
     },
 
     "anc_response": {
@@ -98,14 +98,14 @@
           "enum": [ "anc" ]
         },
         "data": { "$ref": "AncResponseData.schema.json" },
-        "filters": { "$ref": "AncFilters.schema.json" },
+        "filters": { "type": "null" },
         "warnings": {
           "type": "array",
           "items": { "$ref": "Warning.schema.json"  }
         }
       },
       "additionalProperties": false,
-      "required": ["filename", "hash", "type", "data", "filters", "warnings"]
+      "required": ["filename", "hash", "type", "data", "warnings"]
     },
 
     "survey_response": {
@@ -120,14 +120,14 @@
           "enum": [ "survey" ]
         },
         "data": { "$ref": "SurveyResponseData.schema.json" },
-        "filters": { "$ref": "SurveyFilters.schema.json" },
+        "filters": { "type": "null" },
         "warnings": {
           "type": "array",
           "items": { "$ref": "Warning.schema.json"  }
         }
       },
       "additionalProperties": false,
-      "required": ["filename", "hash", "type", "data", "filters", "warnings"]
+      "required": ["filename", "hash", "type", "data", "warnings"]
     },
 
     "vmmc_response": {
@@ -149,7 +149,7 @@
         }
       },
       "additionalProperties": false,
-      "required": ["filename", "hash", "type", "data", "filters", "warnings"]
+      "required": ["filename", "hash", "type", "data", "warnings"]
     }
   },
 
