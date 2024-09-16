@@ -25,8 +25,8 @@ MockQueue <- R6::R6Class(
   )
 )
 
-test_queue <- function(workers = 0) {
-  queue <- Queue$new(workers = workers, timeout = 300)
+test_queue <- function(queue_id = NULL, workers = 0) {
+  queue <- Queue$new(queue_id, workers = workers, timeout = 300)
   withr::defer_parent({
     message("cleaning up workers")
     queue$cleanup()
