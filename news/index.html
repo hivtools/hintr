@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hintr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.26</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.0</span>
       </span>
     </div>
 
@@ -41,6 +41,12 @@
 
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.2.0" id="hintr-120">hintr 1.2.0<a class="anchor" aria-label="anchor" href="#hintr-120"></a></h2>
+<ul><li>Update plot metadata format to make it more generic and generally usable</li>
+<li>Add a new endpoint <code>/review-input/metadata</code> to return metadata for all input plots</li>
+<li>Remove <code>/meta/plotting</code> and <code>/meta/plotting&lt;iso3&gt;</code> endpoints as these are no longer used</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.1.16" id="hintr-1116">hintr 1.1.16<a class="anchor" aria-label="anchor" href="#hintr-1116"></a></h2>
 <ul><li>Add an optional arg to API startup to turn on a health-check. If set, the interval after which the next time the redis connection is used the connection will be reset. 0 for no reconnection. This is needed for running on cloud services as they close idle tcp connections after a set time. On Azure it if 4 mins, so we need to the client to be able to reconnect if this interval has passed.</li>
