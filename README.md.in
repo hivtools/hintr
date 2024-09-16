@@ -2,8 +2,7 @@
 
 <!-- badges: start -->
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![R-CMD-check](https://github.com/mrc-ide/hintr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mrc-ide/hintr/actions/workflows/R-CMD-check.yaml)
-[![codecov.io](https://codecov.io/github/mrc-ide/hintr/coverage.svg?branch=master)](https://codecov.io/github/mrc-ide/hintr?branch=master)
+[![R-CMD-check](https://github.com/hivtools/hintr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/hivtools/hintr/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 R API for Naomi app
@@ -12,14 +11,14 @@ App to show district level estimates of HIV indicators
 
 ## Running in docker
 
-Docker images are built on travis, if on master branch run via:
+Docker images are built on GitHub actions, if on main branch run via:
 ```
 docker run --rm -d --network=host --name hintr_redis redis
 docker run --rm -d --network=host --mount type=volume,src=upload_volume,dst=/uploads \
-  -e USE_MOCK_MODEL=true --name hintr mrcide/hintr:master
+  -e USE_MOCK_MODEL=true --name hintr ghcr.io/hivtools/hintr:main
 ```
 
-For a more complete example of running on a network see [docker test script](https://github.com/mrc-ide/hintr/blob/master/docker/test).
+For a more complete example of running on a network see [docker test script](https://github.com/hivtools/hintr/blob/main/docker/test).
 
 HINT_EXAMPLES
 

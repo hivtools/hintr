@@ -9,8 +9,8 @@ on:
 env:
   TAG_SERVER_DH: mrcide/hintr
   TAG_WORKER_DH: mrcide/hintr-worker
-  TAG_SERVER_GHCR: mrc-ide/hintr
-  TAG_WORKER_GHCR: mrc-ide/hintr-worker
+  TAG_SERVER_GHCR: hivtools/hintr
+  TAG_WORKER_GHCR: hivtools/hintr-worker
 
 jobs:
   docker:
