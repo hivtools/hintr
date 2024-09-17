@@ -664,7 +664,8 @@ calibrate_result_path <- function(queue) {
   function(id) {
     verify_result_available(queue, id)
     result <- queue$result(id)
-    relative_path <- fs::path_rel(result$plot_data_path, start = queue$results_dir)
+    relative_path <- fs::path_rel(result$plot_data_path,
+                                  start = queue$results_dir)
     list(
       path = scalar(relative_path)
     )
@@ -800,28 +801,57 @@ get_download_result <- function(queue, id, error_message) {
   res
 }
 
+download_file_label <- function(type) {
+  switch(type,
+         spectrum = "naomi-output",
+         coarse_output = "coarse-output",
+         summary = "summary-report",
+         comparison = "comparison-report",
+         agyw = "AGYW")
+}
+
+download_file_extension <- function(type) {
+  switch(type,
+         spectrum = ".zip",
+         coarse_output = ".zip",
+         summary = ".html",
+         comparison = ".html",
+         agyw = ".xlsx")
+}
+
 download_result <- function(queue) {
   function(id) {
     tryCatch({
       res <- get_download_result(queue, id, "FAILED_DOWNLOAD")
-      filename <- switch(res$metadata$type,
-                         spectrum = "naomi-output",
-                         coarse_output = "coarse-output",
-                         summary = "summary-report",
-                         comparison = "comparison-report",
-                         agyw = "AGYW")
-      ext <- switch(res$metadata$type,
-                    spectrum = ".zip",
-                    coarse_output = ".zip",
-                    summary = ".html",
-                    comparison = ".html",
-                    agyw = ".xlsx")
+      file_label <- download_file_label(res$metadata$type)
+      ext <- download_file_extension(res$metadata$type)
       bytes <- readBin(res$path, "raw", n = file.size(res$path))
       bytes <- porcelain::porcelain_add_headers(bytes, list(
         "Content-Disposition" = build_content_disp_header(res$metadata$areas,
-                                                          filename, ext),
+                                                          file_label, ext),
         "Content-Length" = length(bytes)))
       bytes
+    },
+    error = function(e) {
+      if (is_porcelain_error(e)) {
+        stop(e)
+      } else {
+        hintr_error(api_error_msg(e), "FAILED_TO_RETRIEVE_RESULT")
+      }
+    })
+  }
+}
+
+download_result_path <- function(queue) {
+  function(id) {
+    tryCatch({
+      res <- get_download_result(queue, id, "FAILED_DOWNLOAD")
+      relative_path <- fs::path_rel(res$path, start = queue$results_dir)
+      res$path <- relative_path
+      res$metadata$id <- id
+      res$metadata$file_label <- download_file_label(res$metadata$type)
+      res$metadata$file_extension <- download_file_extension(res$metadata$type)
+      recursive_scalar(res)
     },
     error = function(e) {
       if (is_porcelain_error(e)) {

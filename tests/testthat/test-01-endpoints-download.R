@@ -40,6 +40,20 @@ test_that("spectrum download returns bytes", {
                'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
   expect_equal(head_response$headers$`Content-Length`, size)
   expect_null(head_response$body, NULL)
+
+  ## Get download result path
+  path_data <- endpoint_download_result_path(q$queue)
+  path_response <- path_data$run(status_response$data$id)
+  expect_equal(path_response$status_code, 200)
+  path <- path_response$data
+  expect_true(file.exists(file.path(q$queue$results_dir, path$path)))
+  expect_equal(path$metadata$type, scalar("spectrum"))
+  expect_equal(path$metadata$areas, scalar("MWI"))
+  expect_match(path$metadata$description,
+               "Naomi output uploaded from Naomi web app")
+  expect_equal(path$metadata$id, scalar(status_response$data$id))
+  expect_equal(path$metadata$file_label, scalar("naomi-output"))
+  expect_equal(path$metadata$file_extension, scalar(".zip"))
 })
 
 test_that("api can call spectrum download", {
@@ -327,11 +341,30 @@ test_that("trying to download result for errored model run returns error", {
   expect_equal(names(error$data[[1]]), c("error", "detail", "key"))
   expect_equal(error$data[[1]]$error, scalar("OUTPUT_GENERATION_FAILED"))
   expect_equal(error$data[[1]]$detail, scalar("test error"))
+
+  ## Getting path to output file returns error
+  result_path <- download_result_path(queue)
+  path_error <- expect_error(result_path(response$id))
+  expect_equal(path_error$status_code, 400)
+  expect_equal(names(path_error$data[[1]]), c("error", "detail", "key"))
+  expect_equal(path_error$data[[1]]$error, scalar("OUTPUT_GENERATION_FAILED"))
+  expect_equal(path_error$data[[1]]$detail, scalar("test error"))
 })
 
 test_that("download result returns formatted error if unexpected issue", {
   queue <- MockQueue$new(workers = 0)
   download <- download_result(queue)
+  error <- expect_error(download("1"))
+
+  expect_equal(error$status_code, 400)
+  expect_equal(names(error$data[[1]]), c("error", "detail", "key"))
+  expect_equal(error$data[[1]]$error, scalar("FAILED_TO_RETRIEVE_RESULT"))
+  expect_equal(error$data[[1]]$detail, scalar("Missing result for task: '1'"))
+})
+
+test_that("download result path returns formatted error if unexpected issue", {
+  queue <- MockQueue$new(workers = 0)
+  download <- download_result_path(queue)
   error <- expect_error(download("1"))
 
   expect_equal(error$status_code, 400)
