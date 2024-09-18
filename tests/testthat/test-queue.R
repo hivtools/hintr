@@ -2,7 +2,7 @@ test_that("queue works as intended", {
   test_redis_available()
   test_mock_model_available()
 
-  queue <- Queue$new(timeout = 300)
+  queue <- Queue$new(timeout = 300, delete_data_on_exit = TRUE)
   ctrl <- queue$controller
   expect_equal(rrq::rrq_worker_len(controller = ctrl), 2)
 
@@ -105,7 +105,7 @@ test_that("test queue starts workers with timeout", {
 })
 
 test_that("queue starts up normally without a timeout", {
-  queue <- Queue$new(workers = 1)
+  queue <- Queue$new(workers = 1, delete_data_on_exit = TRUE)
   on.exit(queue$cleanup())
   timeout <- rrq::rrq_message_send_and_wait(
     "TIMEOUT_GET",

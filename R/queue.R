@@ -3,7 +3,8 @@ Queue <- R6::R6Class(
   cloneable = FALSE,
   public = list(
     root = NULL,
-    cleanup_on_exit = NULL,
+    stop_workers_on_exit = NULL,
+    delete_data_on_exit = NULL,
     controller = NULL,
     results_dir = NULL,
     inputs_dir = NULL,
@@ -12,12 +13,14 @@ Queue <- R6::R6Class(
     next_health_check = NULL,
 
     initialize = function(queue_id = NULL, workers = 2,
-                          cleanup_on_exit = workers > 0,
+                          stop_workers_on_exit = workers > 0,
+                          delete_data_on_exit = FALSE,
                           results_dir = tempdir(),
                           inputs_dir = NULL,
                           timeout = Inf,
                           health_check_interval = 0) {
-      self$cleanup_on_exit <- cleanup_on_exit
+      self$stop_workers_on_exit <- stop_workers_on_exit
+      self$delete_data_on_exit <- delete_data_on_exit
       self$results_dir <- results_dir
 
       message(t_("QUEUE_CONNECTING", list(redis = redux::redis_config()$url)))
@@ -168,16 +171,21 @@ Queue <- R6::R6Class(
 
     ## Not part of the api exposed functions, used in tests
     destroy = function() {
+      message(sprintf(
+        "Deleting all redis data for queue '%s'",
+        self$controller$queue_id))
       rrq::rrq_destroy(delete = TRUE, controller = self$controller)
     },
 
     cleanup = function() {
       if (!is.null(self$controller)) {
         clear_cache(self$controller$queue_id)
-        if (self$cleanup_on_exit) {
+        if (self$stop_workers_on_exit) {
           message(t_("QUEUE_STOPPING_WORKERS"))
           worker_stop(type = "kill", controller = self$controller)
-          self$destroy()
+          if (self$delete_data_on_exit) {
+            self$destroy()
+          }
           self$controller <- NULL
         }
       }
