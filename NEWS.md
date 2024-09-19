@@ -1,7 +1,13 @@
 # hintr 1.2.1
 
-* Add new endpoint `/download/result/path/<id>` to return path to the download file on disk
+* Make it harder to accidentally delete redis data by:
+   * Not starting workers automatically when you create a queue
+   * Only removing the workers a queue creates by default
+   * Only deleting data if you explicitly opt in
 
+# hintr 1.2.1
+
+* Add new endpoint `/download/result/path/<id>` to return path to the download file on disk
 
 # hintr 1.2.0
 
