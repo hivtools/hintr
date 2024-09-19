@@ -65,6 +65,7 @@ test_that("queue works as intended", {
   key <- queue$controller$keys$worker_id
   expect_equal(con$SCARD(key), 2)
 
+  ## queue can delete all data
   rm(queue)
   gc()
 
@@ -188,4 +189,17 @@ test_that("health checks reconnects to redis if time lapsed", {
   Sys.sleep(1)
   queue$health_check()
   mockery::expect_called(mock_reconnect, 2)
+})
+
+test_that("queue cleans up only its own workers", {
+  queue <- test_queue(workers = 1)
+  new_queue <- Queue$new(queue_id = queue$controller$queue_id,
+                         workers = 2,
+                         timeout = 300)
+
+  expect_length(rrq::rrq_worker_list(controller = queue$controller), 3)
+  new_queue$cleanup()
+  Sys.sleep(1) ## Let workers finish exiting
+  rrq::rrq_worker_detect_exited(controller = queue$controller)
+  expect_length(rrq::rrq_worker_list(controller = queue$controller), 1)
 })

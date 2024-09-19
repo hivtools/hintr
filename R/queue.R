@@ -4,15 +4,16 @@ Queue <- R6::R6Class(
   public = list(
     root = NULL,
     stop_workers_on_exit = NULL,
-    delete_data_on_exit = NULL,
+    delete_data_on_exit = FALSE,
     controller = NULL,
+    worker_manager = NULL,
     results_dir = NULL,
     inputs_dir = NULL,
 
     health_check_interval = NULL,
     next_health_check = NULL,
 
-    initialize = function(queue_id = NULL, workers = 2,
+    initialize = function(queue_id = NULL, workers = 0,
                           stop_workers_on_exit = workers > 0,
                           delete_data_on_exit = FALSE,
                           results_dir = tempdir(),
@@ -69,11 +70,11 @@ Queue <- R6::R6Class(
 
     start = function(workers, timeout) {
       if (workers > 0L) {
-        worker_manager <- rrq::rrq_worker_spawn(workers,
-                                                controller = self$controller)
+        self$worker_manager <- rrq::rrq_worker_spawn(
+          workers, controller = self$controller)
         if (is.finite(timeout) && timeout > 0) {
           rrq::rrq_message_send_and_wait("TIMEOUT_SET", timeout,
-                                         worker_manager$id,
+                                         self$worker_manager$id,
                                          controller = self$controller)
         }
       }
@@ -180,12 +181,15 @@ Queue <- R6::R6Class(
     cleanup = function() {
       if (!is.null(self$controller)) {
         clear_cache(self$controller$queue_id)
-        if (self$stop_workers_on_exit) {
-          message(t_("QUEUE_STOPPING_WORKERS"))
+        if (self$delete_data_on_exit) {
+          message("Stopping all workers")
           worker_stop(type = "kill", controller = self$controller)
-          if (self$delete_data_on_exit) {
-            self$destroy()
-          }
+          self$destroy()
+          self$controller <- NULL
+        } else if (self$stop_workers_on_exit && !is.null(self$worker_manager)) {
+          message(t_("QUEUE_STOPPING_WORKERS"))
+          worker_stop(self$worker_manager$id, type = "kill",
+                      controller = self$controller)
           self$controller <- NULL
         }
       }

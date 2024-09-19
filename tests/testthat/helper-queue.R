@@ -144,8 +144,7 @@ setup_prerun_queue <- function() {
   )
 
   list(
-    queue = Queue$new(workers = 0,
-                      inputs_dir = inputs_dir,
+    queue = Queue$new(inputs_dir = inputs_dir,
                       results_dir = output_dir),
     payload = jsonlite::toJSON(payload)
   )
