@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-CONTAINER_NAME=hintr_redis
+CONTAINER_NAME=hintr-redis
 if [ "$1" = "start" ]; then
     docker run --rm -d --name=$CONTAINER_NAME -p 127.0.0.1:6379:6379 redis
 elif [ "$1" = "stop" ]; then

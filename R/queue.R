@@ -6,7 +6,7 @@ Queue <- R6::R6Class(
     stop_workers_on_exit = NULL,
     delete_data_on_exit = FALSE,
     controller = NULL,
-    worker_manager = NULL,
+    worker_ids = NULL,
     results_dir = NULL,
     inputs_dir = NULL,
 
@@ -70,11 +70,12 @@ Queue <- R6::R6Class(
 
     start = function(workers, timeout) {
       if (workers > 0L) {
-        self$worker_manager <- rrq::rrq_worker_spawn(
+        worker_manager <- rrq::rrq_worker_spawn(
           workers, controller = self$controller)
+        self$worker_ids <- worker_manager$id
         if (is.finite(timeout) && timeout > 0) {
           rrq::rrq_message_send_and_wait("TIMEOUT_SET", timeout,
-                                         self$worker_manager$id,
+                                         self$worker_ids,
                                          controller = self$controller)
         }
       }
@@ -183,12 +184,13 @@ Queue <- R6::R6Class(
         clear_cache(self$controller$queue_id)
         if (self$delete_data_on_exit) {
           message("Stopping all workers")
+          rrq::rrq_worker_detect_exited(controller = self$controller)
           worker_stop(type = "kill", controller = self$controller)
           self$destroy()
           self$controller <- NULL
-        } else if (self$stop_workers_on_exit && !is.null(self$worker_manager)) {
+        } else if (self$stop_workers_on_exit && !is.null(self$worker_ids)) {
           message(t_("QUEUE_STOPPING_WORKERS"))
-          worker_stop(self$worker_manager$id, type = "kill",
+          worker_stop(self$worker_ids, type = "kill",
                       controller = self$controller)
           self$controller <- NULL
         }

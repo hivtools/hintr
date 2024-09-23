@@ -163,7 +163,7 @@ test_that("erroring model run returns useful messages", {
   test_redis_available()
 
   ## Call the endpoint
-  queue <- MockQueue$new()
+  queue <- MockQueue$new(workers = 1)
   payload <- setup_payload_submit()
   model_submit <- submit_model(queue)
   response <- model_submit(payload)

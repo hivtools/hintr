@@ -2,7 +2,7 @@ test_that("queue works as intended", {
   test_redis_available()
   test_mock_model_available()
 
-  queue <- Queue$new(timeout = 300, delete_data_on_exit = TRUE)
+  queue <- Queue$new(timeout = 300, workers = 2, delete_data_on_exit = TRUE)
   ctrl <- queue$controller
   expect_equal(rrq::rrq_worker_len(controller = ctrl), 2)
 
@@ -123,7 +123,10 @@ test_that("queue object starts up 2 queues", {
 })
 
 test_that("calibrate gets run before model running", {
-  queue <- test_queue(workers = 0)
+  ## Don't delete data here as we are creating a worker separately which is
+  ## leading to some race condition on cleanup. Where it is trying to finalize
+  ## the worker after all redis data has been deleted terminating the R process.
+  queue <- test_queue(workers = 0, delete_data_on_exit = FALSE)
   ctrl <- queue$controller
   worker <- create_blocking_worker(queue$controller)
   run_id <- queue$submit_model_run(NULL, NULL)

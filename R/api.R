@@ -94,7 +94,6 @@ api <- function(queue_id = NULL, workers = 2,
                      inputs_dir = inputs_dir,
                      health_check_interval = health_check_interval)
   rrq::rrq_worker_delete_exited(controller = queue$controller)
-  logger <- porcelain::porcelain_logger(log_level)
   api_build(queue, logger = logger)
 }
 

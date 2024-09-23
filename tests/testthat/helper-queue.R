@@ -25,10 +25,10 @@ MockQueue <- R6::R6Class(
   )
 )
 
-test_queue <- function(workers = 0) {
+test_queue <- function(workers = 0, delete_data_on_exit = TRUE) {
   queue <- Queue$new(workers = workers,
                      timeout = 300,
-                     delete_data_on_exit = TRUE)
+                     delete_data_on_exit = delete_data_on_exit)
   withr::defer_parent({
     message("cleaning up workers")
     queue$cleanup()

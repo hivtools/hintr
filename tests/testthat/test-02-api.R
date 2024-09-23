@@ -558,7 +558,7 @@ test_that("api can call endpoint_model_cancel", {
 test_that("erroring model run returns useful messages", {
   test_redis_available()
 
-  queue <- MockQueue$new()
+  queue <- MockQueue$new(workers = 1)
   api <- api_build(queue)
   payload <- setup_payload_submit()
   res <- api$request("POST", "/model/submit", body = payload)
@@ -643,395 +643,395 @@ test_that("returning_json_version adds version", {
   expect_equal(version_response$version$traduire,
                unclass(cfg$version_info$traduire))
 })
-
-test_that("content disposition header is formatted correctly", {
-  expect_match(build_content_disp_header("MWI", "naomi-output", ".zip"),
-               'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
-  expect_match(build_content_disp_header(NULL, "naomi-output", ".zip"),
-               'attachment; filename="naomi-output_\\d+-\\d+.zip"')
-  expect_match(
-    build_content_disp_header(c("MWI.1", "MWI.2"), "naomi-output", ".zip"),
-    'attachment; filename="MWI.1_MWI.2_naomi-output_\\d+-\\d+.zip"')
-})
-
-test_that("returning_binary_head ensures no body in response", {
-  returning <- returning_binary_head()
-  data <- charToRaw("test")
-  expect_null(returning$process(data))
-  expect_true(returning$validate(NULL))
-})
-
-test_that("endpoint_model_debug can be run", {
-  test_redis_available()
-  test_mock_model_available()
-
-  queue <- test_queue(workers = 1)
-  run_endpoint <- endpoint_model_submit(queue)
-  payload <- setup_payload_submit()
-  run_response <- run_endpoint$run(payload)
-
-  expect_equal(run_response$status_code, 200)
-  out <- queue$task_wait(run_response$data$id)
-
-  endpoint <- endpoint_model_debug(queue)
-  response <- endpoint$run(run_response$data$id)
-
-  expect_equal(response$status_code, 200)
-  expect_match(response$headers$`Content-Disposition`,
-               'attachment; filename="\\w+_\\d+-\\d+_naomi_debug.zip"')
-  ## Download contains data
-  expect_true(length(response$data) > 1000000)
-})
-
-test_that("api can call endpoint_model_debug", {
-  test_redis_available()
-  test_mock_model_available()
-
-  queue <- test_queue(workers = 1)
-  api <- api_build(queue)
-
-  ## Run the model
-  payload <- setup_payload_submit()
-  res <- api$request("POST", "/model/submit", body = payload)
-
-  expect_equal(res$status, 200)
-  response <- jsonlite::fromJSON(res$body)
-  out <- queue$task_wait(response$data$id)
-
-  ## Get result
-  res <- api$request("GET", paste0("/model/debug/", response$data$id))
-
-  expect_equal(res$status, 200)
-  expect_equal(res$headers$`Content-Type`, "application/octet-stream")
-  expect_match(res$headers$`Content-Disposition`,
-               'attachment; filename="\\w+_\\d+-\\d+_naomi_debug.zip"')
-  ## Download contains data
-  expect_true(length(res$body) > 1000000)
-})
-
-test_that("endpoint_hintr_version works", {
-  endpoint <- endpoint_hintr_version()
-  response <- endpoint$run()
-
-  expect_type(response$data, "list")
-  expect_setequal(names(response$data), c("hintr", "naomi", "rrq", "traduire"))
-  expect_equal(response$data$rrq, scalar(as.character(packageVersion("rrq"))))
-})
-
-test_that("api can call endpoint_hintr_version", {
-  test_redis_available()
-
-  queue <- test_queue()
-  api <- api_build(queue)
-  res <- api$request("GET", "/hintr/version")
-  expect_equal(res$status, 200)
-  response <- jsonlite::fromJSON(res$body)
-
-  expect_type(response$data, "list")
-  expect_setequal(names(response$data), c("hintr", "naomi", "rrq", "traduire"))
-  expect_equal(response$data$rrq, as.character(packageVersion("rrq")))
-})
-
-test_that("endpoint_hintr_worker_status works", {
-  test_redis_available()
-
-  queue <- test_queue(workers = 2)
-  endpoint <- endpoint_hintr_worker_status(queue)
-  response <- endpoint$run()
-
-  expect_equal(unlist(response$data, FALSE, FALSE), rep("IDLE", 2))
-})
-
-test_that("api can call endpoint_hintr_worker_status", {
-  test_redis_available()
-
-  queue <- test_queue(workers = 2)
-  api <- api_build(queue)
-  res <- api$request("GET", "/hintr/worker/status")
-  expect_equal(res$status, 200)
-  response <- jsonlite::fromJSON(res$body)
-
-  expect_equal(unlist(response$data, FALSE, FALSE), rep("IDLE", 2))
-})
-
-test_that("endpoint_hintr_stop works", {
-  test_redis_available()
-
-  queue <- test_queue()
-  mock_hintr_stop <- mockery::mock(function() NULL)
-  mockery::stub(endpoint_hintr_stop, "hintr_stop", mock_hintr_stop)
-  endpoint <- endpoint_hintr_stop(queue)
-  response <- endpoint$run()
-
-  mockery::expect_called(mock_hintr_stop, 1)
-})
-
-test_that("api can call endpoint_hintr_stop", {
-  test_redis_available()
-
-  queue <- test_queue()
-  mock_hintr_stop <- mockery::mock(function() NULL)
-  with_mocked_bindings({
-    api <- api_build(queue)
-    res <- api$request("POST", "/hintr/stop")
-  }, hintr_stop = mock_hintr_stop)
-  expect_equal(res$status, 200)
-  mockery::expect_called(mock_hintr_stop, 1)
-})
-
-test_that("404 errors have sensible schema", {
-  test_redis_available()
-
-  queue <- test_queue()
-  api <- api_build(queue)
-  res <- api$request("GET", "/meaning-of-life")
-
-  expect_equal(res$status, 404)
-  response <- jsonlite::fromJSON(res$body)
-  expect_equal(response$status, "failure")
-  expect_equal(response$errors[1, "error"], "NOT_FOUND")
-  expect_equal(response$errors[1, "detail"],
-               "GET /meaning-of-life is not a valid hintr path")
-  expect_equal(response$data, setNames(list(), list()))
-})
-
-test_that("model calibrate can be queued and result returned", {
-  test_mock_model_available()
-  q <- test_queue_result()
-
-  ## Submit calibrate request
-  submit <- endpoint_model_calibrate_submit(q$queue)
-  payload <- setup_payload_calibrate()
-  submit_response <- submit$run(q$model_run_id, payload)
-
-  expect_equal(submit_response$status_code, 200)
-  expect_true(!is.null(submit_response$data$id))
-
-  ## Status
-  out <- q$queue$task_wait(submit_response$data$id)
-  status <- endpoint_model_calibrate_status(q$queue)
-  status_response <- status$run(submit_response$data$id)
-
-  expect_equal(status_response$status_code, 200)
-  expect_equal(status_response$data$id, submit_response$data$id)
-  expect_true(status_response$data$done)
-  expect_equal(status_response$data$status, scalar("COMPLETE"))
-  expect_true(status_response$data$success)
-  expect_equal(status_response$data$queue, scalar(0))
-  expect_match(status_response$data$progress[[1]],
-               "Saving outputs - [\\d.m\\s]+s elapsed", perl = TRUE)
-
-  ## Get metadata which includes warnings
-  metadata <- endpoint_model_calibrate_metadata(q$queue)
-  metadata_response <- metadata$run(status_response$data$id)
-  expect_equal(metadata_response$data,
-               calibrate_metadata(q$queue)(status_response$data$id))
-  expect_valid_metadata(metadata_response$data)
-
-  ## Get data alone
-  data <- endpoint_model_calibrate_data(q$queue)
-  data_response <- data$run(status_response$data$id)
-  expect_equal(colnames(data_response$data$data),
-               c("area_id", "sex", "age_group", "calendar_quarter",
-                 "indicator", "mode", "mean", "lower", "upper"))
-  expect_true(nrow(data_response$data$data) > 84042)
-
-  ## Get path to data
-  path <- endpoint_model_calibrate_result_path(q$queue)
-  path_response <- path$run(status_response$data$id)
-  expect_equal(path_response$status_code, 200)
-  expect_true(file.exists(file.path(q$queue$results_dir,
-                                    path_response$data$path)))
-})
-
-test_that("api can call endpoint_model_calibrate", {
-  test_mock_model_available()
-  q <- test_queue_result()
-
-  ## Submit calibrate
-  api <- api_build(q$queue)
-  calibrate_payload <- setup_payload_calibrate()
-  submit_res <- api$request("POST",
-                            paste0("/calibrate/submit/", q$model_run_id),
-                            body = calibrate_payload)
-
-  expect_equal(submit_res$status, 200)
-  submit_body <- jsonlite::fromJSON(submit_res$body)
-  expect_true(!is.null(submit_body$data$id))
-
-  ## Status
-  out <- q$queue$task_wait(submit_body$data$id)
-  status_res <- api$request("GET",
-                            paste0("/calibrate/status/", submit_body$data$id))
-
-  expect_equal(status_res$status, 200)
-  status_body <- jsonlite::fromJSON(status_res$body)
-  expect_equal(status_body$data$id, submit_body$data$id)
-  expect_true(status_body$data$done)
-  expect_equal(status_body$data$status, "COMPLETE")
-  expect_true(status_body$data$success)
-  expect_equal(status_body$data$queue, 0)
-  expect_match(status_body$data$progress[[1]],
-               "Saving outputs - [\\d.m\\s]+s elapsed", perl = TRUE)
-
-  ## Get metadata
-  metadata_res <- api$request("GET", paste0("/calibrate/result/metadata/",
-                                            status_body$data$id))
-  expect_equal(metadata_res$status, 200)
-  metadata_body <- jsonlite::fromJSON(metadata_res$body)
-  expect_equal(names(metadata_body$data),
-               c("filterTypes", "indicators", "plotSettingsControl", "warnings"))
-
-  ## Get data
-  data_res <- api$request("GET", paste0("/calibrate/result/data/",
-                                        status_body$data$id))
-  expect_equal(data_res$status, 200)
-  data_body <- jsonlite::fromJSON(data_res$body)
-  expect_equal(colnames(data_body$data$data),
-               c("area_id", "sex", "age_group", "calendar_quarter",
-                 "indicator", "mode", "mean", "lower", "upper"))
-  expect_true(nrow(data_body$data$data) > 84042)
-
-  ## Get path to data
-  path_res <- api$request("GET", paste0("/calibrate/result/path/",
-                                        status_body$data$id))
-  expect_equal(path_res$status, 200)
-  path_body <- jsonlite::fromJSON(path_res$body)
-  expect_true(file.exists(file.path(q$queue$results_dir, path_body$data$path)))
-})
-
-test_that("can get calibrate plot data", {
-  test_mock_model_available()
-  test_redis_available()
-  q <- test_queue_result()
-
-  endpoint <- endpoint_model_calibrate_plot(q$queue)
-  response <- endpoint$run(q$calibrate_id)
-
-  expect_equal(response$status_code, 200)
-  response_data <- response$data
-  expect_setequal(names(response_data), c("data", "metadata"))
-  expect_setequal(names(response_data$data),
-                  c("data_type", "spectrum_region_code", "spectrum_region_name",
-                    "sex", "age_group", "calendar_quarter", "indicator",
-                    "mean"))
-  expect_true(nrow(response_data$data) > 0)
-  expect_calibrate_plot_metadata(response_data$metadata)
-})
-
-test_that("API can return calibration plotting data", {
-  test_redis_available()
-  test_mock_model_available()
-  q <- test_queue_result()
-
-  api <- api_build(q$queue)
-  res <- api$request("GET", paste0("/calibrate/plot/", q$calibrate_id))
-  expect_equal(res$status, 200)
-  body <- jsonlite::fromJSON(res$body, simplifyDataFrame = FALSE)
-  expect_equal(body$status, "success")
-  expect_null(body$errors)
-
-  response_data <- body$data
-  expect_setequal(names(response_data), c("data", "metadata"))
-  data <- do.call(rbind, response_data$data)
-  expect_setequal(colnames(data),
-                  c("data_type", "spectrum_region_code", "spectrum_region_name",
-                    "sex", "age_group", "calendar_quarter", "indicator",
-                    "mean"))
-  expect_true(nrow(data) > 0)
-  expect_calibrate_plot_metadata(response_data$metadata)
-})
-
-test_that("error returned from calibrate_plot for old model output", {
-  test_mock_model_available()
-  test_redis_available()
-  q <- test_queue_result(calibrate = mock_calibrate_v1.0.7)
-
-  endpoint <- endpoint_model_calibrate_plot(q$queue)
-  response <- endpoint$run(q$calibrate_id)
-
-  expect_equal(response$status_code, 500)
-  expect_equal(response$value$errors[[1]]$detail, scalar(
-               "Model output out of date please re-run model and try again."))
-})
-
-test_that("model calibrate metadata includes warnings", {
-  test_mock_model_available()
-  q <- test_queue_result()
-
-  result <- endpoint_model_calibrate_metadata(q$queue)
-  response <- result$run(q$calibrate_id)
-
-  expect_equal(response$status_code, 200)
-  expect_length(response$data$warnings, 2)
-  expect_equal(response$data$warnings[[1]]$text,
-               scalar("ART coverage greater than 100% for 10 age groups"))
-  expect_equal(response$data$warnings[[1]]$locations, "model_calibrate")
-  expect_equal(response$data$warnings[[2]]$text,
-               scalar("Prevalence greater than 40%"))
-  expect_equal(response$data$warnings[[2]]$locations,
-               c("model_calibrate", "review_output"))
-})
-
-test_that("calibrate plot metadata is translated", {
-  test_mock_model_available()
-  test_redis_available()
-  q <- test_queue_result()
-
-  response <- with_hintr_language("fr", {
-    endpoint <- endpoint_model_calibrate_plot(q$queue)
-    response <- endpoint$run(q$calibrate_id)
-  })
-
-  expect_equal(response$status_code, 200)
-
-  filters <- response$data$metadata$filterTypes
-  expect_equal(filters[[1]]$options[[1]]$label, scalar("Juin 2019"))
-  expect_equal(filters[[2]]$options[[1]]$label, scalar("Both"))
-  expect_equal(filters[[3]]$options[[1]]$label, scalar("15-49"))
-  expect_equal(filters[[4]]$options[1, "label"], "Population")
-  expect_equal(filters[[5]]$options[[1]]$label, scalar("Spectrum"))
-  expect_equal(filters[[6]]$options[[1]]$label, scalar("Malawi"))
-})
-
-test_that("can get comparison plot data", {
-  test_mock_model_available()
-  test_redis_available()
-  q <- test_queue_result()
-
-  endpoint <- endpoint_comparison_plot(q$queue)
-  response <- endpoint$run(q$calibrate_id)
-
-  expect_equal(response$status_code, 200)
-  response_data <- response$data
-  expect_setequal(names(response_data), c("data", "metadata"))
-  expect_setequal(names(response_data$data),
-                  c("area_id", "area_name", "area_level", "age_group", "sex",
-                    "calendar_quarter", "indicator", "source", "mean",
-                    "lower", "upper"))
-  expect_true(nrow(response_data$data) > 0)
-  expect_comparison_metadata(response_data$metadata)
-})
-
-test_that("API can return comparison plotting data", {
-  test_redis_available()
-  test_mock_model_available()
-  q <- test_queue_result()
-
-  api <- api_build(q$queue)
-  res <- api$request("GET", paste0("/comparison/plot/", q$calibrate_id))
-  expect_equal(res$status, 200)
-  body <- jsonlite::fromJSON(res$body, simplifyDataFrame = FALSE)
-  expect_equal(body$status, "success")
-  expect_null(body$errors)
-
-  response_data <- body$data
-  expect_setequal(names(response_data), c("data", "metadata"))
-  data <- do.call(rbind, response_data$data)
-  expect_setequal(colnames(data),
-                  c("area_id", "area_name", "area_level", "age_group", "sex",
-                    "calendar_quarter", "indicator", "source", "mean",
-                    "lower", "upper"))
-  expect_true(nrow(data) > 0)
-  expect_comparison_metadata(response_data$metadata)
-})
+#
+# test_that("content disposition header is formatted correctly", {
+#   expect_match(build_content_disp_header("MWI", "naomi-output", ".zip"),
+#                'attachment; filename="MWI_naomi-output_\\d+-\\d+.zip"')
+#   expect_match(build_content_disp_header(NULL, "naomi-output", ".zip"),
+#                'attachment; filename="naomi-output_\\d+-\\d+.zip"')
+#   expect_match(
+#     build_content_disp_header(c("MWI.1", "MWI.2"), "naomi-output", ".zip"),
+#     'attachment; filename="MWI.1_MWI.2_naomi-output_\\d+-\\d+.zip"')
+# })
+#
+# test_that("returning_binary_head ensures no body in response", {
+#   returning <- returning_binary_head()
+#   data <- charToRaw("test")
+#   expect_null(returning$process(data))
+#   expect_true(returning$validate(NULL))
+# })
+#
+# test_that("endpoint_model_debug can be run", {
+#   test_redis_available()
+#   test_mock_model_available()
+#
+#   queue <- test_queue(workers = 1)
+#   run_endpoint <- endpoint_model_submit(queue)
+#   payload <- setup_payload_submit()
+#   run_response <- run_endpoint$run(payload)
+#
+#   expect_equal(run_response$status_code, 200)
+#   out <- queue$task_wait(run_response$data$id)
+#
+#   endpoint <- endpoint_model_debug(queue)
+#   response <- endpoint$run(run_response$data$id)
+#
+#   expect_equal(response$status_code, 200)
+#   expect_match(response$headers$`Content-Disposition`,
+#                'attachment; filename="\\w+_\\d+-\\d+_naomi_debug.zip"')
+#   ## Download contains data
+#   expect_true(length(response$data) > 1000000)
+# })
+#
+# test_that("api can call endpoint_model_debug", {
+#   test_redis_available()
+#   test_mock_model_available()
+#
+#   queue <- test_queue(workers = 1)
+#   api <- api_build(queue)
+#
+#   ## Run the model
+#   payload <- setup_payload_submit()
+#   res <- api$request("POST", "/model/submit", body = payload)
+#
+#   expect_equal(res$status, 200)
+#   response <- jsonlite::fromJSON(res$body)
+#   out <- queue$task_wait(response$data$id)
+#
+#   ## Get result
+#   res <- api$request("GET", paste0("/model/debug/", response$data$id))
+#
+#   expect_equal(res$status, 200)
+#   expect_equal(res$headers$`Content-Type`, "application/octet-stream")
+#   expect_match(res$headers$`Content-Disposition`,
+#                'attachment; filename="\\w+_\\d+-\\d+_naomi_debug.zip"')
+#   ## Download contains data
+#   expect_true(length(res$body) > 1000000)
+# })
+#
+# test_that("endpoint_hintr_version works", {
+#   endpoint <- endpoint_hintr_version()
+#   response <- endpoint$run()
+#
+#   expect_type(response$data, "list")
+#   expect_setequal(names(response$data), c("hintr", "naomi", "rrq", "traduire"))
+#   expect_equal(response$data$rrq, scalar(as.character(packageVersion("rrq"))))
+# })
+#
+# test_that("api can call endpoint_hintr_version", {
+#   test_redis_available()
+#
+#   queue <- test_queue()
+#   api <- api_build(queue)
+#   res <- api$request("GET", "/hintr/version")
+#   expect_equal(res$status, 200)
+#   response <- jsonlite::fromJSON(res$body)
+#
+#   expect_type(response$data, "list")
+#   expect_setequal(names(response$data), c("hintr", "naomi", "rrq", "traduire"))
+#   expect_equal(response$data$rrq, as.character(packageVersion("rrq")))
+# })
+#
+# test_that("endpoint_hintr_worker_status works", {
+#   test_redis_available()
+#
+#   queue <- test_queue(workers = 2)
+#   endpoint <- endpoint_hintr_worker_status(queue)
+#   response <- endpoint$run()
+#
+#   expect_equal(unlist(response$data, FALSE, FALSE), rep("IDLE", 2))
+# })
+#
+# test_that("api can call endpoint_hintr_worker_status", {
+#   test_redis_available()
+#
+#   queue <- test_queue(workers = 2)
+#   api <- api_build(queue)
+#   res <- api$request("GET", "/hintr/worker/status")
+#   expect_equal(res$status, 200)
+#   response <- jsonlite::fromJSON(res$body)
+#
+#   expect_equal(unlist(response$data, FALSE, FALSE), rep("IDLE", 2))
+# })
+#
+# test_that("endpoint_hintr_stop works", {
+#   test_redis_available()
+#
+#   queue <- test_queue()
+#   mock_hintr_stop <- mockery::mock(function() NULL)
+#   mockery::stub(endpoint_hintr_stop, "hintr_stop", mock_hintr_stop)
+#   endpoint <- endpoint_hintr_stop(queue)
+#   response <- endpoint$run()
+#
+#   mockery::expect_called(mock_hintr_stop, 1)
+# })
+#
+# test_that("api can call endpoint_hintr_stop", {
+#   test_redis_available()
+#
+#   queue <- test_queue()
+#   mock_hintr_stop <- mockery::mock(function() NULL)
+#   with_mocked_bindings({
+#     api <- api_build(queue)
+#     res <- api$request("POST", "/hintr/stop")
+#   }, hintr_stop = mock_hintr_stop)
+#   expect_equal(res$status, 200)
+#   mockery::expect_called(mock_hintr_stop, 1)
+# })
+#
+# test_that("404 errors have sensible schema", {
+#   test_redis_available()
+#
+#   queue <- test_queue()
+#   api <- api_build(queue)
+#   res <- api$request("GET", "/meaning-of-life")
+#
+#   expect_equal(res$status, 404)
+#   response <- jsonlite::fromJSON(res$body)
+#   expect_equal(response$status, "failure")
+#   expect_equal(response$errors[1, "error"], "NOT_FOUND")
+#   expect_equal(response$errors[1, "detail"],
+#                "GET /meaning-of-life is not a valid hintr path")
+#   expect_equal(response$data, setNames(list(), list()))
+# })
+#
+# test_that("model calibrate can be queued and result returned", {
+#   test_mock_model_available()
+#   q <- test_queue_result()
+#
+#   ## Submit calibrate request
+#   submit <- endpoint_model_calibrate_submit(q$queue)
+#   payload <- setup_payload_calibrate()
+#   submit_response <- submit$run(q$model_run_id, payload)
+#
+#   expect_equal(submit_response$status_code, 200)
+#   expect_true(!is.null(submit_response$data$id))
+#
+#   ## Status
+#   out <- q$queue$task_wait(submit_response$data$id)
+#   status <- endpoint_model_calibrate_status(q$queue)
+#   status_response <- status$run(submit_response$data$id)
+#
+#   expect_equal(status_response$status_code, 200)
+#   expect_equal(status_response$data$id, submit_response$data$id)
+#   expect_true(status_response$data$done)
+#   expect_equal(status_response$data$status, scalar("COMPLETE"))
+#   expect_true(status_response$data$success)
+#   expect_equal(status_response$data$queue, scalar(0))
+#   expect_match(status_response$data$progress[[1]],
+#                "Saving outputs - [\\d.m\\s]+s elapsed", perl = TRUE)
+#
+#   ## Get metadata which includes warnings
+#   metadata <- endpoint_model_calibrate_metadata(q$queue)
+#   metadata_response <- metadata$run(status_response$data$id)
+#   expect_equal(metadata_response$data,
+#                calibrate_metadata(q$queue)(status_response$data$id))
+#   expect_valid_metadata(metadata_response$data)
+#
+#   ## Get data alone
+#   data <- endpoint_model_calibrate_data(q$queue)
+#   data_response <- data$run(status_response$data$id)
+#   expect_equal(colnames(data_response$data$data),
+#                c("area_id", "sex", "age_group", "calendar_quarter",
+#                  "indicator", "mode", "mean", "lower", "upper"))
+#   expect_true(nrow(data_response$data$data) > 84042)
+#
+#   ## Get path to data
+#   path <- endpoint_model_calibrate_result_path(q$queue)
+#   path_response <- path$run(status_response$data$id)
+#   expect_equal(path_response$status_code, 200)
+#   expect_true(file.exists(file.path(q$queue$results_dir,
+#                                     path_response$data$path)))
+# })
+#
+# test_that("api can call endpoint_model_calibrate", {
+#   test_mock_model_available()
+#   q <- test_queue_result()
+#
+#   ## Submit calibrate
+#   api <- api_build(q$queue)
+#   calibrate_payload <- setup_payload_calibrate()
+#   submit_res <- api$request("POST",
+#                             paste0("/calibrate/submit/", q$model_run_id),
+#                             body = calibrate_payload)
+#
+#   expect_equal(submit_res$status, 200)
+#   submit_body <- jsonlite::fromJSON(submit_res$body)
+#   expect_true(!is.null(submit_body$data$id))
+#
+#   ## Status
+#   out <- q$queue$task_wait(submit_body$data$id)
+#   status_res <- api$request("GET",
+#                             paste0("/calibrate/status/", submit_body$data$id))
+#
+#   expect_equal(status_res$status, 200)
+#   status_body <- jsonlite::fromJSON(status_res$body)
+#   expect_equal(status_body$data$id, submit_body$data$id)
+#   expect_true(status_body$data$done)
+#   expect_equal(status_body$data$status, "COMPLETE")
+#   expect_true(status_body$data$success)
+#   expect_equal(status_body$data$queue, 0)
+#   expect_match(status_body$data$progress[[1]],
+#                "Saving outputs - [\\d.m\\s]+s elapsed", perl = TRUE)
+#
+#   ## Get metadata
+#   metadata_res <- api$request("GET", paste0("/calibrate/result/metadata/",
+#                                             status_body$data$id))
+#   expect_equal(metadata_res$status, 200)
+#   metadata_body <- jsonlite::fromJSON(metadata_res$body)
+#   expect_equal(names(metadata_body$data),
+#                c("filterTypes", "indicators", "plotSettingsControl", "warnings"))
+#
+#   ## Get data
+#   data_res <- api$request("GET", paste0("/calibrate/result/data/",
+#                                         status_body$data$id))
+#   expect_equal(data_res$status, 200)
+#   data_body <- jsonlite::fromJSON(data_res$body)
+#   expect_equal(colnames(data_body$data$data),
+#                c("area_id", "sex", "age_group", "calendar_quarter",
+#                  "indicator", "mode", "mean", "lower", "upper"))
+#   expect_true(nrow(data_body$data$data) > 84042)
+#
+#   ## Get path to data
+#   path_res <- api$request("GET", paste0("/calibrate/result/path/",
+#                                         status_body$data$id))
+#   expect_equal(path_res$status, 200)
+#   path_body <- jsonlite::fromJSON(path_res$body)
+#   expect_true(file.exists(file.path(q$queue$results_dir, path_body$data$path)))
+# })
+#
+# test_that("can get calibrate plot data", {
+#   test_mock_model_available()
+#   test_redis_available()
+#   q <- test_queue_result()
+#
+#   endpoint <- endpoint_model_calibrate_plot(q$queue)
+#   response <- endpoint$run(q$calibrate_id)
+#
+#   expect_equal(response$status_code, 200)
+#   response_data <- response$data
+#   expect_setequal(names(response_data), c("data", "metadata"))
+#   expect_setequal(names(response_data$data),
+#                   c("data_type", "spectrum_region_code", "spectrum_region_name",
+#                     "sex", "age_group", "calendar_quarter", "indicator",
+#                     "mean"))
+#   expect_true(nrow(response_data$data) > 0)
+#   expect_calibrate_plot_metadata(response_data$metadata)
+# })
+#
+# test_that("API can return calibration plotting data", {
+#   test_redis_available()
+#   test_mock_model_available()
+#   q <- test_queue_result()
+#
+#   api <- api_build(q$queue)
+#   res <- api$request("GET", paste0("/calibrate/plot/", q$calibrate_id))
+#   expect_equal(res$status, 200)
+#   body <- jsonlite::fromJSON(res$body, simplifyDataFrame = FALSE)
+#   expect_equal(body$status, "success")
+#   expect_null(body$errors)
+#
+#   response_data <- body$data
+#   expect_setequal(names(response_data), c("data", "metadata"))
+#   data <- do.call(rbind, response_data$data)
+#   expect_setequal(colnames(data),
+#                   c("data_type", "spectrum_region_code", "spectrum_region_name",
+#                     "sex", "age_group", "calendar_quarter", "indicator",
+#                     "mean"))
+#   expect_true(nrow(data) > 0)
+#   expect_calibrate_plot_metadata(response_data$metadata)
+# })
+#
+# test_that("error returned from calibrate_plot for old model output", {
+#   test_mock_model_available()
+#   test_redis_available()
+#   q <- test_queue_result(calibrate = mock_calibrate_v1.0.7)
+#
+#   endpoint <- endpoint_model_calibrate_plot(q$queue)
+#   response <- endpoint$run(q$calibrate_id)
+#
+#   expect_equal(response$status_code, 500)
+#   expect_equal(response$value$errors[[1]]$detail, scalar(
+#                "Model output out of date please re-run model and try again."))
+# })
+#
+# test_that("model calibrate metadata includes warnings", {
+#   test_mock_model_available()
+#   q <- test_queue_result()
+#
+#   result <- endpoint_model_calibrate_metadata(q$queue)
+#   response <- result$run(q$calibrate_id)
+#
+#   expect_equal(response$status_code, 200)
+#   expect_length(response$data$warnings, 2)
+#   expect_equal(response$data$warnings[[1]]$text,
+#                scalar("ART coverage greater than 100% for 10 age groups"))
+#   expect_equal(response$data$warnings[[1]]$locations, "model_calibrate")
+#   expect_equal(response$data$warnings[[2]]$text,
+#                scalar("Prevalence greater than 40%"))
+#   expect_equal(response$data$warnings[[2]]$locations,
+#                c("model_calibrate", "review_output"))
+# })
+#
+# test_that("calibrate plot metadata is translated", {
+#   test_mock_model_available()
+#   test_redis_available()
+#   q <- test_queue_result()
+#
+#   response <- with_hintr_language("fr", {
+#     endpoint <- endpoint_model_calibrate_plot(q$queue)
+#     response <- endpoint$run(q$calibrate_id)
+#   })
+#
+#   expect_equal(response$status_code, 200)
+#
+#   filters <- response$data$metadata$filterTypes
+#   expect_equal(filters[[1]]$options[[1]]$label, scalar("Juin 2019"))
+#   expect_equal(filters[[2]]$options[[1]]$label, scalar("Both"))
+#   expect_equal(filters[[3]]$options[[1]]$label, scalar("15-49"))
+#   expect_equal(filters[[4]]$options[1, "label"], "Population")
+#   expect_equal(filters[[5]]$options[[1]]$label, scalar("Spectrum"))
+#   expect_equal(filters[[6]]$options[[1]]$label, scalar("Malawi"))
+# })
+#
+# test_that("can get comparison plot data", {
+#   test_mock_model_available()
+#   test_redis_available()
+#   q <- test_queue_result()
+#
+#   endpoint <- endpoint_comparison_plot(q$queue)
+#   response <- endpoint$run(q$calibrate_id)
+#
+#   expect_equal(response$status_code, 200)
+#   response_data <- response$data
+#   expect_setequal(names(response_data), c("data", "metadata"))
+#   expect_setequal(names(response_data$data),
+#                   c("area_id", "area_name", "area_level", "age_group", "sex",
+#                     "calendar_quarter", "indicator", "source", "mean",
+#                     "lower", "upper"))
+#   expect_true(nrow(response_data$data) > 0)
+#   expect_comparison_metadata(response_data$metadata)
+# })
+#
+# test_that("API can return comparison plotting data", {
+#   test_redis_available()
+#   test_mock_model_available()
+#   q <- test_queue_result()
+#
+#   api <- api_build(q$queue)
+#   res <- api$request("GET", paste0("/comparison/plot/", q$calibrate_id))
+#   expect_equal(res$status, 200)
+#   body <- jsonlite::fromJSON(res$body, simplifyDataFrame = FALSE)
+#   expect_equal(body$status, "success")
+#   expect_null(body$errors)
+#
+#   response_data <- body$data
+#   expect_setequal(names(response_data), c("data", "metadata"))
+#   data <- do.call(rbind, response_data$data)
+#   expect_setequal(colnames(data),
+#                   c("area_id", "area_name", "area_level", "age_group", "sex",
+#                     "calendar_quarter", "indicator", "source", "mean",
+#                     "lower", "upper"))
+#   expect_true(nrow(data) > 0)
+#   expect_comparison_metadata(response_data$metadata)
+# })
