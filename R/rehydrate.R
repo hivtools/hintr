@@ -34,9 +34,37 @@ rehydrate_submit <- function(queue) {
 rehydrate_result <- function(queue) {
   function(id) {
     res <- queue$result(id)
-    if (is_error(res)) {
-      hintr_error(api_error_msg(res), "PROJECT_REHYDRATE_FAILED")
-    }
+    validate_rehydrate_result(queue, res)
     res
   }
 }
+
+validate_rehydrate_result <- function(queue, res) {
+  if (is_error(res)) {
+    hintr_error(api_error_msg(res), "PROJECT_REHYDRATE_FAILED")
+  }
+  state <- jsonlite::fromJSON(res$state, simplifyVector = FALSE)
+
+  ## Input files must exist on disk
+  lapply(names(state$datasets), function(dataset_name) {
+    data_path <- file.path(queue$inputs_dir,
+                           state$datasets[[dataset_name]]$path)
+    if (!file.exists(data_path)) {
+      hintr_error(t_("REHYDRATE_MISSING_INPUT_FILE",
+                     list(type = file_types_label(dataset_name))),
+                  "PROJECT_REHYDRATE_FAILED")
+    }
+  })
+
+  ## IDs must exist in redis
+  if (!queue$exists(state$model_fit$id)) {
+    hintr_error(t_("REHYDRATE_MODEL_FIT_ID_UNKNOWN"),
+                "PROJECT_REHYDRATE_FAILED")
+  }
+  if (!queue$exists(state$calibrate$id)) {
+    hintr_error(t_("REHYDRATE_CALIBRATE_ID_UNKNOWN"),
+                "PROJECT_REHYDRATE_FAILED")
+  }
+  invisible(TRUE)
+}
+

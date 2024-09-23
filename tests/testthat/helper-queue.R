@@ -52,8 +52,16 @@ create_blocking_worker <- function(controller, worker_name = NULL) {
 
 test_queue_result <- function(model = mock_model,
                               calibrate = mock_calibrate,
-                              clone_output = TRUE) {
-  queue <- Queue$new(workers = 1, timeout = 300, delete_data_on_exit = TRUE)
+                              clone_output = TRUE,
+                              inputs_dir = NULL) {
+  queue <- Queue$new(workers = 1, timeout = 300,
+                     delete_data_on_exit = TRUE,
+                     inputs_dir = inputs_dir)
+  ## Replace exists function so when testing rehydrate we avoid
+  ## validation issues
+  unlockBinding("exists", queue)
+  queue$exists <- function(id) TRUE
+  lockBinding("exists", queue)
   withr::defer_parent({
     message("cleaning up workers")
     queue$cleanup()

@@ -11,27 +11,27 @@
   "state": {
     "datasets": {
       "pjnz":{
-        "path":"72A9B1F58AAA743ADA64C6AE985CF228.pjnz",
+        "path":"Malawi2019.PJNZ",
         "filename":"demo_mwi2019.pjnz"
       },
       "population":{
-        "path":"651105353D7153381ED29363DF0D772F.csv",
+        "path":"population.csv",
         "filename":"demo_population_agesex.csv"
       },
       "shape":{
-        "path":"EBE533976BFAF0CABCA2C2E1B611B9C7.geojson",
+        "path":"malawi.geojson",
         "filename":"demo_areas.geojson"
       },
       "survey":{
-        "path":"F669CA9AA38A3993B5A9E9D3EB717C7D.csv",
+        "path":"survey.csv",
         "filename":"demo_survey_hiv_indicators.csv"
       },
       "programme":{
-        "path":"8301300AB39BE177FA593571B9DD94C4.csv",
+        "path":"programme.csv",
         "filename":"demo_art_number.csv"
       },
       "anc":{
-        "path":"E6323AAEB045D31E4A267398F669CF20.csv",
+        "path":"anc.csv",
         "filename":"demo_anc_testing.csv"
       }
     },
