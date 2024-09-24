@@ -1,7 +1,10 @@
+# hintr 1.2.2
+
+* Fix issue where if shape file was uploaded with no `display` property it was raising an error when fetching input metadata. Now if no `display` property is set, it will include it in the returned metadata.
+
 # hintr 1.2.1
 
 * Add new endpoint `/download/result/path/<id>` to return path to the download file on disk
-
 
 # hintr 1.2.0
 
