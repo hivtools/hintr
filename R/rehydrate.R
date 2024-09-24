@@ -47,8 +47,11 @@ validate_rehydrate_result <- function(queue, res) {
 
   ## Input files must exist on disk
   lapply(names(state$datasets), function(dataset_name) {
-    data_path <- file.path(queue$inputs_dir,
-                           state$datasets[[dataset_name]]$path)
+    data_path <- state$datasets[[dataset_name]]$path
+    if (!is.null(queue$inputs_dir)) {
+      data_path <- file.path(queue$inputs_dir, data_path)
+    }
+
     if (!file.exists(data_path)) {
       hintr_error(t_("REHYDRATE_MISSING_INPUT_FILE",
                      list(type = file_types_label(dataset_name))),

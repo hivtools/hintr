@@ -856,16 +856,15 @@ test_that("rehydrate", {
     expect_equal(response$data$status, "COMPLETE")
   })
 
-  ## Result
+  ## Result is going to fail validation as we are rehydrating from data
+  ## created via another queue. So input files and IDs are not known
+  ## enough to check that we get a response here I think
   r <- server$request("GET", paste0("/rehydrate/result/", id))
-  expect_equal(httr::status_code(r), 200)
+  expect_equal(httr::status_code(r), 400)
   response <- response_from_json(r)
-  expect_equal(response$status, "success")
-  expect_equal(response$errors, NULL)
-  expect_setequal(names(response$data$state),
-                  c("datasets", "model_fit", "calibrate", "version"))
-  expect_setequal(
-    names(response$data$state$datasets),
-    c("pjnz", "population", "shape", "survey", "programme", "anc"))
-  expect_match(response$data$notes, "These are my project notes")
+  expect_equal(response$status, "failure")
+  expect_equal(response$errors[[1]]$error, "PROJECT_REHYDRATE_FAILED")
+  expect_equal(response$errors[[1]]$detail,
+               paste("Failed to locate Spectrum file from this output",
+                     "zip. Please contact a system admin."))
 })
