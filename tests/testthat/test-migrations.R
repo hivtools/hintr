@@ -169,7 +169,7 @@ test_that("all tasks can be migrated", {
 test_that("only completed tasks are migrated", {
   test_mock_model_available()
   ## Setup errored model run
-  queue <- MockQueue$new()
+  queue <- MockQueue$new(workers = 1)
   payload <- setup_payload_submit()
   model_submit <- submit_model(queue)
   response <- model_submit(payload)

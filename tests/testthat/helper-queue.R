@@ -25,8 +25,10 @@ MockQueue <- R6::R6Class(
   )
 )
 
-test_queue <- function(workers = 0) {
-  queue <- Queue$new(workers = workers, timeout = 300)
+test_queue <- function(workers = 0, delete_data_on_exit = TRUE) {
+  queue <- Queue$new(workers = workers,
+                     timeout = 300,
+                     delete_data_on_exit = delete_data_on_exit)
   withr::defer_parent({
     message("cleaning up workers")
     queue$cleanup()
@@ -48,9 +50,10 @@ create_blocking_worker <- function(controller, worker_name = NULL) {
                        worker_id = worker_name)
 }
 
-test_queue_result <- function(model = mock_model, calibrate = mock_calibrate,
+test_queue_result <- function(model = mock_model,
+                              calibrate = mock_calibrate,
                               clone_output = TRUE) {
-  queue <- Queue$new(workers = 1, timeout = 300)
+  queue <- Queue$new(workers = 1, timeout = 300, delete_data_on_exit = TRUE)
   withr::defer_parent({
     message("cleaning up workers")
     queue$cleanup()
@@ -141,8 +144,7 @@ setup_prerun_queue <- function() {
   )
 
   list(
-    queue = Queue$new(workers = 0,
-                      inputs_dir = inputs_dir,
+    queue = Queue$new(inputs_dir = inputs_dir,
                       results_dir = output_dir),
     payload = jsonlite::toJSON(payload)
   )
