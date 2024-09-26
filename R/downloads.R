@@ -31,6 +31,9 @@ download <- function(model_output, type, path_results, input, language = NULL) {
   } else if (type == "agyw") {
     out <- naomi::hintr_prepare_agyw_download(model_output, input$pjnz,
                                               download_path)
+  } else if (type == "coarse_output") {
+    hintr_error("Download err beep boop!",
+                "FAILED_DOWNLOAD")
   } else {
     func <- switch(type,
                    coarse_output = naomi::hintr_prepare_coarse_age_group_download,
