@@ -136,12 +136,13 @@ review_input_filter_metadata <- function(input) {
   area_level_options <- get_level_options(json)
   default_area_level <- list(
     area_level_options[[length(area_level_options)]]$id)
-  time_series_settings <- get_time_series_settings(types, default_area_level)
+  filter_types <- get_review_input_filter_types(input, types, area_level_options)
+  time_series_settings <- get_time_series_settings(types, filter_types)
 
   if (is.null(time_series_settings)) {
     return(
       list(
-        filterTypes = get_review_input_filter_types(input, types, area_level_options),
+        filterTypes = filter_types,
         indicators = get_review_input_indicators(types, input$iso3),
         plotSettingsControl = list(
           inputChoropleth = get_input_choropleth_settings(types, default_area_level)
@@ -150,7 +151,7 @@ review_input_filter_metadata <- function(input) {
     )
   }
   list(
-    filterTypes = get_review_input_filter_types(input, types, area_level_options),
+    filterTypes = filter_types,
     indicators = get_review_input_indicators(types, input$iso3),
     plotSettingsControl = list(
       timeSeries = time_series_settings,
@@ -329,8 +330,8 @@ get_survey_map_filter_types <- function(input) {
   list(age_filter, survey_filter, sex_filter, indicator_filter)
 }
 
-get_time_series_settings <- function(types, default_area_level) {
-  options <- get_time_series_data_source_options(types, default_area_level)
+get_time_series_settings <- function(types, filter_types) {
+  options <- get_time_series_data_source_options(types, filter_types)
   if (length(options) == 0) {
     return(NULL)
   }
@@ -345,9 +346,18 @@ get_time_series_settings <- function(types, default_area_level) {
   )
 }
 
-get_time_series_data_source_options <- function(types, default_area_level) {
+get_min_area_level_from_filter_types <- function(filter_types, filter_id) {
+  filter_type_ids <- vcapply(filter_types, "[[", "id")
+  programme_area_level_opts <- filter_types[
+    filter_type_ids == filter_id][[1]]$options
+  programme_area_level_opts[[length(programme_area_level_opts)]]$id
+}
+
+get_time_series_data_source_options <- function(types, filter_types) {
   options <- list()
   if ("programme" %in% types) {
+    programme_default_area_level <- get_min_area_level_from_filter_types(
+      filter_types, "time_series_programme_area_level")
     options <- append(options, list(list(
       id = scalar("programme"),
       label = scalar(t_("REVIEW_INPUT_PROGRAMME")),
@@ -371,12 +381,14 @@ get_time_series_data_source_options <- function(types, default_area_level) {
         ),
         setMultiple = c("quarter"),
         setFilterValues = list(
-          detail = default_area_level
+          detail = list(programme_default_area_level)
         )
       )
     )))
   }
   if ("anc" %in% types) {
+    anc_default_area_level <- get_min_area_level_from_filter_types(
+      filter_types, "time_series_anc_area_level")
     options <- append(options, list(list(
       id = scalar("anc"),
       label = scalar(t_("REVIEW_INPUT_ANC")),
@@ -399,7 +411,7 @@ get_time_series_data_source_options <- function(types, default_area_level) {
           )
         ),
         setFilterValues = list(
-          detail = default_area_level
+          detail = list(anc_default_area_level)
         )
       )
     )))
