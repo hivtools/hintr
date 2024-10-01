@@ -49,7 +49,7 @@ validate_rehydrate_result <- function(queue, res) {
   lapply(names(state$datasets), function(dataset_name) {
     data_path <- state$datasets[[dataset_name]]$path
     if (!is.null(queue$inputs_dir)) {
-      data_path <- file.path(queue$inputs_dir, data_path)
+      data_path <- file.path(queue$inputs_dir, basename(data_path))
     }
 
     if (!file.exists(data_path)) {
