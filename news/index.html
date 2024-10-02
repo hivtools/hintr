@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hintr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.3</span>
       </span>
     </div>
 
@@ -42,6 +42,13 @@
     </div>
 
     <div class="section level2">
+<h2 class="page-header" data-toc-text="1.2.3" id="hintr-123">hintr 1.2.3<a class="anchor" aria-label="anchor" href="#hintr-123"></a></h2>
+<ul><li>Add checks that a rehydrated project is valid. It checks that:
+<ul><li>All input files exist on disk</li>
+<li>The model fit and calibrate IDs are known in redis</li>
+</ul></li>
+</ul></div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="1.2.2" id="hintr-122">hintr 1.2.2<a class="anchor" aria-label="anchor" href="#hintr-122"></a></h2>
 <ul><li>Fix issue where if shape file was uploaded with no <code>display</code> property it was raising an error when fetching input metadata. Now if no <code>display</code> property is set, it will include it in the returned metadata.</li>
 </ul></div>
@@ -52,10 +59,7 @@
 <li>Only removing the workers a queue creates by default</li>
 <li>Only deleting data if you explicitly opt in</li>
 </ul></li>
-</ul></div>
-    <div class="section level2">
-<h2 class="page-header" data-toc-text="1.2.1" id="hintr-121-1">hintr 1.2.1<a class="anchor" aria-label="anchor" href="#hintr-121-1"></a></h2>
-<ul><li>Add new endpoint <code>/download/result/path/&lt;id&gt;</code> to return path to the download file on disk</li>
+<li>Add new endpoint <code>/download/result/path/&lt;id&gt;</code> to return path to the download file on disk</li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.2.0" id="hintr-120">hintr 1.2.0<a class="anchor" aria-label="anchor" href="#hintr-120"></a></h2>
