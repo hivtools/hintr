@@ -93,8 +93,8 @@ get_default_id_label_map <- function(data, id_column, label_column = NULL,
   if (is.null(label_column)) {
     label_column <- id_column
   }
-  values <- unique(data[, c(id_column, label_column)])
-  if (length(unique(data[, id_column])) != nrow(values)) {
+  values <- dplyr::distinct(data, !!rlang::sym(id_column), !!rlang::sym(label_column))
+  if (nrow(dplyr::distinct(data, !!rlang::sym(id_column))) != nrow(values)) {
     stop(t_("INVALID_ID_LABEL",
             list(id_col = id_column, label_col = label_column)))
   }
@@ -112,8 +112,7 @@ get_default_id_label_map <- function(data, id_column, label_column = NULL,
 }
 
 get_area_hierarchy <- function(data) {
-  hierarchy_table <- unique(
-    data[, c("area_id", "parent_area_id", "area_sort_order", "area_name")])
+  hierarchy_table <- dplyr::distinct(data, area_id, parent_area_id, area_sort_order, area_name)
   colnames(hierarchy_table) <- c("id", "parent_id", "sort_order", "label")
   construct_tree(hierarchy_table)
 }
