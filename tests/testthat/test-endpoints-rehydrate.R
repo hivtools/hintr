@@ -187,8 +187,7 @@ test_that("rehydrate throws error if model fit or calibrate IDs are unknown", {
   state$datasets[["survey"]]$path <- "survey.csv"
   state$datasets[["programme"]]$path <- "programme.csv"
   state$datasets[["anc"]]$path <- "anc.csv"
-  out$state <- jsonlite::toJSON(state)
-
+  out$state <- jsonlite::toJSON(state, auto_unbox = TRUE)
 
   mock_exists <- function(id) {
     FALSE
