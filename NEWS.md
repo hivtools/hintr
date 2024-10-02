@@ -1,3 +1,9 @@
+# hintr 1.2.3
+
+* Add checks that a rehydrated project is valid. It checks that:
+   * All input files exist on disk
+   * The model fit and calibrate IDs are known in redis
+
 # hintr 1.2.2
 
 * Fix issue where if shape file was uploaded with no `display` property it was raising an error when fetching input metadata. Now if no `display` property is set, it will include it in the returned metadata.
@@ -8,9 +14,6 @@
    * Not starting workers automatically when you create a queue
    * Only removing the workers a queue creates by default
    * Only deleting data if you explicitly opt in
-
-# hintr 1.2.1
-
 * Add new endpoint `/download/result/path/<id>` to return path to the download file on disk
 
 # hintr 1.2.0

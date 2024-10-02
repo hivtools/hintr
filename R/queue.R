@@ -166,6 +166,10 @@ Queue <- R6::R6Class(
       rrq::rrq_task_cancel(id, controller = self$controller)
     },
 
+    exists = function(id) {
+      rrq::rrq_task_exists(id, controller = self$controller)
+    },
+
     ## Not part of the api exposed functions, used in tests
     remove = function(id) {
       rrq::rrq_task_delete(id, controller = self$controller)

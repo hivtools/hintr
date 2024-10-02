@@ -15,7 +15,7 @@ test_that("rehydrate returns json", {
 
 test_that("rehydrate endpoint returns json", {
   test_mock_model_available()
-  q <- test_queue_result()
+  q <- test_queue_result(inputs_dir = normalizePath(test_path("testdata")))
 
   ## Submit rehydrate request
   payload <- setup_payload_rehydrate()
@@ -54,7 +54,7 @@ test_that("rehydrate endpoint returns json", {
 test_that("api can call spectrum download", {
   test_redis_available()
   test_mock_model_available()
-  q <- test_queue_result()
+  q <- test_queue_result(inputs_dir = normalizePath(test_path("testdata")))
   api <- api_build(q$queue)
 
   ## Submit rehydrate request
@@ -95,10 +95,10 @@ test_that("api can call spectrum download", {
 
 test_that("rehydrate returns useful error if cannot rehydrate from zip", {
   test_mock_model_available()
-  q <- test_queue_result()
+  q <- test_queue_result(inputs_dir = normalizePath(test_path("testdata")))
 
   ## Submit rehydrate request which will error
-  payload <- setup_payload_rehydrate("testdata/Malawi2019.PJNZ")
+  payload <- setup_payload_rehydrate(test_path("testdata/Botswana2018.PJNZ"))
   submit <- endpoint_rehydrate_submit(q$queue)
   submit_response <- submit$run(payload)
   expect_equal(submit_response$status_code, 200)
@@ -118,7 +118,7 @@ test_that("rehydrate returns useful error if cannot rehydrate from zip", {
 
 test_that("rehydrate returns useful error when submission fails", {
   test_mock_model_available()
-  q <- test_queue_result()
+  q <- test_queue_result(inputs_dir = normalizePath(test_path("testdata")))
 
   payload <- setup_payload_rehydrate("missing/file.zip")
   submit <- endpoint_rehydrate_submit(q$queue)
@@ -154,4 +154,78 @@ test_that("trying to rehydrate with no notes does not error", {
     c("pjnz", "population", "shape", "survey", "programme", "anc"))
 
   expect_null(out$notes)
+})
+
+test_that("rehydrate throws error if input files are unknown", {
+  payload <- setup_payload_rehydrate()
+  input <- jsonlite::fromJSON(payload)
+  out <- rehydrate(input$file)
+
+  mock_queue <- list(
+    inputs_dir = tempdir(),
+    result = function(id) out
+  )
+
+  get_rehydrate_result <- rehydrate_result(mock_queue)
+
+  error <- expect_error(get_rehydrate_result("123"))
+  expect_equal(error$data[[1]]$error, scalar("PROJECT_REHYDRATE_FAILED"))
+  expect_match(error$data[[1]]$detail,
+               scalar("Unable to load output zip, input files not found\\."))
+  expect_equal(error$status_code, 400)
+})
+
+test_that("rehydrate throws error if model fit or calibrate IDs are unknown", {
+  payload <- setup_payload_rehydrate()
+  input <- jsonlite::fromJSON(payload)
+  out <- rehydrate(input$file)
+  state <- jsonlite::fromJSON(out$state, simplifyVector = FALSE)
+  state$datasets[["pjnz"]]$path <- "Malawi2019.PJNZ"
+  state$datasets[["population"]]$path <- "population.csv"
+  state$datasets[["shape"]]$path <- "malawi.geojson"
+  state$datasets[["survey"]]$path <- "survey.csv"
+  state$datasets[["programme"]]$path <- "programme.csv"
+  state$datasets[["anc"]]$path <- "anc.csv"
+  out$state <- jsonlite::toJSON(state, auto_unbox = TRUE)
+
+  mock_exists <- function(id) {
+    FALSE
+  }
+  mock_queue <- list(
+    inputs_dir = normalizePath(test_path("testdata")),
+    result = function(id) out,
+    exists = mock_exists
+  )
+
+  get_rehydrate_result <- rehydrate_result(mock_queue)
+
+  error <- expect_error(get_rehydrate_result("123"))
+  expect_equal(error$data[[1]]$error, scalar("PROJECT_REHYDRATE_FAILED"))
+  expect_match(error$data[[1]]$detail,
+               scalar(paste("Unable to load output zip, model",
+                            "fit not generated on the web app\\.")))
+  expect_equal(error$status_code, 400)
+
+  ## Missing calibrate ID
+  mock_exists <- function(id) {
+    if (id == state$model_fit$id) {
+      TRUE
+    } else {
+      FALSE
+    }
+  }
+  mock_queue <- list(
+    inputs_dir = normalizePath(test_path("testdata")),
+    result = function(id) out,
+    exists = mock_exists
+  )
+
+  get_rehydrate_result <- rehydrate_result(mock_queue)
+
+  error <- expect_error(get_rehydrate_result("123"))
+  expect_equal(error$data[[1]]$error, scalar("PROJECT_REHYDRATE_FAILED"))
+  expect_match(error$data[[1]]$detail,
+               scalar(paste("Unable to load output zip, model calibrate",
+                            "not generated on the web app\\.")))
+  expect_equal(error$status_code, 400)
 })
