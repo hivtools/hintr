@@ -53,8 +53,7 @@ validate_rehydrate_result <- function(queue, res) {
     }
 
     if (!file.exists(data_path)) {
-      hintr_error(t_("REHYDRATE_MISSING_INPUT_FILE",
-                     list(type = file_types_label(dataset_name))),
+      hintr_error(t_("REHYDRATE_MISSING_INPUT_FILE"),
                   "PROJECT_REHYDRATE_FAILED")
     }
   })

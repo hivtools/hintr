@@ -864,7 +864,6 @@ test_that("rehydrate", {
   response <- response_from_json(r)
   expect_equal(response$status, "failure")
   expect_equal(response$errors[[1]]$error, "PROJECT_REHYDRATE_FAILED")
-  expect_equal(response$errors[[1]]$detail,
-               paste("Failed to locate Spectrum file from this output",
-                     "zip. Please contact a system admin."))
+  expect_match(response$errors[[1]]$detail,
+               "Unable to load output zip, input files not found\\.")
 })

@@ -171,8 +171,7 @@ test_that("rehydrate throws error if input files are unknown", {
   error <- expect_error(get_rehydrate_result("123"))
   expect_equal(error$data[[1]]$error, scalar("PROJECT_REHYDRATE_FAILED"))
   expect_match(error$data[[1]]$detail,
-               scalar(paste("Failed to locate Spectrum file from this output",
-                            "zip. Please contact a system admin.")))
+               scalar("Unable to load output zip, input files not found\\."))
   expect_equal(error$status_code, 400)
 })
 
@@ -203,8 +202,8 @@ test_that("rehydrate throws error if model fit or calibrate IDs are unknown", {
   error <- expect_error(get_rehydrate_result("123"))
   expect_equal(error$data[[1]]$error, scalar("PROJECT_REHYDRATE_FAILED"))
   expect_match(error$data[[1]]$detail,
-               scalar(paste("Failed to find model fit result from this output",
-                            "zip. Please contact a system admin.")))
+               scalar(paste("Unable to load output zip, model",
+                            "fit not generated on the web app\\.")))
   expect_equal(error$status_code, 400)
 
   ## Missing calibrate ID
@@ -226,7 +225,7 @@ test_that("rehydrate throws error if model fit or calibrate IDs are unknown", {
   error <- expect_error(get_rehydrate_result("123"))
   expect_equal(error$data[[1]]$error, scalar("PROJECT_REHYDRATE_FAILED"))
   expect_match(error$data[[1]]$detail,
-               scalar(paste("Failed to find calibration result from this",
-                            "output zip. Please contact a system admin.")))
+               scalar(paste("Unable to load output zip, model calibrate",
+                            "not generated on the web app\\.")))
   expect_equal(error$status_code, 400)
 })

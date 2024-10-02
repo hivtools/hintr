@@ -172,14 +172,3 @@ r6_private <- function(x) {
 api_error_msg <- function(e) {
   cli::ansi_strip(conditionMessage(e))
 }
-
-file_types_label <- function(type) {
-  switch(type,
-         pjnz = t_("INPUT_FILE_PJNZ"),
-         population = t_("INPUT_FILE_POPULATION"),
-         shape = t_("INPUT_FILE_SHAPE"),
-         survey = t_("INPUT_FILE_SURVEY"),
-         programme = t_("INPUT_FILE_PROGRAMME"),
-         anc = t_("INPUT_FILE_ANC"),
-         vmmc = t_("INPUT_FILE_VMMC"))
-}
