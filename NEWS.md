@@ -1,3 +1,9 @@
+# hintr 1.2.0
+
+* Update plot metadata format to make it more generic and generally usable
+* Add a new endpoint `/review-input/metadata` to return metadata for all input plots
+* Remove `/meta/plotting` and `/meta/plotting<iso3>` endpoints as these are no longer used
+
 # hintr 1.1.16
 
 * Add an optional arg to API startup to turn on a health-check. If set, the interval after which the next time the redis connection is used the connection will be reset. 0 for no reconnection. This is needed for running on cloud services as they close idle tcp connections after a set time. On Azure it if 4 mins, so we need to the client to be able to reconnect if this interval has passed.
