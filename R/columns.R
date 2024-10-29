@@ -2,7 +2,9 @@
 # full aggregated programme data
 get_programme_time_series_columns_from_metadata <- function(input, area_level_options) {
   metadata <- naomi::get_art_metadata(input$data$programme$path)
-  
+  cq <- metadata$calendar_quarters
+  quarters <- unique(substr(cq, nchar(cq) - 1, nchar(cq)))
+
   list(
     list(
       id = scalar("plot_type"),
@@ -15,7 +17,7 @@ get_programme_time_series_columns_from_metadata <- function(input, area_level_op
       id = scalar("quarter"),
       column_id = scalar("quarter"),
       label = scalar(t_("INPUT_TIME_SERIES_COLUMN_QUARTER")),
-      values = get_quarter_id_label_map(metadata$calendar_quarters)
+      values = get_quarter_id_label_map(quarters)
     ),
     list(
       id = scalar("area_level"),
