@@ -54,7 +54,8 @@ jobs:
       - name: Clone Naomi
         uses: actions/checkout@v4
         with:
-          repository: mrc-ide/naomi@metadata-without-data
+          repository: mrc-ide/naomi
+          ref: metadata-without-data
           ## ${{ github.token }} is scoped to the current repository, so we
           ## need to provide our own PAT
           token: ${{ secrets.NAOMI_GH_PAT }}
