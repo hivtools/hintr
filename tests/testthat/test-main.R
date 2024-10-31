@@ -61,7 +61,10 @@ test_that("can run a single job using worker", {
   test_mock_model_available()
 
   queue_id <- hintr_queue_id(NULL)
-  queue <- test_queue(queue_id, workers = 0)
+  ## Don't delete data here as we are creating a worker separately which is
+  ## leading to some race condition on cleanup. Where it is trying to finalize
+  ## the worker after all redis data has been deleted terminating the R process.
+  queue <- test_queue(queue_id, workers = 0, delete_data_on_exit = FALSE)
   run_endpoint <- endpoint_model_submit(queue)
   payload <- setup_payload_submit()
   run_response <- run_endpoint$run(payload)
