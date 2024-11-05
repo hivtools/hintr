@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "indicator": {
+      "type": "string"
+    },
+    "area_name": {
+      "type": "string"
+    },
+    "year": {
+      "type": "number"
+    },
+    "group": {
+      "type": "string"
+    },
+    "data_source": {
+      "type": "string"
+    },
+    "value": {
+      "type": "number"
+    }
+  },
+  "additionalProperties": false,
+  "required": [ "indicator", "area_name", "year", "group",
+                "data_source", "value" ]
+}

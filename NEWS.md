@@ -1,3 +1,7 @@
+# hintr 1.2.4
+
+* Add a new endpoint `/chart-data/input-comparison` for returning data and metadata for input comparison barchart.
+
 # hintr 1.2.3
 
 * Add checks that a rehydrated project is valid. It checks that:

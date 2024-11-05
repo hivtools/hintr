@@ -165,7 +165,7 @@ get_review_input_filter_types <- function(input, types, area_level_options) {
     list(
       id = scalar("area"),
       column_id = scalar("area_id"),
-      optons = json_verbatim("null"),
+      options = json_verbatim("null"),
       use_shape_regions = scalar(TRUE)
     ),
     list(

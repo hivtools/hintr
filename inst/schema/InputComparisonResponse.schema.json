@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "data": { "$ref": "InputComparisonData.schema.json" },
+    "metadata": { "$ref": "InputComparisonMetadata.schema.json" },
+    "warnings": {
+      "type": "array",
+      "items": { "$ref": "Warning.schema.json"  }
+    }
+  },
+  "additionalProperties": false,
+  "required": [ "data", "metadata", "warnings" ]
+}

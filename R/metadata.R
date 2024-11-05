@@ -2,17 +2,6 @@ get_plotting_metadata <- function(...) {
   naomi::get_plotting_metadata(...)
 }
 
-get_barchart_metadata <- function(output, data_type = "output") {
-  metadata <- naomi::get_metadata()
-  metadata <- metadata[
-    metadata$data_type == data_type & metadata$plot_type == "barchart",
-    c("indicator", "value_column", "error_low_column", "error_high_column",
-      "indicator_column", "indicator_value", "indicator_sort_order",
-      "name", "scale", "accuracy", "format")
-  ]
-  metadata[order(metadata$indicator_sort_order), ]
-}
-
 get_indicator_metadata <- function(data_type, plot_type, data) {
   iso3 <- get_country_iso3(data$area_id)
   metadata <- get_plotting_metadata(iso3)

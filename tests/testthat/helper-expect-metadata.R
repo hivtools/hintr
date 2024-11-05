@@ -96,6 +96,34 @@ expect_comparison_metadata <- function(metadata) {
   expect_equal(filters[[7]], "source", ignore_attr = TRUE)
 }
 
+expect_input_comparison_metadata <- function(metadata) {
+  expect_valid_metadata(metadata)
+  expect_equal(names(metadata),
+               c("filterTypes", "indicators", "plotSettingsControl"))
+
+  if (is.data.frame(metadata$indicators)) {
+    metadata$indicators <- df_to_list(metadata$indicators)
+  }
+  expect_true(length(metadata$indicators) > 0)
+  cols_names <- names(metadata$indicators[[1]])
+  expect_setequal(cols_names,
+                  c("indicator", "value_column", "error_low_column",
+                    "error_high_column", "indicator_column", "indicator_value",
+                    "indicator_sort_order", "name", "min", "max", "colour",
+                    "invert_scale", "scale", "accuracy", "format"))
+
+  filters <- lapply(metadata$filterTypes, "[[",
+                    "column_id")
+  ## Ignore attr below as before serialization this will be wrapped in a scalar
+  ## class but afterwards it won't
+  expect_equal(filters[[1]], "indicator", ignore_attr = TRUE)
+  expect_equal(filters[[2]], "area_name", ignore_attr = TRUE)
+  expect_equal(filters[[3]], "year", ignore_attr = TRUE)
+  expect_equal(filters[[4]], "group", ignore_attr = TRUE)
+  expect_equal(filters[[5]], "group", ignore_attr = TRUE)
+  expect_equal(filters[[6]], "data_source", ignore_attr = TRUE)
+}
+
 mock_filter_types <- function(ids) {
   lapply(ids, function(id) {
     list(
@@ -174,7 +202,7 @@ validate_effects <- function(filter_types, effects, default_effects, context) {
   ## We could have A setFilters for all its settings and B and C do not
   ## contain a setFilters. In this case this test would fail for control B
   ## See https://github.com/mrc-ide/hintr/pull/523#discussion_r1751782412
-  ## for dicussion. This is fine for now, but relax this if we need to.
+  ## for discussion. This is fine for now, but relax this if we need to.
   expect(length(set_filters) > 0,
          paste(context, "setFilters must be set in plot setting or",
                "default settings."))

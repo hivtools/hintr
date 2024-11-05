@@ -109,5 +109,11 @@
     "FAILED_ZIP_REHYDRATE_SUBMIT": "Impossible de charger à partir de ce fichier zip, l'archive manque d'informations requises. Veuillez régénérer le zip de sortie et réessayer.",
     "TABLE_SEX_BY_AREA": "Sexe par zone",
     "TABLE_SEX_BY_5_YEAR_AGE_GROUP": "Sexe par tranche d'âge de 5 ans",
-    "VALIDATION_SHEET_MISSING": "Le fichier Excel téléchargé ne contient pas la feuille requise « {{sheet_name}} ». Veuillez vérifier la ressource et réessayer."
+    "VALIDATION_SHEET_MISSING": "Le fichier Excel téléchargé ne contient pas la feuille requise « {{sheet_name}} ». Veuillez vérifier la ressource et réessayer.",
+    "ART_CHILDREN": "Enfants (<15)",
+    "ART_ADULT_BOTH": "Adult tous les deux (15+)",
+    "ART_ADULT_MALE": "Hommes adultes (15+)",
+    "ART_ADULT_FEMALE": "Femmes adultes (15+)",
+    "ANC_ADULT_FEMALE": "Femmes adultes (15+)",
+    "INPUT_COMPARISON_GROUP_LABEL": "Group"
 }
