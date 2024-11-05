@@ -8,6 +8,17 @@ test_that("can return input comparison metadata", {
   expect_equal(out$warnings, list())
 })
 
+test_that("error returned if neither anc nor programme data", {
+  input <- setup_payload_input_comparison(test_path("testdata"),
+                                          FALSE, FALSE)
+  error <- expect_error(input_comparison(input))
+  expect_equal(error$data[[1]]$error, scalar("FAILED_TO_GENERATE_INPUT_COMPARISON"))
+  expect_match(
+    error$data[[1]]$detail,
+    scalar("Cannot build input comparison plot without either programme or anc data"))
+  expect_equal(error$status_code, 400)
+})
+
 test_that("input comparison metadata endpoint", {
   test_redis_available()
   input <- setup_payload_input_comparison(test_path("testdata"))

@@ -1,12 +1,10 @@
 input_comparison <- function(input) {
   input <- jsonlite::fromJSON(input)
-  if (is.null(input$programme) && is.null(input$anc)) {
-    hintr_error(
-      "Cannot build input comparison plot without either programme or anc data",
-      "FAILED_TO_GENERATE_INPUT_COMPARISON")
-  }
 
   withCallingHandlers({
+    if (is.null(input$programme) && is.null(input$anc)) {
+      stop("Cannot build input comparison plot without either programme or anc data")
+    }
     if (!is.null(input$programme)) {
       assert_file_exists(input$programme$path)
     }
