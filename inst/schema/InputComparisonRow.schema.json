@@ -21,7 +21,7 @@
       "type": "number"
     }
   },
-  "additionalProperties": false,
+  "additionalProperties": true,
   "required": [ "indicator", "area_name", "year", "group",
                 "data_source", "value" ]
 }
