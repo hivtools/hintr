@@ -115,5 +115,8 @@
     "ART_ADULT_MALE": "Hommes adultes (15+)",
     "ART_ADULT_FEMALE": "Femmes adultes (15+)",
     "ANC_ADULT_FEMALE": "Femmes adultes (15+)",
-    "INPUT_COMPARISON_GROUP_LABEL": "Group"
+    "NUMBER_ON_ART_ADULT_BOTH": "Les deux TARV",
+    "NUMBER_ON_ART_ADULT_FEMALE": "Femmes TARV",
+    "NUMBER_ON_ART_ADULT_MALE": "Hommes TARV",
+    "NUMBER_ON_ART_CHILDREN": "Enfants TARV"
 }
