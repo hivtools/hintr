@@ -149,6 +149,12 @@ expect_valid_metadata <- function(metadata) {
   filter_ids <- lapply(metadata$filterTypes, "[[", "id")
   filter_types <- setNames(metadata$filterTypes, filter_ids)
 
+  # All filters have options
+  for (filter in metadata$filterTypes) {
+    expect(length(filter$options) > 0,
+           sprintf("filter '%s' has no options", filter$id))
+  }
+
   plot_names <- names(metadata$plotSettingsControl)
   for (plot in plot_names) {
     default_effects <- metadata$plotSettingsControl[[plot]]$defaultEffect

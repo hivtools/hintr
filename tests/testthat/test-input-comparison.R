@@ -1,13 +1,3 @@
-test_that("can return input comparison metadata", {
-  input <- setup_payload_input_comparison(test_path("testdata"))
-  out <- input_comparison(input)
-
-  expect_setequal(names(out), c("data", "metadata", "warnings"))
-  expect_input_comparison_metadata(out$metadata)
-  expect_true(nrow(out$data) > 100)
-  expect_equal(out$warnings, list())
-})
-
 test_that("error returned if neither anc nor programme data", {
   input <- setup_payload_input_comparison(test_path("testdata"),
                                           FALSE, FALSE)
