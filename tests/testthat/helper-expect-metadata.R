@@ -112,6 +112,12 @@ expect_input_comparison_metadata <- function(metadata) {
                     "indicator_sort_order", "name", "min", "max", "colour",
                     "invert_scale", "scale", "accuracy", "format"))
 
+  # All filters have options
+  for (filter in metadata$filterTypes) {
+    expect(length(filter$options) > 0,
+           sprintf("filter '%s' has no options", filter$id))
+  }
+
   filters <- lapply(metadata$filterTypes, "[[",
                     "column_id")
   ## Ignore attr below as before serialization this will be wrapped in a scalar
@@ -148,12 +154,6 @@ mock_filter_types <- function(ids) {
 expect_valid_metadata <- function(metadata) {
   filter_ids <- lapply(metadata$filterTypes, "[[", "id")
   filter_types <- setNames(metadata$filterTypes, filter_ids)
-
-  # All filters have options
-  for (filter in metadata$filterTypes) {
-    expect(length(filter$options) > 0,
-           sprintf("filter '%s' has no options", filter$id))
-  }
 
   plot_names <- names(metadata$plotSettingsControl)
   for (plot in plot_names) {

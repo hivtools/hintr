@@ -65,7 +65,7 @@ build_input_comparison_metadata <- function(data) {
   year_filter <- list(
     id = scalar("year"),
     column_id = scalar("year"),
-    options = get_year_filters(data)
+    options = get_year_filters(data, decreasing = FALSE)
   )
   anc_groups <- "anc_adult_female"
   art_groups <- c("art_children", "art_adult_both", "art_adult_female",
@@ -158,7 +158,8 @@ get_input_barchart_settings <- function(indicator_options) {
 
   list(
     defaultEffect = list(
-      setFilters = default_set_filters
+      setFilters = default_set_filters,
+      setHidden = c("indicator", "year", "data_source")
     ),
     plotSettings = list(
       list(
@@ -170,13 +171,15 @@ get_input_barchart_settings <- function(indicator_options) {
         id = scalar("x_axis"),
         label = scalar(t_("OUTPUT_BARCHART_X_AXIS")),
         options = x_axis_options,
-        value = scalar("year")
+        value = scalar("year"),
+        hidden = scalar(TRUE)
       ),
       list(
         id = scalar("disagg_by"),
         label = scalar(t_("OUTPUT_BARCHART_DISAGG_BY")),
         options = disagg_options,
-        value = scalar("data_source")
+        value = scalar("data_source"),
+        hidden = scalar(TRUE)
       )
     )
   )
