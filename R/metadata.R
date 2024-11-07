@@ -438,8 +438,7 @@ get_label_for_id <- function(id) {
       "spectrum_region" = "OUTPUT_FILTER_SPECTRUM_REGION",
       "source" = "OUTPUT_FILTER_DATA_TYPE",
       "area_name" = "OUTPUT_FILTER_AREA",
-      "year" = "INPUT_TIME_SERIES_COLUMN_YEAR",
-      "data_source" = "OUTPUT_FILTER_DATA_TYPE"
+      "year" = "INPUT_TIME_SERIES_COLUMN_YEAR"
     )
   )
 }

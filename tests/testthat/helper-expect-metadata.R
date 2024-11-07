@@ -126,7 +126,6 @@ expect_input_comparison_metadata <- function(metadata) {
   expect_equal(filters[[2]], "area_name", ignore_attr = TRUE)
   expect_equal(filters[[3]], "year", ignore_attr = TRUE)
   expect_equal(filters[[4]], "group", ignore_attr = TRUE)
-  expect_equal(filters[[5]], "data_source", ignore_attr = TRUE)
 }
 
 mock_filter_types <- function(ids) {

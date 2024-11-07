@@ -51,7 +51,9 @@ get_filter_options <- function(data, key) {
 build_input_comparison_metadata <- function(data) {
   indicator_metadata <- get_indicator_metadata("input_comparison", "barchart",
                                                list(iso3 = "default"))
-  indicator_options <- read_wide_indicator_filters(data, "input_comparison")
+  data_indicators <- unique(data$indicator)
+  present_indicators <- indicator_metadata[indicator_metadata$indicator %in% data_indicators, ]
+  indicator_options <- construct_filter(present_indicators, "indicator", "name")
   indicator_ids <- vcapply(indicator_options, "[[", "id")
   indicator_labels <- vcapply(indicator_options, "[[", "label")
   indicator_id_label_map <- setNames(indicator_labels, indicator_ids)
@@ -76,18 +78,12 @@ build_input_comparison_metadata <- function(data) {
     column_id = scalar("group"),
     options = get_filter_options(data, "group")
   )
-  data_source_filter <- list(
-    id = scalar("data_source"),
-    column_id = scalar("data_source"),
-    options = get_filter_options(data, "data_source")
-  )
   list(
     filterTypes = list(
       indicator_filter,
       area_name_filter,
       year_filter,
-      group_filter,
-      data_source_filter
+      group_filter
     ),
     indicators = indicator_metadata,
     plotSettingsControl = list(
@@ -167,56 +163,20 @@ get_input_barchart_settings <- function(indicator_ids,
   })
   plot_type_options <- plot_type_options[!vlapply(plot_type_options, is.null)]
 
-  x_axis_options <- list(
-    list(
-      id = scalar("year"),
-      label = scalar("Year"), # not actually shown
-      effect = list(
-        setMultiple = "year"
-      )
-    )
-  )
-  disagg_options <- list(
-    list(
-      id = scalar("data_source"),
-      label = scalar("Data source"), # not actually shown
-      effect = list(
-        setMultiple = "data_source",
-        setFilterValues = list(
-          data_source = c("spectrum", "naomi")
-        )
-      )
-    )
-  )
-
-  default_filter_ids <- c("indicator", "area_name", "year", "data_source",
-                          "group")
+  default_filter_ids <- c("indicator", "area_name", "year", "group")
   default_set_filters <- lapply(default_filter_ids, get_filter_from_id)
 
   list(
     defaultEffect = list(
       setFilters = default_set_filters,
-      setHidden = c("indicator", "year", "data_source", "group")
+      setHidden = c("indicator", "year", "group"),
+      setMultiple = c("year")
     ),
     plotSettings = list(
       list(
         id = scalar("plot_type"),
         label = scalar(t_("INPUT_TIME_SERIES_COLUMN_PLOT_TYPE")),
         options = plot_type_options
-      ),
-      list(
-        id = scalar("x_axis"),
-        label = scalar(t_("OUTPUT_BARCHART_X_AXIS")),
-        options = x_axis_options,
-        value = scalar("year"),
-        hidden = scalar(TRUE)
-      ),
-      list(
-        id = scalar("disagg_by"),
-        label = scalar(t_("OUTPUT_BARCHART_DISAGG_BY")),
-        options = disagg_options,
-        value = scalar("data_source"),
-        hidden = scalar(TRUE)
       )
     )
   )

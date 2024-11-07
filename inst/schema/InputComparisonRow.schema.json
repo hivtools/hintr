@@ -14,14 +14,17 @@
     "group": {
       "type": "string"
     },
-    "data_source": {
-      "type": "string"
+    "value_spectrum": {
+      "type": ["number", "null"]
     },
-    "value": {
-      "type": "number"
+    "value_naomi": {
+      "type": ["number", "null"]
+    },
+    "difference": {
+      "type": ["number", "null"]
     }
   },
   "additionalProperties": true,
   "required": [ "indicator", "area_name", "year", "group",
-                "data_source", "value" ]
+                "value_spectrum", "value_naomi" ]
 }
