@@ -174,13 +174,13 @@ get_review_input_filter_types <- function(input, types, area_level_options) {
       options = area_level_options
     )
   )
-  other_filter_types <- Reduce(append_filter_types(input), c(list(NULL), types))
+  other_filter_types <- Reduce(append_filter_types(input, area_level_options), c(list(NULL), types))
   append(base_filters, other_filter_types)
 }
 
-append_filter_types <- function(input) {
+append_filter_types <- function(input, area_level_options) {
   function(filter_types, type) {
-    append(filter_types, c(get_time_series_filter_types(input, type),
+    append(filter_types, c(get_time_series_filter_types(input, type, area_level_options),
                            get_map_filter_types(input, type)))
   }
 }
@@ -190,20 +190,16 @@ get_review_input_indicators <- function(types, iso3) {
   indicators <- metadata[metadata$data_type %in% types, ]
 }
 
-get_time_series_filter_types <- function(input, type) {
+get_time_series_filter_types <- function(input, type, area_level_options) {
   if (type == "anc") {
-    get_anc_time_series_filter_types(input)
+    get_anc_time_series_filter_types(input, area_level_options)
   } else if (type == "programme") {
-    get_programme_time_series_filter_types(input)
+    get_programme_time_series_filter_types(input, area_level_options)
   }
 }
 
-get_anc_time_series_filter_types <- function(input) {
-  data <- naomi::prepare_input_time_series_anc(
-    input$data$anc$path, input$data$shape$path
-  )
-  data <- as.data.frame(data, stringsAsFactors = FALSE)
-  columns <- get_anc_time_series_columns(data)
+get_anc_time_series_filter_types <- function(input, area_level_options) {
+  columns <- get_anc_time_series_columns_from_metadata(input, area_level_options)
   plot_type_filter <- list(
     id = scalar("time_series_anc_plot_type"),
     column_id = scalar("plot"),
@@ -225,12 +221,8 @@ get_anc_time_series_filter_types <- function(input) {
   list(plot_type_filter, area_level_filter, age_filter)
 }
 
-get_programme_time_series_filter_types <- function(input) {
-  data <- naomi::prepare_input_time_series_art(
-    input$data$programme$path, input$data$shape$path
-  )
-  data <- as.data.frame(data, stringsAsFactors = FALSE)
-  columns <- get_programme_time_series_columns(data)
+get_programme_time_series_filter_types <- function(input, area_level_options) {
+  columns <- get_programme_time_series_columns_from_metadata(input, area_level_options)
   plot_type_filter <- list(
     id = scalar("time_series_programme_plot_type"),
     column_id = scalar("plot"),

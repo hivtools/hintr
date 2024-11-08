@@ -1,3 +1,32 @@
+# slightly quicker version that doesn't require calculating
+# full aggregated programme data
+get_programme_time_series_columns_from_metadata <- function(input, area_level_options) {
+  metadata <- naomi::get_art_metadata(input$data$programme$path)
+  quarters <- naomi::calendar_quarter_to_quarter(unique(metadata$calendar_quarters))
+
+  list(
+    list(
+      id = scalar("plot_type"),
+      column_id = scalar("plot"),
+      label = scalar(t_("INPUT_TIME_SERIES_COLUMN_PLOT_TYPE")),
+      values = recursive_scalar(
+        naomi::get_plot_type_column_metadata(metadata$plot_types))
+    ),
+    list(
+      id = scalar("quarter"),
+      column_id = scalar("quarter"),
+      label = scalar(t_("INPUT_TIME_SERIES_COLUMN_QUARTER")),
+      values = get_quarter_id_label_map(quarters)
+    ),
+    list(
+      id = scalar("area_level"),
+      column_id = scalar("area_level"),
+      label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA_LEVEL")),
+      values = area_level_options
+    )
+  )
+}
+
 get_programme_time_series_columns <- function(data) {
   list(
     list(
@@ -36,6 +65,42 @@ get_programme_time_series_columns <- function(data) {
       column_id = scalar("area_name"),
       label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA_NAME")),
       values = get_default_id_label_map(data, "area_name")
+    )
+  )
+}
+
+get_anc_time_series_columns_from_metadata <- function(input, area_level_options) {
+  metadata <- naomi::get_anc_metadata(input$data$anc$path)
+
+  filters <- get_age_labels(unique(metadata$age_groups))
+  sorted_filters <- filters[order(filters$age_group_sort_order), ]
+  age_group_filters <- construct_filter(sorted_filters, "age_group", "age_group_label")
+
+  list(
+    list(
+      id = scalar("plot_type"),
+      column_id = scalar("plot"),
+      label = scalar(t_("INPUT_TIME_SERIES_COLUMN_PLOT_TYPE")),
+      values = recursive_scalar(
+        naomi::get_plot_type_column_metadata(metadata$plot_types))
+    ),
+    list(
+      id = scalar("quarter"),
+      column_id = scalar("quarter"),
+      label = scalar(t_("INPUT_TIME_SERIES_COLUMN_QUARTER")),
+      values = get_quarter_id_label_map(metadata$calendar_quarters)
+    ),
+    list(
+      id = scalar("area_level"),
+      column_id = scalar("area_level"),
+      label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA_LEVEL")),
+      values = area_level_options
+    ),
+    list(
+      id = scalar("age"),
+      column_id = scalar("age_group"),
+      label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AGE")),
+      values = age_group_filters
     )
   )
 }
