@@ -5,6 +5,7 @@ api_build <- function(queue, validate = FALSE, logger = NULL) {
   api$handle(endpoint_baseline_combined())
   api$handle(endpoint_validate_survey_programme())
   api$handle(endpoint_input_time_series_plot())
+  api$handle(endpoint_input_comparison_plot())
   api$handle(endpoint_review_input_metadata())
   api$handle(endpoint_model_options())
   api$handle(endpoint_model_options_validate())
@@ -177,6 +178,18 @@ endpoint_input_time_series_plot <- function() {
   porcelain::porcelain_endpoint$new("POST",
                                     "/chart-data/input-time-series/<type>",
                                     input_time_series,
+                                    input,
+                                    returning = response)
+}
+
+endpoint_input_comparison_plot <- function() {
+  input <- porcelain::porcelain_input_body_json(
+    "input", "InputComparisonRequest.schema", schema_root())
+  response <- porcelain::porcelain_returning_json(
+    "InputComparisonResponse.schema", schema_root())
+  porcelain::porcelain_endpoint$new("POST",
+                                    "/chart-data/input-comparison",
+                                    input_comparison,
                                     input,
                                     returning = response)
 }

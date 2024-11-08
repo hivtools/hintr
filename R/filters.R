@@ -282,9 +282,9 @@ get_quarter_label <- function(calendar_quarter) {
   naomi::calendar_quarter_labels(calendar_quarter)
 }
 
-get_year_filters <- function(data) {
+get_year_filters <- function(data, decreasing = TRUE) {
   years <- unique(data$year)
-  years <- sort(years, decreasing = TRUE)
+  years <- sort(years, decreasing = decreasing)
   lapply(years, function(year) {
     list(id = scalar(as.character(year)),
          label = scalar(as.character(year)))

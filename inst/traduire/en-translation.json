@@ -108,5 +108,14 @@
     "FAILED_ZIP_REHYDRATE_SUBMIT": "Cannot load from this zip file, archive missing required information. Please regenerate output zip and try again.",
     "TABLE_SEX_BY_AREA": "Sex by area",
     "TABLE_SEX_BY_5_YEAR_AGE_GROUP": "Sex by 5 year age group",
-    "VALIDATION_SHEET_MISSING": "Uploaded Excel file is missing required sheet '{{sheet_name}}'. Please check resource and try again."
+    "VALIDATION_SHEET_MISSING": "Uploaded Excel file is missing required sheet '{{sheet_name}}'. Please check resource and try again.",
+    "ART_CHILDREN": "Children (<15)",
+    "ART_ADULT_BOTH": "Adult both (15+)",
+    "ART_ADULT_MALE": "Adult males (15+)",
+    "ART_ADULT_FEMALE": "Adult females (15+)",
+    "ANC_ADULT_FEMALE": "Adult females (15+)",
+    "NUMBER_ON_ART_ADULT_BOTH": "Both ART",
+    "NUMBER_ON_ART_ADULT_FEMALE": "Female ART",
+    "NUMBER_ON_ART_ADULT_MALE": "Male ART",
+    "NUMBER_ON_ART_CHILDREN": "Children ART"
 }
