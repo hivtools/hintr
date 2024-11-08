@@ -34,9 +34,9 @@ population_pyramid_metadata <- function(data) {
                                                list(iso3 = "default"))
   control_options <- lapply(seq(nrow(indicator_metadata)), function(row_no) {
     list(
-      id = indicator_metadata[row_no, "indicator"],
-      label = indicator_metadata[row_no, "name"],
-      effect = list()
+      id = scalar(indicator_metadata[row_no, "indicator"]),
+      label = scalar(indicator_metadata[row_no, "name"]),
+      effect = setNames(list(), list())
     )
   })
   list(
@@ -65,9 +65,8 @@ population_pyramid_metadata <- function(data) {
         ),
         plotSettings = list(
           list(
-            id = "plot",
-            label = t_("INPUT_TIME_SERIES_COLUMN_PLOT_TYPE"),
-            value = "population",
+            id = scalar("plot"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_PLOT_TYPE")),
             options = control_options
           )
         )
