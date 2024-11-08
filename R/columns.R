@@ -2,8 +2,7 @@
 # full aggregated programme data
 get_programme_time_series_columns_from_metadata <- function(input, area_level_options) {
   metadata <- naomi::get_art_metadata(input$data$programme$path)
-  cq <- metadata$calendar_quarters
-  quarters <- unique(substr(cq, nchar(cq) - 1, nchar(cq)))
+  quarters <- naomi::calendar_quarter_to_quarter(unique(metadata$calendar_quarters))
 
   list(
     list(
