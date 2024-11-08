@@ -1,3 +1,7 @@
+# hintr 1.2.4
+
+* Return data and metadata from population validation endpoint
+
 # hintr 1.2.3
 
 * Add checks that a rehydrated project is valid. It checks that:

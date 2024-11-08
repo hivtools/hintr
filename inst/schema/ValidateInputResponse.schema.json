@@ -58,10 +58,11 @@
           "enum": [ "population" ]
         },
         "data": { "$ref": "PopulationResponseData.schema.json" },
+        "metadata": { "$ref": "PopulationResponseMetadata.schema.json" },
         "filters": { "type": "null" }
       },
       "additionalProperties": false,
-      "required": ["filename", "hash", "type", "data"]
+      "required": ["filename", "hash", "type", "data", "metadata"]
     },
 
     "programme_response": {
