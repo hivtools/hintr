@@ -90,7 +90,9 @@ build_input_comparison_metadata <- function(data) {
       inputComparisonBarchart = get_input_barchart_settings(
         indicator_ids,
         group_ids,
-        indicator_id_label_map)
+        indicator_id_label_map),
+      inputComparisonTable = get_input_table_settings(indicator_id_label_map,
+                                                      group_ids)
     )
   )
 }
@@ -177,6 +179,100 @@ get_input_barchart_settings <- function(indicator_ids,
         id = scalar("plot_type"),
         label = scalar(t_("INPUT_TIME_SERIES_COLUMN_PLOT_TYPE")),
         options = plot_type_options
+      )
+    )
+  )
+}
+
+get_input_table_settings <- function(indicator_id_label_map, group_ids) {
+  art_indicators <- "number_on_art"
+  art_groups <- c("art_adult_both", "art_adult_females", "art_adult_males",
+                  "art_children")
+  anc_indicators <- c("anc_already_art", "anc_clients", "anc_known_pos",
+                      "anc_tested", "anc_tested_pos")
+  anc_groups <- "anc_adult_female"
+  indicator_to_control_option <- function(indicator_id) {
+    if (indicator_id %in% art_indicators) {
+      groups <- art_groups[art_groups %in% group_ids]
+    } else if (indicator_id %in% anc_indicators) {
+      groups <- anc_groups[anc_groups %in% group_ids]
+    } else {
+      hintr_error(sprintf("Unknown input table indicator '%s'.", indicator_id),
+                  "UNKNOWN_INDICATOR")
+    }
+    list(
+      id = scalar(indicator_id),
+      label = scalar(indicator_id_label_map[[indicator_id]]),
+      effect = list(
+        setFilterValues = list(
+          indicator = indicator_id,
+          group = groups
+        )
+      )
+    )
+  }
+  indicator_control_options <- lapply(names(indicator_id_label_map),
+                                      indicator_to_control_option)
+  default_filter_ids <- c("indicator", "area_name", "year", "group")
+  default_set_filters <- lapply(default_filter_ids, get_filter_from_id)
+  list(
+    defaultEffect = list(
+      setFilters = default_set_filters,
+      customPlotEffect = list(
+        row = c("area_name", "year"),
+        column = "group"
+      ),
+      setMultiple = c("area_name", "year", "group")
+    ),
+    plotSettings = list(
+      list(
+        id = scalar("indicator_control"),
+        label = scalar(t_("OUTPUT_FILTER_INDICATOR")),
+        options = indicator_control_options
+      )
+    )
+  )
+}
+
+get_table_presets <- function(filter_types) {
+  detail_options <- get_filter_option_ids(filter_types, "detail")
+  list(
+    list(
+      id = scalar("sex_by_area"),
+      label = scalar(t_("TABLE_SEX_BY_AREA")),
+      effect = list(
+        setFilters = lapply(
+          c("indicator", "area", "detail", "period", "sex", "age"),
+          get_filter_from_id),
+        ## Hide the area ID as we want people to just select the detail level
+        ## and see all rows within that level. Having the area filter available
+        ## too makes this confusing, but we need area to exist for picking
+        ## up the row labels
+        setHidden = c("area"),
+        setMultiple = c("sex", "area"),
+        setFilterValues = list(
+          detail = detail_options[length(detail_options)]
+        ),
+        customPlotEffect = list(
+          row = c("area"),
+          column = c("sex")
+        )
+      )
+    ),
+    list(
+      id = scalar("sex_by_5_year_age_group"),
+      label = scalar(t_("TABLE_SEX_BY_5_YEAR_AGE_GROUP")),
+      effect = list(
+        setFilters = lapply(c("indicator", "area", "period", "sex", "age"),
+                            get_filter_from_id),
+        setMultiple = c("sex", "age"),
+        setFilterValues = list(
+          age = naomi::get_five_year_age_groups()
+        ),
+        customPlotEffect = list(
+          row = c("age"),
+          column = c("sex")
+        )
       )
     )
   )
