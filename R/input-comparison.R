@@ -68,7 +68,7 @@ build_input_comparison_metadata <- function(data) {
     column_id = scalar("year"),
     options = get_year_filters(data, decreasing = FALSE)
   )
-  art_groups <- c("art_adult_both", "art_adult_females", "art_adult_males",
+  art_groups <- c("art_adult_both", "art_adult_female", "art_adult_male",
                   "art_children")
   anc_groups <- "anc_adult_female"
   ordered_groups <- c(art_groups, anc_groups)
