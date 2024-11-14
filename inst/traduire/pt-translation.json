@@ -108,5 +108,14 @@
     "FAILED_ZIP_REHYDRATE_SUBMIT": "Não é possível carregar a partir deste ficheiro zip, faltando informação necessária ao arquivo. Por favor, regenerar zip de saída e tentar novamente.",
     "TABLE_SEX_BY_AREA": "Sexo por área",
     "TABLE_SEX_BY_5_YEAR_AGE_GROUP": "Sexo por faixa etária de 5 anos",
-    "VALIDATION_SHEET_MISSING": "O arquivo Excel carregado está faltando a planilha necessária '{{sheet_name}}'. Verifique o recurso e tente novamente."
+    "VALIDATION_SHEET_MISSING": "O arquivo Excel carregado está faltando a planilha necessária '{{sheet_name}}'. Verifique o recurso e tente novamente.",
+    "ART_CHILDREN": "Crianças (<15)",
+    "ART_ADULT_BOTH": "Adultos ambos (15+)",
+    "ART_ADULT_MALE": "Homens adultos (15+)",
+    "ART_ADULT_FEMALE": "Mulheres adultas (15+)",
+    "ANC_ADULT_FEMALE": "Mulheres adultas (15+)",
+    "NUMBER_ON_ART_ADULT_BOTH": "Ambos TARV",
+    "NUMBER_ON_ART_ADULT_FEMALE": "Mulheres TARV",
+    "NUMBER_ON_ART_ADULT_MALE": "Homens ART",
+    "NUMBER_ON_ART_CHILDREN": "Crianças ART"
 }

@@ -83,3 +83,35 @@ setup_payload_rehydrate <- function(
     '}'
   )
 }
+
+setup_payload_input_comparison <- function(data_root_dir,
+                                           include_anc = TRUE,
+                                           include_programme = TRUE) {
+  shape <- normalizePath(file.path(data_root_dir, "malawi.geojson"),
+                         winslash = "/", mustWork = TRUE)
+  pjnz <- normalizePath(file.path(data_root_dir, "Malawi2019.PJNZ"),
+                          winslash = "/", mustWork = TRUE)
+  anc <- normalizePath(file.path(data_root_dir, "anc.csv"),
+                       winslash = "/", mustWork = TRUE)
+  programme <- normalizePath(file.path(data_root_dir, "programme.csv"),
+                             winslash = "/", mustWork = TRUE)
+
+  file_template <- '
+    "%s": {
+      "path": "%s",
+      "hash": "12345",
+      "filename": "original",
+      "fromADR": false,
+      "resource_url": "https://adr.unaids.org/file/123.csv"
+    }'
+  paste0(
+    '{',
+    paste(c(
+      sprintf(file_template, "shape", shape),
+      sprintf(file_template, "pjnz", pjnz),
+      if (include_anc) sprintf(file_template, "anc", anc),
+      if (include_programme) sprintf(file_template, "programme", programme)),
+      collapse = ","
+    ),
+    '}')
+}

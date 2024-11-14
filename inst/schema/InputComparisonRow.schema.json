@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "indicator": {
+      "type": "string"
+    },
+    "area_name": {
+      "type": "string"
+    },
+    "year": {
+      "type": "number"
+    },
+    "group": {
+      "type": "string"
+    },
+    "value_spectrum": {
+      "type": ["number", "null"]
+    },
+    "value_naomi": {
+      "type": ["number", "null"]
+    },
+    "difference": {
+      "type": ["number", "null"]
+    }
+  },
+  "additionalProperties": true,
+  "required": [ "indicator", "area_name", "year", "group",
+                "value_spectrum", "value_naomi" ]
+}

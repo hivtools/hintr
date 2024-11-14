@@ -15,7 +15,8 @@ test_that("plumber api can be built", {
   expect_setequal(names(api$routes$calibrate),
                   c("options", "submit", "status", "result", "plot"))
   expect_setequal(names(api$routes$meta), "adr")
-  expect_equal(names(api$routes$`chart-data`), "input-time-series")
+  expect_setequal(names(api$routes$`chart-data`),
+                  c("input-comparison", "input-time-series"))
   expect_setequal(names(api$routes$rehydrate), c("submit", "status", "result"))
   expect_equal(names(api$routes$comparison), "plot")
   expect_setequal(names(api$routes$internal), c("upload", "prerun"))
