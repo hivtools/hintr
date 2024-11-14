@@ -1,3 +1,7 @@
+# hintr 1.2.5
+
+* Return metadata for input comparison table.
+
 # hintr 1.2.4
 
 * Add a new endpoint `/chart-data/input-comparison` for returning data and metadata for input comparison barchart.

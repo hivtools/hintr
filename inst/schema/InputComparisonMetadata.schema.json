@@ -13,10 +13,11 @@
     "plotSettingsControl": {
       "type": "object",
       "properties": {
-        "inputComparisonBarchart": { "$ref": "PlotSettingsControl.schema.json" }
+        "inputComparisonBarchart": { "$ref": "PlotSettingsControl.schema.json" },
+        "inputComparisonTable": { "$ref": "PlotSettingsControl.schema.json" }
       },
       "additionalProperties": false,
-      "required": ["inputComparisonBarchart"]
+      "required": ["inputComparisonBarchart", "inputComparisonTable"]
     }
   },
   "required": [ "filterTypes", "indicators", "plotSettingsControl" ]
