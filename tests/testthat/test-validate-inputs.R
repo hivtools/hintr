@@ -184,7 +184,7 @@ test_that("converting from numeric to iso3 works", {
 })
 
 test_that("can read iso3", {
-  pjnz <- file_object(file.path("testdata", "Malawi2019.PJNZ"))
+  pjnz <- file_object(file.path("testdata", "Malawi2024.PJNZ"))
   expect_equal(read_iso3(pjnz, "pjnz"), "MWI")
   shape <- file_object(file.path("testdata", "malawi.geojson"))
   expect_equal(read_iso3(shape, "shape"), "MWI")
@@ -201,7 +201,7 @@ test_that("can read regions", {
 })
 
 test_that("baseline data can be validated as a collection", {
-  pjnz <- file_object(file.path("testdata", "Malawi2019.PJNZ"))
+  pjnz <- file_object(file.path("testdata", "Malawi2024.PJNZ"))
   shape <- file_object(file.path("testdata", "malawi.geojson"))
   population <- file_object(file.path("testdata", "population.csv"))
   response <- do_validate_baseline(pjnz, shape, population)

@@ -180,7 +180,7 @@ test_that("rehydrate throws error if model fit or calibrate IDs are unknown", {
   input <- jsonlite::fromJSON(payload)
   out <- rehydrate(input$file)
   state <- jsonlite::fromJSON(out$state, simplifyVector = FALSE)
-  state$datasets[["pjnz"]]$path <- "Malawi2019.PJNZ"
+  state$datasets[["pjnz"]]$path <- "Malawi2024.PJNZ"
   state$datasets[["population"]]$path <- "population.csv"
   state$datasets[["shape"]]$path <- "malawi.geojson"
   state$datasets[["survey"]]$path <- "survey.csv"

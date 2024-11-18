@@ -102,7 +102,7 @@ test_queue_result <- function(model = mock_model,
 }
 
 prerun_inputs <- list(
-  pjnz = "testdata/Malawi2019.PJNZ",
+  pjnz = "testdata/Malawi2024.PJNZ",
   population = "testdata/population.csv",
   shape = "testdata/malawi.geojson",
   programme = "testdata/programme.csv",
@@ -113,7 +113,7 @@ prerun_inputs <- list(
 setup_prerun_queue <- function() {
   inputs_dir <- tempfile()
   dir.create(inputs_dir)
-  data <- c("testdata/Malawi2019.PJNZ", "testdata/population.csv",
+  data <- c("testdata/Malawi2024.PJNZ", "testdata/population.csv",
             "testdata/malawi.geojson", "testdata/programme.csv",
             "testdata/anc.csv", "testdata/survey.csv")
   file.copy(data, inputs_dir)
@@ -133,7 +133,7 @@ setup_prerun_queue <- function() {
 
   payload <- list(
     inputs = list(
-      pjnz = as_file("Malawi2019.PJNZ", inputs_dir),
+      pjnz = as_file("Malawi2024.PJNZ", inputs_dir),
       population = as_file("population.csv", inputs_dir),
       shape = as_file("malawi.geojson", inputs_dir),
       survey = as_file("survey.csv", inputs_dir),

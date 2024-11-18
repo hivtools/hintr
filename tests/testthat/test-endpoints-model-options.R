@@ -58,32 +58,32 @@ test_that("endpoint_model_options returns model options", {
   )
   expect_length(
     survey_section$controlGroups[[2]]$controls[[1]]$options,
-    4
+    5
   )
   expect_equal(
     names(survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]),
     c("id", "label"))
   expect_equal(
     survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
-    "DEMO2016PHIA")
+    "DEMO2020PHIA")
   expect_equal(
     survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
-    "DEMO2016PHIA")
+    "DEMO2020PHIA")
 
   anc_section <- json$controlSections[[3]]
   expect_length(
     anc_section$controlGroups[[1]]$controls[[1]]$options,
-    8
+    13
   )
   expect_equal(
     names(anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
     c("id", "label"))
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
-    "2018")
+    "2023")
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
-    "2018")
+    "2023")
 
   art_section <- json$controlSections[[4]]
   expect_length(
@@ -167,17 +167,17 @@ test_that("endpoint_model_options can be run without programme data", {
   )
   expect_length(
     survey_section$controlGroups[[2]]$controls[[1]]$options,
-    4
+    5
   )
   expect_equal(
     names(survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]),
     c("id", "label"))
   expect_equal(
     survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
-    "DEMO2016PHIA")
+    "DEMO2020PHIA")
   expect_equal(
     survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
-    "DEMO2016PHIA")
+    "DEMO2020PHIA")
 })
 
 test_that("endpoint_model_options fails without shape & survey data", {
