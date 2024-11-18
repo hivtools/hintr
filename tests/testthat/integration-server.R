@@ -423,7 +423,7 @@ test_that("model run options are exposed", {
   anc_section <- response$data$controlSections[[3]]
   expect_length(
     anc_section$controlGroups[[1]]$controls[[1]]$options,
-    8
+    13
   )
   expect_equal(
     names(anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
