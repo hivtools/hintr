@@ -105,7 +105,7 @@
     "QUARTER_4": "Quarter 4",
     "VALIDATION_MULTIPLE_LEVELS_DETAIL": "year {{year}} has area levels {{levels}}",
     "VALIDATION_MULTIPLE_LEVELS": "Data can only be for regions at a single area level per year. In uploaded data {{detail}}.",
-    "FAILED_ZIP_REHYDRATE_SUBMIT": "Cannot load from this zip file, archive missing required information. Please regenerate output zip and try again.",
+    "FAILED_ZIP_REHYDRATE_SUBMIT": "Cannot load model outputs. This fit was not generated on the Naomi web application. Please contact support.",
     "TABLE_SEX_BY_AREA": "Sex by area",
     "TABLE_SEX_BY_5_YEAR_AGE_GROUP": "Sex by 5 year age group",
     "VALIDATION_SHEET_MISSING": "Uploaded Excel file is missing required sheet '{{sheet_name}}'. Please check resource and try again.",
