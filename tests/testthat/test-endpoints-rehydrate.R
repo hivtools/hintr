@@ -111,9 +111,9 @@ test_that("rehydrate returns useful error if cannot rehydrate from zip", {
   expect_equal(response$value$errors[[1]]$error,
                scalar("PROJECT_REHYDRATE_FAILED"))
   expect_equal(response$value$errors[[1]]$detail,
-               scalar(paste0("Cannot load from this zip file, archive missing",
-                             " required information. Please regenerate output",
-                             " zip and try again.")))
+               scalar(paste0("Cannot load model outputs. This fit was not",
+                             " generated on the Naomi web application. ",
+                             "Please contact support.")))
 })
 
 test_that("rehydrate returns useful error when submission fails", {

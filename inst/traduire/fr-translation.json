@@ -106,7 +106,7 @@
     "QUARTER_4": "trimestre 4",
     "VALIDATION_MULTIPLE_LEVELS_DETAIL": "l'année {{year}} a des niveaux de zone {{levels}}",
     "VALIDATION_MULTIPLE_LEVELS": "Les données ne peuvent concerner que les régions à un seul niveau de zone par an. Dans les données téléchargées {{detail}}",
-    "FAILED_ZIP_REHYDRATE_SUBMIT": "Impossible de charger à partir de ce fichier zip, l'archive manque d'informations requises. Veuillez régénérer le zip de sortie et réessayer.",
+    "FAILED_ZIP_REHYDRATE_SUBMIT": "Impossible de charger les résultats du modèle. Cet ajustement n'a pas été généré sur l'application web Naomi. Veuillez contacter le support.",
     "TABLE_SEX_BY_AREA": "Sexe par zone",
     "TABLE_SEX_BY_5_YEAR_AGE_GROUP": "Sexe par tranche d'âge de 5 ans",
     "VALIDATION_SHEET_MISSING": "Le fichier Excel téléchargé ne contient pas la feuille requise « {{sheet_name}} ». Veuillez vérifier la ressource et réessayer.",
