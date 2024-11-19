@@ -56,7 +56,7 @@
     "anc_prevalence_year2": 2023,
     "anc_art_coverage_year1": 2020,
     "anc_art_coverage_year2": 2023,
-    "spectrum_population_calibration": "none",
+    "spectrum_population_calibration": "national",
     "artattend_log_gamma_offset": -4,
     "artattend": false,
     "output_aware_plhiv": "true",
