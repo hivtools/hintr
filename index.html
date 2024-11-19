@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">hintr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.6</span>
       </span>
     </div>
 
@@ -94,7 +94,7 @@ http://localhost:8888/validate/baseline-individual</code></pre>
 <span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>            <span class="dt">"country"</span><span class="fu">:</span> <span class="st">"Malawi"</span><span class="fu">,</span></span>
 <span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>            <span class="dt">"iso3"</span><span class="fu">:</span> <span class="st">"MWI"</span></span>
 <span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>        <span class="fu">},</span></span>
-<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>        <span class="dt">"filename"</span><span class="fu">:</span> <span class="st">"Malawi2019.PJNZ"</span><span class="fu">,</span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>        <span class="dt">"filename"</span><span class="fu">:</span> <span class="st">"Malawi2024.PJNZ"</span><span class="fu">,</span></span>
 <span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a>        <span class="dt">"fromADR"</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></span>
 <span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a>        <span class="dt">"resource_url"</span><span class="fu">:</span> <span class="st">"https://adr.unaids.org/file/123.csv"</span><span class="fu">,</span></span>
 <span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a>        <span class="dt">"filters"</span><span class="fu">:</span> <span class="kw">null</span></span>
@@ -257,8 +257,8 @@ http://localhost:8888/model/options</code></pre>
 <pre><code>$ curl -s --data '{
     "data": {
         "pjnz": {
-            "path": "testdata/Malawi2019.PJNZ",
-            "filename": "Malawi2019.PJNZ",
+            "path": "testdata/Malawi2024.PJNZ",
+            "filename": "Malawi2024.PJNZ",
             "hash": "12345",
             "fromADR": false
         },
@@ -296,23 +296,22 @@ http://localhost:8888/model/options</code></pre>
     "options": {
         "area_scope": "MWI",
         "area_level": 4,
-        "calendar_quarter_t1": "CY2016Q1",
-        "calendar_quarter_t2": "CY2018Q3",
-        "calendar_quarter_t3": "CY2019Q2",
-        "survey_prevalence": [
-            "DEMO2016PHIA",
-            "DEMO2015DHS"
-        ],
-        "survey_art_coverage": "DEMO2016PHIA",
-        "survey_recently_infected": "DEMO2016PHIA",
+        "calendar_quarter_t1": "CY2020Q3",
+        "calendar_quarter_t2": "CY2023Q4",
+        "calendar_quarter_t3": "CY2024Q3",
+        "calendar_quarter_t4": "CY2025Q3",
+        "calendar_quarter_t5": "CY2026Q3",
+        "survey_prevalence": "DEMO2020PHIA",
+        "survey_art_coverage": "DEMO2020PHIA",
+        "survey_recently_infected": "DEMO2020PHIA",
         "include_art_t1": "true",
         "include_art_t2": "true",
-        "anc_clients_year2": 2018,
-        "anc_clients_year2_num_months": "9",
-        "anc_prevalence_year1": 2016,
-        "anc_prevalence_year2": 2018,
-        "anc_art_coverage_year1": 2016,
-        "anc_art_coverage_year2": 2018,
+        "anc_clients_year2": 2023,
+        "anc_clients_year2_num_months": "12",
+        "anc_prevalence_year1": 2020,
+        "anc_prevalence_year2": 2023,
+        "anc_art_coverage_year1": 2020,
+        "anc_art_coverage_year2": 2023,
         "spectrum_population_calibration": "none",
         "spectrum_plhiv_calibration_level": "none",
         "spectrum_plhiv_calibration_strat": "sex_age_coarse",
@@ -500,23 +499,22 @@ http://localhost:8888/calibrate/submit/957800d3055d679195ffe18aaf3391ab</code></
             "options": {
                 "area_scope": "MWI",
                 "area_level": 4,
-                "calendar_quarter_t1": "CY2016Q1",
-                "calendar_quarter_t2": "CY2018Q3",
-                "calendar_quarter_t3": "CY2019Q2",
-                "survey_prevalence": [
-                    "DEMO2016PHIA",
-                    "DEMO2015DHS"
-                ],
-                "survey_art_coverage": "DEMO2016PHIA",
-                "survey_recently_infected": "DEMO2016PHIA",
+                "calendar_quarter_t1": "CY2020Q3",
+                "calendar_quarter_t2": "CY2023Q4",
+                "calendar_quarter_t3": "CY2024Q3",
+                "calendar_quarter_t4": "CY2025Q3",
+                "calendar_quarter_t5": "CY2026Q3",
+                "survey_prevalence": "DEMO2020PHIA",
+                "survey_art_coverage": "DEMO2020PHIA",
+                "survey_recently_infected": "DEMO2020PHIA",
                 "include_art_t1": "true",
                 "include_art_t2": "true",
-                "anc_clients_year2": 2018,
-                "anc_clients_year2_num_months": "9",
-                "anc_prevalence_year1": 2016,
-                "anc_prevalence_year2": 2018,
-                "anc_art_coverage_year1": 2016,
-                "anc_art_coverage_year2": 2018,
+                "anc_clients_year2": 2023,
+                "anc_clients_year2_num_months": "12",
+                "anc_prevalence_year1": 2020,
+                "anc_prevalence_year2": 2023,
+                "anc_art_coverage_year1": 2020,
+                "anc_art_coverage_year2": 2023,
                 "spectrum_population_calibration": "none",
                 "spectrum_plhiv_calibration_level": "none",
                 "spectrum_plhiv_calibration_strat": "sex_age_coarse",
