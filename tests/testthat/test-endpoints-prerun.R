@@ -35,7 +35,7 @@ test_that("prerun endpoint creates outputs and returns state", {
 
   ## Calibration
   expect_equal(state$calibrate$options$spectrum_plhiv_calibration_level,
-               scalar("none"))
+               scalar("national"))
   calibrate <- prerun_setup$queue$result(state$calibrate$id)
   expect_s3_class(fit, "hintr_output")
   expect_true(file.exists(calibrate$plot_data_path))
@@ -86,7 +86,7 @@ test_that("api can call prerun endpoint", {
 
   ## Calibration
   expect_equal(state$calibrate$options$spectrum_plhiv_calibration_level,
-               "none")
+               "national")
   calibrate <- prerun_setup$queue$result(state$calibrate$id)
   expect_s3_class(fit, "hintr_output")
   expect_true(file.exists(calibrate$plot_data_path))

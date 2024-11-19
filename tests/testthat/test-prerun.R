@@ -32,7 +32,7 @@ test_that("prerun returns project state", {
 
   ## Calibration
   expect_equal(state$calibrate$options$spectrum_plhiv_calibration_level,
-               scalar("none"))
+               scalar("national"))
   calibrate <- prerun_setup$queue$result(state$calibrate$id)
   expect_s3_class(fit, "hintr_output")
   expect_true(file.exists(calibrate$plot_data_path))
