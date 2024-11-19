@@ -23,7 +23,7 @@ test_that("prerun returns project state", {
   ## Model fit
   expect_equal(state$model_fit$options$area_scope, scalar("MWI"))
   expect_equal(state$model_fit$options$survey_prevalence,
-               list(scalar("DEMO2016PHIA"), scalar("DEMO2015DHS")))
+               scalar("DEMO2020PHIA"))
 
   fit <- prerun_setup$queue$result(state$model_fit$id)
   expect_s3_class(fit, "hintr_output")

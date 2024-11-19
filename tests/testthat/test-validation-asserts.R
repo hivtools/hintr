@@ -67,7 +67,7 @@ Rumphi, Balaka")
 })
 
 test_that("assert_file_exists throws error if file doesn't exist", {
-  expect_true(assert_file_exists(file.path("testdata", "Malawi2019.PJNZ")))
+  expect_true(assert_file_exists(file.path("testdata", "Malawi2024.PJNZ")))
   expect_error(assert_file_exists("file.path"),
                "File at path file.path does not exist. Create it, or fix the path.")
 })

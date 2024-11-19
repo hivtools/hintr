@@ -5,7 +5,7 @@ test_that("endpoint_validate_baseline_combined correctly validates data", {
     hintenv$cache <- list()
     gc()
   }
-  input <- validate_baseline_all_input(file.path("testdata", "Malawi2019.PJNZ"),
+  input <- validate_baseline_all_input(file.path("testdata", "Malawi2024.PJNZ"),
                                        file.path("testdata", "malawi.geojson"),
                                        file.path("testdata", "population.csv"))
   response <- validate_baseline_combined(input)

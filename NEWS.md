@@ -1,3 +1,7 @@
+# hintr 1.2.6
+
+* Update test data and options to new Malawi 2024 data
+
 # hintr 1.2.5
 
 * Return metadata for input comparison table.

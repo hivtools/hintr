@@ -29,7 +29,7 @@ test_that("validate pjnz", {
                      type = "pjnz",
                      data = list(country = "Malawi",
                                  iso3 = "MWI"),
-                     filename = "Malawi2019.PJNZ",
+                     filename = "Malawi2024.PJNZ",
                      fromADR = FALSE,
                      resource_url = "https://adr.unaids.org/file/123.csv",
                      filters = NULL)))
@@ -218,7 +218,7 @@ test_that("model interactions", {
   expect_setequal(dir(file.path(tmp, response$data$id)),
                   c("data.rds", "files"))
   dat <- readRDS(file.path(tmp, response$data$id, "data.rds"))
-  expect_equal(dat$variables$data$pjnz$filename, "Malawi2019.PJNZ")
+  expect_equal(dat$variables$data$pjnz$filename, "Malawi2024.PJNZ")
 
   ## Get the result
   r <- server$request("GET", paste0("/model/result/", response$data$id))
@@ -408,32 +408,32 @@ test_that("model run options are exposed", {
   )
   expect_length(
     survey_section$controlGroups[[2]]$controls[[1]]$options,
-    4
+    5
   )
   expect_equal(
     names(survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]),
     c("id", "label"))
   expect_equal(
     survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
-    "DEMO2016PHIA")
+    "DEMO2020PHIA")
   expect_equal(
     survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
-    "DEMO2016PHIA")
+    "DEMO2020PHIA")
 
   anc_section <- response$data$controlSections[[3]]
   expect_length(
     anc_section$controlGroups[[1]]$controls[[1]]$options,
-    8
+    13
   )
   expect_equal(
     names(anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
     c("id", "label"))
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
-    "2018")
+    "2023")
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
-    "2018")
+    "2023")
 
   art_section <- response$data$controlSections[[4]]
   expect_length(

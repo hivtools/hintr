@@ -26,7 +26,7 @@ test_that("prerun endpoint creates outputs and returns state", {
   ## Model fit
   expect_equal(state$model_fit$options$area_scope, scalar("MWI"))
   expect_equal(state$model_fit$options$survey_prevalence,
-               list(scalar("DEMO2016PHIA"), scalar("DEMO2015DHS")))
+               scalar("DEMO2020PHIA"))
 
   fit <- prerun_setup$queue$result(state$model_fit$id)
   expect_s3_class(fit, "hintr_output")
@@ -77,8 +77,7 @@ test_that("api can call prerun endpoint", {
 
   ## Model fit
   expect_equal(state$model_fit$options$area_scope, "MWI")
-  expect_equal(state$model_fit$options$survey_prevalence,
-               list("DEMO2016PHIA", "DEMO2015DHS"))
+  expect_equal(state$model_fit$options$survey_prevalence, "DEMO2020PHIA")
 
   fit <- prerun_setup$queue$result(state$model_fit$id)
   expect_s3_class(fit, "hintr_output")

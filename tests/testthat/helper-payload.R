@@ -89,7 +89,7 @@ setup_payload_input_comparison <- function(data_root_dir,
                                            include_programme = TRUE) {
   shape <- normalizePath(file.path(data_root_dir, "malawi.geojson"),
                          winslash = "/", mustWork = TRUE)
-  pjnz <- normalizePath(file.path(data_root_dir, "Malawi2019.PJNZ"),
+  pjnz <- normalizePath(file.path(data_root_dir, "Malawi2024.PJNZ"),
                           winslash = "/", mustWork = TRUE)
   anc <- normalizePath(file.path(data_root_dir, "anc.csv"),
                        winslash = "/", mustWork = TRUE)

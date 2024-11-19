@@ -57,16 +57,16 @@ test_that("do_endpoint_model_options correctly builds options and fallbacks", {
   expect_equal(t2[[length(t2)]]$id, scalar("CY2010Q1"))
   expect_equal(t2[[length(t2)]]$label, scalar("March 2010"))
   expect_true(length(t2) >= 32)
-  expect_length(options$survey_prevalence, 4)
+  expect_length(options$survey_prevalence, 5)
   expect_equal(options$survey_prevalence[[1]]$id,
-               scalar("DEMO2016PHIA"))
+               scalar("DEMO2020PHIA"))
   expect_equal(options$survey_prevalence[[1]]$label,
-               scalar("DEMO2016PHIA"))
-  expect_length(options$survey_art_coverage, 1)
-  expect_length(options$survey_recently_infected, 1)
-  expect_length(options$anc_prevalence_year1, 8)
-  expect_equal(options$anc_prevalence_year1[[1]]$id, scalar("2018"))
-  expect_equal(options$anc_prevalence_year1[[1]]$label, scalar("2018"))
+               scalar("DEMO2020PHIA"))
+  expect_length(options$survey_art_coverage, 2)
+  expect_length(options$survey_recently_infected, 2)
+  expect_length(options$anc_prevalence_year1, 13)
+  expect_equal(options$anc_prevalence_year1[[1]]$id, scalar("2023"))
+  expect_equal(options$anc_prevalence_year1[[1]]$label, scalar("2023"))
   expect_equal(options$anc_prevalence_year1,
                options$anc_prevalence_year2)
   expect_equal(options$anc_prevalence_year1,
@@ -81,11 +81,11 @@ test_that("do_endpoint_model_options correctly builds options and fallbacks", {
                     "survey_art_coverage", "anc_prevalence_year1",
                     "anc_art_coverage_year1"))
   expect_equal(overrides$area_scope, scalar("MWI"))
-  expect_equal(overrides$calendar_quarter_t1, scalar("CY2016Q1"))
-  expect_equal(overrides$survey_prevalence, scalar("DEMO2016PHIA"))
-  expect_equal(overrides$survey_art_coverage, scalar("DEMO2016PHIA"))
-  expect_equal(overrides$anc_prevalence_year1, scalar("2016"))
-  expect_equal(overrides$anc_art_coverage_year1, scalar("2016"))
+  expect_equal(overrides$calendar_quarter_t1, scalar("CY2020Q3"))
+  expect_equal(overrides$survey_prevalence, scalar("DEMO2020PHIA"))
+  expect_equal(overrides$survey_art_coverage, scalar("DEMO2020PHIA"))
+  expect_equal(overrides$anc_prevalence_year1, scalar("2020"))
+  expect_equal(overrides$anc_art_coverage_year1, scalar("2020"))
 })
 
 test_that("do_endpoint_model_options without programme data", {
@@ -144,13 +144,13 @@ test_that("do_endpoint_model_options without programme data", {
   expect_equal(t2[[length(t2)]]$id, scalar("CY2010Q1"))
   expect_equal(t2[[length(t2)]]$label, scalar("March 2010"))
   expect_true(length(t2) >= 32)
-  expect_length(options$survey_prevalence, 4)
+  expect_length(options$survey_prevalence, 5)
   expect_equal(options$survey_prevalence[[1]]$id,
-               scalar("DEMO2016PHIA"))
+               scalar("DEMO2020PHIA"))
   expect_equal(options$survey_prevalence[[1]]$label,
-               scalar("DEMO2016PHIA"))
-  expect_length(options$survey_art_coverage, 1)
-  expect_length(options$survey_recently_infected, 1)
+               scalar("DEMO2020PHIA"))
+  expect_length(options$survey_art_coverage, 2)
+  expect_length(options$survey_recently_infected, 2)
 
   fallback <- args[[1]][[4]]
   expect_equal(fallback$area_scope, scalar("MWI"))
@@ -163,7 +163,7 @@ test_that("do_endpoint_model_options overrides anc year2 to 2022 if in data", {
   anc <- file_object(test_path("testdata", "anc.csv"))
 
   mock_get_controls_json <- mockery::mock('"{"test"}')
-  mock_get_years <- mockery::mock(c(2022, 2021, 2020, 2019))
+  mock_get_years <- mockery::mock(c(2022, 2021))
   with_mocked_bindings(
     {
       json <- do_endpoint_model_options(shape, survey, art, anc)
@@ -236,32 +236,32 @@ test_that("can retrieve validated model options including additional options", {
   survey_section <- json$controlSections[[2]]
   expect_length(
     survey_section$controlGroups[[2]]$controls[[1]]$options,
-    4
+    5
   )
   expect_equal(
     names(survey_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
     c("id", "label"))
   expect_equal(
     survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
-    "DEMO2016PHIA")
+    "DEMO2020PHIA")
   expect_equal(
     survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
-    "DEMO2016PHIA")
+    "DEMO2020PHIA")
 
   anc_section <- json$controlSections[[3]]
   expect_length(
     anc_section$controlGroups[[1]]$controls[[1]]$options,
-    8
+    13
   )
   expect_equal(
     names(anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
     c("id", "label"))
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
-    "2018")
+    "2023")
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
-    "2018")
+    "2023")
 
   art_section <- json$controlSections[[4]]
   expect_length(
@@ -370,8 +370,12 @@ test_that("can get survey options & default for different indicators", {
   data <- read_csv(file.path("testdata", "survey.csv"))
   metadata <- naomi::get_metadata()
   prev_options <- get_survey_options(data, metadata, "prevalence")
-  expect_equal(prev_options$default, scalar("DEMO2016PHIA"))
+  expect_equal(prev_options$default, scalar("DEMO2020PHIA"))
   expect_equal(prev_options$options, list(
+    list(
+      id = scalar("DEMO2020PHIA"),
+      label = scalar("DEMO2020PHIA")
+    ),
     list(
       id = scalar("DEMO2016PHIA"),
       label = scalar("DEMO2016PHIA")
@@ -391,8 +395,10 @@ test_that("can get survey options & default for different indicators", {
   ))
 
   art_options <- get_survey_options(data, metadata, "art_coverage")
-  expect_equal(art_options$default, scalar("DEMO2016PHIA"))
+  expect_equal(art_options$default, scalar("DEMO2020PHIA"))
   expect_equal(art_options$options, list(
+    list(id = scalar("DEMO2020PHIA"),
+         label = scalar("DEMO2020PHIA")),
     list(id = scalar("DEMO2016PHIA"),
          label = scalar("DEMO2016PHIA"))
   ))
@@ -400,8 +406,10 @@ test_that("can get survey options & default for different indicators", {
   mock_get_indicator_data <- mockery::mock(NULL)
   recent_infected_options <- get_survey_options(data, metadata,
                                                 "recent_infected")
-  expect_equal(art_options$default, scalar("DEMO2016PHIA"))
+  expect_equal(art_options$default, scalar("DEMO2020PHIA"))
   expect_equal(art_options$options, list(
+    list(id = scalar("DEMO2020PHIA"),
+         label = scalar("DEMO2020PHIA")),
     list(id = scalar("DEMO2016PHIA"),
          label = scalar("DEMO2016PHIA"))
   ))

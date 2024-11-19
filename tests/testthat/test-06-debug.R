@@ -39,7 +39,7 @@ test_that("Debug endpoint returns debug information", {
   expect_equal(names(info$variables$data$pjnz), c("path", "hash", "filename"))
   expect_setequal(
     dir(file.path(dest, id, "files")),
-    c("anc.csv", "malawi.geojson", "Malawi2019.PJNZ", "population.csv",
+    c("anc.csv", "malawi.geojson", "Malawi2024.PJNZ", "population.csv",
       "programme.csv", "survey.csv"))
 })
 

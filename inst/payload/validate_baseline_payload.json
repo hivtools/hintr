@@ -1,5 +1,5 @@
 {
-  "pjnz": "testdata/Malawi2019.PJNZ",
+  "pjnz": "testdata/Malawi2024.PJNZ",
   "shape": "testdata/malawi.geojson",
   "population": "testdata/population.csv"
 }

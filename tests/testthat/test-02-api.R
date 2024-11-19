@@ -63,7 +63,7 @@ test_that("endpoint_baseline_individual", {
   expect_equal(response$data$hash, scalar("12345"))
   expect_equal(response$data$data$country, scalar("Malawi"))
   expect_equal(response$data$data$iso3, scalar("MWI"))
-  expect_equal(response$data$filename, scalar("Malawi2019.PJNZ"))
+  expect_equal(response$data$filename, scalar("Malawi2024.PJNZ"))
   expect_equal(response$data$filters, json_null())
   expect_equal(response$data$fromADR, scalar(FALSE))
   expect_equal(response$data$resource_url,
@@ -81,7 +81,7 @@ test_that("endpoint_baseline_individual works", {
   expect_equal(body$data$hash, "12345")
   expect_equal(body$data$data$country, "Malawi")
   expect_equal(body$data$data$iso3, "MWI")
-  expect_equal(body$data$filename, "Malawi2019.PJNZ")
+  expect_equal(body$data$filename, "Malawi2024.PJNZ")
   expect_equal(body$data$filters, NULL)
   expect_equal(body$data$fromADR, FALSE)
   expect_equal(body$data$resource_url, "https://adr.unaids.org/file/123.csv")
@@ -169,32 +169,32 @@ test_that("endpoint_model_options", {
   )
   expect_length(
     survey_section$controlGroups[[2]]$controls[[1]]$options,
-    4
+    5
   )
   expect_equal(
     names(survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]),
     c("id", "label"))
   expect_equal(
     survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
-    "DEMO2016PHIA")
+    "DEMO2020PHIA")
   expect_equal(
     survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
-    "DEMO2016PHIA")
+    "DEMO2020PHIA")
 
   anc_section <- body$data$controlSections[[3]]
   expect_length(
     anc_section$controlGroups[[1]]$controls[[1]]$options,
-    8
+    13
   )
   expect_equal(
     names(anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
     c("id", "label"))
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
-    "2018")
+    "2023")
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
-    "2018")
+    "2023")
 
   art_section <- body$data$controlSections[[4]]
   expect_length(
@@ -280,32 +280,32 @@ test_that("endpoint_model_options works", {
   )
   expect_length(
     survey_section$controlGroups[[2]]$controls[[1]]$options,
-    4
+    5
   )
   expect_equal(
     names(survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]),
     c("id", "label"))
   expect_equal(
     survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]$id,
-    "DEMO2016PHIA")
+    "DEMO2020PHIA")
   expect_equal(
     survey_section$controlGroups[[2]]$controls[[1]]$options[[1]]$label,
-    "DEMO2016PHIA")
+    "DEMO2020PHIA")
 
   anc_section <- body$data$controlSections[[3]]
   expect_length(
     anc_section$controlGroups[[1]]$controls[[1]]$options,
-    8
+    13
   )
   expect_equal(
     names(anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]),
     c("id", "label"))
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$id,
-    "2018")
+    "2023")
   expect_equal(
     anc_section$controlGroups[[1]]$controls[[1]]$options[[1]]$label,
-    "2018")
+    "2023")
 
   art_section <- body$data$controlSections[[4]]
   expect_length(
