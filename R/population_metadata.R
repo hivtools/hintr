@@ -61,7 +61,8 @@ population_pyramid_metadata <- function(data) {
               label = scalar(t_("OUTPUT_FILTER_PERIOD")),
               stateFilterId = scalar("calendar_quarter")
             )
-          )
+          ),
+          setMultiple = c("area")
         ),
         plotSettings = list(
           list(
