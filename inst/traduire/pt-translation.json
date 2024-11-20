@@ -117,5 +117,6 @@
     "NUMBER_ON_ART_ADULT_BOTH": "Ambos TARV",
     "NUMBER_ON_ART_ADULT_FEMALE": "Mulheres TARV",
     "NUMBER_ON_ART_ADULT_MALE": "Homens ART",
-    "NUMBER_ON_ART_CHILDREN": "Crianças ART"
+    "NUMBER_ON_ART_CHILDREN": "Crianças ART",
+    "FAILED_READ_CSV": "Falha na leitura do ficheiro. Reveja o ficheiro de entrada e verifique se é um csv válido."
 }

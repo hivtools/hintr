@@ -118,5 +118,6 @@
     "NUMBER_ON_ART_ADULT_BOTH": "Les deux TARV",
     "NUMBER_ON_ART_ADULT_FEMALE": "Femmes TARV",
     "NUMBER_ON_ART_ADULT_MALE": "Hommes TARV",
-    "NUMBER_ON_ART_CHILDREN": "Enfants TARV"
+    "NUMBER_ON_ART_CHILDREN": "Enfants TARV",
+    "FAILED_READ_CSV": "Échec de la lecture du fichier ANC. Veuillez revoir le fichier et vérifier qu'il s'agit d'un fichier csv valide."
 }
