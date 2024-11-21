@@ -1,3 +1,7 @@
+# hintr 1.2.7
+
+* Return a more human readable error message when reading a csv fails in spectacular fashion.
+
 # hintr 1.2.6
 
 * Update test data and options to new Malawi 2024 data

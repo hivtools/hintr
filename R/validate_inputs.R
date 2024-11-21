@@ -85,7 +85,12 @@ do_validate_shape <- function(shape) {
 #' @keywords internal
 do_validate_population <- function(population) {
   assert_file_extension(population, "csv")
-  population <- read_csv(population$path, header = TRUE)
+  withCallingHandlers(
+    population <- read_csv(population$path, header = TRUE),
+    error = function(e) {
+      hintr_error(t_("FAILED_READ_CSV"), "INVALID_FILE")
+    }
+  )
   assert_single_country(population, "population")
   assert_column_names(
     colnames(population),
@@ -118,7 +123,12 @@ do_validate_population <- function(population) {
 #' @keywords internal
 do_validate_programme <- function(programme, shape, strict = TRUE) {
   assert_file_extension(programme, "csv")
-  data <- read_csv(programme$path, header = TRUE)
+  withCallingHandlers(
+    data <- read_csv(programme$path, header = TRUE),
+    error = function(e) {
+      hintr_error(t_("FAILED_READ_CSV"), "INVALID_FILE")
+    }
+  )
   assert_single_country(data, "programme")
   assert_column_names(
     colnames(data),
@@ -156,7 +166,12 @@ do_validate_programme <- function(programme, shape, strict = TRUE) {
 #' @keywords internal
 do_validate_anc <- function(anc, shape, strict = TRUE) {
   assert_file_extension(anc, "csv")
-  data <- as.data.frame(naomi::read_anc_testing(anc$path))
+  withCallingHandlers(
+    data <- as.data.frame(naomi::read_anc_testing(anc$path)),
+    error = function(e) {
+      hintr_error(t_("FAILED_READ_CSV"), "INVALID_FILE")
+    }
+  )
   assert_single_country(data, "anc")
   assert_column_names(
     colnames(data),
@@ -195,7 +210,12 @@ do_validate_anc <- function(anc, shape, strict = TRUE) {
 #' @keywords internal
 do_validate_survey <- function(survey, shape, strict = TRUE) {
   assert_file_extension(survey, "csv")
-  data <- read_csv(survey$path, header = TRUE)
+  withCallingHandlers(
+    data <- read_csv(survey$path, header = TRUE),
+    error = function(e) {
+      hintr_error(t_("FAILED_READ_CSV"), "INVALID_FILE")
+    }
+  )
   assert_single_country(data, "survey")
   assert_column_names(
     colnames(data),

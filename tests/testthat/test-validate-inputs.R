@@ -222,3 +222,25 @@ test_that("baseline data can be validated as a collection", {
   response <- do_validate_baseline(botswana_pjnz, NULL, population)
   expect_true(response$consistent)
 })
+
+test_that("useful error returned when csv file read fails", {
+  not_a_csv <- file_object(tempfile(fileext = ".csv"))
+  saveRDS("123", not_a_csv$path)
+  shape <- file_object(file.path("testdata", "malawi.geojson"))
+
+  expect_error(
+    do_validate_population(not_a_csv),
+    "Failed to read file. Please review input file and check it is a valid csv.")
+
+  expect_error(
+    do_validate_survey(not_a_csv),
+    "Failed to read file. Please review input file and check it is a valid csv.")
+
+  expect_error(
+    do_validate_programme(not_a_csv),
+    "Failed to read file. Please review input file and check it is a valid csv.")
+
+  suppressWarnings(expect_error(
+    do_validate_anc(not_a_csv, shape),
+    "Failed to read file. Please review input file and check it is a valid csv."))
+})
