@@ -145,7 +145,7 @@ test_that("endpoint_validate_baseline supports population file", {
   expect_equal(response$fromADR, scalar(FALSE))
 
   expect_setequal(colnames(response$data),
-                  c("area_id", "calendar_quarter",
+                  c("area_id", "area_name", "calendar_quarter",
                     "sex", "age_group", "population"))
   expect_true(nrow(response$data) > 100)
   ## Data is rounded i.e. no decimal point
