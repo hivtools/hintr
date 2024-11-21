@@ -55,8 +55,14 @@ test_that("do_validate_shape returns if display property is missing", {
 test_that("do_validate_population validates population file", {
   population <- file_object(file.path("testdata", "population.csv"))
   pop <- do_validate_population(population)
-  ## No actual data to return but has been validated
-  expect_equal(pop$data, json_verbatim("null"))
+
+  expect_setequal(colnames(pop$data),
+                  c("area_id", "calendar_quarter",
+                    "sex", "age_group", "population"))
+  expect_true(nrow(pop$data) > 100)
+  ## Data is rounded i.e. no decimal point
+  expect_false(grepl("\\.", as.character(pop$data$population[[1]])))
+  expect_population_metadata(pop$metadata)
 })
 
 test_that("empty rows are ignored in validation", {
@@ -85,8 +91,9 @@ test_that("empty rows are ignored in validation", {
 ",,,,,,"), path)
   population <- file_object(path)
   pop <- do_validate_population(population)
-  ## No actual data to return but has been validated
-  expect_equal(pop$data, json_verbatim("null"))
+
+  # Check these empty rows have been ignored
+  expect_equal(nrow(pop$data), 17)
 })
 
 test_that("do_validate_programme validates programme file", {

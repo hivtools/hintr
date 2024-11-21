@@ -142,6 +142,13 @@ test_that("endpoint_validate_baseline supports population file", {
 
   expect_equal(response$filename, scalar("original"))
   expect_equal(response$hash, scalar("12345"))
-  expect_equal(response$data, json_null())
   expect_equal(response$fromADR, scalar(FALSE))
+
+  expect_setequal(colnames(response$data),
+                  c("area_id", "calendar_quarter",
+                    "sex", "age_group", "population"))
+  expect_true(nrow(response$data) > 100)
+  ## Data is rounded i.e. no decimal point
+  expect_false(grepl("\\.", as.character(response$data$population[[1]])))
+  expect_population_metadata(response$metadata)
 })
