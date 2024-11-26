@@ -420,14 +420,12 @@ get_bubble_settings <- function(filter_types) {
 get_cascade_settings <- function(filter_types) {
   filters <- lapply(c("indicator", "detail", "area", "period", "sex", "age"),
                     get_filter_from_id)
-  detail_options <- get_filter_option_ids(filter_types, "detail")
   list(
     defaultEffect = list(
       setFilters = filters,
       setFilterValues = list(
-        detail = detail_options[length(detail_options)],
         indicator = c("plhiv_attend", "aware_plhiv_attend",
-                      "art_number_attending")
+                      "art_current")
       ),
       setHidden = c("indicator")
     ),
@@ -441,7 +439,7 @@ get_cascade_settings <- function(filter_types) {
       list(
         id = scalar("disagg_by"),
         label = scalar(t_("OUTPUT_BARCHART_DISAGG_BY")),
-        options = list(get_x_axis_or_disagg_by_option("indcator")),
+        options = list(get_x_axis_or_disagg_by_option("indicator")),
         hidden = scalar(TRUE)
       )
     )

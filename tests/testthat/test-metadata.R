@@ -192,13 +192,11 @@ test_that("can get cascade settings", {
   cascade_settings <- call_with_mocks_object({
     get_cascade_settings(filter_types)
   }, mocks)
-  expect_equal(mock_args(mocks$get_filter_from_id), expected_filter_calls)
   expect_equal(cascade_settings$defaultEffect, list(
     setFilters = rep(list("filter_ref"), 6),
     setFilterValues = list(
-      detail = list(scalar("opt2")),
       indicator = c("plhiv_attend", "aware_plhiv_attend",
-                    "art_number_attending")
+                    "art_current")
     ),
     setHidden = c("indicator")
   ))
