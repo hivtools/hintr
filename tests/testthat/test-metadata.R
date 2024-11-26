@@ -195,7 +195,6 @@ test_that("can get cascade settings", {
   expect_equal(mock_args(mocks$get_filter_from_id), expected_filter_calls)
   expect_equal(cascade_settings$defaultEffect, list(
     setFilters = rep(list("filter_ref"), 6),
-    setMultiple = c("indicator", "area"),
     setFilterValues = list(
       detail = list(scalar("opt2")),
       indicator = c("plhiv_attend", "aware_plhiv_attend",
@@ -203,7 +202,14 @@ test_that("can get cascade settings", {
     ),
     setHidden = c("indicator")
   ))
-  expect_equal(cascade_settings$plotSettings, list())
+
+  control_ids <- lapply(cascade_settings$plotSettings, "[[", "id")
+  expect_setequal(control_ids, c("x_axis", "disagg_by"))
+  ## Sets filter values for same property it sets multiple except for area
+  expect_equal(cascade_settings$plotSettings[[1]]$options,
+               list("x_axis_or_disagg_by_option"))
+  expect_equal(cascade_settings$plotSettings[[2]]$options,
+               list("x_axis_or_disagg_by_option"))
 })
 
 test_that("can get x axis or disagg by option", {

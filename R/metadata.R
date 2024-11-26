@@ -424,7 +424,6 @@ get_cascade_settings <- function(filter_types) {
   list(
     defaultEffect = list(
       setFilters = filters,
-      setMultiple = c("indicator", "area"),
       setFilterValues = list(
         detail = detail_options[length(detail_options)],
         indicator = c("plhiv_attend", "aware_plhiv_attend",
@@ -432,7 +431,20 @@ get_cascade_settings <- function(filter_types) {
       ),
       setHidden = c("indicator")
     ),
-    plotSettings = list()
+    plotSettings = list(
+      list(
+        id = scalar("x_axis"),
+        label = scalar(t_("OUTPUT_BARCHART_X_AXIS")),
+        options = list(get_x_axis_or_disagg_by_option("area")),
+        hidden = scalar(TRUE)
+      ),
+      list(
+        id = scalar("disagg_by"),
+        label = scalar(t_("OUTPUT_BARCHART_DISAGG_BY")),
+        options = list(get_x_axis_or_disagg_by_option("indcator")),
+        hidden = scalar(TRUE)
+      )
+    )
   )
 }
 
