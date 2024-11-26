@@ -24,7 +24,8 @@ get_output_plot_settings_control <- function(filter_types) {
     choropleth = get_choropleth_settings(filter_types),
     barchart = get_barchart_settings(filter_types),
     table = get_table_settings(filter_types),
-    bubble = get_bubble_settings(filter_types)
+    bubble = get_bubble_settings(filter_types),
+    cascade = get_cascade_settings(filter_types)
   )
 }
 
@@ -411,6 +412,25 @@ get_bubble_settings <- function(filter_types) {
         sizeIndicator = c("plhiv"),
         detail = detail_options[length(detail_options)]
       )
+    ),
+    plotSettings = list()
+  )
+}
+
+get_cascade_settings <- function(filter_types) {
+  filters <- lapply(c("indicator", "detail", "area", "period", "sex", "age"),
+                    get_filter_from_id)
+  detail_options <- get_filter_option_ids(filter_types, "detail")
+  list(
+    defaultEffect = list(
+      setFilters = filters,
+      setMultiple = c("indicator", "area"),
+      setFilterValues = list(
+        detail = detail_options[length(detail_options)],
+        indicator = c("plhiv_attend", "aware_plhiv_attend",
+                      "art_number_attending")
+      ),
+      setHidden = c("indicator")
     ),
     plotSettings = list()
   )
