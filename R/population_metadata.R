@@ -15,7 +15,7 @@ population_pyramid_metadata <- function(data) {
     list(
       id = scalar("calendar_quarter"),
       column_id = scalar("calendar_quarter"),
-      options = get_quarter_filters(data)
+      options = get_quarter_filters(data, decreasing = FALSE)
     ),
     age_filter <- list(
       id = scalar("age"),

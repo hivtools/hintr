@@ -269,9 +269,9 @@ get_selected_mappings <- function(mappings, type, ids = NULL, key = "options") {
   selected
 }
 
-get_quarter_filters <- function(data) {
+get_quarter_filters <- function(data, decreasing = TRUE) {
   calendar_quarters <- unique(data$calendar_quarter)
-  calendar_quarters <- sort(calendar_quarters, decreasing = TRUE)
+  calendar_quarters <- sort(calendar_quarters, decreasing = decreasing)
   lapply(calendar_quarters, function(quarter) {
     list(id = scalar(as.character(quarter)),
          label = scalar(get_quarter_label(quarter)))
