@@ -8,6 +8,9 @@
 ## of simplifyVector in call to simplifyVector
 ## Use this so that we can use same test for data frame and list type
 df_to_list <- function(x) {
+  if (nrow(x) == 0) {
+    return(list())
+  }
   lapply(seq(nrow(x)), function(row_num) { as.list(x[row_num, ])})
 }
 
@@ -118,14 +121,35 @@ expect_input_comparison_metadata <- function(metadata) {
            sprintf("filter '%s' has no options", filter$id))
   }
 
-  filters <- lapply(metadata$filterTypes, "[[",
-                    "column_id")
+  filters <- lapply(metadata$filterTypes, "[[", "column_id")
   ## Ignore attr below as before serialization this will be wrapped in a scalar
   ## class but afterwards it won't
   expect_equal(filters[[1]], "indicator", ignore_attr = TRUE)
   expect_equal(filters[[2]], "area_name", ignore_attr = TRUE)
   expect_equal(filters[[3]], "year", ignore_attr = TRUE)
   expect_equal(filters[[4]], "group", ignore_attr = TRUE)
+}
+
+expect_population_metadata <- function(metadata) {
+  expect_valid_metadata(metadata)
+  expect_equal(names(metadata),
+               c("filterTypes", "indicators", "plotSettingsControl"))
+
+  if (is.data.frame(metadata$indicators)) {
+    metadata$indicators <- df_to_list(metadata$indicators)
+  }
+  expect_true(length(metadata$indicators) > 0)
+  indicators <- vcapply(metadata$indicators, "[[", "indicator")
+  expect_setequal(indicators, c("population", "population_proportion"))
+
+  filters <- lapply(metadata$filterTypes, "[[", "column_id")
+  ## Ignore attr below as before serialization this will be wrapped in a scalar
+  ## class but afterwards it won't
+  expect_equal(filters[[1]], "area_id", ignore_attr = TRUE)
+  expect_equal(filters[[2]], "area_level", ignore_attr = TRUE)
+  expect_equal(filters[[3]], "calendar_quarter", ignore_attr = TRUE)
+  expect_equal(filters[[4]], "age_group", ignore_attr = TRUE)
+  expect_equal(filters[[5]], "sex", ignore_attr = TRUE)
 }
 
 mock_filter_types <- function(ids) {

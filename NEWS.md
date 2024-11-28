@@ -1,3 +1,7 @@
+# hintr 1.2.8
+
+* Return data and metadata from population validation endpoint
+
 # hintr 1.2.7
 
 * Return a more human readable error message when reading a csv fails in spectacular fashion.

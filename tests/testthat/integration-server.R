@@ -63,16 +63,21 @@ test_that("validate population", {
     body = payload,
     httr::content_type_json())
   expect_equal(httr::status_code(r), 200)
-  expect_equal(response_from_json(r), list(
-    status = "success",
-    errors = NULL,
-    data = list(hash = "12345",
-                type = "population",
-                data = NULL,
-                filename = "original.csv",
-                fromADR = FALSE,
-                resource_url = NULL,
-                filters = NULL)))
+  res <- response_from_json(r)
+  expect_equal(res$status, "success")
+  expect_null(res$errors)
+  expect_equal(res$data$hash, "12345")
+  expect_equal(res$data$type, "population")
+  expect_equal(res$data$filename, "original.csv")
+  expect_false(res$data$fromADR)
+  expect_null(res$data$resource_url)
+  expect_null(res$data$filters)
+
+  expect_setequal(names(res$data$data[[1]]),
+                  c("area_id", "area_name", "calendar_quarter",
+                    "sex", "age_group", "population"))
+  expect_true(length(res$data$data) > 100)
+  expect_population_metadata(res$data$metadata)
 })
 
 test_that("validate programme", {

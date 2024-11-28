@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "area_id": {
+      "type": "string"
+    },
+    "area_name": {
+      "type": "string"
+    },
+    "calendar_quarter": {
+      "type": "string"
+    },
+    "sex": {
+      "type": "string"
+    },
+    "age_group": {
+      "type": "string"
+    },
+    "population": {
+      "type": "number"
+    }
+  },
+  "additionalProperties": true,
+  "required": [ "area_id", "area_name", "calendar_quarter", "sex", "age_group",
+                "population" ]
+}

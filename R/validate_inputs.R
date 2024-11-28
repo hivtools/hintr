@@ -94,7 +94,8 @@ do_validate_population <- function(population) {
   assert_single_country(population, "population")
   assert_column_names(
     colnames(population),
-    c("area_id", "calendar_quarter", "sex", "age_group", "source", "population"))
+    c("area_id", "area_name", "calendar_quarter", "sex", "age_group",
+      "source", "population"))
   assert_calendar_quarter_column(population)
   assert_expected_values(population, "sex", c("male", "female"), all_values = TRUE)
   assert_expected_values(population, "age_group", naomi::get_five_year_age_groups(), all_values = TRUE)
@@ -102,8 +103,16 @@ do_validate_population <- function(population) {
   assert_single_source(population)
   assert_no_na(population, "population")
   assert_column_positive_numeric(population, "population")
-  list(data = json_verbatim("null"),
-       filters = json_verbatim("null"))
+
+  return_data <- population[, c("area_id", "area_name", "calendar_quarter",
+                                "sex", "age_group", "population")]
+  # Population data sometimes interpolated so it has many decimal points
+  # reduce payload size here by rounding early, we never want to display it
+  # more precisely than to nearest 1.
+  return_data$population <- round(return_data$population)
+  metadata <- population_pyramid_metadata(return_data)
+  list(data = return_data,
+       metadata = metadata)
 }
 
 #' Validate programme ART data file.

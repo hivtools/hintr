@@ -17,6 +17,9 @@
     },
     "use_shape_regions": {
       "type": [ "boolean", "null" ]
+    },
+    "use_shape_area_level": {
+      "type": [ "boolean", "null" ]
     }
   },
   "additionalProperties": false,

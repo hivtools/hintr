@@ -9,6 +9,9 @@ input_response <- function(value, type, file) {
   if (!is.null(value$warnings)) {
     ret$warnings <- warnings_scalar(value$warnings)
   }
+  if (!is.null(value$metadata)) {
+    ret$metadata <- value$metadata
+  }
   validate_json_schema(to_json(ret), get_input_response_schema(type), "data")
   ret
 }
