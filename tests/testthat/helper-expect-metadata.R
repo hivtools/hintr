@@ -140,7 +140,7 @@ expect_population_metadata <- function(metadata) {
   }
   expect_true(length(metadata$indicators) > 0)
   indicators <- vcapply(metadata$indicators, "[[", "indicator")
-  expect_setequal(indicators, c("population", "population_ratio"))
+  expect_setequal(indicators, c("population", "population_proportion"))
 
   filters <- lapply(metadata$filterTypes, "[[", "column_id")
   ## Ignore attr below as before serialization this will be wrapped in a scalar
