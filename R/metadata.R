@@ -24,7 +24,8 @@ get_output_plot_settings_control <- function(filter_types) {
     choropleth = get_choropleth_settings(filter_types),
     barchart = get_barchart_settings(filter_types),
     table = get_table_settings(filter_types),
-    bubble = get_bubble_settings(filter_types)
+    bubble = get_bubble_settings(filter_types),
+    cascade = get_cascade_settings(filter_types)
   )
 }
 
@@ -413,6 +414,35 @@ get_bubble_settings <- function(filter_types) {
       )
     ),
     plotSettings = list()
+  )
+}
+
+get_cascade_settings <- function(filter_types) {
+  filters <- lapply(c("indicator", "detail", "area", "period", "sex", "age"),
+                    get_filter_from_id)
+  list(
+    defaultEffect = list(
+      setFilters = filters,
+      setFilterValues = list(
+        indicator = c("plhiv_attend", "aware_plhiv_attend",
+                      "art_current")
+      ),
+      setHidden = c("indicator")
+    ),
+    plotSettings = list(
+      list(
+        id = scalar("x_axis"),
+        label = scalar(t_("OUTPUT_BARCHART_X_AXIS")),
+        options = list(get_x_axis_or_disagg_by_option("area")),
+        hidden = scalar(TRUE)
+      ),
+      list(
+        id = scalar("disagg_by"),
+        label = scalar(t_("OUTPUT_BARCHART_DISAGG_BY")),
+        options = list(get_x_axis_or_disagg_by_option("indicator")),
+        hidden = scalar(TRUE)
+      )
+    )
   )
 }
 

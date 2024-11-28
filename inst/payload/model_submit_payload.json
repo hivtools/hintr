@@ -62,7 +62,7 @@
     "anc_prevalence_year2": 2023,
     "anc_art_coverage_year1": 2020,
     "anc_art_coverage_year2": 2023,
-    "spectrum_population_calibration": "none",
+    "spectrum_population_calibration": "national",
     "spectrum_plhiv_calibration_level": "none",
     "spectrum_plhiv_calibration_strat": "sex_age_coarse",
     "spectrum_artnum_calibration_level": "none",
