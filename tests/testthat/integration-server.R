@@ -178,10 +178,10 @@ test_that("population plot metadata", {
     body = payload,
     httr::content_type_json())
   expect_equal(httr::status_code(r), 200)
-  res <- response_from_json(r)
+  res <- response_from_json(r, simplifyVector = FALSE)
   expect_equal(res$status, "success")
   expect_null(res$errors)
-  expect_population_metadata(res$data$metadata)
+  expect_population_metadata(res$data)
 })
 
 test_that("model interactions", {
