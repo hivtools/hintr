@@ -62,7 +62,6 @@ test_that("do_validate_population validates population file", {
   expect_true(nrow(pop$data) > 100)
   ## Data is rounded i.e. no decimal point
   expect_false(grepl("\\.", as.character(pop$data$population[[1]])))
-  expect_population_metadata(pop$metadata)
 })
 
 test_that("empty rows are ignored in validation", {

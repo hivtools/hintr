@@ -150,5 +150,4 @@ test_that("endpoint_validate_baseline supports population file", {
   expect_true(nrow(response$data) > 100)
   ## Data is rounded i.e. no decimal point
   expect_false(grepl("\\.", as.character(response$data$population[[1]])))
-  expect_population_metadata(response$metadata)
 })

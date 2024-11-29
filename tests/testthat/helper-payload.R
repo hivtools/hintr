@@ -115,3 +115,11 @@ setup_payload_input_comparison <- function(data_root_dir,
     ),
     '}')
 }
+
+setup_payload_poulation_metadata <- function(data_root_dir) {
+  population <- normalizePath(file.path(data_root_dir, "population.csv"),
+                              winslash = "/", mustWork = TRUE)
+
+  jsonlite::toJSON(list(population = file_object(population)),
+                   auto_unbox = TRUE)
+}

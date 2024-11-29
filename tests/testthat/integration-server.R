@@ -77,7 +77,6 @@ test_that("validate population", {
                   c("area_id", "area_name", "calendar_quarter",
                     "sex", "age_group", "population"))
   expect_true(length(res$data$data) > 100)
-  expect_population_metadata(res$data$metadata)
 })
 
 test_that("validate programme", {
@@ -170,6 +169,19 @@ test_that("review input metadata", {
   expect_input_metadata(response$data,
                         c("survey", "programme", "anc"),
                         c("programme", "anc"))
+})
+
+test_that("population plot metadata", {
+  payload <- setup_payload_poulation_metadata(test_path("testdata"))
+  r <- server$request(
+    "POST", "/chart-data/input-population",
+    body = payload,
+    httr::content_type_json())
+  expect_equal(httr::status_code(r), 200)
+  res <- response_from_json(r)
+  expect_equal(res$status, "success")
+  expect_null(res$errors)
+  expect_population_metadata(res$data$metadata)
 })
 
 test_that("model interactions", {

@@ -110,9 +110,7 @@ do_validate_population <- function(population) {
   # reduce payload size here by rounding early, we never want to display it
   # more precisely than to nearest 1.
   return_data$population <- round(return_data$population)
-  metadata <- population_pyramid_metadata(return_data)
-  list(data = return_data,
-       metadata = metadata)
+  list(data = return_data)
 }
 
 #' Validate programme ART data file.
