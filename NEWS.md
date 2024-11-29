@@ -1,3 +1,7 @@
+# hintr 1.2.9
+
+* Return metadata from a new separate population endpoint to make re-fetching when languages change easier. See nm-94.
+
 # hintr 1.2.8
 
 * Return data and metadata from population validation endpoint
