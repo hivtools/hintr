@@ -83,7 +83,7 @@ test_that("get_anc_time_series returns data and columns", {
   expect_equal(columns[[1]]$id, scalar("plot_type"))
   expect_equal(columns[[1]]$column_id, scalar("plot"))
   expect_equal(columns[[1]]$label, scalar("Plot type"))
-  expect_length(columns[[1]]$values, 9)
+  expect_length(columns[[1]]$values, 13)
   expect_setequal(
     names(columns[[1]]$values[[1]]),
     c("id", "label", "description", "format", "accuracy")
