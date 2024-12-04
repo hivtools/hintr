@@ -5,9 +5,6 @@
     "area_id": {
       "type": "string"
     },
-    "area_name": {
-      "type": "string"
-    },
     "calendar_quarter": {
       "type": "string"
     },
@@ -22,6 +19,5 @@
     }
   },
   "additionalProperties": true,
-  "required": [ "area_id", "area_name", "calendar_quarter", "sex", "age_group",
-                "population" ]
+  "required": [ "area_id", "calendar_quarter", "sex", "age_group", "population" ]
 }

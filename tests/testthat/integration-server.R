@@ -74,7 +74,7 @@ test_that("validate population", {
   expect_null(res$data$filters)
 
   expect_setequal(names(res$data$data[[1]]),
-                  c("area_id", "area_name", "calendar_quarter",
+                  c("area_id", "calendar_quarter",
                     "sex", "age_group", "population"))
   expect_true(length(res$data$data) > 100)
 })
