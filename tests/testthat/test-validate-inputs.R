@@ -57,7 +57,7 @@ test_that("do_validate_population validates population file", {
   pop <- do_validate_population(population)
 
   expect_setequal(colnames(pop$data),
-                  c("area_id", "area_name", "calendar_quarter",
+                  c("area_id", "calendar_quarter",
                     "sex", "age_group", "population"))
   expect_true(nrow(pop$data) > 100)
   ## Data is rounded i.e. no decimal point
