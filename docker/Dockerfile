@@ -15,12 +15,14 @@ RUN install_packages --repo=https://mrc-ide.r-universe.dev \
         jsonvalidate \
         lgr \
         naomi.options \
+        first90 \
         plumber \
         porcelain \
         ps \
         remotes \
         rlang \
         rrq
+
 
 COPY docker/bin /usr/local/bin/
 
