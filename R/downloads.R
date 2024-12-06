@@ -15,6 +15,7 @@ download <- function(model_output, type, path_results, input, language = NULL) {
                      summary = ".html",
                      comparison = ".html",
                      agyw = ".xlsx",
+                     datapack = ".csv",
                      hintr_error(t_("INVALID_DOWNLOAD_TYPE", list(type = type)),
                                  "INVALID_DOWNLOAD_TYPE"))
   path_results <- normalizePath(path_results, winslash = "/", mustWork = TRUE)
@@ -31,6 +32,9 @@ download <- function(model_output, type, path_results, input, language = NULL) {
   } else if (type == "agyw") {
     out <- naomi::hintr_prepare_agyw_download(model_output, input$pjnz,
                                               download_path)
+  } else if (type == "datapack") {
+    out <- naomi::hintr_prepare_datapack_download(model_output,
+                                                  download_path, input$vmmc)
   } else {
     func <- switch(type,
                    coarse_output = naomi::hintr_prepare_coarse_age_group_download,

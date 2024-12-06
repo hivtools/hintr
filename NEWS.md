@@ -1,3 +1,7 @@
+# hintr 1.2.10
+
+* Add new endpoint for downloading datapack nm-103.
+
 # hintr 1.2.9
 
 * Return metadata from a new separate population endpoint to make re-fetching when languages change easier. See nm-94.

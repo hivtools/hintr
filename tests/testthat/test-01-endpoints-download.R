@@ -1028,3 +1028,47 @@ test_that("api can include vmmc in spectrum download", {
   expect_true(all(c("VMMC_CIRC_SUBNAT.T_1", "VMMC_TOTALCIRC_SUBNAT.T_1") %in%
                     pepfar_data$indicator_code))
 })
+
+test_that("datapack download returns bytes", {
+  test_mock_model_available()
+  q <- test_queue_result()
+
+  ## Submit download request
+  submit <- endpoint_download_submit(q$queue)
+  submit_response <- submit$run(q$calibrate_id, "datapack")
+
+  expect_equal(submit_response$status_code, 200)
+  expect_true(!is.null(submit_response$data$id))
+
+  ## Status
+  out <- q$queue$task_wait(submit_response$data$id)
+  status <- endpoint_download_status(q$queue)
+  status_response <- status$run(submit_response$data$id)
+
+  expect_equal(status_response$status_code, 200)
+  expect_equal(status_response$data$id, submit_response$data$id)
+  expect_true(status_response$data$done)
+  expect_equal(status_response$data$status, scalar("COMPLETE"))
+  expect_true(status_response$data$success)
+  expect_equal(status_response$data$queue, scalar(0))
+  expect_length(status_response$data$progress, 1)
+
+  ## Get result
+  result <- endpoint_download_result(q$queue)
+  response <- result$run(status_response$data$id)
+  expect_equal(response$status_code, 200)
+  expect_match(response$headers$`Content-Disposition`,
+               'attachment; filename="MWI_datapack_\\d+-\\d+.csv"')
+  size <- length(response$data)
+  expect_equal(response$headers$`Content-Length`, size)
+
+  ## Get HEAD
+  head <- endpoint_download_result_head(q$queue)
+  head_response <- head$run(status_response$data$id)
+  expect_equal(head_response$status_code, 200)
+  expect_equal(head_response$content_type, "application/octet-stream")
+  expect_match(head_response$headers$`Content-Disposition`,
+               'attachment; filename="MWI_datapack_\\d+-\\d+.csv"')
+  expect_equal(head_response$headers$`Content-Length`, size)
+  expect_null(head_response$body, NULL)
+})
