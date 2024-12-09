@@ -1058,7 +1058,7 @@ test_that("datapack download returns bytes", {
   response <- result$run(status_response$data$id)
   expect_equal(response$status_code, 200)
   expect_match(response$headers$`Content-Disposition`,
-               'attachment; filename="MWI_datapack_\\d+-\\d+.csv"')
+               'attachment; filename="MWI_pepfar-tst-2025_\\d+-\\d+.xlsx"')
   size <- length(response$data)
   expect_equal(response$headers$`Content-Length`, size)
 
@@ -1068,7 +1068,7 @@ test_that("datapack download returns bytes", {
   expect_equal(head_response$status_code, 200)
   expect_equal(head_response$content_type, "application/octet-stream")
   expect_match(head_response$headers$`Content-Disposition`,
-               'attachment; filename="MWI_datapack_\\d+-\\d+.csv"')
+               'attachment; filename="MWI_pepfar-tst-2025_\\d+-\\d+.xlsx"')
   expect_equal(head_response$headers$`Content-Length`, size)
   expect_null(head_response$body, NULL)
 })

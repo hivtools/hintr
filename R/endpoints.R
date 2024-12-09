@@ -815,7 +815,7 @@ download_file_label <- function(type) {
          summary = "summary-report",
          comparison = "comparison-report",
          agyw = "AGYW",
-         datapack = "datapack")
+         datapack = "pepfar-tst-2025")
 }
 
 download_file_extension <- function(type) {
@@ -825,7 +825,7 @@ download_file_extension <- function(type) {
          summary = ".html",
          comparison = ".html",
          agyw = ".xlsx",
-         datapack = ".csv")
+         datapack = ".xlsx")
 }
 
 download_result <- function(queue) {

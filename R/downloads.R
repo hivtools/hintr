@@ -15,7 +15,7 @@ download <- function(model_output, type, path_results, input, language = NULL) {
                      summary = ".html",
                      comparison = ".html",
                      agyw = ".xlsx",
-                     datapack = ".csv",
+                     datapack = ".xlsx",
                      hintr_error(t_("INVALID_DOWNLOAD_TYPE", list(type = type)),
                                  "INVALID_DOWNLOAD_TYPE"))
   path_results <- normalizePath(path_results, winslash = "/", mustWork = TRUE)
