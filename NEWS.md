@@ -1,3 +1,7 @@
+# hintr 1.2.10
+
+* Remove ANC strict validation for Zimbabwe to be able to upload data
+
 # hintr 1.2.9
 
 * Return metadata from a new separate population endpoint to make re-fetching when languages change easier. See nm-94.
