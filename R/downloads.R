@@ -36,7 +36,7 @@ download <- function(model_output, type, path_results, input, language = NULL) {
     state_json <- jsonlite::fromJSON(input$state, simplifyVector = FALSE)
     model_fit_id <- state_json$model_fit$id
     calibrate_id <- state_json$calibrate$id
-    ids <- data.frame(c("model_fit", "calibrate"),
+    ids <- data.frame(c("Model fit ID", "Calibrate ID"),
                       c(model_fit_id, calibrate_id))
     out <- naomi::hintr_prepare_datapack_download(model_output,
                                                   download_path,
