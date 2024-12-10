@@ -33,8 +33,14 @@ download <- function(model_output, type, path_results, input, language = NULL) {
     out <- naomi::hintr_prepare_agyw_download(model_output, input$pjnz,
                                               download_path)
   } else if (type == "datapack") {
+    model_fit_id <- input$state$model_fit$id
+    calibrate_id <- input$state$calibrate$id
+    ids <- data.frame(c("model_fit", "calibrate"),
+                      c(model_fit_id, calibrate_id))
     out <- naomi::hintr_prepare_datapack_download(model_output,
-                                                  download_path, input$vmmc)
+                                                  download_path,
+                                                  input$vmmc,
+                                                  ids)
   } else {
     func <- switch(type,
                    coarse_output = naomi::hintr_prepare_coarse_age_group_download,
