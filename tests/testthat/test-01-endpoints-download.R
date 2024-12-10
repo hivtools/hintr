@@ -1035,7 +1035,9 @@ test_that("datapack download returns bytes", {
 
   ## Submit download request
   submit <- endpoint_download_submit(q$queue)
-  submit_response <- submit$run(q$calibrate_id, "datapack")
+  payload <- setup_payload_download_request(include_vmmc = TRUE,
+                                            include_notes = FALSE)
+  submit_response <- submit$run(q$calibrate_id, "datapack", payload)
 
   expect_equal(submit_response$status_code, 200)
   expect_true(!is.null(submit_response$data$id))
