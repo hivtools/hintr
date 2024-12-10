@@ -814,7 +814,8 @@ download_file_label <- function(type) {
          coarse_output = "coarse-output",
          summary = "summary-report",
          comparison = "comparison-report",
-         agyw = "AGYW")
+         agyw = "AGYW",
+         datapack = "pepfar-tst-2025")
 }
 
 download_file_extension <- function(type) {
@@ -823,7 +824,8 @@ download_file_extension <- function(type) {
          coarse_output = ".zip",
          summary = ".html",
          comparison = ".html",
-         agyw = ".xlsx")
+         agyw = ".xlsx",
+         datapack = ".xlsx")
 }
 
 download_result <- function(queue) {

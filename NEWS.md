@@ -1,3 +1,7 @@
+# hintr 1.2.11
+
+* Add new endpoint for downloading datapack output nm-103.
+
 # hintr 1.2.10
 
 * Remove ANC strict validation for Zimbabwe to be able to upload data
