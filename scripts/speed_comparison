@@ -1,0 +1,185 @@
+#!/usr/bin/env bash
+
+set -e
+
+# Variables
+NETWORK_NAME="hintr_nw"
+REDIS_CONTAINER_NAME="hintr_redis"
+CONTAINER_NAME_MAIN="hintr_main"
+CONTAINER_NAME_MINIMAL="hintr_minimal"
+TAG_MAIN="main"
+TAG_MINIMAL="nm-39"
+TESTDATA_DIR="$(pwd)/tests/testthat/testdata"
+ENDPOINT="http://localhost:8888/review-input/metadata"
+REQUEST_DATA='{
+  "iso3": "MWI",
+  "data": {
+    "shape": {
+      "path": "testdata/malawi.geojson",
+      "hash": "12345",
+      "filename": "original",
+      "fromADR": false,
+      "resource_url": "https://adr.unaids.org/file/123.csv"
+    },
+    "survey": {
+      "path": "testdata/survey.csv",
+      "hash": "12345",
+      "filename": "original",
+      "fromADR": false,
+      "resource_url": "https://adr.unaids.org/file/123.csv"
+    },
+    "anc": {
+      "path": "testdata/anc.csv",
+      "hash": "12345",
+      "filename": "original",
+      "fromADR": false,
+      "resource_url": "https://adr.unaids.org/file/123.csv"
+    },
+    "programme": {
+      "path": "testdata/programme.csv",
+      "hash": "12345",
+      "filename": "original",
+      "fromADR": false,
+      "resource_url": "https://adr.unaids.org/file/123.csv"
+    }
+  }
+}'
+
+# Function to start a Docker container
+start_hintr() {
+  local container_name=$1
+  local tag=$2
+  docker pull "ghcr.io/hivtools/hintr:$tag"
+  docker run --rm -d \
+    --name="$container_name" \
+    -v "$TESTDATA_DIR:/testdata" \
+    -e "REDIS_URL=redis://redis:6379" \
+    -e VALIDATE_JSON_SCHEMAS=true \
+    -e PORCELAIN_VALIDATE=true \
+    --network "$NETWORK_NAME" \
+    -p 8888:8888 \
+    "ghcr.io/hivtools/hintr:$tag" \
+    --inputs-dir /testdata
+
+  set +e
+  for attempt in $(seq 20); do
+    echo "Attempt $attempt"
+    RESPONSE=$(curl --silent http://localhost:8888 | jq -r .data)
+    if [ "$RESPONSE" == 'Welcome to hintr' ]; then
+        echo "SUCCESS"
+        break
+    fi
+    sleep 0.5
+  done
+  if [ "$RESPONSE" != 'Welcome to hintr' ]; then
+        echo "FAILED TO START HINTR $tag"
+        exit 0
+    fi
+  set -e
+}
+
+# Function to stop a Docker container
+stop_container() {
+  local container_name=$1
+  docker stop "$container_name"
+}
+
+# Function to send POST request and measure round trip time
+measure_time() {
+  local start_time=$(date +%s%N)
+#  curl -s -o /dev/null -X POST -H "Content-Type: application/json" -d "$REQUEST_DATA" "$ENDPOINT"
+  curl -s -o /dev/null -X GET http://localhost:8888/model/status/123
+  local end_time=$(date +%s%N)
+  echo $((end_time - start_time))
+}
+
+# Function to calculate statistics
+calculate_statistics() {
+  local times=("$@")
+  local sum=0
+  local count=${#times[@]}
+  local min=${times[0]}
+  local max=${times[0]}
+  local mean=0
+  local median=0
+  local variance=0
+
+  for time in "${times[@]}"; do
+    sum=$((sum + time))
+    if [ "$time" -lt "$min" ]; then min=$time; fi
+    if [ "$time" -gt "$max" ]; then max=$time; fi
+  done
+
+  mean=$((sum / count))
+
+  sorted_times=($(printf '%s\n' "${times[@]}" | sort -n))
+  if (( count % 2 == 0 )); then
+    median=$(( (sorted_times[count/2-1] + sorted_times[count/2]) / 2 ))
+  else
+    median=${sorted_times[count/2]}
+  fi
+
+  for time in "${times[@]}"; do
+    diff=$(echo "$time - $mean" | bc)
+    square=$(echo "$diff * $diff" | bc)
+    variance=$(echo "$variance + $square" | bc)
+  done
+  variance=$(echo "scale=3; $variance / $count" | bc)
+
+  # Convert nanoseconds to milliseconds
+  min_ms=$(echo "scale=3; $min / 1000000" | bc)
+  mean_ms=$(echo "scale=3; $mean / 1000000" | bc)
+  median_ms=$(echo "scale=3; $median / 1000000" | bc)
+  sd_ms=$(echo "scale=3; sqrt($variance / 1000000000000)" | bc)
+  max_ms=$(echo "scale=3; $max / 1000000" | bc)
+
+  echo "Min: ${min_ms}ms"
+  echo "Mean: ${mean_ms}ms"
+  echo "Median: ${median_ms}ms"
+  echo "SD: ${sd_ms}ms^2"
+  echo "Max: ${max_ms}ms"
+}
+
+function cleanup {
+    echo "Cleaning up"
+    docker kill $CONTAINER_NAME_MINIMAL > /dev/null || true
+    docker kill $CONTAINER_NAME_MAIN > /dev/null || true
+    docker kill $REDIS_CONTAINER_NAME > /dev/null || true
+    docker network rm $NETWORK_NAME > /dev/null || true
+}
+
+trap cleanup EXIT
+
+# Main script
+docker network create "$NETWORK_NAME"
+
+docker run --rm -d \
+  --name "$REDIS_CONTAINER_NAME" \
+  --network "$NETWORK_NAME" \
+  --network-alias=redis \
+  redis
+
+start_hintr "$CONTAINER_NAME_MAIN" "$TAG_MAIN"
+
+times_main=()
+
+for i in {1..50}; do
+  echo "Timing request $i to $TAG_MAIN"
+  times_main+=($(measure_time))
+done
+stop_container "$CONTAINER_NAME_MAIN"
+
+start_hintr "$CONTAINER_NAME_MINIMAL" "$TAG_MINIMAL"
+
+times_minimal=()
+
+for i in {1..50}; do
+  echo "Timing request $i to $TAG_MINIMAL"
+  times_minimal+=($(measure_time))
+done
+
+echo "Statistics for $CONTAINER_NAME_MAIN:"
+calculate_statistics "${times_main[@]}"
+
+echo "Statistics for $CONTAINER_NAME_MINIMAL:"
+calculate_statistics "${times_minimal[@]}"

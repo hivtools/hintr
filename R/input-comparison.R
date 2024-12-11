@@ -13,11 +13,10 @@ input_comparison <- function(input) {
     }
     assert_file_exists(input$shape$path)
     assert_file_exists(input$pjnz$path)
-    data <- as.data.frame(
-      naomi::prepare_spectrum_naomi_comparison(input$programme$path,
-                                               input$anc$path,
-                                               input$shape$path,
-                                               input$pjnz$path))
+    data <- naomi::prepare_spectrum_naomi_comparison(input$programme$path,
+                                                     input$anc$path,
+                                                     input$shape$path,
+                                                     input$pjnz$path)
     metadata <- build_input_comparison_metadata(data)
     list(
       data = data,
@@ -47,7 +46,10 @@ get_filter_options <- function(data, key) {
 build_input_comparison_metadata <- function(data) {
   indicator_metadata <- get_indicator_metadata("input_comparison", "barchart",
                                                list(iso3 = "default"))
-  data_indicators <- unique(data$indicator)
+  common_cols <- c("indicator", "area_name", "year", "group")
+  all_categories <- rbind.data.frame(data$anc[, common_cols],
+                                         data$art[, common_cols])
+  data_indicators <- unique(all_categories$indicator)
   present_indicators <- indicator_metadata[indicator_metadata$indicator %in% data_indicators, ]
   indicator_options <- construct_filter(present_indicators, "indicator", "name")
   indicator_ids <- vcapply(indicator_options, "[[", "id")
@@ -61,18 +63,18 @@ build_input_comparison_metadata <- function(data) {
   area_name_filter <- list(
     id = scalar("area_name"),
     column_id = scalar("area_name"),
-    options = get_filter_options(data, "area_name")
+    options = get_filter_options(all_categories, "area_name")
   )
   year_filter <- list(
     id = scalar("year"),
     column_id = scalar("year"),
-    options = get_year_filters(data, decreasing = FALSE)
+    options = get_year_filters(all_categories, decreasing = FALSE)
   )
   art_groups <- c("art_adult_both", "art_adult_female", "art_adult_male",
                   "art_children")
   anc_groups <- "anc_adult_female"
   ordered_groups <- c(art_groups, anc_groups)
-  group_ids <- unique(data$group)
+  group_ids <- unique(all_categories$group)
   ordered_group_ids <- ordered_groups[ordered_groups %in% group_ids]
   group_filter <- list(
     id = scalar("group"),
