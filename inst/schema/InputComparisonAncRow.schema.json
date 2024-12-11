@@ -19,9 +19,6 @@
     },
     "value_naomi": {
       "type": ["number", "null"]
-    },
-    "difference": {
-      "type": ["number", "null"]
     }
   },
   "additionalProperties": true,
