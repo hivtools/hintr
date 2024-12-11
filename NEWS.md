@@ -1,3 +1,7 @@
+# hintr 1.2.12
+
+* Update ART comparison table data and metadata to return adjusted and unadjusted spectrum values.
+
 # hintr 1.2.11
 
 * Add new endpoint for downloading datapack output nm-103.

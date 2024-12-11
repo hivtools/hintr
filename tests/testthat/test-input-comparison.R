@@ -3,8 +3,10 @@ test_that("can return input comparison metadata", {
   out <- input_comparison(input)
 
   expect_setequal(names(out), c("data", "metadata", "warnings"))
+  expect_setequal(names(out$data), c("anc", "art"))
+  expect_true(nrow(out$data$anc) > 50)
+  expect_true(nrow(out$data$art)> 20)
   expect_input_comparison_metadata(out$metadata)
-  expect_true(nrow(out$data) > 50)
   expect_equal(out$warnings, list())
 })
 
@@ -32,7 +34,9 @@ test_that("input comparison metadata endpoint", {
   expect_equal(names(body$data), c("data", "metadata", "warnings"))
 
   expect_input_comparison_metadata(body$data$metadata)
-  expect_true(length(body$data$data) > 50)
+  expect_setequal(names(body$data$data), c("anc", "art"))
+  expect_true(length(body$data$data$anc) > 50)
+  expect_true(length(body$data$data$art) > 20)
   expect_equal(body$data$warnings, list())
 })
 
@@ -49,6 +53,8 @@ test_that("api can return input comparison data", {
   expect_null(body$errors)
   expect_equal(names(body$data), c("data", "metadata", "warnings"))
   expect_input_comparison_metadata(body$data$metadata)
-  expect_true(length(body$data$data) > 50)
+  expect_setequal(names(body$data$data), c("anc", "art"))
+  expect_true(length(body$data$data$anc) > 50)
+  expect_true(length(body$data$data$art) > 20)
   expect_equal(body$data$warnings, list())
 })

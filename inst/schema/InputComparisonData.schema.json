@@ -1,5 +1,16 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "type": "array",
-  "items": { "$ref": "InputComparisonRow.schema.json" }
+  "type": "object",
+  "properties": {
+    "anc": {
+      "type": ["array", "null"],
+      "items": { "$ref": "InputComparisonAncRow.schema.json" }
+    },
+    "art": {
+      "type": ["array", "null"],
+      "items": { "$ref": "InputComparisonArtRow.schema.json" }
+    }
+  },
+  "required": ["anc", "art"],
+  "additionalProperties": false
 }
