@@ -55,7 +55,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: mrc-ide/naomi
-          ref: Apply-spectrum-ART-adjustments
+          ## ref: feature-branch
           ## ${{ github.token }} is scoped to the current repository, so we
           ## need to provide our own PAT
           token: ${{ secrets.NAOMI_GH_PAT }}
