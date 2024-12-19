@@ -1,21 +1,36 @@
-# Metadata driven UI
+---
+title: "Metadata driven UI"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{metadata}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
 
 ## Motivation
 
 Historically Hint had different components for their plots each with their own logic on how to handle different filter selections. For example:
 
 ### Choropleth
-![Choropleth state 1](pics/choropleth-1.png)
+![Choropleth state 1](images/choropleth-1.png)
 
 ### Barchart
-![Barchart state 1](pics/barchart-1.png)
-![Barchart state 2](pics/barchart-2.png)
+![Barchart state 1](images/barchart-1.png)
+![Barchart state 2](images/barchart-2.png)
 
 ### Table
-![Table state 1](pics/table-1.png)
-![Table state 2](pics/table-2.png)
+![Table state 1](images/table-1.png)
+![Table state 2](images/table-2.png)
 
 There are lots of differences between these but the main relevant differences are:
+
 * Some filters are single selects and some are multi-selects
 * The barchart's `X Axis` and `Disaggregate by` filters turn whatever is selected into a multi-select dropdown while keeping the rest single selects
 * The table's `Presets` dropdown changes the _filters_ that are shown while also changing whether they are multi-selects or single selects and also changing the value of the filters
@@ -24,14 +39,16 @@ The aim is to unify these differences into one framework that can support all th
 
 ## Implementation overview
 
-The structure we settled on is the backend (this repository) sending the frontend json reponse that tells it how to construct the UI and also how to dynamically update it based on the value of the dropdowns.
+The structure we settled on is the backend (this repository) sending the frontend json response that tells it how to construct the UI and also how to dynamically update it based on the value of the dropdowns.
 
 Note: For each tab there is a different response that specifies the metadata:
+
 * [`Review output`](../inst/schema/CalibrateMetadataResponse.schema.json)
 * [`Calibrate model`](../inst/schema/CalibratePlotMetadata.schema.json)
 * [`Review inputs`](../inst/schema/ReviewInputFilterMetadataResponse.schema.json)
 
 The structure of these are the same bar the keys to the `plotSettingsControl` which identifies the plot. In the bullet points above there are two main types of dropdowns that we want:
+
 1. Dropdowns that influence other dropdowns - we will call these `controls` and call their values `settings`
 1. Dropdowns that acts as filters for slicing the data - we will call these `filters` and their values `selections`
 
@@ -98,6 +115,7 @@ This is just a full version of the json schema.
 │   │   │   │   │   ├── setHidden
 ```
 The `filterTypes` key is the simplest. It is an array of all the filters that can be displayed in the UI with their options. Explanations for each number in the visualisation:
+
 1. The `id` is just an id we can assign to the filter to refer to it later
 1. The `column_id` this is the column name of the data which we have to filter
 1. `use_shape_regions` is a boolean that should largely be ignored, it is a one off trick to reduce the amount of payload we send to the frontend by telling it to derive the options of a filter select with this boolean from the shape file that the user has uploaded
@@ -224,6 +242,7 @@ For this section we will need a more detailed view of the effects structure
 ```
 
 Explanation of each effect and how the frontend aggregates this:
+
 1. `setFilters` is how the effect specifies what `filters` the user sees from the `filterTypes` The frontend aggregates this by replacing it. So if two `settings` set filters, the last `setFilters` in the for loop would be used when going through all the `settings`. Keys:
     1. `filterId` is the `id` key in a `filterTypes`element (`a` in the visualisation)
     1. `label` is the title of the `filter` displayed to the user in the UI
