@@ -449,7 +449,7 @@ If you are using an existing data source or metadata source, you will need to
 
 ### Where do I write custom logic?
 
-**Modify the metadata before it is ever used**, write it in the action after the data is fetched and before it saved to state. For exampe, setting options for a filter to those from the shape file.
+**Modify the metadata before it is ever used**, write it in the action after the data is fetched and before it saved to state. For example, setting options for a filter to those from the shape file.
 
 **Customise the filter logic**, write it in one of the function `getPlotData` calls to. For example can use this to switch between different data sources in one plot (time series), derive some data from selections (population data gets aggregated to selected level)
 
