@@ -1,48 +1,22 @@
-FROM ghcr.io/hivtools/naomi-base:latest
-
-RUN apt-get update && apt-get -y install --no-install-recommends \
-        libhiredis-dev \
-        libjq-dev \
-        && apt-get clean \
-        && rm -rf /var/lib/apt/lists/*
-
-RUN install_packages --repo=https://mrc-ide.r-universe.dev \
-        callr \
-        docopt \
-        eppasm \
-        geojsonio \
-        glue \
-        jsonlite \
-        jsonvalidate \
-        lgr \
-        naomi.options \
-        first90 \
-        plumber \
-        porcelain \
-        ps \
-        remotes \
-        rlang \
-        rrq
-
-
-COPY docker/bin /usr/local/bin/
-
-# If tracking development versions of packages, install via
-# github. However, limt this (and prefer updating the drat) as this
-# can hit rate limits as we cannot use a PAT when building the
-# container.
-# RUN install_remote \
-#    mrc-ide/naomi.options
+FROM ghcr.io/hivtools/naomi-base:minimal
 
 COPY . /src
-RUN R CMD INSTALL /src/naomi \
-    && cd /src && ./scripts/build_test_data \
-    && R CMD INSTALL /src
+COPY docker/Rprofile.site /usr/local/lib/R/etc/Rprofile.site
+COPY docker/bin /usr/local/bin/
+
+RUN cd /src \
+    && ./scripts/build_test_data \
+    && find /src/inst/output -type f ! -name "malawi_model_output.qs" -delete \
+    && R CMD INSTALL /src \
+    && rm -r /src
 
 EXPOSE 8888
 ENV HINTR_QUEUE_ID=hintr
+
 ## Model run will try to parallelise over as many threads as are available
 ## potentially slowing the application, manually limit threads to 1
 ENV OMP_NUM_THREADS=1
+
+WORKDIR /
 
 ENTRYPOINT ["/usr/local/bin/hintr_api"]

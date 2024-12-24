@@ -1,0 +1,1 @@
+options(knitr.chunk.dev = 'svglite')
