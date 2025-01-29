@@ -24,7 +24,7 @@ Imports:
     glue,
     ids,
     jsonlite (>= 1.2.2),
-    naomi (>= 2.10.3),
+    naomi (>= 2.10.9),
     naomi.options (>= 1.1.0),
     porcelain (>= 0.1.8),
     qs,
