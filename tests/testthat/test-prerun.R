@@ -56,7 +56,7 @@ test_that("error returned if httr request fails", {
   expect_error(
     hintr_submit_prerun(prerun_inputs, mock_model, mock_calibrate,
                         "https://example.com", port = NULL),
-    "Method Not Allowed (HTTP 405)",
+    "Forbidden (HTTP 403)",
     fixed = TRUE)
 })
 
