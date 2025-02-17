@@ -1,0 +1,1 @@
+options(repos = c(CRAN = 'https://packagemanager.rstudio.com/all/__linux__/noble/latest'), download.file.method = 'libcurl')
