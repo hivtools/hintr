@@ -31,7 +31,7 @@ Imports:
     R6,
     readxl,
     rlang,
-    rrq (>= 0.7.15),
+    rrq (>= 0.7.23),
     specio (>= 0.1.4),
     storr,
     traduire (>= 0.0.5),
@@ -56,7 +56,8 @@ Suggests:
     tidyselect,
     withr
 Remotes:
-    mrc-ide/naomi@4e9a9b81ae86fabd81f9d1905bfc4c0554af7602
+    mrc-ide/naomi@4e9a9b81ae86fabd81f9d1905bfc4c0554af7602,
+    r-ash/rrq@cluster
 Config/testthat/edition: 3
 Config/testthat/parallel: true
 VignetteBuilder: knitr
