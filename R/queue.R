@@ -31,13 +31,13 @@ Queue <- R6::R6Class(
       queue_id <- hintr_queue_id(queue_id)
       self$controller <- rrq::rrq_controller(queue_id, con = con)
       default_worker_cfg <- rrq::rrq_worker_config(
-        heartbeat_period = 10,
+        heartbeat_period = NULL,
         queue = c(QUEUE_CALIBRATE, QUEUE_RUN))
       calibrate_worker_cfg <- rrq::rrq_worker_config(
-        heartbeat_period = 10,
+        heartbeat_period = NULL,
         queue = QUEUE_CALIBRATE)
       fit_worker_cfg <- rrq::rrq_worker_config(
-        heartbeat_period = 10,
+        heartbeat_period = NULL,
         queue = QUEUE_RUN)
       rrq::rrq_worker_config_save("localhost", default_worker_cfg,
                                   controller = self$controller)
