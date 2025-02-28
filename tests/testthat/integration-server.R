@@ -4,7 +4,8 @@ dir.create(results_dir)
 withr::with_dir(testthat::test_path(), {
   server <- porcelain::porcelain_background$new(
     api, args = list(queue_id = paste0("hintr:", ids::random_id()),
-                     results_dir = results_dir))
+                     results_dir = results_dir),
+    verbose = TRUE)
   server$start()
 })
 
@@ -575,8 +576,11 @@ test_that("download streams bytes", {
   })
 
   ## Start the download
+  payload <- setup_payload_download_request(include_notes = FALSE,
+                                            include_state = FALSE)
   r <- server$request("POST",
-                      paste0("/download/submit/spectrum/", calibrate_id))
+                      paste0("/download/submit/spectrum/", calibrate_id),
+                      body = payload)
   response <- response_from_json(r)
   expect_equal(httr::status_code(r), 200)
   expect_true(!is.null(response$data$id))

@@ -51,7 +51,9 @@ test_that("endpoint_run_model returns error if queueing fails", {
 
   ## Create mocks
   queue <- test_queue()
-  mock_submit_model_run <- function(data, options) { stop("Failed to queue") }
+  mock_submit_model_run <- function(data, options, iso3) {
+    stop("Failed to queue")
+  }
 
   ## Call the endpoint
   model_submit <- submit_model(queue)
