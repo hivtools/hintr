@@ -3,8 +3,10 @@ test_that("spectrum download returns bytes", {
   q <- test_queue_result()
 
   ## Submit download request
+  payload <- setup_payload_download_request(include_notes = FALSE,
+                                            include_state = FALSE)
   submit <- endpoint_download_submit(q$queue)
-  submit_response <- submit$run(q$calibrate_id, "spectrum")
+  submit_response <- submit$run(q$calibrate_id, "spectrum", payload)
 
   expect_equal(submit_response$status_code, 200)
   expect_true(!is.null(submit_response$data$id))
@@ -63,8 +65,11 @@ test_that("api can call spectrum download", {
   api <- api_build(q$queue)
 
   ## Submit download request
+  payload <- setup_payload_download_request(include_notes = FALSE,
+                                            include_state = FALSE)
   submit <- api$request("POST",
-                        paste0("/download/submit/spectrum/", q$calibrate_id))
+                        paste0("/download/submit/spectrum/", q$calibrate_id),
+                        body = payload)
   submit_body <- jsonlite::fromJSON(submit$body)
   expect_equal(submit$status, 200)
   expect_true(!is.null(submit_body$data$id))
@@ -112,8 +117,10 @@ test_that("coarse output download returns bytes", {
   q <- test_queue_result()
 
   ## Submit download request
+  payload <- setup_payload_download_request(include_notes = FALSE,
+                                            include_state = FALSE)
   submit <- endpoint_download_submit(q$queue)
-  submit_response <- submit$run(q$calibrate_id, "coarse_output")
+  submit_response <- submit$run(q$calibrate_id, "coarse_output", payload)
 
   expect_equal(submit_response$status_code, 200)
   expect_true(!is.null(submit_response$data$id))
@@ -149,8 +156,11 @@ test_that("api can call coarse_output download", {
   api <- api_build(q$queue)
 
   ## Submit download request
+  payload <- setup_payload_download_request(include_notes = FALSE,
+                                            include_state = FALSE)
   submit <- api$request("POST", paste0("/download/submit/coarse-output/",
-                                      q$calibrate_id))
+                                      q$calibrate_id),
+                        body = payload)
   submit_body <- jsonlite::fromJSON(submit$body)
   expect_equal(submit$status, 200)
   expect_true(!is.null(submit_body$data$id))
@@ -189,8 +199,10 @@ test_that("summary report download returns bytes", {
   q <- test_queue_result()
 
   ## Submit download request
+  payload <- setup_payload_download_request(include_notes = FALSE,
+                                            include_state = FALSE)
   submit <- endpoint_download_submit(q$queue)
-  submit_response <- submit$run(q$calibrate_id, "summary")
+  submit_response <- submit$run(q$calibrate_id, "summary", payload)
 
   expect_equal(submit_response$status_code, 200)
   expect_true(!is.null(submit_response$data$id))
@@ -228,8 +240,11 @@ test_that("api can call summary report download", {
   api <- api_build(q$queue)
 
   ## Submit download request
+  payload <- setup_payload_download_request(include_notes = FALSE,
+                                            include_state = FALSE)
   submit <- api$request("POST", paste0("/download/submit/summary/",
-                                      q$calibrate_id))
+                                      q$calibrate_id),
+                        body = payload)
   submit_body <- jsonlite::fromJSON(submit$body)
   expect_equal(submit$status, 200)
   expect_true(!is.null(submit_body$data$id))
@@ -300,9 +315,11 @@ test_that("download returns useful error if model result can't be retrieved", {
   test_mock_model_available()
 
   ## Try to download with task ID doesn't exist
+  payload <- setup_payload_download_request(include_notes = FALSE,
+                                            include_state = FALSE)
   queue <- test_queue(workers = 0)
   download <- download_submit(queue)
-  error <- expect_error(download("id1", "spectrum"))
+  error <- expect_error(download("id1", "spectrum", payload))
   expect_equal(error$data[[1]]$error, scalar("FAILED_TO_RETRIEVE_RESULT"))
   expect_equal(error$data[[1]]$detail, scalar("Failed to fetch result"))
   expect_equal(error$status_code, 400)
@@ -417,8 +434,10 @@ test_that("comparison report download returns bytes", {
   q <- test_queue_result()
 
   ## Submit download request
+  payload <- setup_payload_download_request(include_notes = FALSE,
+                                            include_state = FALSE)
   submit <- endpoint_download_submit(q$queue)
-  submit_response <- submit$run(q$calibrate_id, "comparison")
+  submit_response <- submit$run(q$calibrate_id, "comparison", payload)
 
   expect_equal(submit_response$status_code, 200)
   expect_true(!is.null(submit_response$data$id))
@@ -456,8 +475,11 @@ test_that("api can call comparison report download", {
   api <- api_build(q$queue)
 
   ## Submit download request
+  payload <- setup_payload_download_request(include_notes = FALSE,
+                                            include_state = FALSE)
   submit <- api$request("POST", paste0("/download/submit/comparison/",
-                                      q$calibrate_id))
+                                      q$calibrate_id),
+                        body = payload)
   submit_body <- jsonlite::fromJSON(submit$body)
   expect_equal(submit$status, 200)
   expect_true(!is.null(submit_body$data$id))
@@ -831,9 +853,11 @@ test_that("spectrum download is translated", {
   test_mock_model_available()
   q <- test_queue_result()
 
+  payload <- setup_payload_download_request(include_notes = FALSE,
+                                            include_state = FALSE)
   response <- with_hintr_language("fr", {
     submit <- endpoint_download_submit(q$queue)
-    submit_response <- submit$run(q$calibrate_id, "spectrum")
+    submit_response <- submit$run(q$calibrate_id, "spectrum", payload)
   })
 
   expect_equal(submit_response$status_code, 200)

@@ -13,6 +13,7 @@ cfg <- new.env(parent = emptyenv())
 .onLoad <- function(...) {
   cfg$version_info <- get_version_info() # nocov
   hintr_init_traduire() # nocov
+  cfg$workers <- read_worker_config()
 }
 
 get_version_info <- function() {

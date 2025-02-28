@@ -57,10 +57,7 @@ setup_payload_download_request <- function(version = NULL,
                                            include_state = TRUE,
                                            include_pjnz = FALSE,
                                            include_vmmc = FALSE) {
-  if (!any(include_notes, include_state, include_pjnz)) {
-    stop("Must include one or more of notes, state or pjnz in payload")
-  }
-  payload <- list()
+  payload <- list('"iso3": "MWI"')
   path <- tempfile()
   if (include_notes) {
     notes <- paste0(readLines(

@@ -4,12 +4,14 @@
   "properties": {
     "data" : { "$ref": "ModelSubmitData.schema.json" },
     "options" : { "type": "object" },
-    "version": { "$ref": "VersionInfo.schema.json" }
+    "version": { "$ref": "VersionInfo.schema.json" },
+    "iso3": { "type": "string" }
   },
   "additionalProperties": false,
   "required": [
     "data",
     "options",
-    "version"
+    "version",
+    "iso3"
   ]
 }

@@ -3,8 +3,10 @@ test_that("can return upload metadata for ADR spectrum", {
   q <- test_queue_result()
 
   ## Submit download request
+  payload <- setup_payload_download_request(include_notes = FALSE,
+                                            include_state = FALSE)
   submit <- endpoint_download_submit(q$queue)
-  submit_response <- submit$run(q$calibrate_id, "spectrum")
+  submit_response <- submit$run(q$calibrate_id, "spectrum", payload)
 
   expect_equal(submit_response$status_code, 200)
   expect_true(!is.null(submit_response$data$id))
@@ -33,8 +35,10 @@ test_that("can return upload metadata for ADR coarse-output", {
   q <- test_queue_result()
 
   ## Submit download request
+  payload <- setup_payload_download_request(include_notes = FALSE,
+                                            include_state = FALSE)
   submit <- endpoint_download_submit(q$queue)
-  submit_response <- submit$run(q$calibrate_id, "coarse-output")
+  submit_response <- submit$run(q$calibrate_id, "coarse-output", payload)
 
   expect_equal(submit_response$status_code, 200)
   expect_true(!is.null(submit_response$data$id))
@@ -63,8 +67,10 @@ test_that("can return upload metadata for ADR summary report", {
   q <- test_queue_result()
 
   ## Submit download request
+  payload <- setup_payload_download_request(include_notes = FALSE,
+                                            include_state = FALSE)
   submit <- endpoint_download_submit(q$queue)
-  submit_response <- submit$run(q$calibrate_id, "summary")
+  submit_response <- submit$run(q$calibrate_id, "summary", payload)
 
   expect_equal(submit_response$status_code, 200)
   expect_true(!is.null(submit_response$data$id))
@@ -93,8 +99,10 @@ test_that("can return upload metadata for comparison report", {
   q <- test_queue_result()
 
   ## Submit download request
+  payload <- setup_payload_download_request(include_notes = FALSE,
+                                            include_state = FALSE)
   submit <- endpoint_download_submit(q$queue)
-  submit_response <- submit$run(q$calibrate_id, "comparison")
+  submit_response <- submit$run(q$calibrate_id, "comparison", payload)
 
   expect_equal(submit_response$status_code, 200)
   expect_true(!is.null(submit_response$data$id))
