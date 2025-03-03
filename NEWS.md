@@ -1,3 +1,7 @@
+# hintr 1.2.13
+
+* Update worker configuration setup to accept a json configuration file instead of being hardcoded in the package.
+
 # hintr 1.2.12
 
 * Update ART comparison table data and metadata to return adjusted and unadjusted spectrum values.
