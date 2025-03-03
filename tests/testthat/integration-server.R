@@ -580,7 +580,8 @@ test_that("download streams bytes", {
                                             include_state = FALSE)
   r <- server$request("POST",
                       paste0("/download/submit/spectrum/", calibrate_id),
-                      body = payload)
+                      body = payload,
+                      httr::content_type_json())
   response <- response_from_json(r)
   expect_equal(httr::status_code(r), 200)
   expect_true(!is.null(response$data$id))
