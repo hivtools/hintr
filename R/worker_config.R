@@ -1,9 +1,14 @@
 read_worker_config <- function() {
-  ## Read app config if we have this setup with env vars
-  config <- jsonlite::read_json(system_file("worker_config.json"),
-                                simplifyVector = TRUE)
+  worker_config <- Sys.getenv("HINTR_WORKER_CONFIG")
+  if (!is.null(worker_config) && worker_config != "") {
+    config <- jsonlite::fromJSON(worker_config,
+                                 simplifyVector = FALSE)
+  } else {
+    config <- jsonlite::read_json(system_file("worker_config.json"),
+                                  simplifyVector = TRUE)
+  }
 
-  ## Reverse the order of the job config so that lookups later are easier
+  ## Reverse the order of the job config so that look-ups later are easier
   ## we want something like list(job_name = list(country_iso3 = queue_name)))
   config$job_mapping <- parse_and_validate_worker_config(config)
   config
