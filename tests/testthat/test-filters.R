@@ -203,7 +203,7 @@ test_that("error thrown when tree can't be constructed", {
 
 test_that("can get indicator filters for survey data", {
   survey_path <- file.path("testdata", "survey.csv")
-  survey <- read_csv(survey_path, header = TRUE)
+  survey <- read_csv(survey_path, col_names = TRUE)
   filters <- get_indicator_filters(survey, "survey")
 
   expect_length(filters, 4)
@@ -219,7 +219,7 @@ test_that("can get indicator filters for survey data", {
 
 test_that("can get indicator filters for programme data", {
   programme_path <- file.path("testdata", "programme.csv")
-  programme <- read_csv(programme_path, header = TRUE)
+  programme <- read_csv(programme_path, col_names = TRUE)
   filters <- get_indicator_filters(programme, "programme")
 
   expect_length(filters, 4)
@@ -235,7 +235,7 @@ test_that("can get indicator filters for programme data", {
 
 test_that("can get indicator filters for anc data", {
   anc_path <- file.path("testdata", "anc.csv")
-  anc <- read_csv(anc_path, header = TRUE)
+  anc <- read_csv(anc_path, col_names = TRUE)
   ## We will have calculated prev and art coverage for ANC data
   anc <- naomi::calculate_prevalence_art_coverage(anc)
   filters <- get_indicator_filters(anc, "anc")

@@ -63,7 +63,7 @@ test_that("read csv removes empty rows", {
   path <- tempfile()
   writeLines(c("character,value", "a,1", ",", "b,2", "c,3", "d,4", ",", ","),
              path)
-  expect_equal(nrow(read_csv(path)), 4)
+  expect_equal(nrow(read_csv(path, delim = ",")), 4)
 })
 
 test_that("read csv can read semicolon delimited files", {

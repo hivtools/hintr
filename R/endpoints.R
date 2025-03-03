@@ -278,7 +278,7 @@ get_anc_map_filter_types <- function(input) {
 }
 
 get_programme_map_filter_types <- function(input) {
-  data <- read_csv(input$data$programme$path, header = TRUE)
+  data <- read_csv(input$data$programme$path, col_names = TRUE)
   quarter_filter <- list(
     id = scalar("map_programme_quarter"),
     column_id = scalar("calendar_quarter"),
@@ -303,7 +303,7 @@ get_programme_map_filter_types <- function(input) {
 }
 
 get_survey_map_filter_types <- function(input) {
-  data <- read_csv(input$data$survey$path, header = TRUE)
+  data <- read_csv(input$data$survey$path, col_names = TRUE)
   age_filter <- list(
     id = scalar("map_survey_age"),
     column_id = scalar("age_group"),
