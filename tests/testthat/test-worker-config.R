@@ -157,3 +157,10 @@ test_that("can get worker from loaded worker config", {
   expect_error(get_queue_from_job_name("unk", "MWI", worker_cfg),
                "Failed to get relevant queue from config")
 })
+
+test_that("can check for valid worker name", {
+  expect_true(validate_worker_name("localhost"))
+  expect_error(validate_worker_name("unk"),
+               paste("Cannot start worker with config 'unk'",
+                     "this is not in configuration."))
+})

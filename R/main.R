@@ -37,24 +37,18 @@ main_api <- function(args = commandArgs(TRUE)) {
 
 main_worker_args <- function(args = commandArgs(TRUE)) {
   usage <- "Usage:
-hintr_worker [options] [<queue_id>]
-
-Options:
---calibrate-only  Start a worker which will only run calibration tasks"
+hintr_worker [<worker_config>] [<queue_id>]"
   dat <- docopt_parse(usage, args)
   list(queue_id = dat$queue_id,
-       calibrate_only = dat$calibrate_only)
+       worker_config = dat$worker_config)
 }
 
 main_worker <- function(args = commandArgs(TRUE)) {
   # nocov start
   args <- main_worker_args(args)
-  worker_config <- "localhost"
-  if (args$calibrate_only) {
-    worker_config <- "calibrate_only"
-  }
+  validate_worker_name(args$worker_config)
   worker <- rrq_worker_new(hintr_queue_id(args$queue_id, TRUE),
-                           name_config = worker_config)
+                           name_config = args$worker_config)
   worker$loop()
   invisible(TRUE)
   # nocov end
@@ -68,23 +62,17 @@ rrq_worker_new <- function(...) {
 
 main_worker_single_job_args <- function(args = commandArgs(TRUE)) {
   usage <- "Usage:
-hintr_worker_single_job [options] [<queue_id>]
-
-Options:
---fit-only  Start a worker which will only run model fit"
+hintr_worker_single_job [<worker_config>] [<queue_id>]"
   dat <- docopt_parse(usage, args)
   list(queue_id = dat$queue_id,
-       fit_only = dat$fit_only)
+       worker_config = dat$worker_config)
 }
 
 main_worker_single_job <- function(args = commandArgs(TRUE)) {
   # nocov start
   args <- main_worker_single_job_args(args)
-  worker_config <- "localhost"
-  if (args$fit_only) {
-    worker_config <- "fit_only"
-  }
-  worker_single_job(hintr_queue_id(args$queue_id, TRUE), worker_config)
+  validate_worker_name(args$worker_config)
+  worker_single_job(hintr_queue_id(args$queue_id, TRUE), args$worker_config)
   # nocov end
 }
 

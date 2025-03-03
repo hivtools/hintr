@@ -95,3 +95,12 @@ get_queue_from_job_name <- function(job_name, iso3 = NULL,
     queue_config$default
   }
 }
+
+validate_worker_name <- function(name) {
+  if (!(name %in% names(cfg$workers$workers))) {
+    stop(paste0("Cannot start worker with config '",
+                name,
+                "' this is not in configuration."))
+  }
+  invisible(TRUE)
+}
