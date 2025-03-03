@@ -190,3 +190,7 @@ test_that("can check for valid worker name", {
                paste("Cannot start worker with config 'unk'",
                      "this is not in configuration."))
 })
+
+test_that("wake_up doesn't attempt to wake any workers by default", {
+  wake_up
+})

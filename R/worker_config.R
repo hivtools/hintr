@@ -109,3 +109,11 @@ validate_worker_name <- function(name) {
   }
   invisible(TRUE)
 }
+
+wake_up <- function(queue) {
+  wake_up <- vlapply(cfg$workers$queues, "[[", "wake_up")
+  wake_up_queues <- names(cfg$workers$queues)[wake_up]
+  ids <- lapply(wake_up_queues, queue$submit_wake)
+  names(ids) <- wake_up_queues
+  list(ids = ids)
+}

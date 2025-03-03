@@ -79,6 +79,15 @@ Queue <- R6::R6Class(
       rrq::rrq_task_wait(id, controller = self$controller)
     },
 
+    submit_wake = function(queue_name) {
+      rrq::rrq_task_create_expr(
+        1 + 1,
+        queue = queue,
+        separate_process = FALSE,
+        controller = self$controller
+      )
+    },
+
     submit_model_run = function(data, options, iso3) {
       results_dir <- self$results_dir
       language <- traduire::translator()$language()
