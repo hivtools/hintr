@@ -1,3 +1,29 @@
+test_that("can read worker config", {
+  cfg <- read_worker_config()
+  expect_equal(names(cfg$workers), c("localhost", "calibrate_only", "fit_only"))
+
+  worker_cfg <- jsonlite::toJSON(list(
+    workers = list(
+      localhost = list(
+        queue = "main",
+        heartbeat_period = scalar(10)
+      )
+    ),
+    queues = list(
+      main = list(
+        jobs = list(
+          fit = scalar("default")
+        ),
+        wake_up = scalar(FALSE)
+      )
+    )
+  ))
+
+  withr::with_envvar(c("HINTR_WORKER_CONFIG" = worker_cfg),
+                     cfg <- read_worker_config())
+  expect_equal(names(cfg$workers), "localhost")
+})
+
 test_that("can build job mapping", {
   queues <- list(
     run = list(
