@@ -25,10 +25,17 @@
     },
     "value_spectrum_reallocated": {
       "type": ["number", "null"]
+    },
+    "difference": {
+      "type": ["number", "null"]
+    },
+    "difference_ratio": {
+      "type": ["number", "null"]
     }
   },
   "additionalProperties": true,
   "required": [ "indicator", "area_name", "year", "group",
                 "value_spectrum_reported", "value_spectrum_adjusted",
-                "value_naomi", "value_spectrum_reallocated" ]
+                "value_naomi", "value_spectrum_reallocated",
+                "difference", "difference_ratio"]
 }
