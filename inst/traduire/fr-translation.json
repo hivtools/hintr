@@ -119,5 +119,6 @@
     "NUMBER_ON_ART_ADULT_FEMALE": "Femmes TARV",
     "NUMBER_ON_ART_ADULT_MALE": "Hommes TARV",
     "NUMBER_ON_ART_CHILDREN": "Enfants TARV",
-    "FAILED_READ_CSV": "Échec de la lecture du fichier ANC. Veuillez revoir le fichier et vérifier qu'il s'agit d'un fichier csv valide."
+    "FAILED_READ_CSV": "Échec de la lecture du fichier ANC. Veuillez revoir le fichier et vérifier qu'il s'agit d'un fichier csv valide.",
+    "FAILED_QUEUE": "Impossible d'obtenir la file d'attente appropriée à partir de la configuration, veuillez contacter un administrateur système."
 }

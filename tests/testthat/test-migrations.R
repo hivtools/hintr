@@ -59,8 +59,10 @@ test_that("download output format is not migrated", {
   q <- test_queue_result()
 
   ## Submit download request and wait for it to complete
+  payload <- setup_payload_download_request(include_notes = FALSE,
+                                            include_state = FALSE)
   submit <- endpoint_download_submit(q$queue)
-  submit_response <- submit$run(q$calibrate_id, "coarse_output")
+  submit_response <- submit$run(q$calibrate_id, "coarse_output", payload)
   expect_equal(submit_response$status_code, 200)
   expect_true(!is.null(submit_response$data$id))
   out <- q$queue$task_wait(submit_response$data$id)

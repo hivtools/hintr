@@ -118,5 +118,6 @@
     "NUMBER_ON_ART_ADULT_FEMALE": "Female ART",
     "NUMBER_ON_ART_ADULT_MALE": "Male ART",
     "NUMBER_ON_ART_CHILDREN": "Children ART",
-    "FAILED_READ_CSV": "Failed to read file. Please review input file and check it is a valid csv."
+    "FAILED_READ_CSV": "Failed to read file. Please review input file and check it is a valid csv.",
+    "FAILED_QUEUE": "Failed to get relevant queue from config, please contact a system admin."
 }

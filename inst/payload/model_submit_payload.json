@@ -80,5 +80,6 @@
     "max_iter": 250,
     "psnu_level": null
   },
-  "version": "<+version_info+>"
+  "version": "<+version_info+>",
+  "iso3": "MWI"
 }

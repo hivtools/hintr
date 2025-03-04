@@ -85,8 +85,10 @@ test_that("Debug endpoint returns debug information for download", {
   test_mock_model_available()
   q <- test_queue_result()
 
+  payload <- setup_payload_download_request(include_notes = FALSE,
+                                            include_state = FALSE)
   submit <- endpoint_download_submit(q$queue)
-  submit_response <- submit$run(q$calibrate_id, "spectrum")
+  submit_response <- submit$run(q$calibrate_id, "spectrum", payload)
   id <- submit_response$data$id
 
   expect_equal(submit_response$status_code, 200)

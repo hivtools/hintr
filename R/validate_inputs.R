@@ -86,7 +86,7 @@ do_validate_shape <- function(shape) {
 do_validate_population <- function(population) {
   assert_file_extension(population, "csv")
   withCallingHandlers(
-    population <- read_csv(population$path, header = TRUE),
+    population <- read_csv(population$path, col_names = TRUE),
     error = function(e) {
       hintr_error(t_("FAILED_READ_CSV"), "INVALID_FILE")
     }
@@ -131,7 +131,7 @@ do_validate_population <- function(population) {
 do_validate_programme <- function(programme, shape, strict = TRUE) {
   assert_file_extension(programme, "csv")
   withCallingHandlers(
-    data <- read_csv(programme$path, header = TRUE),
+    data <- read_csv(programme$path, col_names = TRUE),
     error = function(e) {
       hintr_error(t_("FAILED_READ_CSV"), "INVALID_FILE")
     }
@@ -215,7 +215,7 @@ do_validate_anc <- function(anc, shape, strict = TRUE) {
 do_validate_survey <- function(survey, shape, strict = TRUE) {
   assert_file_extension(survey, "csv")
   withCallingHandlers(
-    data <- read_csv(survey$path, header = TRUE),
+    data <- read_csv(survey$path, col_names = TRUE),
     error = function(e) {
       hintr_error(t_("FAILED_READ_CSV"), "INVALID_FILE")
     }
