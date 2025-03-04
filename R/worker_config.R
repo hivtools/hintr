@@ -1,6 +1,6 @@
 read_worker_config <- function() {
-  worker_config <- Sys.getenv("HINTR_WORKER_CONFIG")
-  if (!is.null(worker_config) && worker_config != "") {
+  worker_config <- Sys.getenv("HINTR_WORKER_CONFIG", unset = NA)
+  if (!is.na(worker_config)) {
     config <- jsonlite::fromJSON(worker_config,
                                  simplifyVector = FALSE)
   } else {
