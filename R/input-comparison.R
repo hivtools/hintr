@@ -17,8 +17,11 @@ input_comparison <- function(input) {
                                                      input$anc$path,
                                                      input$shape$path,
                                                      input$pjnz$path)
-    cols_remove <- c("difference", "difference_ratio")
-    data$art <- data$art[, -which(names(data$art) %in% cols_remove)]
+
+    if (!is.null(data$art)) {
+      cols_remove <- c("difference", "difference_ratio")
+      data$art <- data$art[, -which(names(data$art) %in% cols_remove)]
+    }
     metadata <- build_input_comparison_metadata(data)
     list(
       data = data,
