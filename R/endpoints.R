@@ -225,12 +225,24 @@ get_anc_time_series_filter_types <- function(input, area_level_options) {
 }
 
 get_programme_time_series_filter_types <- function(input, area_level_options) {
-  columns <- get_programme_time_series_columns_from_metadata(input, area_level_options)
+  columns <- get_programme_time_series_columns_from_metadata(input,
+                                                             area_level_options)
+  plot_type_options <- get_selected_mappings(columns, "plot_type",
+                                             key = "values")
+  ## TODO: We don't want to show adjusted indicators in the time series
+  ## only in comparisons
   plot_type_filter <- list(
     id = scalar("time_series_programme_plot_type"),
     column_id = scalar("plot"),
-    options = get_selected_mappings(columns, "plot_type",
-                                    key = "values")
+    options = plot_type_options
+  )
+  ## For comparison plots, we want to select multiple "plot_type"s but
+  ## not have it a complete free for all. So add a combined filter
+  ## which will show pre-defined combinations of plot types to show together
+  comparison_plot_type_filter <- list(
+    id = scalar("time_series_programme_comparison_plot_type"),
+    column_id = scalar("plot"),
+    options = get_programme_time_series_comparisons(plot_type_options)
   )
   area_level_filter <- list(
     id = scalar("time_series_programme_area_level"),
@@ -244,8 +256,39 @@ get_programme_time_series_filter_types <- function(input, area_level_options) {
     options = get_selected_mappings(columns, "quarter",
                                     key = "values")
   )
-  filter_types <- list(plot_type_filter, area_level_filter,
-                       quarter_filter)
+  filter_types <- list(plot_type_filter, comparison_plot_type_filter,
+                       area_level_filter, quarter_filter)
+}
+
+get_programme_time_series_comparisons <- function(plot_type_filter_options) {
+  ## It's a bit gross we're hardcoding this here but really this is grossly
+  ## fiddly wherever we put it and this seems like the least bad option
+  ## at the moment
+  comparisons <- list(
+    c("art_current", "art_new_total"),
+    c("art_current", "art_current_adjusted"),
+    c("art_adult", "art_adjusted_adult"),
+    c("art_male", "art_adjusted_male"),
+    c("art_female", "art_adjusted_female"),
+    c("art_child", "art_adjusted_child")
+  )
+  filter_option_ids <- lapply(plot_type_filter_options, "[[", "id")
+  viable_comparisons <- lapply(comparisons, function(comparison) {
+    comparison[[1]] %in% filter_option_ids &&
+      comparison[[2]] %in% filter_option_ids
+  })
+  lapply(comparisons[unlist(viable_comparisons)], function(comparison) {
+    lhs_comp <- plot_type_filter_options[filter_option_ids == comparison[1]][[1]]
+    rhs_comp <- plot_type_filter_options[filter_option_ids == comparison[2]][[1]]
+    comp <- list(
+      id = scalar(sprintf("%s:%s", comparison[1], comparison[2])),
+      label = scalar(t_("TIME_SERIES_COMPARISON", list(
+        lhs = lhs_comp$label,
+        rhs = rhs_comp$label))),
+      format = lhs_comp$format,
+      accuracy = lhs_comp$accuracy
+    )
+  })
 }
 
 get_map_filter_types <- function(input, type) {
@@ -360,6 +403,33 @@ get_time_series_data_source_options <- function(types, filter_types) {
         setFilters = list(
           list(
             filterId = scalar("time_series_programme_plot_type"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_PLOT_TYPE")),
+            stateFilterId = scalar("plotType")
+          ),
+          list(
+            filterId = scalar("time_series_programme_area_level"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA_LEVEL")),
+            stateFilterId = scalar("detail")
+          ),
+          list(
+            filterId = scalar("time_series_programme_quarter"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_QUARTER")),
+            stateFilterId = scalar("quarter")
+          )
+        ),
+        setMultiple = c("quarter"),
+        setFilterValues = list(
+          detail = list(programme_default_area_level)
+        )
+      )
+    ),
+    list(
+      id = scalar("programme_comparison"),
+      label = scalar(t_("REVIEW_INPUT_PROGRAMME_COMPARISON")),
+      effect = list(
+        setFilters = list(
+          list(
+            filterId = scalar("time_series_programme_comparison_plot_type"),
             label = scalar(t_("INPUT_TIME_SERIES_COLUMN_PLOT_TYPE")),
             stateFilterId = scalar("plotType")
           ),

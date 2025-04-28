@@ -253,7 +253,7 @@ test_that("review inputs function works with anc", {
                   c("filterTypes", "indicators", "plotSettingsControl"))
   expect_input_metadata(metadata,
                         c("survey", "programme", "anc"),
-                        c("programme", "anc"))
+                        c("programme", "programme_comparison", "anc"))
 })
 
 test_that("review inputs function is translated", {
@@ -292,7 +292,7 @@ test_that("filters not returned if indicator missing from input data", {
 
   expect_input_metadata(response,
                         c("survey", "programme"),
-                        c("programme"))
+                        c("programme", "programme_comparison"))
 })
 
 test_that("api can call review_input_metadata", {

@@ -82,6 +82,8 @@
     "REVIEW_INPUT_DATA_SOURCE": "La Source de Données",
     "REVIEW_INPUT_ANC": "Test de clinique prénatale",
     "REVIEW_INPUT_PROGRAMME": "TARV",
+    "REVIEW_INPUT_PROGRAMME_COMPARISON": "Comparaisons TARV",
+    "TIME_SERIES_COMPARISON": "{{lhs}} vs {{rhs}}",
     "REVIEW_INPUT_SURVEY": "Enquête de ménage",
     "MODEL_RESULT_OLD": "Impossible de télécharger {{type}}, veuillez réexécuter le modèle et réessayer de télécharger.",
     "OUTPUT_GENERATION_FAILED": "Impossible de générer une sortie",
