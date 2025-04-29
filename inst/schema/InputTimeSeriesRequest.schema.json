@@ -7,11 +7,12 @@
       "properties": {
         "shape": { "$ref": "SessionFile.schema.json" },
         "programme": { "$ref": "SessionFile.schema.json" },
-        "anc": { "$ref": "SessionFile.schema.json" }
+        "anc": { "$ref": "SessionFile.schema.json" },
+        "pjnz": { "$ref": "SessionFile.schema.json" }
       },
       "anyOf": [
         { "required":
-          [ "shape", "programme" ] },
+          [ "shape", "programme", "pjnz" ] },
         { "required":
           [ "shape", "anc" ] }
       ]
