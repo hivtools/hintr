@@ -123,7 +123,7 @@ input_time_series <- function(type, input) {
       file <- input$data$programme
     }
     assert_file_exists(file$path)
-    get_time_series_data(file, input$data$shape)
+    get_time_series_data(file, input$data$shape, input$data$pjnz)
   },
   error = function(e) {
     hintr_error(api_error_msg(e), "FAILED_TO_GENERATE_TIME_SERIES")
