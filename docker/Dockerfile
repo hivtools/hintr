@@ -1,5 +1,8 @@
 FROM ghcr.io/hivtools/naomi-base:latest AS build
 
+RUN apt-get update && apt-get install -y \
+    pkg-config
+
 COPY . /src
 COPY docker/bin /usr/local/bin/
 COPY docker/Rprofile.site /usr/local/lib/R/etc/Rprofile.site
