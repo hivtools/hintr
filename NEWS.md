@@ -1,3 +1,7 @@
+# hintr 1.2.13
+
+* Add metadata to show comparisons of ART indicators in input time series plot.
+
 # hintr 1.2.12
 
 * Update ART comparison table data and metadata to return adjusted and unadjusted spectrum values.

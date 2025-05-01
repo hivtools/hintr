@@ -6,7 +6,7 @@ COPY docker/Rprofile.site /usr/local/lib/R/etc/Rprofile.site
 
 ## Remove the large test data not needed for runtime
 RUN install_packages remotes \
-    && install_remote mrc-ide/naomi \
+    && install_remote mrc-ide/naomi@nm-122 \
     && rm -r /usr/local/lib/R/site-library/naomi/extdata
 
 WORKDIR /src

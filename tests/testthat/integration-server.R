@@ -168,7 +168,7 @@ test_that("review input metadata", {
   expect_equal(response$status, "success")
   expect_input_metadata(response$data,
                         c("survey", "programme", "anc"),
-                        c("programme", "anc"))
+                        c("programme", "programme_comparison", "anc"))
 })
 
 test_that("population plot metadata", {

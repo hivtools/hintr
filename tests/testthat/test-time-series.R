@@ -1,7 +1,8 @@
 test_that("get_programme_time_series returns data and columns", {
   programme <- file_object(file.path("testdata", "programme.csv"))
   shape <- file_object(file.path("testdata", "malawi.geojson"))
-  out <- get_programme_time_series(programme, shape)
+  pjnz <- file_object(file.path("testdata", "Malawi2024.PJNZ"))
+  out <- get_programme_time_series(programme, shape, pjnz)
 
   expect_equal(names(out), c("data", "metadata", "warnings"))
   expect_true(nrow(out$data) > 100) ## Check that we have read out some data
@@ -18,7 +19,7 @@ test_that("get_programme_time_series returns data and columns", {
   expect_equal(columns[[1]]$id, scalar("plot_type"))
   expect_equal(columns[[1]]$column_id, scalar("plot"))
   expect_equal(columns[[1]]$label, scalar("Plot type"))
-  expect_length(columns[[1]]$values, 19)
+  expect_length(columns[[1]]$values, 22)
   expect_setequal(
     names(columns[[1]]$values[[1]]),
     c("id", "label", "description", "format", "accuracy")

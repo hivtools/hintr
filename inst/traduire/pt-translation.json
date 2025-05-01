@@ -42,6 +42,8 @@
     "REVIEW_INPUT_DATA_SOURCE": "Fonte de Dados",
     "REVIEW_INPUT_ANC": "Teste da CPN",
     "REVIEW_INPUT_PROGRAMME": "TARV",
+    "REVIEW_INPUT_PROGRAMME_COMPARISON": "Comparações ART",
+    "TIME_SERIES_COMPARISON": "{{lhs}} vs {{rhs}}",
     "REVIEW_INPUT_SURVEY": "Inquérito aos agregados familiares",
     "PJNZ_INVALID_ZIP": "O zip não contém ficheiros PJNZ",
     "QUEUE_CACHE": "A criar cache",
