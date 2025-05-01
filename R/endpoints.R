@@ -230,7 +230,7 @@ get_programme_time_series_filter_types <- function(input, area_level_options) {
   plot_type_options <- get_selected_mappings(columns, "plot_type",
                                              key = "values")
   ## TODO: We don't want to show adjusted indicators in the time series
-  ## only in comparisons
+  ## only in comparisons NM-123
   plot_type_filter <- list(
     id = scalar("time_series_programme_plot_type"),
     column_id = scalar("plot"),
