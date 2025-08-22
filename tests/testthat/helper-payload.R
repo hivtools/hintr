@@ -3,6 +3,22 @@ setup_payload_input_time_series <- function(data_root_dir, file_path, type) {
                         winslash = "/", mustWork = TRUE)
   shape <- normalizePath(file.path(data_root_dir, "malawi.geojson"),
                          winslash = "/", mustWork = TRUE)
+  if (type == "programme") {
+    pjnz <- normalizePath(file.path(data_root_dir, "Malawi2024.PJNZ"),
+                          winslash = "/", mustWork = TRUE)
+    pjnz_json <- sprintf(
+      ',
+      "pjnz": {
+        "path": "%s",
+        "hash": "123",
+        "filename": "pjnz_file",
+        "fromADR": false,
+        "resource_url": "https://adr.unaids.org/file/123.csv"
+      }', pjnz
+    )
+  } else {
+    pjnz_json <- ""
+  }
 
   sprintf(
     '{
@@ -21,8 +37,9 @@ setup_payload_input_time_series <- function(data_root_dir, file_path, type) {
           "fromADR": false,
           "resource_url": "https://adr.unaids.org/file/123.csv"
         }
+        %s
       }
-    }', type, file, shape)
+    }', type, file, shape, pjnz_json)
 }
 
 setup_payload_review_inputs_metadata <- function(data_root_dir,

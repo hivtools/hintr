@@ -119,11 +119,13 @@ input_time_series <- function(type, input) {
     assert_file_exists(input$data$shape$path)
     if (type == "anc") {
       file <- input$data$anc
+      pjnz <- NULL
     } else {
       file <- input$data$programme
+      pjnz <- input$data$pjnz
     }
     assert_file_exists(file$path)
-    get_time_series_data(file, input$data$shape)
+    get_time_series_data(file, input$data$shape, pjnz)
   },
   error = function(e) {
     hintr_error(api_error_msg(e), "FAILED_TO_GENERATE_TIME_SERIES")
