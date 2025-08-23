@@ -2,7 +2,7 @@ population_metadata <- function(input) {
   input <- jsonlite::fromJSON(input)
   withCallingHandlers({
     assert_file_exists(input$population$path)
-    population <- read_csv(input$population$path, header = TRUE)
+    population <- read_csv(input$population$path, col_names = TRUE)
   }, error = function(e) {
     hintr_error(t_("FAILED_READ_CSV"), "INVALID_FILE")
   })

@@ -13,12 +13,12 @@ MockQueue <- R6::R6Class(
   inherit = Queue,
   cloneable = FALSE,
   public = list(
-    submit_model_run = function(data, options) {
+    submit_model_run = function(data, options, iso3) {
       rrq::rrq_task_create_expr(stop("test error"),
                                 controller = self$controller)
     },
 
-    submit_calibrate = function(data, options) {
+    submit_calibrate = function(data, options, iso3) {
       rrq::rrq_task_create_expr(stop("test error"),
                                 controller = self$controller)
     }
@@ -34,6 +34,9 @@ test_queue <- function(queue_id = NULL, workers = 0, delete_data_on_exit = TRUE)
   })
   queue
 }
+
+QUEUE_CALIBRATE <- "calibrate"
+QUEUE_RUN <- "run"
 
 create_blocking_worker <- function(controller, worker_name = NULL) {
   ## Set config for a blocking worker
