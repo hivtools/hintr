@@ -194,7 +194,7 @@ test_that("can check for valid worker name", {
 test_that("wake_up doesn't attempt to wake any workers by default", {
   test_redis_available()
   queue <- test_queue(workers = 0)
-  expect_equal(wake_up(queue), list(ids = list()), ignore_attr = TRUE)
+  expect_equal(wake_up(queue)(), list(ids = list()), ignore_attr = TRUE)
 })
 
 test_that("endpoint wake_up calls wake_up function", {
