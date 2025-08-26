@@ -136,7 +136,7 @@ endpoint_wake_up <- function(queue) {
   response <- porcelain::porcelain_returning_json("WakeUpResponse.schema",
                                                   schema_root())
   porcelain::porcelain_endpoint$new(
-    "GET", "/wake", wake_up,
+    "GET", "/wake", wake_up(queue),
     returning = response
   )
 }
