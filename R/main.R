@@ -37,7 +37,10 @@ main_api <- function(args = commandArgs(TRUE)) {
 
 main_worker_args <- function(args = commandArgs(TRUE)) {
   usage <- "Usage:
-hintr_worker [<worker_config>] [<queue_id>]"
+hintr_worker [options] [<queue_id>]
+
+Options:
+--worker-config=name  The name of the worker configuration [default: localhost]"
   dat <- docopt_parse(usage, args)
   list(queue_id = dat$queue_id,
        worker_config = dat$worker_config)
@@ -62,7 +65,10 @@ rrq_worker_new <- function(...) {
 
 main_worker_single_job_args <- function(args = commandArgs(TRUE)) {
   usage <- "Usage:
-hintr_worker_single_job [<worker_config>] [<queue_id>]"
+hintr_worker_single_job [options] [<queue_id>]
+
+Options:
+--worker-config=name  The name of the worker configuration [default: localhost]"
   dat <- docopt_parse(usage, args)
   list(queue_id = dat$queue_id,
        worker_config = dat$worker_config)
