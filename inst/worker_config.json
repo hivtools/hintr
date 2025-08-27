@@ -18,7 +18,8 @@
       "jobs": {
         "fit": "default"
       },
-      "wake_up": false
+      "wake_up": false,
+      "extra_memory_override": true
     },
     "calibrate": {
       "jobs": {

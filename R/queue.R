@@ -91,9 +91,11 @@ Queue <- R6::R6Class(
     submit_model_run = function(data, options, iso3) {
       results_dir <- self$results_dir
       language <- traduire::translator()$language()
+      extra_memory <- options$extra_memory == "true"
+      queue_name <- get_queue_from_job_name("fit", iso3, extra_memory)
       rrq::rrq_task_create_expr(
         hintr:::run_model(data, options, results_dir, language),
-        queue = get_queue_from_job_name("fit", iso3),
+        queue = queue_name,
         separate_process = TRUE,
         controller = self$controller
       )

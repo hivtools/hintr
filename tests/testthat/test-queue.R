@@ -206,3 +206,16 @@ test_that("queue cleans up only its own workers", {
   rrq::rrq_worker_detect_exited(controller = queue$controller)
   expect_length(rrq::rrq_worker_list(controller = queue$controller), 1)
 })
+
+test_that("queue pushes model fit into largest runner if option set", {
+  queue <- test_queue(workers = 0)
+
+  data <- list()
+  options <- list(
+    extra_memory = "true"
+  )
+
+  run_id <- queue$submit_model_run(NULL, options, "MWI")
+  info <- rrq::rrq_task_info(run_id, queue$controller)
+  expect_equal(info$queue, "run")
+})

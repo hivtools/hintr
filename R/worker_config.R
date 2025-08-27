@@ -89,7 +89,16 @@ build_job_mappings <- function(queues) {
 }
 
 get_queue_from_job_name <- function(job_name, iso3 = NULL,
+                                    extra_memory = FALSE,
                                     worker_config = cfg$workers) {
+  # This option is set if a user explicitly sets this advanced model option
+  if (extra_memory) {
+    for (queue in names(cfg$workers$queues)) {
+      if (cfg$workers$queues[[queue]]$extra_memory_override) {
+        return(queue)
+      }
+    }
+  }
   if (!(job_name %in% names(worker_config$job_mapping))) {
     hintr_error(t_("FAILED_QUEUE"), "INVALID_QUEUE_CONFIG")
   }

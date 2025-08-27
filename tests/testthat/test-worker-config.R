@@ -165,6 +165,12 @@ test_that("worker config invalid if duplicate country per job", {
 
 test_that("can get worker from loaded worker config", {
   worker_cfg <- list(
+    queues = list(
+      run = list(
+        extra_memory_override = TRUE
+      ),
+      calibrate = list()
+    ),
     job_mapping = list(
       fit = list(
         default = "run",
@@ -175,12 +181,14 @@ test_that("can get worker from loaded worker config", {
       )
     )
   )
-  expect_equal(get_queue_from_job_name("fit", "MWI", worker_cfg), "run")
-  expect_equal(get_queue_from_job_name("fit", "COD", worker_cfg), "large")
-  expect_equal(get_queue_from_job_name("fit", NULL, worker_cfg), "run")
-  expect_equal(get_queue_from_job_name("calibrate", "COD", worker_cfg),
+  expect_equal(get_queue_from_job_name("fit", "MWI", FALSE, worker_cfg), "run")
+  expect_equal(get_queue_from_job_name("fit", "COD", FALSE, worker_cfg), "large")
+  expect_equal(get_queue_from_job_name("fit", NULL, FALSE, worker_cfg), "run")
+  expect_equal(get_queue_from_job_name("calibrate", "COD", FALSE, worker_cfg),
                "calibrate")
-  expect_error(get_queue_from_job_name("unk", "MWI", worker_cfg),
+  expect_equal(get_queue_from_job_name("calibrate", "COD", TRUE, worker_cfg),
+               "run")
+  expect_error(get_queue_from_job_name("unk", "MWI", FALSE, worker_cfg),
                "Failed to get relevant queue from config")
 })
 
