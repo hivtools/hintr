@@ -2,7 +2,7 @@ read_worker_config <- function() {
   worker_config <- Sys.getenv("HINTR_WORKER_CONFIG")
   if (!is.null(worker_config) && worker_config != "") {
     config <- jsonlite::fromJSON(worker_config,
-                                 simplifyVector = FALSE)
+                                 simplifyVector = TRUE)
   } else {
     config <- jsonlite::read_json(system_file("worker_config.json"),
                                   simplifyVector = TRUE)
@@ -31,8 +31,8 @@ register_workers <- function(controller) {
 }
 
 parse_and_validate_worker_config <- function(config) {
-  if (!setequal(names(config), c("workers", "queues"))) {
-    stop("Worker config must only have keys 'workers' and 'queues'.")
+  if (!all(c("workers", "queues") %in% names(config))) {
+    stop("Worker config must have keys 'workers' and 'queues'.")
   }
   queue_names <- names(config$queues)
   for (worker_name in names(config$workers)) {

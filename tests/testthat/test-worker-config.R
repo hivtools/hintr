@@ -108,7 +108,7 @@ test_that("can build job mapping", {
 test_that("worker config must container expected keys", {
   expect_error(
     parse_and_validate_worker_config(list()),
-    "Worker config must only have keys 'workers' and 'queues'.",
+    "Worker config must have keys 'workers' and 'queues'.",
     fixed = TRUE
   )
 })
