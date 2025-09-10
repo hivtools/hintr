@@ -853,39 +853,35 @@ test_that("input time series can return plot data for anc", {
                c("plot_type", "area_level", "age", "quarter"))
 })
 
-test_that("rehydrate", {
-  payload <- setup_payload_rehydrate()
+test_that("can test if task exists", {
+  test_mock_model_available()
 
-  r <- server$request("POST",
-                      "/rehydrate/submit",
-                      body = payload,
-                      encode = "json",
-                      httr::content_type_json())
+  r <- server$request(
+    "GET", "/task/123/exists"
+  )
+
   expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
   expect_equal(response$status, "success")
-  expect_equal(response$errors, NULL)
-  expect_equal(names(response$data), c("id"))
+  expect_equal(response$data, list(id = "123", exists = FALSE))
+
+  payload <- setup_payload_submit(include_anc_art = FALSE)
+
+  ## Create a task
+  r <- server$request(
+    "POST", "/model/submit",
+    body = payload,
+    httr::content_type_json())
+  expect_equal(httr::status_code(r), 200)
+  response <- response_from_json(r)
   id <- response$data$id
 
-  ## Get the status
-  testthat::try_again(10, {
-    Sys.sleep(1)
-    r <- server$request("GET", paste0("/rehydrate/status/", id))
-    expect_equal(httr::status_code(r), 200)
-    response <- response_from_json(r)
-    expect_equal(response$status, "success")
-    expect_equal(response$data$status, "COMPLETE")
-  })
+  r <- server$request(
+    "GET", sprintf("/task/%s/exists", id)
+  )
 
-  ## Result is going to fail validation as we are rehydrating from data
-  ## created via another queue. So input files and IDs are not known
-  ## enough to check that we get a response here I think
-  r <- server$request("GET", paste0("/rehydrate/result/", id))
-  expect_equal(httr::status_code(r), 400)
+  expect_equal(httr::status_code(r), 200)
   response <- response_from_json(r)
-  expect_equal(response$status, "failure")
-  expect_equal(response$errors[[1]]$error, "PROJECT_REHYDRATE_FAILED")
-  expect_match(response$errors[[1]]$detail,
-               "Unable to load output zip, input files not found\\.")
+  expect_equal(response$status, "success")
+  expect_equal(response$data, list(id = id, exists = TRUE))
 })

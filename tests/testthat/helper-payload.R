@@ -90,17 +90,6 @@ setup_payload_project_state <- function(version = NULL) {
     ))
 }
 
-setup_payload_rehydrate <- function(
-    path = system_file("output", "malawi_spectrum_download.zip")) {
-  c('{"file":{',
-    paste0('"path": "', path, '",'),
-    '"hash": "1234",',
-    '"filename": "malawi_spectrum_download.zip"',
-    '}',
-    '}'
-  )
-}
-
 setup_payload_input_comparison <- function(data_root_dir,
                                            include_anc = TRUE,
                                            include_programme = TRUE) {
