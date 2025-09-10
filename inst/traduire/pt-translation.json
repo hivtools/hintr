@@ -118,5 +118,6 @@
     "NUMBER_ON_ART_ADULT_FEMALE": "Mulheres TARV",
     "NUMBER_ON_ART_ADULT_MALE": "Homens ART",
     "NUMBER_ON_ART_CHILDREN": "Crianças ART",
-    "FAILED_READ_CSV": "Falha na leitura do ficheiro. Reveja o ficheiro de entrada e verifique se é um csv válido."
+    "FAILED_READ_CSV": "Falha na leitura do ficheiro. Reveja o ficheiro de entrada e verifique se é um csv válido.",
+    "FAILED_QUEUE": "Falha ao obter a fila relevante da configuração, entre em contato com um administrador do sistema."
 }

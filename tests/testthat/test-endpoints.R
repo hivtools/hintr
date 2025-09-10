@@ -1,11 +1,11 @@
 test_that("plumber api can be built", {
   api <- api_build(NULL)
   expect_s3_class(api, "Plumber")
-  expect_length(api$routes, 12)
+  expect_length(api$routes, 13)
   expect_setequal(names(api$routes),
                  c("", "validate", "review-input", "model", "calibrate",
                    "comparison", "meta", "download", "hintr", "chart-data",
-                   "rehydrate", "internal"))
+                   "rehydrate", "internal", "wake"))
   expect_setequal(names(api$routes$validate),
                   c("baseline-individual", "baseline-combined",
                     "survey-and-programme", "options"))

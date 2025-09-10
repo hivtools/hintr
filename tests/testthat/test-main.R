@@ -15,17 +15,17 @@ test_that("main_api_args", {
 
 test_that("main_worker_args", {
   expect_equal(main_worker_args(c()),
-               list(queue_id = NULL, calibrate_only = FALSE))
-  expect_equal(main_worker_args("hintr"),
-               list(queue_id = "hintr", calibrate_only = FALSE))
-  expect_equal(main_worker_args(c("--calibrate-only")),
-               list(queue_id = NULL, calibrate_only = TRUE))
+               list(queue_id = NULL, worker_config = "localhost"))
+  expect_equal(main_worker_args("--worker-config=localhost"),
+               list(queue_id = NULL, worker_config = "localhost"))
+  expect_equal(main_worker_args(c("--worker-config=localhost", "hintr")),
+               list(queue_id = "hintr", worker_config = "localhost"))
 })
 
 test_that("main worker creates worker with multiple queues", {
   mock_rrq_worker <- mockery::mock(list(loop = function() TRUE, cycle = TRUE))
   with_mocked_bindings(
-    worker <- main_worker("queue_id"),
+    worker <- main_worker(c("--worker-config=localhost", "queue_id")),
     rrq_worker_new = mock_rrq_worker
   )
   args <- mockery::mock_args(mock_rrq_worker)[[1]]
@@ -36,7 +36,7 @@ test_that("main worker creates worker with multiple queues", {
 test_that("main worker can create a calibrate only worker", {
   mock_rrq_worker <- mockery::mock(list(loop = function() TRUE, cycle = TRUE))
   with_mocked_bindings(
-    worker <- main_worker(c("--calibrate-only", "queue_id")),
+    worker <- main_worker(c("--worker-config=calibrate_only", "queue_id")),
     rrq_worker_new = mock_rrq_worker
   )
   args <- mockery::mock_args(mock_rrq_worker)[[1]]
@@ -48,7 +48,7 @@ test_that("main worker single job can create a fit only worker", {
   mock_rrq_worker <- mockery::mock(
     list(step = function(immediate) TRUE, cycle = TRUE))
   with_mocked_bindings(
-    worker <- main_worker_single_job(c("--fit-only", "queue_id")),
+    worker <- main_worker_single_job(c("--worker-config=fit_only", "queue_id")),
     rrq_worker_new = mock_rrq_worker
   )
   args <- mockery::mock_args(mock_rrq_worker)[[1]]

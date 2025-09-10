@@ -30,7 +30,7 @@ test_that("queue works as intended", {
   expect_length(rrq::rrq_task_list(controller = ctrl), 0)
 
   ## model run can be pushed to queue
-  job_id <- queue$submit_model_run(NULL, list())
+  job_id <- queue$submit_model_run(NULL, list(), "MWI")
   expect_length(rrq::rrq_task_list(controller = ctrl), 1)
 
   ## status can be retireved
@@ -117,9 +117,9 @@ test_that("queue starts up normally without a timeout", {
 
 test_that("queue object starts up 2 queues", {
   queue <- test_queue(workers = 2)
-  expect_equal(rrq::rrq_worker_config_read("localhost",
-                                           controller = queue$controller)$queue,
-               c(QUEUE_CALIBRATE, QUEUE_RUN, "default"))
+  expect_setequal(rrq::rrq_worker_config_read(
+    "localhost", controller = queue$controller)$queue,
+    c(QUEUE_CALIBRATE, QUEUE_RUN, "default"))
 })
 
 test_that("calibrate gets run before model running", {
@@ -129,10 +129,10 @@ test_that("calibrate gets run before model running", {
   queue <- test_queue(workers = 0, delete_data_on_exit = FALSE)
   ctrl <- queue$controller
   worker <- create_blocking_worker(queue$controller)
-  run_id <- queue$submit_model_run(NULL, NULL)
+  run_id <- queue$submit_model_run(NULL, NULL, "MWI")
   ## Calibrate tasks will error but that is fine - we want to test here
   ## that calibrate & model run get queued and run in the correct order
-  calibrate_id <- queue$submit_calibrate(NULL, NULL)
+  calibrate_id <- queue$submit_calibrate(NULL, NULL, "MWI")
 
   expect_equal(rrq::rrq_task_status(c(run_id, calibrate_id), controller = ctrl),
                rep("PENDING", 2))
@@ -205,4 +205,17 @@ test_that("queue cleans up only its own workers", {
   Sys.sleep(1) ## Let workers finish exiting
   rrq::rrq_worker_detect_exited(controller = queue$controller)
   expect_length(rrq::rrq_worker_list(controller = queue$controller), 1)
+})
+
+test_that("queue pushes model fit into largest runner if option set", {
+  queue <- test_queue(workers = 0)
+
+  data <- list()
+  options <- list(
+    extra_memory = "true"
+  )
+
+  run_id <- queue$submit_model_run(NULL, options, "MWI")
+  info <- rrq::rrq_task_info(run_id, queue$controller)
+  expect_equal(info$queue, "run")
 })

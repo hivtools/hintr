@@ -278,7 +278,7 @@ get_anc_map_filter_types <- function(input) {
 }
 
 get_programme_map_filter_types <- function(input) {
-  data <- read_csv(input$data$programme$path, header = TRUE)
+  data <- read_csv(input$data$programme$path, col_names = TRUE)
   quarter_filter <- list(
     id = scalar("map_programme_quarter"),
     column_id = scalar("calendar_quarter"),
@@ -303,7 +303,7 @@ get_programme_map_filter_types <- function(input) {
 }
 
 get_survey_map_filter_types <- function(input) {
-  data <- read_csv(input$data$survey$path, header = TRUE)
+  data <- read_csv(input$data$survey$path, col_names = TRUE)
   age_filter <- list(
     id = scalar("map_survey_age"),
     column_id = scalar("age_group"),
@@ -580,7 +580,8 @@ submit_model <- function(queue) {
       hintr_error(t_("MODEL_SUBMIT_OLD"), "VERSION_OUT_OF_DATE")
     }
     withCallingHandlers(
-      list(id = scalar(queue$submit_model_run(input$data, input$options))),
+      list(id = scalar(queue$submit_model_run(input$data, input$options,
+                                              input$iso3))),
       error = function(e) {
         hintr_error(api_error_msg(e), "FAILED_TO_QUEUE")
       }
@@ -626,7 +627,8 @@ submit_calibrate <- function(queue) {
     }
     withCallingHandlers(
       list(id = scalar(queue$submit_calibrate(queue$result(id),
-                                              calibration_options$options))),
+                                              calibration_options$options,
+                                              calibration_options$iso3))),
       error = function(e) {
         hintr_error(api_error_msg(e), "FAILED_TO_QUEUE")
       }
@@ -790,7 +792,8 @@ download_submit <- function(queue) {
     }
     withCallingHandlers(
       list(id = scalar(
-        queue$submit_download(queue$result(id), type, prepared_input))),
+        queue$submit_download(queue$result(id), type, prepared_input,
+                              parsed_input$iso3))),
       error = function(e) {
         hintr_error(api_error_msg(e), "FAILED_TO_QUEUE")
       }

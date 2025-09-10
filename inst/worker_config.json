@@ -1,0 +1,38 @@
+{
+  "workers": {
+    "localhost": {
+      "queue": ["calibrate", "run"],
+      "heartbeat_period": 10
+    },
+    "calibrate_only": {
+      "queue": ["calibrate"],
+      "heartbeat_period": 10
+    },
+    "fit_only": {
+      "queue": ["run"],
+      "heartbeat_period": 10
+    }
+  },
+  "queues": {
+    "run": {
+      "jobs": {
+        "fit": "default"
+      },
+      "wake_up": false,
+      "extra_memory_override": true
+    },
+    "calibrate": {
+      "jobs": {
+        "calibrate": "default",
+        "spectrum": "default",
+        "coarse_output": "default",
+        "summary": "default",
+        "comparison": "default",
+        "agyw": "default",
+        "datapack": "default",
+        "rehydrate": "default"
+      },
+      "wake_up": false
+    }
+  }
+}

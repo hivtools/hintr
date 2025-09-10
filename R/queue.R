@@ -30,22 +30,7 @@ Queue <- R6::R6Class(
       message(t_("QUEUE_STARTING"))
       queue_id <- hintr_queue_id(queue_id)
       self$controller <- rrq::rrq_controller(queue_id, con = con)
-      default_worker_cfg <- rrq::rrq_worker_config(
-        heartbeat_period = 10,
-        queue = c(QUEUE_CALIBRATE, QUEUE_RUN))
-      calibrate_worker_cfg <- rrq::rrq_worker_config(
-        heartbeat_period = 10,
-        queue = QUEUE_CALIBRATE)
-      fit_worker_cfg <- rrq::rrq_worker_config(
-        heartbeat_period = 10,
-        queue = QUEUE_RUN)
-      rrq::rrq_worker_config_save("localhost", default_worker_cfg,
-                                  controller = self$controller)
-      rrq::rrq_worker_config_save("calibrate_only", calibrate_worker_cfg,
-                                  controller = self$controller)
-      rrq::rrq_worker_config_save("fit_only", fit_worker_cfg,
-                                  controller = self$controller)
-
+      register_workers(self$controller)
       self$start(workers, timeout)
 
       message(t_("QUEUE_CACHE"))
@@ -94,35 +79,46 @@ Queue <- R6::R6Class(
       rrq::rrq_task_wait(id, controller = self$controller)
     },
 
-    submit_model_run = function(data, options) {
+    submit_wake = function(queue_name) {
+      rrq::rrq_task_create_expr(
+        1 + 1,
+        queue = queue,
+        separate_process = FALSE,
+        controller = self$controller
+      )
+    },
+
+    submit_model_run = function(data, options, iso3) {
       results_dir <- self$results_dir
       language <- traduire::translator()$language()
+      extra_memory <- isTRUE(options$extra_memory == "true")
+      queue_name <- get_queue_from_job_name("fit", iso3, extra_memory)
       rrq::rrq_task_create_expr(
         hintr:::run_model(data, options, results_dir, language),
-        queue = QUEUE_RUN,
+        queue = queue_name,
         separate_process = TRUE,
         controller = self$controller
       )
     },
 
-    submit_calibrate = function(model_output, calibration_options) {
+    submit_calibrate = function(model_output, calibration_options, iso3) {
       results_dir <- self$results_dir
       language <- traduire::translator()$language()
       rrq::rrq_task_create_expr(
         hintr:::run_calibrate(model_output, calibration_options, results_dir,
                               language),
-        queue = QUEUE_CALIBRATE,
+        queue = get_queue_from_job_name("calibrate", iso3),
         separate_process = TRUE,
         controller = self$controller
       )
     },
 
-    submit_download = function(model_output, type, input) {
+    submit_download = function(model_output, type, input, iso3) {
       results_dir <- self$results_dir
       language <- traduire::translator()$language()
       rrq::rrq_task_create_expr(
         hintr:::download(model_output, type, results_dir, input, language),
-        queue = QUEUE_CALIBRATE,
+        queue = get_queue_from_job_name(type, iso3),
         separate_process = TRUE,
         controller = self$controller
       )
@@ -131,7 +127,7 @@ Queue <- R6::R6Class(
     submit_rehydrate = function(output_zip) {
       rrq::rrq_task_create_expr(
         hintr:::rehydrate(output_zip),
-        queue = QUEUE_CALIBRATE,
+        queue = get_queue_from_job_name("rehydrate"),
         separate_process = TRUE,
         controller = self$controller
       )

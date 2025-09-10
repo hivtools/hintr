@@ -1,6 +1,7 @@
 api_build <- function(queue, validate = FALSE, logger = NULL) {
   api <- porcelain::porcelain$new(validate = validate, logger = logger)
   api$handle(endpoint_root())
+  api$handle(endpoint_wake_up(queue))
   api$handle(endpoint_baseline_individual())
   api$handle(endpoint_baseline_combined())
   api$handle(endpoint_validate_survey_programme())
@@ -128,6 +129,16 @@ endpoint_root <- function() {
   porcelain::porcelain_endpoint$new(
     "GET", "/", root_endpoint,
     returning = porcelain::porcelain_returning_json())
+}
+
+## Ping this on Azure to wake up the API and rrq runners
+endpoint_wake_up <- function(queue) {
+  response <- porcelain::porcelain_returning_json("WakeUpResponse.schema",
+                                                  schema_root())
+  porcelain::porcelain_endpoint$new(
+    "GET", "/wake", wake_up(queue),
+    returning = response
+  )
 }
 
 endpoint_baseline_individual <- function() {
