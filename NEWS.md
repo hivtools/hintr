@@ -1,3 +1,8 @@
+# hintr 1.2.14
+
+* Remove endpoints `/rehydrate/submit`, `/rehydrate/status/<id>` and `/rehydrate/result/<id>` in favour of moving these to Kotlin.
+* Add endpoint `/task/<id>/exists` to check if a task with that ID exists.
+
 # hintr 1.2.13
 
 * Update worker configuration setup to accept a json configuration file instead of being hardcoded in the package.

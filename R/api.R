@@ -30,12 +30,10 @@ api_build <- function(queue, validate = FALSE, logger = NULL) {
   api$handle(endpoint_download_result_path(queue))
   api$handle(endpoint_download_result_head(queue))
   api$handle(endpoint_adr_metadata(queue))
-  api$handle(endpoint_rehydrate_submit(queue))
-  api$handle(endpoint_rehydrate_status(queue))
-  api$handle(endpoint_rehydrate_result(queue))
   api$handle(endpoint_upload_input(queue))
   api$handle(endpoint_upload_output(queue))
   api$handle(endpoint_prerun(queue))
+  api$handle(endpoint_task_exists(queue))
   api$handle(endpoint_hintr_version())
   api$handle(endpoint_hintr_worker_status(queue))
   api$handle(endpoint_hintr_stop(queue))
@@ -503,6 +501,21 @@ endpoint_prerun <- function(queue) {
                                     returning = response)
 }
 
+endpoint_task_exists <- function(queue) {
+  response <- porcelain::porcelain_returning_json(
+    "TaskExistsResponse.schema.json", schema_root())
+  task_exists <- function(id) {
+    list(
+      id = scalar(id),
+      exists = scalar(queue$exists(id))
+    )
+  }
+  porcelain::porcelain_endpoint$new("GET",
+                                    "/task/<id>/exists",
+                                    task_exists,
+                                    returning = response)
+}
+
 endpoint_hintr_version <- function() {
   response <- porcelain::porcelain_returning_json("HintrVersionResponse.schema",
                                                   schema_root())
@@ -535,34 +548,4 @@ endpoint_hintr_stop <- function(queue) {
                                     hintr_stop(queue),
                                     returning = returning,
                                     validate = FALSE)
-}
-
-endpoint_rehydrate_submit <- function(queue) {
-  input <- porcelain::porcelain_input_body_json(
-    "input", "ProjectRehydrateSubmitRequest.schema", schema_root())
-  response <- porcelain::porcelain_returning_json(
-    "ProjectRehydrateSubmitResponse.schema", schema_root())
-  porcelain::porcelain_endpoint$new("POST",
-                                    "/rehydrate/submit",
-                                    rehydrate_submit(queue),
-                                    input,
-                                    returning = response)
-}
-
-endpoint_rehydrate_status <- function(queue) {
-  response <- porcelain::porcelain_returning_json(
-    "ProjectRehydrateStatusResponse.schema", schema_root())
-  porcelain::porcelain_endpoint$new("GET",
-                                    "/rehydrate/status/<id>",
-                                    queue_status(queue),
-                                    returning = response)
-}
-
-endpoint_rehydrate_result <- function(queue) {
-  response <- porcelain::porcelain_returning_json(
-    "ProjectRehydrateResultResponse.schema", schema_root())
-  porcelain::porcelain_endpoint$new("GET",
-                                    "/rehydrate/result/<id>",
-                                    rehydrate_result(queue),
-                                    returning = response)
 }

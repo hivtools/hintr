@@ -124,15 +124,6 @@ Queue <- R6::R6Class(
       )
     },
 
-    submit_rehydrate = function(output_zip) {
-      rrq::rrq_task_create_expr(
-        hintr:::rehydrate(output_zip),
-        queue = get_queue_from_job_name("rehydrate"),
-        separate_process = TRUE,
-        controller = self$controller
-      )
-    },
-
     status = function(id) {
       status <- unname(rrq::rrq_task_status(id, controller = self$controller))
       done <- c("ERROR", "DIED", "CANCELLED", "TIMEOUT", "COMPLETE")
