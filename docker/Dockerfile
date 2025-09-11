@@ -24,6 +24,7 @@ RUN apt-get update && apt-get -y install --no-install-recommends \
         libjq1 \
         libsodium23 \
         libssl3 \
+	libnode-dev \
         gdal-bin \
         && apt-get clean \
         && rm -rf /var/lib/apt/lists/* \
