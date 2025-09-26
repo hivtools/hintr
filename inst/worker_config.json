@@ -29,8 +29,7 @@
         "summary": "default",
         "comparison": "default",
         "agyw": "default",
-        "datapack": "default",
-        "rehydrate": "default"
+        "datapack": "default"
       },
       "wake_up": false
     }

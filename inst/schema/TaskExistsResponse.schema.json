@@ -2,9 +2,12 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "notes": { "type": [ "string", "null" ] },
-    "state": { "$ref": "ProjectState.schema.json" }
+    "id": {
+      "type": "string"
+    },
+    "exists": {
+      "type": "boolean"
+    }
   },
-  "required": [ "notes", "state" ],
   "additionalProperties": false
 }
