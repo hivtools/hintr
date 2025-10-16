@@ -7,6 +7,50 @@ test_that("download_debug prevents overwriting", {
     "Path 'abc' already exists at destination")
 })
 
+test_that("download_debug uses env var for token when set", {
+  withr::local_envvar(GITHUB_DEBUG_DOWNLOAD_TOKEN = "token-from-env")
+  mock_debug_download <- get_mock_debug_download()
+  with_mocked_bindings(
+    result <- download_debug("test-id"),
+    GET = mock_debug_download,
+    .package = "httr"
+  )
+  mockery::expect_called(mock_debug_download, 1)
+  args <- mockery::mock_args(mock_debug_download)
+  expect_equal(args[[1]][[3]]$headers,
+               c("Authorization" = "Bearer token-from-env"))
+})
+
+test_that("askpass is called when env var is empty", {
+  withr::local_envvar(GITHUB_DEBUG_DOWNLOAD_TOKEN = "")
+  mock_debug_download <- get_mock_debug_download()
+  with_mocked_bindings(
+    with_mocked_bindings(
+      result <- download_debug("test-id"),
+      askpass = function(...) "token-from-askpass",
+      .package = "askpass"
+    ),
+    GET = mock_debug_download,
+    .package = "httr"
+  )
+  mockery::expect_called(mock_debug_download, 1)
+  args <- mockery::mock_args(mock_debug_download)
+  expect_equal(args[[1]][[3]]$headers,
+               c("Authorization" = "Bearer token-from-askpass"))
+})
+
+test_that("error thrown when no token and askpass not installed", {
+  withr::local_envvar(GITHUB_DEBUG_DOWNLOAD_TOKEN = "")
+  error <- expect_error(
+    with_mocked_bindings(
+      result <- download_debug("test-id"),
+      requireNamespace = function(...) FALSE,
+      .package = "base"
+    )
+  )
+  expect_match(error$message, "GitHub token not found.")
+})
+
 test_that("Debug endpoint returns debug information", {
   test_redis_available()
   test_mock_model_available()

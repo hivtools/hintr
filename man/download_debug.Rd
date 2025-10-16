@@ -4,7 +4,13 @@
 \alias{download_debug}
 \title{Get debug output from naomi}
 \usage{
-download_debug(id, server = NULL, dest = tempfile(), verbose = TRUE)
+download_debug(
+  id,
+  server = NULL,
+  dest = tempfile(),
+  github_token = Sys.getenv("GITHUB_DEBUG_DOWNLOAD_TOKEN"),
+  verbose = TRUE
+)
 }
 \arguments{
 \item{id}{The model run id to download. This will be printed below the
@@ -22,4 +28,15 @@ id within this, so it is safe to use a common directory.}
 }
 \description{
 Get debug output from naomi
+}
+\details{
+This uses GitHub authentication to pull the debug file. You need to
+\enumerate{
+\item Make sure you are a member of the naomi-debug GitHub team
+\item Generate a GitHub personal access token. Create a new fine-grained
+token. Set the resource owner to "hivtools" organisation. Under
+"Permissions" add "Members" read-only permission. And generate the token.
+\item Pass the token to this function, fill in the interactive prompt or
+set as an environment variable "GITHUB_DEBUG_DOWNLOAD_TOKEN".
+}
 }
