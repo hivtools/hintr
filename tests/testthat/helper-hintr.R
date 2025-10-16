@@ -20,7 +20,7 @@ get_filter_mocks <- function() {
 create_test_zip <- function() {
   t <- tempfile()
   dir.create(file.path(t), FALSE, TRUE)
-  write.csv(c(1, 2, 3), file.path(t, "myfile.csv"))
+  utils::write.csv(c(1, 2, 3), file.path(t, "myfile.csv"))
   zip_file <- tempfile()
   zip::zip(zip_file, "myfile.csv", root = t)
   readBin(zip_file, "raw", n = file.size(zip_file))
