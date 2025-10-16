@@ -1,3 +1,7 @@
+# hintr 1.2.15
+
+* Update download_debug to use GitHub token for auth and pull from new authenticated endpoint.
+
 # hintr 1.2.14
 
 * Remove endpoints `/rehydrate/submit`, `/rehydrate/status/<id>` and `/rehydrate/result/<id>` in favour of moving these to Kotlin.
