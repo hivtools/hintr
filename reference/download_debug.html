@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hintr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.14</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.15</span>
       </span>
     </div>
 
@@ -57,7 +57,13 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">download_debug</span><span class="op">(</span><span class="va">id</span>, server <span class="op">=</span> <span class="cn">NULL</span>, dest <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">download_debug</span><span class="op">(</span></span>
+<span>  <span class="va">id</span>,</span>
+<span>  server <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  dest <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  github_token <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"GITHUB_DEBUG_DOWNLOAD_TOKEN"</span><span class="op">)</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -85,6 +91,15 @@ id within this, so it is safe to use a common directory.</p></dd>
 <dd><p>Add a progress bar</p></dd>
 
 </dl></div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>This uses GitHub authentication to pull the debug file. You need to</p><ol><li><p>Make sure you are a member of the naomi-debug GitHub team</p></li>
+<li><p>Generate a GitHub personal access token. Create a new fine-grained
+token. Set the resource owner to "hivtools" organisation. Under
+"Permissions" add "Members" read-only permission. And generate the token.</p></li>
+<li><p>Pass the token to this function, fill in the interactive prompt or
+set as an environment variable "GITHUB_DEBUG_DOWNLOAD_TOKEN".</p></li>
+</ol></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
