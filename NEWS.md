@@ -1,3 +1,7 @@
+# hintr 1.2.16
+
+* Update Naomi model options for 2026 estimates
+
 # hintr 1.2.15
 
 * Update download_debug to use GitHub token for auth and pull from new authenticated endpoint.

@@ -1,6 +1,6 @@
 Package: hintr
 Title: R API for calling naomi district level HIV model
-Version: 1.2.15
+Version: 1.2.16
 Authors@R: 
     person(given = "Robert",
            family = "Ashton",
@@ -24,7 +24,7 @@ Imports:
     ids,
     jsonlite (>= 1.2.2),
     naomi (>= 2.10.9),
-    naomi.options (>= 1.1.0),
+    naomi.options (>= 1.4.0),
     porcelain (>= 0.1.8),
     qs,
     R6,
@@ -57,7 +57,8 @@ Suggests:
     tidyselect,
     withr
 Remotes:
-    mrc-ide/naomi
+    mrc-ide/naomi,
+    mrc-ide/naomi.options
 Config/testthat/edition: 3
 Config/testthat/parallel: true
 VignetteBuilder: knitr
