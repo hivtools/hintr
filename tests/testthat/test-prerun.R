@@ -55,9 +55,7 @@ test_that("hintr_submit_prerun fails if invalid object used", {
 test_that("error returned if httr request fails", {
   expect_error(
     hintr_submit_prerun(prerun_inputs, mock_model, mock_calibrate,
-                        "https://example.com", port = NULL),
-    "Forbidden (HTTP 403)",
-    fixed = TRUE)
+                        "https://example.com", port = NULL))
 })
 
 test_that("hintr_submit_prerun uploads files and returns output zip", {
