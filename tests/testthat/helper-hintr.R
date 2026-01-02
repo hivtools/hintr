@@ -28,7 +28,7 @@ create_test_zip <- function() {
 
 debug_download_response <- list(
   url = "https://example.com",
-  status_code = 200,
+  status_code = 200L,
   content = create_test_zip(),
   request = list(
     method = "GET",

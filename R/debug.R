@@ -56,7 +56,12 @@ download_debug <- function(
   r <- httr::GET(url,
                  progress,
                  httr::add_headers(Authorization = paste("Bearer", github_token)))
-  httr::stop_for_status(r)
+  if (httr::http_error(r)) {
+    stop(sprintf(
+      "Failed to download debug. Error: '%s'. \nCheck token has not expired",
+      httr::content(r)$error
+    ))
+  }
 
   zip <- tempfile(fileext = ".zip")
   on.exit(unlink(zip))
