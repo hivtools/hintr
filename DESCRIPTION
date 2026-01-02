@@ -1,6 +1,6 @@
 Package: hintr
 Title: R API for calling naomi district level HIV model
-Version: 1.2.16
+Version: 1.2.17
 Authors@R: 
     person(given = "Robert",
            family = "Ashton",
@@ -12,7 +12,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.3
 Additional_repositories: https://mrc-ide.r-universe.dev 
 Imports:
     digest,

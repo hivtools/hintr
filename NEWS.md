@@ -1,3 +1,7 @@
+# hintr 1.2.17
+
+* Improve docs for download_debug, change token name and update order of args
+
 # hintr 1.2.16
 
 * Update Naomi model options for 2026 estimates

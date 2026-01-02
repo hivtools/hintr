@@ -8,7 +8,7 @@ test_that("download_debug prevents overwriting", {
 })
 
 test_that("download_debug uses env var for token when set", {
-  withr::local_envvar(GITHUB_DEBUG_DOWNLOAD_TOKEN = "token-from-env")
+  withr::local_envvar(NAOMI_DOWNLOAD_DEBUG_TOKEN = "token-from-env")
   mock_debug_download <- get_mock_debug_download()
   with_mocked_bindings(
     result <- download_debug("test-id"),
@@ -22,7 +22,7 @@ test_that("download_debug uses env var for token when set", {
 })
 
 test_that("askpass is called when env var is empty", {
-  withr::local_envvar(GITHUB_DEBUG_DOWNLOAD_TOKEN = "")
+  withr::local_envvar(NAOMI_DOWNLOAD_DEBUG_TOKEN = "")
   mock_debug_download <- get_mock_debug_download()
   with_mocked_bindings(
     with_mocked_bindings(
@@ -40,7 +40,7 @@ test_that("askpass is called when env var is empty", {
 })
 
 test_that("error thrown when no token and askpass not installed", {
-  withr::local_envvar(GITHUB_DEBUG_DOWNLOAD_TOKEN = "")
+  withr::local_envvar(NAOMI_DOWNLOAD_DEBUG_TOKEN = "")
   error <- expect_error(
     with_mocked_bindings(
       result <- download_debug("test-id"),

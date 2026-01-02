@@ -1,37 +1,41 @@
 ##' Get debug output from naomi
 ##'
 ##' This uses GitHub authentication to pull the debug file. You need to
-##'   1. Make sure you are a member of the naomi-debug GitHub team
-##'   2. Generate a GitHub personal access token. Create a new fine-grained
-##'   token. Set the resource owner to "hivtools" organisation. Under
+##'   1. Make sure you are a member of the [naomi-debug GitHub team](https://github.com/orgs/hivtools/teams/naomi-debug)
+##'   2. Generate a [GitHub personal access token](https://github.com/settings/personal-access-tokens/new).
+##'   Create a new fine-grained token. Set the resource owner to "hivtools" organisation. Under
 ##'   "Permissions" add "Members" read-only permission. And generate the token.
 ##'   3. Pass the token to this function, fill in the interactive prompt or
-##'   set as an environment variable "GITHUB_DEBUG_DOWNLOAD_TOKEN".
+##'   set as an environment variable "NAOMI_DOWNLOAD_DEBUG_TOKEN".
 ##'
 ##' @title Get debug output from naomi
 ##'
 ##' @param id The model run id to download. This will be printed below the
 ##'   error message.
 ##'
+##' @param dest The destination for the downloaded data.  The actual
+##'   data will be unpacked into a directory corresponding to the run
+##'   id within this, so it is safe to use a common directory.
+##'
 ##' @param server The url of the server.  The default is to use the
 ##'   production naomi/hint/hintr instance. It is not possible to use
 ##'   the staging instance.  You can change this if running locally.
 ##'
-##' @param dest The destination for the downloaded data.  The actual
-##'   data will be unpacked into a directory corresponding to the run
-##'   id within this, so it is safe to use a common directory.
+##' @param github_token Token with access to read hivtools org team members.
+##'   Used to check you are a person with access to download debugs. Ideally
+##'   don't pass this and use env var or interactive prompt instead.
 ##'
 ##' @param verbose Add a progress bar
 ##'
 ##' @export
 download_debug <- function(
     id,
-    server = NULL,
     dest = tempfile(),
-    github_token = Sys.getenv("GITHUB_DEBUG_DOWNLOAD_TOKEN"),
+    server = NULL,
+    github_token = Sys.getenv("NAOMI_DOWNLOAD_DEBUG_TOKEN"),
     verbose = TRUE) {
   if (is.null(server)) {
-    server <- "http://naomi.unaids.org"
+    server <- "https://naomi.unaids.org"
   }
   if (file.exists(file.path(dest, id))) {
     stop(sprintf("Path '%s' already exists at destination '%s'", id, dest))
@@ -44,7 +48,7 @@ download_debug <- function(
     } else {
       stop(paste(
         "GitHub token not found. Please set env var",
-        "GITHUB_DEBUG_DOWNLOAD_TOKEN or install the 'askpass' package",
+        "NAOMI_DOWNLOAD_DEBUG_TOKEN or install the 'askpass' package",
         "to be prompted for input."
       ))
     }

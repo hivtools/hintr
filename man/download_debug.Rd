@@ -6,9 +6,9 @@
 \usage{
 download_debug(
   id,
-  server = NULL,
   dest = tempfile(),
-  github_token = Sys.getenv("GITHUB_DEBUG_DOWNLOAD_TOKEN"),
+  server = NULL,
+  github_token = Sys.getenv("NAOMI_DOWNLOAD_DEBUG_TOKEN"),
   verbose = TRUE
 )
 }
@@ -16,13 +16,17 @@ download_debug(
 \item{id}{The model run id to download. This will be printed below the
 error message.}
 
+\item{dest}{The destination for the downloaded data.  The actual
+data will be unpacked into a directory corresponding to the run
+id within this, so it is safe to use a common directory.}
+
 \item{server}{The url of the server.  The default is to use the
 production naomi/hint/hintr instance. It is not possible to use
 the staging instance.  You can change this if running locally.}
 
-\item{dest}{The destination for the downloaded data.  The actual
-data will be unpacked into a directory corresponding to the run
-id within this, so it is safe to use a common directory.}
+\item{github_token}{Token with access to read hivtools org team members.
+Used to check you are a person with access to download debugs. Ideally
+don't pass this and use env var or interactive prompt instead.}
 
 \item{verbose}{Add a progress bar}
 }
@@ -32,11 +36,11 @@ Get debug output from naomi
 \details{
 This uses GitHub authentication to pull the debug file. You need to
 \enumerate{
-\item Make sure you are a member of the naomi-debug GitHub team
-\item Generate a GitHub personal access token. Create a new fine-grained
-token. Set the resource owner to "hivtools" organisation. Under
+\item Make sure you are a member of the \href{https://github.com/orgs/hivtools/teams/naomi-debug}{naomi-debug GitHub team}
+\item Generate a \href{https://github.com/settings/personal-access-tokens/new}{GitHub personal access token}.
+Create a new fine-grained token. Set the resource owner to "hivtools" organisation. Under
 "Permissions" add "Members" read-only permission. And generate the token.
 \item Pass the token to this function, fill in the interactive prompt or
-set as an environment variable "GITHUB_DEBUG_DOWNLOAD_TOKEN".
+set as an environment variable "NAOMI_DOWNLOAD_DEBUG_TOKEN".
 }
 }

@@ -8,7 +8,7 @@ hintr_submit_prerun(
   inputs,
   model_output,
   calibrate_output,
-  server = "http://naomi.unaids.org",
+  server = "https://naomi.unaids.org",
   port = "8888",
   output_zip_path = tempfile(fileext = ".zip")
 )
