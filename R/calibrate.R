@@ -14,7 +14,7 @@ run_calibrate <- function(model_output, calibration_options, path_results,
   plot_data_path <- tempfile("plot_data", tmpdir = path_results,
                              fileext = ".duckdb")
   model_output_path <- tempfile("model_output", tmpdir = path_results,
-                                fileext = ".qs")
+                                fileext = ".qs2")
 
   naomi::hintr_calibrate(model_output, calibration_options, plot_data_path,
                          model_output_path)

@@ -5,7 +5,7 @@ Sys.setenv("USE_MOCK_MODEL" = "true")
 mock_model <- list(
   plot_data_path = NULL,
   model_output_path =
-    system.file("output", "malawi_model_output.qs", package = "hintr"),
+    system.file("output", "malawi_model_output.qs2", package = "hintr"),
   version = utils::packageVersion("naomi"),
   warnings = list(
     list(
@@ -21,7 +21,7 @@ mock_calibrate <- list(
   plot_data_path =
     system.file("output", "malawi_calibrate_plot_data.duckdb", package = "hintr"),
   model_output_path =
-    system.file("output", "malawi_calibrate_output.qs", package = "hintr"),
+    system.file("output", "malawi_calibrate_output.qs2", package = "hintr"),
   version = utils::packageVersion("naomi"),
   warnings = list(
     list(
@@ -76,7 +76,7 @@ test_mock_model_available <- function() {
   }))
 }
 
-t_qs <- tempfile(fileext = ".qs")
+t_qs <- tempfile(fileext = ".qs2")
 plot_data <- naomi::read_hintr_output(system.file("output", "malawi_calibrate_plot_data.duckdb", package = "hintr"))
 naomi:::hintr_save(plot_data, t_qs)
 
@@ -146,7 +146,7 @@ class(mock_model_v0.1.2) <- "hintr_output"
 
 
 clone_model_output <- function(output) {
-  model_output_path <- tempfile(fileext = ".qs")
+  model_output_path <- tempfile(fileext = ".qs2")
   file.copy(output$model_output_path, model_output_path)
   plot_data_path <- NULL
   if (!is.null(output$plot_data_path)) {
@@ -170,13 +170,13 @@ clone_old_model_output <- function(output) {
   coarse_output_path <- tempfile(fileext = ".zip")
   file.copy(output$coarse_output_path, coarse_output_path)
   if (!is.null(output$calibration_path)) {
-    calibration_path <- tempfile(fileext = ".qs")
+    calibration_path <- tempfile(fileext = ".qs2")
     file.copy(output$calibration_path, calibration_path)
   } else {
     calibration_path <- NULL
   }
   if (!is.null(output$summary_report_path)) {
-    summary_report_path <- tempfile(fileext = ".qs")
+    summary_report_path <- tempfile(fileext = ".qs2")
     file.copy(output$summary_report_path, summary_report_path)
   } else {
     summary_report_path <- NULL

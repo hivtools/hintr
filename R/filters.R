@@ -282,10 +282,29 @@ get_quarter_label <- function(calendar_quarter) {
   naomi::calendar_quarter_labels(calendar_quarter)
 }
 
-get_year_filters <- function(data, decreasing = TRUE) {
-  years <- unique(data$year)
+get_year_filters <- function(data, decreasing = TRUE, col_name = "year") {
+  years <- unique(as.numeric(data[[col_name]]))
   years <- sort(years, decreasing = decreasing)
   lapply(years, function(year) {
+    list(id = scalar(as.character(year)),
+         label = scalar(as.character(year)))
+  })
+}
+
+get_time_series_period_filters <- function(data, decreasing = TRUE) {
+  cqs <- unique(data$calendar_quarters)
+  cqs <- sort(cqs, decreasing = decreasing)
+  lapply(cqs, function(cq) {
+    list(id = scalar(cq),
+         label = scalar(get_quarter_label(cq)))
+  })
+}
+
+get_time_series_year_filters <- function(metadata, decreasing = TRUE) {
+  years <- unique(metadata$calendar_quarters)
+  years <- vnapply(years, naomi::calendar_quarter_to_year)
+  years <- sort(years, decreasing = decreasing)
+  lapply(unname(years), function(year) {
     list(id = scalar(as.character(year)),
          label = scalar(as.character(year)))
   })

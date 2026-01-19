@@ -6,12 +6,12 @@ COPY docker/Rprofile.site /usr/local/lib/R/etc/Rprofile.site
 
 ## Remove the large test data not needed for runtime
 RUN install_packages remotes \
-    && install_remote mrc-ide/naomi mrc-ide/naomi.options \
+    && install_remote mrc-ide/naomi@issue-1115-nm mrc-ide/naomi.options \
     && rm -r /usr/local/lib/R/site-library/naomi/extdata
 
 WORKDIR /src
 RUN ./scripts/build_test_data \
-    && find /src/inst/output -type f ! -name "malawi_model_output.qs" -delete \
+    && find /src/inst/output -type f ! -name "malawi_model_output.qs2" -delete \
     && R CMD INSTALL /src \
     && rm -r /src
 

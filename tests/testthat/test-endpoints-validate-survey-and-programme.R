@@ -8,9 +8,7 @@ test_that("endpoint_validate_survey_programme supports programme file", {
   expect_equal(response$filename, scalar("original"))
   expect_equal(response$hash, scalar("12345"))
   expect_equal(response$fromADR, scalar(FALSE))
-  ## Sanity check that data has been returned
-  expect_true(nrow(response$data) >= 200)
-  expect_type(response$data[, "art_current"], "double")
+  expect_equal(response$data, json_verbatim("null"))
   expect_length(response$warnings, 0)
 })
 
@@ -38,10 +36,7 @@ test_that("endpoint_validate_survey_programme supports ANC file", {
   expect_equal(response$filename, scalar("original"))
   expect_equal(response$hash, scalar("12345"))
   expect_equal(response$fromADR, scalar(FALSE))
-  ## Sanity check that data has been returned
-  expect_true(nrow(response$data) >= 200)
-  expect_type(response$data[, "anc_prevalence"], "double")
-  expect_type(response$data[, "anc_art_coverage"], "double")
+  expect_equal(response$data, json_verbatim("null"))
   expect_length(response$warnings, 0)
 })
 
@@ -101,9 +96,7 @@ test_that("endpoint_validate_survey_programme programme", {
   expect_equal(response$data$filename, scalar("original.csv"))
   expect_equal(response$data$hash, scalar("12345"))
   expect_equal(response$data$fromADR, scalar(FALSE))
-  ## Sanity check that data has been returned
-  expect_true(nrow(response$data$data) >= 200)
-  expect_type(response$data$data[, "art_current"], "double")
+  expect_equal(response$data$data, json_verbatim("null"))
   expect_length(response$data$warnings, 0)
 })
 
@@ -121,9 +114,7 @@ test_that("endpoint_validate_survey_programme works with programme data", {
   expect_equal(body$data$filename, "original.csv")
   expect_equal(body$data$hash, "12345")
   expect_equal(body$data$fromADR, FALSE)
-  ## Sanity check that data has been returned
-  expect_true(nrow(body$data$data) >= 200)
-  expect_type(body$data$data[, "art_current"], "integer")
+  expect_null(body$data$data)
   expect_length(body$data$warnings, 0)
 })
 
@@ -136,10 +127,7 @@ test_that("endpoint_validate_survey_programme anc", {
   expect_equal(response$data$filename, scalar("original.csv"))
   expect_equal(response$data$hash, scalar("12345"))
   expect_equal(response$data$fromADR, scalar(FALSE))
-  ## Sanity check that data has been returned
-  expect_true(nrow(response$data$data) >= 200)
-  expect_type(response$data$data[, "anc_prevalence"], "double")
-  expect_type(response$data$data[, "anc_art_coverage"], "double")
+  expect_equal(response$data$data, json_verbatim("null"))
   expect_length(response$data$warnings, 0)
 })
 
@@ -157,10 +145,7 @@ test_that("endpoint_validate_survey_programme works with anc data", {
   expect_equal(body$data$filename, "original.csv")
   expect_equal(body$data$hash, "12345")
   expect_equal(body$data$fromADR, FALSE)
-  ## Sanity check that data has been returned
-  expect_true(nrow(body$data$data) >= 200)
-  expect_type(body$data$data[, "anc_prevalence"], "double")
-  expect_type(body$data$data[, "anc_art_coverage"], "double")
+  expect_null(body$data$data)
   expect_length(body$data$warnings, 0)
 })
 

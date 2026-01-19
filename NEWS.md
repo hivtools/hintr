@@ -1,3 +1,8 @@
+# hintr 1.2.18
+
+* Update to save files in qs2 format instead of qs. qs package has been deprecated.
+* Update metadata for indicators and filters to show time series data in input choropleth.
+
 # hintr 1.2.17
 
 * Improve docs for download_debug, change token name and update order of args

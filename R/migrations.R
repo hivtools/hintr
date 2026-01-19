@@ -30,9 +30,9 @@ write_migration_log <- function(migrations, log_dir) {
   message(sprintf("Saving summary csv %s", summary_path))
   utils::write.csv(summary, summary_path, row.names = FALSE)
 
-  log_path <- file.path(log_dir, sprintf("log_%s.qs", time_now))
-  message(sprintf("Saving output qs %s", log_path))
-  qs::qsave(migrations, log_path, preset = "fast")
+  log_path <- file.path(log_dir, sprintf("log_%s.qs2", time_now))
+  message(sprintf("Saving output qs2 %s", log_path))
+  qs2::qs_save(migrations, log_path)
   list(
     summary_path = summary_path,
     log_path = log_path

@@ -153,7 +153,7 @@ do_validate_programme <- function(programme, shape, strict = TRUE) {
   data$art_current <- as.numeric(data$art_current)
   assert_column_positive_numeric(data, "art_current")
   assert_calendar_quarter_column(data)
-  list(data = data,
+  list(data = json_verbatim("null"),
        warnings = list())
 }
 
@@ -192,8 +192,7 @@ do_validate_anc <- function(anc, shape, strict = TRUE) {
   assert_year_column(data)
   assert_column_positive_numeric(data, c("anc_clients", "anc_known_pos", "anc_already_art",
                                          "anc_tested", "anc_tested_pos"))
-  data <- naomi::calculate_prevalence_art_coverage(data)
-  list(data = data,
+  list(data = json_verbatim("null"),
        warnings = list())
 }
 

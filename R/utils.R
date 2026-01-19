@@ -57,6 +57,10 @@ vlapply <- function(X, FUN, ...) {
   vapply(X, FUN, ..., FUN.VALUE = logical(1))
 }
 
+vnapply <- function(X, FUN, ...) {
+  vapply(X, FUN, ..., FUN.VALUE = numeric(1))
+}
+
 # This utility will not be needed once all endpoints use file objects
 # rather than paths, at which point this could be moved into the test
 # helpers.

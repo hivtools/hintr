@@ -82,7 +82,7 @@ Queue <- R6::R6Class(
     submit_wake = function(queue_name) {
       rrq::rrq_task_create_expr(
         1 + 1,
-        queue = queue,
+        queue = queue_name,
         separate_process = FALSE,
         controller = self$controller
       )

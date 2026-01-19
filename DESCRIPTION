@@ -23,10 +23,10 @@ Imports:
     glue,
     ids,
     jsonlite (>= 1.2.2),
-    naomi (>= 2.10.9),
+    naomi (>= 2.10.18),
     naomi.options (>= 1.4.0),
     porcelain (>= 0.1.8),
-    qs,
+    qs2,
     R6,
     readr,
     readxl,
@@ -57,7 +57,7 @@ Suggests:
     tidyselect,
     withr
 Remotes:
-    mrc-ide/naomi,
+    mrc-ide/naomi@issue-1115-nm,
     mrc-ide/naomi.options
 Config/testthat/edition: 3
 Config/testthat/parallel: true
