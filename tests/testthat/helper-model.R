@@ -85,7 +85,7 @@ naomi:::hintr_save(plot_data, t_qs)
 mock_calibrate_v1.1.15 <- list(
   plot_data_path = t_qs,
   model_output_path =
-    system.file("output", "malawi_calibrate_output.qs", package = "hintr"),
+    system.file("output", "malawi_calibrate_output.qs2", package = "hintr"),
   version = "2.9.10"
 )
 class(mock_calibrate_v1.1.15) <- "hintr_output"
@@ -95,7 +95,7 @@ class(mock_calibrate_v1.1.15) <- "hintr_output"
 mock_model_v1.1.15 <- list(
   plot_data_path = NULL,
   model_output_path =
-    system.file("output", "malawi_model_output.qs", package = "hintr"),
+    system.file("output", "malawi_model_output.qs2", package = "hintr"),
   version = "2.9.10"
 )
 class(mock_model_v1.1.15) <- "hintr_output"
@@ -105,7 +105,7 @@ class(mock_model_v1.1.15) <- "hintr_output"
 mock_calibrate_v1.0.7 <- list(
   plot_data_path = t_qs,
   model_output_path =
-    system.file("output", "malawi_calibrate_output.qs", package = "hintr"),
+    system.file("output", "malawi_calibrate_output.qs2", package = "hintr"),
   version = "2.5.6"
 )
 class(mock_calibrate_v1.0.7) <- "hintr_output"
@@ -115,7 +115,7 @@ class(mock_calibrate_v1.0.7) <- "hintr_output"
 mock_model_v1.0.7 <- list(
   plot_data_path = NULL,
   model_output_path =
-    system.file("output", "malawi_model_output.qs", package = "hintr"),
+    system.file("output", "malawi_model_output.qs2", package = "hintr"),
   version = "2.5.4"
 )
 class(mock_model_v1.0.7) <- "hintr_output"
@@ -123,7 +123,7 @@ class(mock_model_v1.0.7) <- "hintr_output"
 ## Model output as returned by
 ## hintr version 0.1.4 to 0.1.38 and naomi version 1.0.8 to 2.4.2
 mock_model_v0.1.38 <- list(
-  output_path = system.file("output", "malawi_output.qs", package = "hintr"),
+  output_path = system.file("output", "malawi_output.qs2", package = "hintr"),
   spectrum_path = system.file("output", "malawi_spectrum_download.zip",
                               package = "hintr"),
   coarse_output_path =
@@ -131,12 +131,12 @@ mock_model_v0.1.38 <- list(
                 package = "hintr"),
   summary_report_path =
     system.file("output", "malawi_summary_report.html", package = "hintr"),
-  calibration_path = system.file("output", "malawi_calibration.qs",
+  calibration_path = system.file("output", "malawi_calibration.qs2",
                                  package = "hintr"))
 class(mock_model_v0.1.38) <- "hintr_output"
 
 mock_model_v0.1.2 <- list(
-  output_path = system.file("output", "malawi_output.qs", package = "hintr"),
+  output_path = system.file("output", "malawi_output.qs2", package = "hintr"),
   spectrum_path = system.file("output", "malawi_spectrum_download.zip",
                               package = "hintr"),
   coarse_output_path =
