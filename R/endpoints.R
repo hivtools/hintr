@@ -450,7 +450,8 @@ get_input_choropleth_data_source_options <- function(types, default_area_level) 
           list(
             filterId = scalar("time_series_programme_plot_type"),
             label = scalar(t_("INPUT_TIME_SERIES_COLUMN_PLOT_TYPE")),
-            stateFilterId = scalar("plotType")
+            # stateFilterId here is very important for choropleth to work
+            stateFilterId = scalar("indicator")
           ),
           list(
             filterId = scalar("time_series_programme_area_level"),
@@ -484,7 +485,8 @@ get_input_choropleth_data_source_options <- function(types, default_area_level) 
           list(
             filterId = scalar("time_series_anc_plot_type"),
             label = scalar(t_("INPUT_TIME_SERIES_COLUMN_PLOT_TYPE")),
-            stateFilterId = scalar("plotType")
+            # stateFilterId here is very important for choropleth to work
+            stateFilterId = scalar("indicator")
           ),
           list(
             filterId = scalar("time_series_anc_area_level"),
