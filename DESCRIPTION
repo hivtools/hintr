@@ -57,7 +57,7 @@ Suggests:
     tidyselect,
     withr
 Remotes:
-    mrc-ide/naomi@issue-1115-nm,
+    mrc-ide/naomi,
     mrc-ide/naomi.options
 Config/testthat/edition: 3
 Config/testthat/parallel: true
