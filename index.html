@@ -687,7 +687,7 @@ http://localhost:8888/download/submit/spectrum/d5d08f4783975d8092e049adec43726b<
 </li>
 <li><p>If running all tests, including those that require redis, start a redis docker container <code>docker run --rm -d --network=host --name hintr_redis redis</code></p></li>
 </ol>
-<p>Finally tests can be run with <code><a href="https://devtools.r-lib.org/reference/test.html" class="external-link">devtools::test()</a></code>.</p>
+<p>Finally tests can be run with <code>devtools::test()</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="using-sensitive-data">Using sensitive data<a class="anchor" aria-label="anchor" href="#using-sensitive-data"></a>
@@ -703,7 +703,7 @@ http://localhost:8888/download/submit/spectrum/d5d08f4783975d8092e049adec43726b<
 <p>First, run a model using <code><a href="https://rdrr.io/pkg/naomi/man/hintr_run_model.html" class="external-link">naomi::hintr_run_model</a></code> into some directory, say <code>mydir</code></p>
 <p>Then import the data into the <em>production copy of naomi</em> with</p>
 <pre><code><span><span class="fu">hintr</span><span class="fu">::</span><span class="fu">prerun_push</span><span class="op">(</span><span class="st">"mydir"</span>,</span>
-<span>                   output <span class="op">=</span> <span class="st">"malawi_output.qs"</span>,</span>
+<span>                   output <span class="op">=</span> <span class="st">"malawi_output.qs2"</span>,</span>
 <span>                   spectrum <span class="op">=</span> <span class="st">"malawi_spectrum_download.zip"</span>,</span>
 <span>                   summary <span class="op">=</span> <span class="st">"malawi_summary_download.zip"</span><span class="op">)</span></span></code></pre>
 <p>Make a note of the hash that is returned - you’ll need that if you want to delete the data.</p>
