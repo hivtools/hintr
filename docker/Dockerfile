@@ -11,7 +11,7 @@ RUN install_packages remotes \
 
 WORKDIR /src
 RUN ./scripts/build_test_data \
-    && find /src/inst/output -type f ! -name "malawi_model_output.qs" -delete \
+    && find /src/inst/output -type f ! -name "malawi_model_output.qs2" -delete \
     && R CMD INSTALL /src \
     && rm -r /src
 

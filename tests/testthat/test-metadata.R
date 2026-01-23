@@ -280,15 +280,15 @@ test_that("filters not returned if indicator missing from input data", {
   response <- review_input_filter_metadata(input)
 
   filter_ids <- vcapply(response$filterTypes, "[[", "id")
-  programme_indicators <- response$filterTypes[
-    filter_ids == "map_programme_indicator"][[1]]
-  expect_length(programme_indicators$options, 2)
-  expect_equal(programme_indicators$options[[1]]$id, scalar("art_current"))
-  expect_equal(programme_indicators$options[[1]]$label,
+  programme_plot_types <- response$filterTypes[
+    filter_ids == "time_series_programme_plot_type"][[1]]
+  expect_length(programme_plot_types$options, 10)
+  expect_equal(programme_plot_types$options[[1]]$id, scalar("art_current"))
+  expect_equal(programme_plot_types$options[[1]]$label,
                scalar("ART number (attending)"))
-  expect_equal(programme_indicators$options[[2]]$id, scalar("art_new"))
-  expect_equal(programme_indicators$options[[2]]$label,
-               scalar("ART new"))
+  expect_equal(programme_plot_types$options[[2]]$id, scalar("art_adult"))
+  expect_equal(programme_plot_types$options[[2]]$label,
+               scalar("ART adult"))
 
   expect_input_metadata(response,
                         c("survey", "programme"),

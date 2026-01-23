@@ -10,7 +10,8 @@ test_that("get_programme_time_series returns data and columns", {
     colnames(out$data),
     c(
       "area_id", "area_name", "area_level", "area_hierarchy",
-      "time_period", "quarter", "plot", "value", "missing_ids"
+      "time_period", "quarter", "calendar_quarter", "plot", "value",
+      "missing_ids"
     )
   )
 

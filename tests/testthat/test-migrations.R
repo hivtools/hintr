@@ -135,7 +135,7 @@ test_that("all tasks can be migrated", {
     "Not migrating %s", calibrate_response$id), msg)), 1)
   expect_equal(sum(grepl("Saving summary csv", msg)), 1)
 
-  migration_log <- qs::qread(migrate$log_path)
+  migration_log <- qs2::qs_read(migrate$log_path)
   expect_length(migration_log, 4)
   files <- list.files(t)
   expect_length(files, 2)
@@ -186,7 +186,7 @@ test_that("only completed tasks are migrated", {
   msg <- capture_messages(migrate <- run_migration(queue, t,
                                                    "2.9.11", dry_run = FALSE))
   expect_equal(sum(grepl("Migrating", msg)), 0) ## Nothing was migrated
-  migration_log <- qs::qread(migrate$log_path)
+  migration_log <- qs2::qs_read(migrate$log_path)
   expect_equal(migration_log, list())
 })
 
@@ -230,7 +230,7 @@ test_that("migration can be run in dry-run mode", {
     "Not migrating %s", calibrate_response$id), msg)), 1)
   expect_equal(sum(grepl("Saving summary csv", msg)), 1)
 
-  migration_log <- qs::qread(migrate$log_path)
+  migration_log <- qs2::qs_read(migrate$log_path)
   expect_length(migration_log, 4)
   files <- list.files(t)
   expect_length(files, 2)
@@ -287,7 +287,7 @@ test_that("can migrate task data", {
   capture_messages(
     out <- run_task_data_migration(q$queue, log_dir, "1.1.25", FALSE))
 
-  log <- qs::qread(out$log_path)
+  log <- qs2::qs_read(out$log_path)
   expect_length(log, 3)
   actions <- lapply(log, "[[", "action")
   expect_setequal(actions, c("Not migrating, this is already a new task",

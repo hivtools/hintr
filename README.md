@@ -783,7 +783,7 @@ Then import the data into the *production copy of naomi* with
 
 ```
 hintr::prerun_push("mydir",
-                   output = "malawi_output.qs",
+                   output = "malawi_output.qs2",
                    spectrum = "malawi_spectrum_download.zip",
                    summary = "malawi_summary_download.zip")
 ```

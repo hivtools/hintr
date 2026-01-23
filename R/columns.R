@@ -19,6 +19,12 @@ get_programme_time_series_columns_from_metadata <- function(input, area_level_op
       values = get_quarter_id_label_map(quarters)
     ),
     list(
+      id = scalar("calendar_quarter"),
+      column_id = scalar("calendar_quarter"),
+      label = scalar(t_("INPUT_TIME_SERIES_COLUMN_QUARTER")),
+      values = get_time_series_period_filters(metadata)
+    ),
+    list(
       id = scalar("area_level"),
       column_id = scalar("area_level"),
       label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA_LEVEL")),
@@ -89,6 +95,12 @@ get_anc_time_series_columns_from_metadata <- function(input, area_level_options)
       column_id = scalar("quarter"),
       label = scalar(t_("INPUT_TIME_SERIES_COLUMN_QUARTER")),
       values = get_quarter_id_label_map(metadata$calendar_quarters)
+    ),
+    list(
+      id = scalar("year"),
+      column_id = scalar("time_period"),
+      label = scalar(t_("INPUT_TIME_SERIES_COLUMN_QUARTER")),
+      values = get_time_series_year_filters(metadata)
     ),
     list(
       id = scalar("area_level"),

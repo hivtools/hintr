@@ -49,7 +49,7 @@ run_model <- function(data, options, path_results, language = NULL) {
                               class = c("progress", "condition")))
     output <- list(
       plot_data_path = NULL,
-      model_output_path = system_file("output", "malawi_model_output.qs"),
+      model_output_path = system_file("output", "malawi_model_output.qs2"),
       version = utils::packageVersion("naomi"),
       warnings = list(
         list(
@@ -64,7 +64,7 @@ run_model <- function(data, options, path_results, language = NULL) {
 
   path_results <- normalizePath(path_results, winslash = "/", mustWork = TRUE)
   model_output_path <- tempfile("model_output", tmpdir = path_results,
-                                fileext = ".qs")
+                                fileext = ".qs2")
 
   ## Fix some labels to match what naomi requires
   data <- relabel_files_for_naomi(data)

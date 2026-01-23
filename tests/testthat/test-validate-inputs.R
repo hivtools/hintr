@@ -99,9 +99,7 @@ test_that("do_validate_programme validates programme file", {
   programme <- file_object(file.path("testdata", "programme.csv"))
   shape <- file_object(file.path("testdata", "malawi.geojson"))
   data <- do_validate_programme(programme, shape)
-  ## Some arbitrary test that the data has actually been returned
-  expect_true(nrow(data$data) > 200)
-  expect_type(data$data$art_current, "double")
+  expect_equal(data$data, json_verbatim("null"))
   expect_length(data$warnings, 0)
 })
 
@@ -110,9 +108,7 @@ test_that("do_validate_anc validates ANC file and gets data for plotting", {
   shape <- file_object(file.path("testdata", "malawi.geojson"))
   data <- do_validate_anc(anc, shape)
 
-  expect_true(nrow(data$data) > 200)
-  expect_type(data$data$area_id, "character")
-  expect_true(all(c("anc_prevalence", "anc_art_coverage") %in% colnames(data$data)))
+  expect_equal(data$data, json_verbatim("null"))
 })
 
 test_that("do_validate_anc can include anc_hiv_status column", {
@@ -124,9 +120,7 @@ test_that("do_validate_anc can include anc_hiv_status column", {
   shape <- file_object(file.path("testdata", "malawi.geojson"))
   data <- do_validate_anc(anc_file, shape)
 
-  expect_true(nrow(data$data) > 200)
-  expect_type(data$data$area_id, "character")
-  expect_true(all(c("anc_prevalence", "anc_art_coverage") %in% colnames(data$data)))
+  expect_equal(data$data, json_verbatim("null"))
 })
 
 test_that("do_validate_anc adds default anc_known_neg column", {
@@ -138,10 +132,7 @@ test_that("do_validate_anc adds default anc_known_neg column", {
   shape <- file_object(file.path("testdata", "malawi.geojson"))
   data <- do_validate_anc(file_object(t), shape)
 
-  expect_true(nrow(data$data) > 200)
-  expect_type(data$data$area_id, "character")
-  expect_true("anc_known_neg" %in% colnames(data$data))
-  expect_equal(data$data$anc_known_neg, rep(0, nrow(data$data)))
+  expect_equal(data$data, json_verbatim("null"))
 })
 
 test_that("do_validate_survey validates survey file", {

@@ -7,7 +7,8 @@ get_programme_time_series <- function(programme, shape, pjnz) {
                                               key = "values")
   list(
     data = data[, c("area_id", "area_name", "area_level", "area_hierarchy",
-                    "quarter", "time_period", "plot", "value", "missing_ids")],
+                    "quarter", "time_period", "calendar_quarter", "plot",
+                    "value", "missing_ids")],
     metadata = list(
       columns = columns,
       defaults = list(

@@ -1,8 +1,8 @@
 #!/usr/bin/env Rscript
 
-paths <- list(model_output_path = "inst/output/malawi_model_output.qs",
+paths <- list(model_output_path = "inst/output/malawi_model_output.qs2",
               calibrate_plot_path = "inst/output/malawi_calibrate_plot_data.duckdb",
-              calibrate_output_path = "inst/output/malawi_calibrate_output.qs",
+              calibrate_output_path = "inst/output/malawi_calibrate_output.qs2",
               spectrum_path = "inst/output/malawi_spectrum_download.zip",
               coarse_output_path = "inst/output/malawi_coarse_output_download.zip",
               summary_report_path = "inst/output/malawi_summary_report.html",

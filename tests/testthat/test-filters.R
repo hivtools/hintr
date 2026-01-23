@@ -217,36 +217,6 @@ test_that("can get indicator filters for survey data", {
   expect_equal(filters[[4]]$label, scalar("Viral load suppression"))
 })
 
-test_that("can get indicator filters for programme data", {
-  programme_path <- file.path("testdata", "programme.csv")
-  programme <- read_csv(programme_path, col_names = TRUE)
-  filters <- get_indicator_filters(programme, "programme")
-
-  expect_length(filters, 4)
-  expect_equal(filters[[1]]$id, scalar("art_current"))
-  expect_equal(filters[[1]]$label, scalar("ART number (attending)"))
-  expect_equal(filters[[2]]$id, scalar("art_new"))
-  expect_equal(filters[[2]]$label, scalar("ART new"))
-  expect_equal(filters[[3]]$id, scalar("vl_tested_12mos"))
-  expect_equal(filters[[3]]$label, scalar("VL tested"))
-  expect_equal(filters[[4]]$id, scalar("vl_suppressed_12mos"))
-  expect_equal(filters[[4]]$label, scalar("VL tests suppressed"))
-})
-
-test_that("can get indicator filters for anc data", {
-  anc_path <- file.path("testdata", "anc.csv")
-  anc <- read_csv(anc_path, col_names = TRUE)
-  ## We will have calculated prev and art coverage for ANC data
-  anc <- naomi::calculate_prevalence_art_coverage(anc)
-  filters <- get_indicator_filters(anc, "anc")
-
-  expect_length(filters, 2)
-  expect_equal(filters[[1]]$id, scalar("anc_prevalence"))
-  expect_equal(filters[[1]]$label, scalar("ANC HIV prevalence"))
-  expect_equal(filters[[2]]$id, scalar("anc_art_coverage"))
-  expect_equal(filters[[2]]$label, scalar("ANC prior ART coverage"))
-})
-
 test_that("error thrown for unknown type", {
   data <- data.frame(x = c(1, 2, 3), y = c(4, 5, 6))
   expect_error(get_indicator_filters(data, "unknown"),

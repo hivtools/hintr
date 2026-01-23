@@ -185,8 +185,8 @@ get_review_input_filter_types <- function(input, types, area_level_options) {
 
 append_filter_types <- function(input, area_level_options) {
   function(filter_types, type) {
-    append(filter_types, c(get_time_series_filter_types(input, type, area_level_options),
-                           get_map_filter_types(input, type)))
+    append(filter_types, c(get_anc_art_filter_types(input, type, area_level_options),
+                           get_survey_filter_types(input, type)))
   }
 }
 
@@ -195,15 +195,15 @@ get_review_input_indicators <- function(types, iso3) {
   indicators <- metadata[metadata$data_type %in% types, ]
 }
 
-get_time_series_filter_types <- function(input, type, area_level_options) {
+get_anc_art_filter_types <- function(input, type, area_level_options) {
   if (type == "anc") {
-    get_anc_time_series_filter_types(input, area_level_options)
+    get_anc_filter_types(input, area_level_options)
   } else if (type == "programme") {
-    get_programme_time_series_filter_types(input, area_level_options)
+    get_programme_filter_types(input, area_level_options)
   }
 }
 
-get_anc_time_series_filter_types <- function(input, area_level_options) {
+get_anc_filter_types <- function(input, area_level_options) {
   columns <- get_anc_time_series_columns_from_metadata(input, area_level_options)
   plot_type_filter <- list(
     id = scalar("time_series_anc_plot_type"),
@@ -223,11 +223,18 @@ get_anc_time_series_filter_types <- function(input, area_level_options) {
     options = get_selected_mappings(columns, "age",
                                     key = "values")
   )
-  list(plot_type_filter, area_level_filter, age_filter)
+  year_filter <- list(
+    id = scalar("time_series_anc_year"),
+    column_id = scalar("time_period"),
+    options = get_selected_mappings(columns, "year",
+                                    key = "values")
+  )
+  list(plot_type_filter, area_level_filter, age_filter, year_filter)
 }
 
-get_programme_time_series_filter_types <- function(input, area_level_options) {
+get_programme_filter_types <- function(input, area_level_options) {
   columns <- get_programme_time_series_columns_from_metadata(input, area_level_options)
+
   plot_type_filter <- list(
     id = scalar("time_series_programme_plot_type"),
     column_id = scalar("plot"),
@@ -246,60 +253,20 @@ get_programme_time_series_filter_types <- function(input, area_level_options) {
     options = get_selected_mappings(columns, "quarter",
                                     key = "values")
   )
+  period_filter <- list(
+    id = scalar("time_series_programme_calendar_quarter"),
+    column_id = scalar("calendar_quarter"),
+    options = get_selected_mappings(columns, "calendar_quarter",
+                                    key = "values")
+  )
   filter_types <- list(plot_type_filter, area_level_filter,
-                       quarter_filter)
+                       quarter_filter, period_filter)
 }
 
-get_map_filter_types <- function(input, type) {
-  if (type == "anc") {
-    get_anc_map_filter_types(input)
-  } else if (type == "programme") {
-    get_programme_map_filter_types(input)
-  } else if (type == "survey") {
+get_survey_filter_types <- function(input, type) {
+  if (type == "survey") {
     get_survey_map_filter_types(input)
   }
-}
-
-get_anc_map_filter_types <- function(input) {
-  data <- as.data.frame(naomi::read_anc_testing(input$data$anc$path))
-  data <- naomi::calculate_prevalence_art_coverage(data)
-  year_filter <- list(
-    id = scalar("map_anc_year"),
-    label = scalar(t_("INPUT_TIME_SERIES_COLUMN_YEAR")),
-    column_id = scalar("year"),
-    options = get_year_filters(data)
-  )
-  indicator_filter <- list(
-    id = scalar("map_anc_indicator"),
-    column_id = scalar("indicator"),
-    options = get_indicator_filters(data, "anc")
-  )
-  list(year_filter, indicator_filter)
-}
-
-get_programme_map_filter_types <- function(input) {
-  data <- read_csv(input$data$programme$path, col_names = TRUE)
-  quarter_filter <- list(
-    id = scalar("map_programme_quarter"),
-    column_id = scalar("calendar_quarter"),
-    options = get_quarter_filters(data)
-  )
-  age_filter <- list(
-    id = scalar("map_programme_age"),
-    column_id = scalar("age_group"),
-    options = get_age_filters(data)
-  )
-  sex_filter <- list(
-    id = scalar("map_programme_sex"),
-    column_id = scalar("sex"),
-    options = get_sex_filters(data)
-  )
-  indicator_filter <- list(
-    id = scalar("map_programme_indicator"),
-    column_id = scalar("indicator"),
-    options = get_indicator_filters(data, "programme")
-  )
-  list(quarter_filter, age_filter, sex_filter, indicator_filter)
 }
 
 get_survey_map_filter_types <- function(input) {
@@ -481,12 +448,13 @@ get_input_choropleth_data_source_options <- function(types, default_area_level) 
       effect = list(
         setFilters = list(
           list(
-            filterId = scalar("map_programme_indicator"),
-            label = scalar(t_("OUTPUT_FILTER_INDICATOR")),
+            filterId = scalar("time_series_programme_plot_type"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_PLOT_TYPE")),
+            # stateFilterId here is very important for choropleth to work
             stateFilterId = scalar("indicator")
           ),
           list(
-            filterId = scalar("map_area_level"),
+            filterId = scalar("time_series_programme_area_level"),
             label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA_LEVEL")),
             stateFilterId = scalar("detail")
           ),
@@ -496,19 +464,9 @@ get_input_choropleth_data_source_options <- function(types, default_area_level) 
             stateFilterId = scalar("area")
           ),
           list(
-            filterId = scalar("map_programme_quarter"),
+            filterId = scalar("time_series_programme_calendar_quarter"),
             label = scalar(t_("OUTPUT_FILTER_PERIOD")),
-            stateFilterId = scalar("period")
-          ),
-          list(
-            filterId = scalar("map_programme_sex"),
-            label = scalar(t_("OUTPUT_FILTER_SEX")),
-            stateFilterId = scalar("sex")
-          ),
-          list(
-            filterId = scalar("map_programme_age"),
-            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AGE")),
-            stateFilterId = scalar("age")
+            stateFilterId = scalar("calendar_quarter")
           )
         ),
         setMultiple = c("area"),
@@ -525,12 +483,13 @@ get_input_choropleth_data_source_options <- function(types, default_area_level) 
       effect = list(
         setFilters = list(
           list(
-            filterId = scalar("map_anc_indicator"),
-            label = scalar(t_("OUTPUT_FILTER_INDICATOR")),
+            filterId = scalar("time_series_anc_plot_type"),
+            label = scalar(t_("INPUT_TIME_SERIES_COLUMN_PLOT_TYPE")),
+            # stateFilterId here is very important for choropleth to work
             stateFilterId = scalar("indicator")
           ),
           list(
-            filterId = scalar("map_area_level"),
+            filterId = scalar("time_series_anc_area_level"),
             label = scalar(t_("INPUT_TIME_SERIES_COLUMN_AREA_LEVEL")),
             stateFilterId = scalar("detail")
           ),
@@ -540,7 +499,7 @@ get_input_choropleth_data_source_options <- function(types, default_area_level) 
             stateFilterId = scalar("area")
           ),
           list(
-            filterId = scalar("map_anc_year"),
+            filterId = scalar("time_series_anc_year"),
             label = scalar(t_("INPUT_TIME_SERIES_COLUMN_YEAR")),
             stateFilterId = scalar("year")
           )

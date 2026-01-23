@@ -26,6 +26,9 @@
     "quarter": {
       "type": "string"
     },
+    "calendar_quarter": {
+      "type": "string"
+    },
     "area_hierarchy": {
       "type": [ "string" ]
     },
