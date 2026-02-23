@@ -1,3 +1,7 @@
+# hintr 1.2.19
+
+* Fix issue where worker config extra memory option was being parsed incorrectly
+
 # hintr 1.2.18
 
 * Update to save files in qs2 format instead of qs. qs package has been deprecated.

@@ -166,10 +166,10 @@ test_that("worker config invalid if duplicate country per job", {
 test_that("can get worker from loaded worker config", {
   worker_cfg <- list(
     queues = list(
+      calibrate = list(),
       run = list(
         extra_memory_override = TRUE
-      ),
-      calibrate = list()
+      )
     ),
     job_mapping = list(
       fit = list(

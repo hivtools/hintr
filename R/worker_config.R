@@ -93,8 +93,9 @@ get_queue_from_job_name <- function(job_name, iso3 = NULL,
                                     worker_config = cfg$workers) {
   # This option is set if a user explicitly sets this advanced model option
   if (extra_memory) {
-    for (queue in names(cfg$workers$queues)) {
-      if (cfg$workers$queues[[queue]]$extra_memory_override) {
+    for (queue in names(worker_config$queues)) {
+      extra_memory_override <- worker_config$queues[[queue]]$extra_memory_override
+      if (!is.null(extra_memory_override) && extra_memory_override)  {
         return(queue)
       }
     }
