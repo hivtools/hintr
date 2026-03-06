@@ -17,7 +17,7 @@
     "INVALID_ISO3": "Não é possível ler o país a partir de dados do tipo {{type}}",
     "INVALID_REGIONS": "Não é possível ler regiões a partir de dados do tipo {{type}}",
     "MODEL_OPTIONS_FAIL": "Falha na construção de opções de modelo a partir de modelo e parâms: {{message}}",
-    "MODEL_RESULT_CRASH": "O trabalhador falhou - os detalhes do erro não estão disponíveis",
+    "MODEL_RESULT_CRASH": "O trabalhador falhou. Envie um pedido de resolução de problemas.",
     "MODEL_RESULT_MISSING": "Falha na obtenção do resultado",
     "MODEL_RESULT_OLD": "Não é possível descarregar {{type}}, por favor, volte a executar o modelo e tente descarregar novamente.",
     "MODEL_RUN_CANCELLED": "A execução do modelo foi cancelada pelo utilizador",
