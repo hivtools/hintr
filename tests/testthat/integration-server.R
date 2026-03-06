@@ -750,7 +750,7 @@ test_that("crashed worker can be detected", {
   expect_equal(dat$errors[[1]]$error,
                "MODEL_RUN_FAILED")
   expect_equal(dat$errors[[1]]$detail,
-               "Worker has crashed - error details are unavailable")
+               "Worker has crashed. Please submit a troubleshooting request.")
   expect_type(dat$errors[[1]]$key, "character")
 })
 

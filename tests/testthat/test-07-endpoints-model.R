@@ -121,7 +121,7 @@ test_that("querying for an orphan task returns sensible error", {
 
   expect_equal(error$data[[1]]$error, scalar("MODEL_RUN_FAILED"))
   expect_equal(error$data[[1]]$detail,
-               scalar("Worker has crashed - error details are unavailable"))
+               scalar("Worker has crashed. Please submit a troubleshooting request."))
   expect_equal(error$status_code, 400)
 })
 

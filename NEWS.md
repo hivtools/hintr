@@ -1,3 +1,7 @@
+# hintr 1.2.20
+
+* Improve error message when a worker crashes.
+
 # hintr 1.2.19
 
 * Fix issue where worker config extra memory option was being parsed incorrectly
