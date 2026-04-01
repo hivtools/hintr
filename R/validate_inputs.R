@@ -66,10 +66,7 @@ do_validate_shape <- function(shape) {
   assert_single_parent_region(json)
   assert_single_country(json, "shape")
   assert_properties_exist(json, c("area_id", "area_level_label", "area_level"))
-  ## TODO: Add region code validation see mrc-1305
-  # Then we have to *reread* the file now that we know that it is
-  # valid, but but this is not too slow, especially as the file is now
-  # in cache (but still ~1/20s)
+  assert_region_codes_valid(json)
   list(data = json_verbatim(read_string(shape$path)),
        filters = list("regions" = get_region_filters(json),
                       "level_labels" = get_level_labels(json)))

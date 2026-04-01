@@ -181,6 +181,39 @@ test_that("can check region file spectrum codes are valid", {
   features_contain_property = mock_contains_property)
 })
 
+test_that("can check region codes for subnational spectrum countries are valid", {
+  shape <- file_object(file.path("testdata", "malawi.geojson"))
+  json <- hintr_geojson_read(shape)
+
+  # Set region code of 1 of the level 1 areas to something other than 0
+  # so this is interpreted as a shape file for a subnational spectrum country
+  json$features[[2]]$properties$spectrum_region_code <- 1
+  expect_error(
+    assert_region_codes_valid(json),
+    paste("Invalid spectrum_region_code for subnational area file.",
+          "National level must be NA. Please raise a troubleshooting issue."),
+    fixed = TRUE)
+
+  ## and a subnational file with NA at national level and not different levels
+  ## at level 1
+  json$features[[1]]$properties$spectrum_region_code <- NA
+  expect_error(
+    assert_region_codes_valid(json),
+    paste("Duplicate spectrum_region_code for subnational Spectrum files.",
+          "Please raise a troubleshooting issue"),
+    fixed = TRUE)
+
+  ## Set spectrum_region_code correctly
+  ## Note regions below level 1 are not well formed, but we don't check those
+  level <- vnapply(json$features, function(x) x$properties$area_level)
+  i <- 0
+  for (idx in which(level == 1)) {
+    json$features[[idx]]$properties$spectrum_region_code <- i
+    i <- i + 1
+  }
+  expect_true(assert_region_codes_valid(json))
+})
+
 test_that("can check a column for expected values", {
   data <- data_frame(
     age_group = c("Y000_004", "Y005_009", "Y010_014"),

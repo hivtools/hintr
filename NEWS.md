@@ -1,3 +1,9 @@
+# hintr 1.2.21
+
+* Add validation check for spectrum_region_code in the shape file. It must:
+   * Be set for every feature
+   * Be all 0 or if for a country that uses subnational PJNZ have NA for national level and be unique for every level 1 area.
+
 # hintr 1.2.20
 
 * Improve error message when a worker crashes.
