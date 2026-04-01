@@ -236,11 +236,13 @@ assert_region_codes_valid <- function(json) {
   # So check, either all 0
   # or if at area_level = 0, spectrum_region_code is NA then at
   # area_level = 1, all spectrum_region_codes are different
-  region_codes <- unique(vnapply(region_code_level, "[[", "spectrum_region_code"))
-  if (any(region_codes != 0)) {
+  region_codes <- unique(lapply(region_code_level, "[[", "spectrum_region_code"))
+  zero_region_codes <- vlapply(region_codes, function(code) isTRUE(code == 0))
+  if (!all(zero_region_codes)) {
     area_levels <- vnapply(region_code_level, "[[", "area_level")
     level_0_region_codes <- region_code_level[area_levels == 0]
-    if (length(level_0_region_codes) != 1 || !is.na(level_0_region_codes[[1]]$spectrum_region_code)) {
+    is_null_or_na <- function(x) is.null(x) || is.na(x)
+    if (length(level_0_region_codes) != 1 || !is_null_or_na(level_0_region_codes[[1]]$spectrum_region_code)) {
       stop("Invalid spectrum_region_code for subnational area file. National level must be NA. Please raise a troubleshooting issue.")
     }
     level_1_region_codes <- region_code_level[area_levels == 1]

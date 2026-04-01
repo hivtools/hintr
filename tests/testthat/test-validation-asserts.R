@@ -212,6 +212,10 @@ test_that("can check region codes for subnational spectrum countries are valid",
     i <- i + 1
   }
   expect_true(assert_region_codes_valid(json))
+
+  # Works also if spectrum region code is NULL instead of NA
+  json$features[[1]]$properties$spectrum_region_code <- NULL
+  expect_true(assert_region_codes_valid(json))
 })
 
 test_that("can check a column for expected values", {
