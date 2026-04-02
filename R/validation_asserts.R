@@ -243,12 +243,12 @@ assert_region_codes_valid <- function(json) {
     level_0_region_codes <- region_code_level[area_levels == 0]
     is_null_or_na <- function(x) is.null(x) || is.na(x)
     if (length(level_0_region_codes) != 1 || !is_null_or_na(level_0_region_codes[[1]]$spectrum_region_code)) {
-      stop("Invalid spectrum_region_code for subnational area file. National level must be NA. Please raise a troubleshooting issue.")
+      stop(t_("VALIDATION_REGION_CODES_INVALID_SUBNATIONAL_1"))
     }
     level_1_region_codes <- region_code_level[area_levels == 1]
     unique_region_codes <- unique(level_1_region_codes)
     if (length(unique_region_codes) != length(level_1_region_codes)) {
-      stop("Duplicate spectrum_region_code for subnational Spectrum files. Please raise a troubleshooting issue.")
+      stop(t_("VALIDATION_REGION_CODES_INVALID_SUBNATIONAL_2"))
     }
   }
 

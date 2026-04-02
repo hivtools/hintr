@@ -44,6 +44,8 @@
     "VALIDATION_SINGLE_COUNTRY_MUTIPLE": "Le fichier {{type}} contient des régions pour plus d'un pays. Les pays sont {{countries}}.",
     "VALIDATION_REGION_CODES_VALID": "Le fichier de formes contient {{count}} région avec un code région de Spectrum manquant, le code peut seulement manquer pour la région au niveau du pays.",
     "VALIDATION_REGION_CODES_VALID_plural": "Le fichier de formes contient {{count}} régions avec un code région de Spectrum manquant, le code peut seulement manquer pour la région au niveau du pays.",
+    "VALIDATION_REGION_CODES_INVALID_SUBNATIONAL_1": "Valeur « spectrum_region_code » non valide pour le fichier de zone infranationale. Le niveau national doit être « NA ». Veuillez créer un ticket de dépannage.",
+    "VALIDATION_REGION_CODES_INVALID_SUBNATIONAL_2": "Valeur « spectrum_region_code » en double pour les fichiers Spectrum infranationaux. Veuillez créer un ticket de dépannage.",
     "VALIDATION_PROPERTY_EXISTS": "Le fichier de formes ne contient aucune propriété {{property}} pour chacune des régions. ID manquant pour {{count}} caractéristique.",
     "VALIDATION_PROPERTY_EXISTS_plural": "Le fichier de formes ne contient aucune propriété {{property}} pour chacune des régions. ID manquant pour {{count}} caractéristiques.",
     "VALIDATION_CONSISTENT_COUNTRY": "Les pays ne sont pas cohérents, nous avons {{country_x}} depuis la {{source_x}} et {{country_y}} depuis la {{source_y}}.",

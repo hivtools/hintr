@@ -44,6 +44,8 @@
     "VALIDATION_SINGLE_COUNTRY_MUTIPLE": "{{type}} file contains regions for more than one country. Got countries {{countries}}.",
     "VALIDATION_REGION_CODES_VALID": "Shape file contains {{count}} region with missing spectrum region code, code can only be missing for country level region.",
     "VALIDATION_REGION_CODES_VALID_plural": "Shape file contains {{count}} regions with missing spectrum region code, code can only be missing for country level region.",
+    "VALIDATION_REGION_CODES_INVALID_SUBNATIONAL_1": "Invalid spectrum_region_code for subnational area file. National level must be NA. Please raise a troubleshooting issue.",
+    "VALIDATION_REGION_CODES_INVALID_SUBNATIONAL_2": "Duplicate spectrum_region_code for subnational Spectrum files. Please raise a troubleshooting issue.",
     "VALIDATION_PROPERTY_EXISTS": "Shape file does not contain property {{property}} for each region. Missing ID for {{count}} feature.",
     "VALIDATION_PROPERTY_EXISTS_plural": "Shape file does not contain property {{property}} for each region. Missing ID for {{count}} features.",
     "VALIDATION_CONSISTENT_COUNTRY": "Countries aren't consistent got {{country_x}} from {{source_x}} and {{country_y}} from {{source_y}}.",

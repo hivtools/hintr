@@ -75,6 +75,8 @@
     "VALIDATION_PROPERTY_EXISTS_plural": "O ficheiro de formas não contém propriedade {{property}} para cada região. Identificação em falta para {{count}} características.",
     "VALIDATION_REGION_CODES_VALID": "O ficheiro de formas contém {{count}} região com o código de região Spectrum em falta, o código só pode estar em falta para a região ao nível do país.",
     "VALIDATION_REGION_CODES_VALID_plural": "O ficheiro de formas contém {{count}} regiões com o código de região Spectrum em falta, o código só pode estar em falta para a região ao nível do país.",
+    "VALIDATION_REGION_CODES_INVALID_SUBNATIONAL_1": "O valor “spectrum_region_code” é inválido para o ficheiro de área subnacional. O nível nacional deve ser NA. Por favor, crie um ticket de resolução de problemas.",
+    "VALIDATION_REGION_CODES_INVALID_SUBNATIONAL_2": "O valor “spectrum_region_code” está duplicado nos ficheiros Spectrum subnacionais. Por favor, crie um ticket de resolução de problemas.",
     "VALIDATION_SINGLE_COUNTRY_MUTIPLE": "O ficheiro {{type}} contém regiões para mais do que um país. Foram obtidos os países {{countries}}.",
     "VALIDATION_SINGLE_COUNTRY_NO_REGIONS": "O ficheiro {{type}} não contém regiões. Garanta que o ficheiro tem uma coluna area_id.",
     "VALIDATION_SINGLE_PARENT_REGION": "Devia ter sido localizada uma região principal mas foram encontradas as regiões {{regions}}.",
