@@ -137,6 +137,16 @@ migrate_task <- function(task_id, queue, to_version, dry_run) {
 }
 
 migrate <- function(res, new_version, dry_run) {
+  if (new_version == "2.9.11") {
+    migrate_v2.9.11(res, new_version, dry_run)
+  } else if (new_version == "2.10.21") {
+    migrate_v2.10.21(res, new_version, dry_run)
+  } else {
+    stop(sprintf("Invalid target migration version: '%s'.", new_version))
+  }
+}
+
+migrate_v2.9.11 <- function(res, new_version, dry_run) {
   plot_data <- naomi::read_hintr_output(res$plot_data_path)
   new_plot_data_path <- tempfile("plot_data",
                                  tmpdir = dirname(res$plot_data_path),
@@ -146,6 +156,21 @@ migrate <- function(res, new_version, dry_run) {
     unlink(res$plot_data_path)
   }
   res$plot_data_path <- new_plot_data_path
+  res$version <- new_version
+  res
+}
+
+migrate_v2.10.21 <- function(res, new_version, dry_run) {
+  assert_package_installed("qs")
+  model_output_data <- qs::qread(res$model_output_path)
+  new_model_output_path <- tempfile("model_output",
+                                    tmpdir = dirname(res$model_output_path),
+                                    fileext = ".qs2")
+  if (!dry_run) {
+    naomi:::hintr_save(model_output_data, new_model_output_path)
+    unlink(res$model_output_path)
+  }
+  res$model_output_path <- new_model_output_path
   res$version <- new_version
   res
 }
@@ -220,4 +245,15 @@ migrate_task_data <- function(task_id, controller, to_version, dry_run) {
 
 has_keys <- function(what, keys) {
   length(names(what)) == length(keys) && all(names(what) %in% keys)
+}
+
+assert_package_installed <- function(package_name) {
+  if (!requireNamespace(package_name, quietly = TRUE)) {
+    stop(
+      sprintf("Package '%s' must be installed to use this function.",
+              package_name),
+      call. = FALSE
+    )
+  }
+  invisible(TRUE)
 }
