@@ -19,11 +19,11 @@ param volumeName string = 'migration-logs'
 @description('Location to mount the file share')
 param volumeMountPath string = '/migrations'
 
-resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2026-04-01' = {
   name: storageAccountName
   location: location
   sku: {
-    name: 'StandardV2_ZRS'
+    name: 'Standard_LRS'
   }
   kind: 'StorageV2'
 }
@@ -34,6 +34,24 @@ var storageKey = storageAccount.listKeys().keys[0].value
 @description('Create configured file shares')
 resource fileShare 'Microsoft.Storage/storageAccounts/fileServices/shares@2023-05-01' = {
   name: '${storageAccount.name}/default/${shareName}'
+}
+
+@description('Name of the Naomi main storage account')
+param naomiStorageAccountName string
+
+@description('Name of the naomi results share')
+param naomiStorageShareName string
+
+resource naomiStorageAccount 'Microsoft.Storage/storageAccounts@2026-04-01' existing = {
+  name: naomiStorageAccountName
+}
+
+// get storage account keys (for mounting)
+var naomiStorageKey = naomiStorageAccount.listKeys().keys[0].value
+
+@description('Create configured file shares')
+resource naomiResultsShare 'Microsoft.Storage/storageAccounts/fileServices/shares@2023-05-01' existing = {
+  name: '${naomiStorageAccountName}/default/${naomiStorageShareName}'
 }
 
 @description('Name of the redis service')
@@ -54,7 +72,19 @@ resource redisDb 'Microsoft.Cache/redisEnterprise/databases@2025-08-01-preview' 
   parent: redis
 }
 
-var redisConnectionString: 'redis://:${redisDb.listKeys().primaryKey}@${redisName}.${redisPrivateDnsZoneName}:10000'
+var redisConnectionString = 'redis://:${redisDb.listKeys().primaryKey}@${redisName}.${redisPrivateDnsZoneName}:10000'
+
+@description('Name for the existing vnet')
+param vnetName string
+
+resource vnet 'Microsoft.Network/virtualNetworks@2024-01-01' existing = {
+  name: vnetName
+}
+
+resource dbMigrateSubnet 'Microsoft.Network/virtualNetworks/subnets@2023-11-01' existing = {
+  name: 'nm-hint-db-migrate-subnet'
+  parent: vnet
+}
 
 resource naomiMigration 'Microsoft.ContainerInstance/containerGroups@2023-05-01' = {
   name: migrateContainerName
@@ -77,7 +107,7 @@ resource naomiMigration 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
           resources: {
             requests: {
               cpu: json('2')
-              memoryInGB: json('4.0)
+              memoryInGB: json('4.0')
             }
           }
           volumeMounts: [
@@ -86,8 +116,19 @@ resource naomiMigration 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
               mountPath: volumeMountPath
               readOnly: false
             }
+            {
+              name: 'results-share'
+              mountPath: '/results'
+              readOnly: false
+            }
           ]
         }
+      }
+    ]
+    subnetIds: [
+      {
+        id: dbMigrateSubnet.id
+        name: 'nm-hint-db-migrate-subnet'
       }
     ]
     osType: 'Linux'
@@ -99,6 +140,14 @@ resource naomiMigration 'Microsoft.ContainerInstance/containerGroups@2023-05-01'
           shareName: shareName
           storageAccountName: storageAccountName
           storageAccountKey: storageKey
+        }
+      }
+      {
+        name: 'results-share'
+        azureFile: {
+          shareName: naomiStorageShareName
+          storageAccountName: naomiStorageAccountName
+          storageAccountKey: naomiStorageKey
         }
       }
     ]

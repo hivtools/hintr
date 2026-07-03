@@ -1,7 +1,8 @@
 using 'migrate.bicep'
 
-param hintResourceGroup = 'nmHint-RG'
-
-param redisName = '${prefix}-hintr-queue'
+param redisName = 'nm-hintr-queue'
 param redisDbName = 'default'
 param redisPrivateDnsZoneName = 'privatelink.eastus2.redis.azure.net'
+param vnetName = 'nm-hint-nw'
+param naomiStorageAccountName = 'naomiappstorage'
+param naomiStorageShareName = 'results-share'

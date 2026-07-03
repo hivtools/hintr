@@ -68,30 +68,8 @@ migrate_task <- function(task_id, queue, to_version, dry_run) {
       action = "No change - up to date"
     ))
   }
-  if (is.null(res$plot_data_path)) {
-    ## This will be null for model fits, only written out during calibrate
-    message(
-      sprintf("Not migrating %s, this result does not have plot data", task_id))
-    return(list(
-      id = task_id,
-      prev_res = res,
-      action = "No change - only migrating plot data and this result has none"
-    ))
-  }
-  if (!file.exists(res$plot_data_path)) {
-    ## Have seen some instances of prod where plot data doesn't exist
-    ## it's probably really old model fit so not going to
-    ## worry about it to much and just skip it
-    message(
-      sprintf("Not migrating %s, plot data path does not exist", task_id))
-    return(list(
-      id = task_id,
-      prev_res = res,
-      action = "No change - plot data path does not exist"
-    ))
-  }
 
-  new_res <- migrate(res, to_version, dry_run)
+  new_res <- migrate(task_id, res, to_version, dry_run)
   if (!dry_run) {
     ## rrq stores results using an object store
     ## So when an rrq completes a job successfully it generates an R object
@@ -136,17 +114,40 @@ migrate_task <- function(task_id, queue, to_version, dry_run) {
   out
 }
 
-migrate <- function(res, new_version, dry_run) {
+migrate <- function(task_id, res, new_version, dry_run) {
   if (new_version == "2.9.11") {
-    migrate_v2.9.11(res, new_version, dry_run)
+    migrate_v2.9.11(task_id, res, new_version, dry_run)
   } else if (new_version == "2.10.21") {
-    migrate_v2.10.21(res, new_version, dry_run)
+    migrate_v2.10.21(task_id, res, new_version, dry_run)
   } else {
     stop(sprintf("Invalid target migration version: '%s'.", new_version))
   }
 }
 
-migrate_v2.9.11 <- function(res, new_version, dry_run) {
+migrate_v2.9.11 <- function(task_id, res, new_version, dry_run) {
+  if (is.null(res$plot_data_path)) {
+    ## This will be null for model fits, only written out during calibrate
+    message(
+      sprintf("Not migrating %s, this result does not have plot data", task_id))
+    return(list(
+      id = task_id,
+      prev_res = res,
+      action = "No change - only migrating plot data and this result has none"
+    ))
+  }
+  if (!file.exists(res$plot_data_path)) {
+    ## Have seen some instances of prod where plot data doesn't exist
+    ## it's probably really old model fit so not going to
+    ## worry about it to much and just skip it
+    message(
+      sprintf("Not migrating %s, plot data path does not exist", task_id))
+    return(list(
+      id = task_id,
+      prev_res = res,
+      action = "No change - plot data path does not exist"
+    ))
+  }
+
   plot_data <- naomi::read_hintr_output(res$plot_data_path)
   new_plot_data_path <- tempfile("plot_data",
                                  tmpdir = dirname(res$plot_data_path),
@@ -160,12 +161,44 @@ migrate_v2.9.11 <- function(res, new_version, dry_run) {
   res
 }
 
-migrate_v2.10.21 <- function(res, new_version, dry_run) {
+migrate_v2.10.21 <- function(task_id, res, new_version, dry_run) {
+  if (is.null(res$model_output_path)) {
+    ## This shouldn't occur, but just in case
+    message(
+      sprintf("Not migrating %s, this result does not have model output data", task_id))
+    return(list(
+      id = task_id,
+      prev_res = res,
+      action = "No change - only migrating model output data and this result has none"
+    ))
+  }
+  if (!file.exists(res$model_output_path)) {
+    ## Another catch all, again this shouldn't happen
+    message(
+      sprintf("Not migrating %s, this result does not have model output data", task_id))
+    return(list(
+      id = task_id,
+      prev_res = res,
+      action = "No change - model output path does not exist"
+    ))
+  }
+  ext <- tools::file_ext(res$model_output_path)
+  if (ext != "qs") {
+    message(
+      sprintf("Not migrating %s, this result has non qs model output '%s'",
+              task_id, res$model_output_path))
+    return(list(
+      id = task_id,
+      prev_res = res,
+      action = sprintf("No change - model output file type is '%s', only migrating qs files", ext)
+    ))
+  }
   assert_package_installed("qs")
   model_output_data <- qs::qread(res$model_output_path)
   new_model_output_path <- tempfile("model_output",
                                     tmpdir = dirname(res$model_output_path),
                                     fileext = ".qs2")
+  message(sprintf("Migrating '%s' to '%s'.", res$model_output_path, new_model_output_path))
   if (!dry_run) {
     naomi:::hintr_save(model_output_data, new_model_output_path)
     unlink(res$model_output_path)
