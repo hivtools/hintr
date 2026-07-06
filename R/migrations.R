@@ -70,6 +70,11 @@ migrate_task <- function(task_id, queue, to_version, dry_run) {
   }
 
   new_res <- migrate(task_id, res, to_version, dry_run)
+  if (!naomi:::is_hintr_output(new_res)) {
+    ## Version specific migration has decided not to migrate and
+    ## returned a log entry instead of a new result
+    return(new_res)
+  }
   if (!dry_run) {
     ## rrq stores results using an object store
     ## So when an rrq completes a job successfully it generates an R object

@@ -25,6 +25,58 @@ test_that("single task can be migrated", {
   expect_silent(naomi::read_hintr_output(migrated$new_res$plot_data_path))
 })
 
+test_that("task can be migrated to 2.10.21", {
+  test_mock_model_available()
+  ## Recreate a calibrate result as stored before naomi switched to qs2,
+  ## with model output saved as a .qs file
+  model_output <- naomi::read_hintr_output(mock_calibrate$model_output_path)
+  qs_output_path <- tempfile(fileext = ".qs")
+  qs::qsave(model_output, qs_output_path)
+  plot_data_path <- tempfile(fileext = ".duckdb")
+  file.copy(mock_calibrate$plot_data_path, plot_data_path)
+  calibrate_qs <- list(
+    plot_data_path = plot_data_path,
+    model_output_path = qs_output_path,
+    version = "2.9.11"
+  )
+  class(calibrate_qs) <- "hintr_output"
+  q <- test_queue_result(model = mock_model_v1.1.15,
+                         calibrate = calibrate_qs,
+                         clone_output = FALSE)
+
+  ## Model result already has qs2 output - it is not migrated and,
+  ## crucially, the stored result is left untouched
+  expect_message(migrated <- migrate_task(q$model_run_id, q$queue,
+                                          "2.10.21", dry_run = FALSE),
+                 sprintf("Not migrating %s, this result has non qs model output",
+                         q$model_run_id))
+  expect_equal(migrated$id, q$model_run_id)
+  expect_equal(
+    migrated$action,
+    "No change - model output file type is 'qs2', only migrating qs files")
+  res <- q$queue$result(q$model_run_id)
+  expect_true(naomi:::is_hintr_output(res))
+  expect_equal(res, mock_model_v1.1.15)
+
+  ## Calibrate result with qs output is migrated to a valid hintr_output
+  expect_message(migrated <- migrate_task(q$calibrate_id, q$queue,
+                                          "2.10.21", dry_run = FALSE),
+                 sprintf("Successfully migrated %s", q$calibrate_id))
+  expect_equal(migrated$id, q$calibrate_id)
+  expect_true(naomi:::is_hintr_output(migrated$new_res))
+  expect_equal(tools::file_ext(migrated$new_res$model_output_path), "qs2")
+  expect_true(file.exists(migrated$new_res$model_output_path))
+  expect_false(file.exists(qs_output_path))
+  expect_equal(migrated$new_res$plot_data_path, plot_data_path)
+  expect_equal(migrated$new_res$version, "2.10.21")
+  expect_equal(migrated$action, "Successfully migrated")
+
+  ## Result has been migrated and new output can be read
+  res <- q$queue$result(q$calibrate_id)
+  expect_equal(res, migrated$new_res)
+  expect_silent(naomi::read_hintr_output(res$model_output_path))
+})
+
 test_that("already up to date task is not migrated", {
   q <- test_queue_result()
   t <- tempfile()
