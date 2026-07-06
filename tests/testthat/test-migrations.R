@@ -220,6 +220,40 @@ test_that("all tasks can be migrated", {
   expect_equal(migrated_real_calibrate_result, real_calibrate_result)
 })
 
+test_that("log is saved if migration errors part way through", {
+  test_mock_model_available()
+  ## A result whose model output claims to be qs but isn't will error
+  ## when the migration tries to read it
+  bad_output_path <- tempfile(fileext = ".qs")
+  writeLines("this is not a qs file", bad_output_path)
+  bad_calibrate <- list(
+    plot_data_path = NULL,
+    model_output_path = bad_output_path,
+    version = "2.9.11"
+  )
+  class(bad_calibrate) <- "hintr_output"
+  q <- test_queue_result(model = mock_model_v1.1.15,
+                         calibrate = bad_calibrate,
+                         clone_output = FALSE)
+
+  t <- tempfile()
+  dir.create(t)
+  expect_error(suppressMessages(
+    run_migration(q$queue, t, "2.10.21", dry_run = FALSE)))
+
+  files <- list.files(t)
+  expect_length(files, 2)
+  expect_length(grep("^summary_.*_incomplete\\.csv$", files), 1)
+  expect_length(grep("^log_.*_incomplete\\.qs2$", files), 1)
+
+  ## Incomplete log contains the migrations completed before the error
+  log <- qs2::qs_read(file.path(t, grep("^log_", files, value = TRUE)))
+  expect_true(length(log) < 2)
+  ## Task results have not been modified
+  expect_equal(q$queue$result(q$model_run_id), mock_model_v1.1.15)
+  expect_equal(q$queue$result(q$calibrate_id), bad_calibrate)
+})
+
 test_that("only completed tasks are migrated", {
   test_mock_model_available()
   ## Setup errored model run

@@ -11,12 +11,29 @@ run_migration <- function(queue, log_dir, to_version, dry_run = TRUE) {
   }
 
   completed_tasks <- tasks[status == "COMPLETE"]
-  migrations <- lapply(completed_tasks, migrate_task, queue,
-                       to_version, dry_run)
+  migrate_tasks_with_log(completed_tasks, log_dir, function(task_id) {
+    migrate_task(task_id, queue, to_version, dry_run)
+  })
+}
+
+## Run migrate_fn for each task, if any of them error then save out a log
+## of the migrations completed so far before the error propagates
+migrate_tasks_with_log <- function(task_ids, log_dir, migrate_fn) {
+  migrations <- list()
+  withCallingHandlers(
+    for (task_id in task_ids) {
+      migrations[[length(migrations) + 1]] <- migrate_fn(task_id)
+    },
+    error = function(e) {
+      message(sprintf("Error during migration: %s", conditionMessage(e)))
+      message("Saving log of migrations completed before the error")
+      write_migration_log(migrations, log_dir, suffix = "_incomplete")
+    }
+  )
   write_migration_log(migrations, log_dir)
 }
 
-write_migration_log <- function(migrations, log_dir) {
+write_migration_log <- function(migrations, log_dir, suffix = "") {
   summary <- lapply(migrations, function(migration) {
     list(
       id = migration$id,
@@ -26,11 +43,12 @@ write_migration_log <- function(migrations, log_dir) {
 
   time_now <- iso_time_str()
   summary <- do.call(rbind, summary)
-  summary_path <- file.path(log_dir, sprintf("summary_%s.csv", time_now))
+  summary_path <- file.path(log_dir,
+                            sprintf("summary_%s%s.csv", time_now, suffix))
   message(sprintf("Saving summary csv %s", summary_path))
   utils::write.csv(summary, summary_path, row.names = FALSE)
 
-  log_path <- file.path(log_dir, sprintf("log_%s.qs2", time_now))
+  log_path <- file.path(log_dir, sprintf("log_%s%s.qs2", time_now, suffix))
   message(sprintf("Saving output qs2 %s", log_path))
   qs2::qs_save(migrations, log_path)
   list(
@@ -222,9 +240,9 @@ run_task_data_migration <- function(queue, log_dir, to_version, dry_run = TRUE) 
   log_dir <- normalizePath(log_dir, mustWork = TRUE)
   tasks <- rrq::rrq_task_list(controller = queue$controller)
 
-  migrations <- lapply(tasks, migrate_task_data, queue$controller,
-                       to_version, dry_run)
-  write_migration_log(migrations, log_dir)
+  migrate_tasks_with_log(tasks, log_dir, function(task_id) {
+    migrate_task_data(task_id, queue$controller, to_version, dry_run)
+  })
 }
 
 migrate_task_data <- function(task_id, controller, to_version, dry_run) {
