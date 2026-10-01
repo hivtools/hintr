@@ -1,0 +1,123 @@
+#!/usr/bin/env Rscript
+## One-off cleanup of rrq worker debris, we had a see issue 569 on GitHub
+## https://github.com/hivtools/hintr/issues/569.
+## We do the cleanup manually here instead of using rrq's own
+## rrq::rrq_worker_detect_exited() and rrq::rrq_worker_delete_exited()
+## because of a few issues:
+## 1. These only cleanup a "lost" worker if it was started with a
+## hearbeat, we have 5 workers in the record which do not have a heartbeat
+## it is unclear why.
+## 2. We have 5 other works which were created and added to the list
+## of workers, but never wrote worker info (because of some race condition
+## in rrq at the time of writing). Calling rrq_worker_detect_exited when
+## these exist throws an error because it passes as NA which we then try
+## to deserialise as an R object using `unserialize` which throws an error.
+## 3. There are too many junk workers now, because of the runaway spawning
+## described in the issue, which causes a C-stack limit error. So we need to
+## batch the deletion.
+##
+## This scans hintr:worker:id with SSCAN, decides
+## staleness from each worker's own log (its last log line, which starts
+## with a unix timestamp), and for anything stale:
+##   * marks any task it was still holding as DIED, the same way
+##     rrq:::cleanup_orphans() does for a heartbeat-detected loss
+##   * removes the worker from the registry via rrq_worker_delete_exited()
+##
+## Run with dry_run = TRUE first (the default) to see counts before
+## anything is deleted.
+
+cleanup_orphaned_workers <- function(queue, max_age_hours = 24,
+                                     batch_size = 2000, dry_run = TRUE) {
+  con <- queue$controller$con
+  keys <- queue$controller$keys
+  cutoff <- as.numeric(Sys.time()) - max_age_hours * 3600
+
+  message("Scanning hintr:worker:id for stale workers...")
+  stale <- character(0)
+  cursor <- "0"
+  repeat {
+    res <- con$SSCAN(keys$worker_id, cursor, COUNT = batch_size)
+    cursor <- res[[1]]
+    ids <- as.character(res[[2]])
+    if (length(ids) > 0) {
+      log_keys <- rrq:::rrq_key_worker_log(keys$queue_id, ids)
+      cmds <- lapply(log_keys, function(k) redux::redis$LINDEX(k, -1))
+      last_lines <- con$pipeline(.commands = cmds)
+      last_ts <- vapply(last_lines, function(x) {
+        if (is.null(x)) {
+          return(NA_real_)
+        }
+        suppressWarnings(as.numeric(strsplit(x, " ", fixed = TRUE)[[1]][1]))
+      }, numeric(1))
+      ## No log at all is also treated as stale - an orphaned registration
+      ## with nothing to show it was ever doing anything.
+      is_stale <- is.na(last_ts) | last_ts < cutoff
+      stale <- c(stale, ids[is_stale])
+    }
+    if (identical(cursor, "0")) {
+      break
+    }
+  }
+
+  message(sprintf("Found %d worker(s) with no activity in the last %g hours",
+                  length(stale), max_age_hours))
+
+  if (length(stale) == 0) {
+    return(invisible(stale))
+  }
+
+  if (dry_run) {
+    message("Dry run - nothing deleted. Re-run with dry_run = FALSE to apply.")
+    return(invisible(stale))
+  }
+
+  ## Mirror rrq:::cleanup_orphans(), which is what heartbeat-based
+  ## detection does for a worker it can confirm is lost. Done in batches
+  ## for two reasons: a single call across the whole stale set can hit R's
+  ## C stack limit when marshalling very long vectors into one Redis call,
+  ## and workers with no worker:info entry at all (the SADD-before-HSET
+  ## startup race) can never be recognised as "exited" by
+  ## rrq_worker_delete_exited() - it diffs against HKEYS(worker_info),
+  ## which they were never part of - so they need their remaining keys
+  ## cleared directly instead of going through rrq for them.
+  n_removed <- 0
+  n_chunks <- ceiling(length(stale) / batch_size)
+  for (i in seq_len(n_chunks)) {
+    idx <- seq((i - 1) * batch_size + 1, min(i * batch_size, length(stale)))
+    chunk <- stale[idx]
+
+    task_ids <- rrq::rrq_worker_task_id(chunk, controller = queue$controller)
+    held <- !is.na(task_ids)
+    if (any(held)) {
+      rrq:::run_task_cleanup_failure(queue$controller, task_ids[held],
+                                     rrq:::TASK_DIED, NULL)
+    }
+    con$HMSET(keys$worker_status, chunk, rep(rrq:::WORKER_LOST, length(chunk)))
+    con$SREM(keys$worker_id, chunk)
+
+    has_info <- !vapply(con$HMGET(keys$worker_info, chunk), is.null, logical(1))
+    normal <- chunk[has_info]
+
+    ## Phantom are our workers which hit the race condition described above
+    ## they are in the list of workers but have no worker info and so we
+    ## can't call delete_exited on them
+    phantom <- chunk[!has_info]
+    if (length(phantom) > 0) {
+      con$DEL(rrq:::rrq_key_worker_log(keys$queue_id, phantom))
+    }
+    if (length(normal) > 0) {
+      rrq::rrq_worker_delete_exited(worker_ids = normal,
+                                    controller = queue$controller)
+    }
+    n_removed <- n_removed + length(chunk)
+    message(sprintf("  ...%d/%d batches (%d workers removed so far)",
+                    i, n_chunks, n_removed))
+  }
+  message(sprintf("Removed %d worker record(s)", n_removed))
+  invisible(stale)
+}
+
+if (!interactive()) {
+  queue <- hintr:::Queue$new(workers = 0) ## Connect to running queue
+  cleanup_orphaned_workers(queue, max_age_hours = 24, dry_run = TRUE)
+}

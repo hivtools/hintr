@@ -12,6 +12,7 @@ Queue <- R6::R6Class(
 
     health_check_interval = NULL,
     next_health_check = NULL,
+    check_orphan = NULL,
 
     initialize = function(queue_id = NULL, workers = 0,
                           stop_workers_on_exit = workers > 0,
@@ -32,6 +33,15 @@ Queue <- R6::R6Class(
       self$controller <- rrq::rrq_controller(queue_id, con = con)
       register_workers(self$controller)
       self$start(workers, timeout)
+
+      ## Throttled so this doesn't run on literally every request - but
+      ## health_check() runs via the preroute hook on *every* request
+      ## (including /wake)
+      self$check_orphan <- throttle(
+        function() {
+          rrq::rrq_worker_detect_exited(controller = self$controller)
+          rrq::rrq_worker_delete_exited(controller = self$controller)
+        }, 10)
 
       message(t_("QUEUE_CACHE"))
       set_cache(queue_id)
@@ -56,6 +66,7 @@ Queue <- R6::R6Class(
           Sys.time() > self$next_health_check) {
         self$controller$con$reconnect()
       }
+      no_error(self$check_orphan())
     },
 
     start = function(workers, timeout) {

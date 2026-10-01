@@ -49,14 +49,17 @@ test_that("throttle does not call functions very often", {
   mockery::expect_called(f, 2)
 })
 
-test_that("no_error swallows all errors", {
+test_that("no_error swallows all errors but logs them", {
   f <- function(x) {
     if (x < 0) {
       stop("expected positive x")
     }
   }
   expect_silent(no_error(f(1)))
-  expect_silent(no_error(f(-1)))
+  expect_message(
+    no_error(f(-1)),
+    "Encountered background error, logging and continuing operation: expected positive x"
+  )
 })
 
 test_that("can convert list to data frame", {

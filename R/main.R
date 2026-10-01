@@ -84,6 +84,10 @@ main_worker_single_job <- function(args = commandArgs(TRUE)) {
 
 worker_single_job <- function(queue_id, config) {
   worker <- rrq_worker_new(queue_id, name_config = config)
+  no_error({
+    rrq::rrq_worker_detect_exited(controller = worker$controller)
+    rrq::rrq_worker_delete_exited(controller = worker$controller)
+  })
   worker$step(immediate = TRUE)
   invisible(TRUE)
 }
