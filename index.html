@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">hintr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.22</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.23</span>
       </span>
     </div>
 
@@ -687,13 +687,34 @@ http://localhost:8888/download/submit/spectrum/d5d08f4783975d8092e049adec43726b<
 </li>
 <li><p>If running all tests, including those that require redis, start a redis docker container <code>docker run --rm -d --network=host --name hintr_redis redis</code></p></li>
 </ol>
-<p>Finally tests can be run with <code>devtools::test()</code>.</p>
+<p>Finally tests can be run with <code><a href="https://devtools.r-lib.org/reference/test.html" class="external-link">devtools::test()</a></code>.</p>
 </div>
 <div class="section level2">
 <h2 id="using-sensitive-data">Using sensitive data<a class="anchor" aria-label="anchor" href="#using-sensitive-data"></a>
 </h2>
 <p>To run tests which use sensitive data you need to clone the private <a href="https://github.com/mrc-ide/naomi-data" class="external-link">naomi-data repo</a> into <code>tests/testthat/testdata/sensitive</code>.</p>
 <pre><code>git clone git@github.com:mrc-ide/naomi-data.git tests/testthat/testdata/sensitive</code></pre>
+</div>
+<div class="section level2">
+<h2 id="running-commands-against-a-deployed-environment">Running commands against a deployed environment<a class="anchor" aria-label="anchor" href="#running-commands-against-a-deployed-environment"></a>
+</h2>
+<p>Sometimes you need to run R interactively against a live deployment - checking configuration, running a one-off maintenance script, or just debugging.</p>
+<div class="section level3">
+<h3 id="getting-a-shell">Getting a shell<a class="anchor" aria-label="anchor" href="#getting-a-shell"></a>
+</h3>
+<div class="sourceCode" id="cb50"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb50-1"><a href="#cb50-1" tabindex="-1"></a><span class="ex">az</span> containerapp exec <span class="at">-g</span> <span class="op">&lt;</span>resource-group<span class="op">&gt;</span> -n <span class="op">&lt;</span>container-app-name<span class="op">&gt;</span> --command R</span></code></pre></div>
+<p>This opens an interactive R session inside the running container. Use <code>--command bash</code> instead if you want a plain shell rather than R directly.</p>
+<p>Resource group and app names are environment-specific - check the relevant deploy repo’s bicep/parameter files, or list the apps in the resource group with <code>az containerapp list -g &lt;resource-group&gt;</code>. For the main naomi production deployment, the API container app is <code>nm-hintr</code> in <code>nmHint-RG</code>:</p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb51-1"><a href="#cb51-1" tabindex="-1"></a><span class="ex">az</span> containerapp exec <span class="at">-g</span> nmHint-RG <span class="at">-n</span> nm-hintr <span class="at">--command</span> R</span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="running-things-once-youre-in">Running things once you’re in<a class="anchor" aria-label="anchor" href="#running-things-once-youre-in"></a>
+</h3>
+<p>From an R session you can connect to the queue the same way the API itself does:</p>
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">queue</span> <span class="op">&lt;-</span> <span class="fu">hintr</span><span class="fu">:::</span><span class="va">Queue</span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>workers <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+<p>That gives you a live <code>rrq</code> controller (<code>queue$controller</code>), so you can call any <code>rrq</code>/<code>hintr</code> function directly, inspect Redis state, or run a one-off script.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="adding-prerun-model-results">Adding prerun model results<a class="anchor" aria-label="anchor" href="#adding-prerun-model-results"></a>

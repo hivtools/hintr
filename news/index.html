@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hintr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.22</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.23</span>
       </span>
     </div>
 
@@ -51,6 +51,14 @@
 
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.2.23" id="hintr-1223">hintr 1.2.23<a class="anchor" aria-label="anchor" href="#hintr-1223"></a></h2>
+<ul><li>Run rrq worker orphan detection and cleanup more regularly
+<ol style="list-style-type: decimal"><li>Whenever a worker starts up</li>
+<li>On every endpoint (max once every 10 seconds) as part of the API pre-route</li>
+</ol></li>
+<li>Ensure that when worker orphan cleanup fails it raises a log message</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.2.21" id="hintr-1221">hintr 1.2.21<a class="anchor" aria-label="anchor" href="#hintr-1221"></a></h2>
 <ul><li>Add validation check for spectrum_region_code in the shape file. It must:
