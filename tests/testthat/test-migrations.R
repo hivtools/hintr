@@ -1,4 +1,5 @@
 test_that("single task can be migrated", {
+  testthat::skip("Only run on systems with qs installed")
   test_mock_model_available()
   q <- test_queue_result(model = mock_model_v1.1.15,
                          calibrate = mock_calibrate_v1.1.15)
@@ -26,12 +27,13 @@ test_that("single task can be migrated", {
 })
 
 test_that("task can be migrated to 2.10.21", {
+  testthat::skip("Only run on systems with qs installed")
   test_mock_model_available()
   ## Recreate a calibrate result as stored before naomi switched to qs2,
   ## with model output saved as a .qs file
   model_output <- naomi::read_hintr_output(mock_calibrate$model_output_path)
   qs_output_path <- tempfile(fileext = ".qs")
-  qs::qsave(model_output, qs_output_path)
+  getExportedValue("qs", "qsave")(model_output, qs_output_path)
   plot_data_path <- tempfile(fileext = ".duckdb")
   file.copy(mock_calibrate$plot_data_path, plot_data_path)
   calibrate_qs <- list(
