@@ -11,12 +11,29 @@ run_migration <- function(queue, log_dir, to_version, dry_run = TRUE) {
   }
 
   completed_tasks <- tasks[status == "COMPLETE"]
-  migrations <- lapply(completed_tasks, migrate_task, queue,
-                       to_version, dry_run)
+  migrate_tasks_with_log(completed_tasks, log_dir, function(task_id) {
+    migrate_task(task_id, queue, to_version, dry_run)
+  })
+}
+
+## Run migrate_fn for each task, if any of them error then save out a log
+## of the migrations completed so far before the error propagates
+migrate_tasks_with_log <- function(task_ids, log_dir, migrate_fn) {
+  migrations <- list()
+  withCallingHandlers(
+    for (task_id in task_ids) {
+      migrations[[length(migrations) + 1]] <- migrate_fn(task_id)
+    },
+    error = function(e) {
+      message(sprintf("Error during migration: %s", conditionMessage(e)))
+      message("Saving log of migrations completed before the error")
+      write_migration_log(migrations, log_dir, suffix = "_incomplete")
+    }
+  )
   write_migration_log(migrations, log_dir)
 }
 
-write_migration_log <- function(migrations, log_dir) {
+write_migration_log <- function(migrations, log_dir, suffix = "") {
   summary <- lapply(migrations, function(migration) {
     list(
       id = migration$id,
@@ -26,11 +43,12 @@ write_migration_log <- function(migrations, log_dir) {
 
   time_now <- iso_time_str()
   summary <- do.call(rbind, summary)
-  summary_path <- file.path(log_dir, sprintf("summary_%s.csv", time_now))
+  summary_path <- file.path(log_dir,
+                            sprintf("summary_%s%s.csv", time_now, suffix))
   message(sprintf("Saving summary csv %s", summary_path))
   utils::write.csv(summary, summary_path, row.names = FALSE)
 
-  log_path <- file.path(log_dir, sprintf("log_%s.qs2", time_now))
+  log_path <- file.path(log_dir, sprintf("log_%s%s.qs2", time_now, suffix))
   message(sprintf("Saving output qs2 %s", log_path))
   qs2::qs_save(migrations, log_path)
   list(
@@ -68,30 +86,13 @@ migrate_task <- function(task_id, queue, to_version, dry_run) {
       action = "No change - up to date"
     ))
   }
-  if (is.null(res$plot_data_path)) {
-    ## This will be null for model fits, only written out during calibrate
-    message(
-      sprintf("Not migrating %s, this result does not have plot data", task_id))
-    return(list(
-      id = task_id,
-      prev_res = res,
-      action = "No change - only migrating plot data and this result has none"
-    ))
-  }
-  if (!file.exists(res$plot_data_path)) {
-    ## Have seen some instances of prod where plot data doesn't exist
-    ## it's probably really old model fit so not going to
-    ## worry about it to much and just skip it
-    message(
-      sprintf("Not migrating %s, plot data path does not exist", task_id))
-    return(list(
-      id = task_id,
-      prev_res = res,
-      action = "No change - plot data path does not exist"
-    ))
-  }
 
-  new_res <- migrate(res, to_version, dry_run)
+  new_res <- migrate(task_id, res, to_version, dry_run)
+  if (!naomi:::is_hintr_output(new_res)) {
+    ## Version specific migration has decided not to migrate and
+    ## returned a log entry instead of a new result
+    return(new_res)
+  }
   if (!dry_run) {
     ## rrq stores results using an object store
     ## So when an rrq completes a job successfully it generates an R object
@@ -136,7 +137,40 @@ migrate_task <- function(task_id, queue, to_version, dry_run) {
   out
 }
 
-migrate <- function(res, new_version, dry_run) {
+migrate <- function(task_id, res, new_version, dry_run) {
+  if (new_version == "2.9.11") {
+    migrate_v2.9.11(task_id, res, new_version, dry_run)
+  } else if (new_version == "2.10.21") {
+    migrate_v2.10.21(task_id, res, new_version, dry_run)
+  } else {
+    stop(sprintf("Invalid target migration version: '%s'.", new_version))
+  }
+}
+
+migrate_v2.9.11 <- function(task_id, res, new_version, dry_run) {
+  if (is.null(res$plot_data_path)) {
+    ## This will be null for model fits, only written out during calibrate
+    message(
+      sprintf("Not migrating %s, this result does not have plot data", task_id))
+    return(list(
+      id = task_id,
+      prev_res = res,
+      action = "No change - only migrating plot data and this result has none"
+    ))
+  }
+  if (!file.exists(res$plot_data_path)) {
+    ## Have seen some instances of prod where plot data doesn't exist
+    ## it's probably really old model fit so not going to
+    ## worry about it to much and just skip it
+    message(
+      sprintf("Not migrating %s, plot data path does not exist", task_id))
+    return(list(
+      id = task_id,
+      prev_res = res,
+      action = "No change - plot data path does not exist"
+    ))
+  }
+
   plot_data <- naomi::read_hintr_output(res$plot_data_path)
   new_plot_data_path <- tempfile("plot_data",
                                  tmpdir = dirname(res$plot_data_path),
@@ -150,6 +184,53 @@ migrate <- function(res, new_version, dry_run) {
   res
 }
 
+migrate_v2.10.21 <- function(task_id, res, new_version, dry_run) {
+  if (is.null(res$model_output_path)) {
+    ## This shouldn't occur, but just in case
+    message(
+      sprintf("Not migrating %s, this result does not have model output data", task_id))
+    return(list(
+      id = task_id,
+      prev_res = res,
+      action = "No change - only migrating model output data and this result has none"
+    ))
+  }
+  if (!file.exists(res$model_output_path)) {
+    ## Another catch all, again this shouldn't happen
+    message(
+      sprintf("Not migrating %s, this result does not have model output data", task_id))
+    return(list(
+      id = task_id,
+      prev_res = res,
+      action = "No change - model output path does not exist"
+    ))
+  }
+  ext <- tools::file_ext(res$model_output_path)
+  if (ext != "qs") {
+    message(
+      sprintf("Not migrating %s, this result has non qs model output '%s'",
+              task_id, res$model_output_path))
+    return(list(
+      id = task_id,
+      prev_res = res,
+      action = sprintf("No change - model output file type is '%s', only migrating qs files", ext)
+    ))
+  }
+  assert_package_installed("qs")
+  model_output_data <- qs::qread(res$model_output_path)
+  new_model_output_path <- tempfile("model_output",
+                                    tmpdir = dirname(res$model_output_path),
+                                    fileext = ".qs2")
+  message(sprintf("Migrating '%s' to '%s'.", res$model_output_path, new_model_output_path))
+  if (!dry_run) {
+    naomi:::hintr_save(model_output_data, new_model_output_path)
+    unlink(res$model_output_path)
+  }
+  res$model_output_path <- new_model_output_path
+  res$version <- new_version
+  res
+}
+
 r6_private <- function(x) {
   x[[".__enclos_env__"]]$private
 }
@@ -159,9 +240,9 @@ run_task_data_migration <- function(queue, log_dir, to_version, dry_run = TRUE) 
   log_dir <- normalizePath(log_dir, mustWork = TRUE)
   tasks <- rrq::rrq_task_list(controller = queue$controller)
 
-  migrations <- lapply(tasks, migrate_task_data, queue$controller,
-                       to_version, dry_run)
-  write_migration_log(migrations, log_dir)
+  migrate_tasks_with_log(tasks, log_dir, function(task_id) {
+    migrate_task_data(task_id, queue$controller, to_version, dry_run)
+  })
 }
 
 migrate_task_data <- function(task_id, controller, to_version, dry_run) {
@@ -220,4 +301,15 @@ migrate_task_data <- function(task_id, controller, to_version, dry_run) {
 
 has_keys <- function(what, keys) {
   length(names(what)) == length(keys) && all(names(what) %in% keys)
+}
+
+assert_package_installed <- function(package_name) {
+  if (!requireNamespace(package_name, quietly = TRUE)) {
+    stop(
+      sprintf("Package '%s' must be installed to use this function.",
+              package_name),
+      call. = FALSE
+    )
+  }
+  invisible(TRUE)
 }
