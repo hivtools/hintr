@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">hintr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.21</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.22</span>
       </span>
     </div>
 
@@ -212,7 +212,7 @@ http://localhost:8888/validate/survey-and-programme</code></pre>
 <span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a>                <span class="dt">"anc_tested_pos"</span><span class="fu">:</span> <span class="dv">50</span><span class="fu">,</span></span>
 <span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a>                <span class="dt">"anc_known_neg"</span><span class="fu">:</span> <span class="dv">217</span><span class="fu">,</span></span>
 <span id="cb15-18"><a href="#cb15-18" tabindex="-1"></a>                <span class="dt">"births_facility"</span><span class="fu">:</span> <span class="dv">3279</span><span class="fu">,</span></span>
-<span id="cb15-19"><a href="#cb15-19" tabindex="-1"></a>                <span class="dt">"anc_prevalence"</span><span class="fu">:</span> <span class="dv">0</span><span class="er">.0315</span><span class="fu">,</span></span>
+<span id="cb15-19"><a href="#cb15-19" tabindex="-1"></a>                <span class="dt">"anc_prevalence"</span><span class="fu">:</span> <span class="fl">0.0315</span><span class="fu">,</span></span>
 <span id="cb15-20"><a href="#cb15-20" tabindex="-1"></a>                <span class="dt">"anc_art_coverage"</span><span class="fu">:</span> <span class="dv">0</span></span>
 <span id="cb15-21"><a href="#cb15-21" tabindex="-1"></a><span class="er">...</span> <span class="er">truncated</span> <span class="dv">3626</span> <span class="er">lines</span> <span class="er">of</span> <span class="er">output</span></span></code></pre></div>
 <p>Validate survey data</p>
@@ -238,7 +238,7 @@ http://localhost:8888/validate/survey-and-programme</code></pre>
 <span id="cb17-17"><a href="#cb17-17" tabindex="-1"></a>                <span class="dt">"n_clusters"</span><span class="fu">:</span> <span class="dv">512</span><span class="fu">,</span></span>
 <span id="cb17-18"><a href="#cb17-18" tabindex="-1"></a>                <span class="dt">"n_observations"</span><span class="fu">:</span> <span class="dv">5136</span><span class="fu">,</span></span>
 <span id="cb17-19"><a href="#cb17-19" tabindex="-1"></a>                <span class="dt">"n_eff_kish"</span><span class="fu">:</span> <span class="fl">3125.6878</span><span class="fu">,</span></span>
-<span id="cb17-20"><a href="#cb17-20" tabindex="-1"></a>                <span class="dt">"estimate"</span><span class="fu">:</span> <span class="dv">0</span><span class="er">.</span><span class="dv">1183</span><span class="fu">,</span></span>
+<span id="cb17-20"><a href="#cb17-20" tabindex="-1"></a>                <span class="dt">"estimate"</span><span class="fu">:</span> <span class="fl">0.1183</span><span class="fu">,</span></span>
 <span id="cb17-21"><a href="#cb17-21" tabindex="-1"></a><span class="er">...</span> <span class="er">truncated</span> <span class="er">367974</span> <span class="er">lines</span> <span class="er">of</span> <span class="er">output</span></span></code></pre></div>
 <p>Get model run options</p>
 <pre><code>$ curl -s -X POST -H 'Content-Type: application/json' \
@@ -595,15 +595,15 @@ http://localhost:8888/download/submit/spectrum/d5d08f4783975d8092e049adec43726b<
 <span id="cb35-14"><a href="#cb35-14" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
 <p>Headers for summary download result</p>
 <pre><code>$ curl -s -I http://localhost:8888/download/result/930202bce97ebe49df170f0e59512357</code></pre>
-<div class="sourceCode" id="cb37"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb37-1"><a href="#cb37-1" tabindex="-1"></a><span class="er">HTTP/1.1</span> <span class="er">200</span> <span class="er">OK</span></span>
-<span id="cb37-2"><a href="#cb37-2" tabindex="-1"></a><span class="er">Date:</span> <span class="er">Mon,</span> <span class="er">23</span> <span class="er">Jan</span> <span class="er">2023</span> <span class="er">18:44:36</span> <span class="er">GMT</span></span>
+<div class="sourceCode" id="cb37"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb37-1"><a href="#cb37-1" tabindex="-1"></a><span class="er">HTTP/</span><span class="fl">1.1</span> <span class="dv">200</span> <span class="er">OK</span></span>
+<span id="cb37-2"><a href="#cb37-2" tabindex="-1"></a><span class="er">Date:</span> <span class="er">Mon,</span> <span class="dv">23</span> <span class="er">Jan</span> <span class="dv">2023</span> <span class="dv">18</span><span class="er">:</span><span class="dv">44</span><span class="er">:</span><span class="dv">36</span> <span class="er">GMT</span></span>
 <span id="cb37-3"><a href="#cb37-3" tabindex="-1"></a><span class="er">Content-Type:</span> <span class="er">application/octet-stream</span></span>
-<span id="cb37-4"><a href="#cb37-4" tabindex="-1"></a><span class="er">Content-Disposition:</span> <span class="er">attachment;</span> <span class="er">filename="MWI_naomi-output_20230123-1844.zip"</span></span>
-<span id="cb37-5"><a href="#cb37-5" tabindex="-1"></a><span class="er">X-Porcelain-Validated:</span> <span class="er">false</span></span>
-<span id="cb37-6"><a href="#cb37-6" tabindex="-1"></a><span class="er">Content-Length:</span> <span class="er">18810039</span></span></code></pre></div>
+<span id="cb37-4"><a href="#cb37-4" tabindex="-1"></a><span class="er">Content-Disposition:</span> <span class="er">attachment;</span> <span class="er">filename=</span><span class="st">"MWI_naomi-output_20230123-1844.zip"</span></span>
+<span id="cb37-5"><a href="#cb37-5" tabindex="-1"></a><span class="er">X-Porcelain-Validated:</span> <span class="kw">false</span></span>
+<span id="cb37-6"><a href="#cb37-6" tabindex="-1"></a><span class="er">Content-Length:</span> <span class="dv">18810039</span></span></code></pre></div>
 <p>Get the summary download result</p>
 <pre><code>$ curl -s http://localhost:8888/download/result/930202bce97ebe49df170f0e59512357</code></pre>
-<div class="sourceCode" id="cb39"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb39-1"><a href="#cb39-1" tabindex="-1"></a><span class="er">Hidden</span> <span class="er">74802</span> <span class="er">bytes</span> <span class="er">of</span> <span class="er">output</span></span></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb39-1"><a href="#cb39-1" tabindex="-1"></a><span class="er">Hidden</span> <span class="dv">74802</span> <span class="er">bytes</span> <span class="er">of</span> <span class="er">output</span></span></code></pre></div>
 <p>Get plotting metadata for Malawi</p>
 <pre><code>$ curl -s http://localhost:8888/meta/plotting/Malawi</code></pre>
 <div class="sourceCode" id="cb41"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb41-1"><a href="#cb41-1" tabindex="-1"></a><span class="fu">{</span></span>
@@ -620,7 +620,7 @@ http://localhost:8888/download/submit/spectrum/d5d08f4783975d8092e049adec43726b<
 <span id="cb41-12"><a href="#cb41-12" tabindex="-1"></a>                        <span class="dt">"indicator_value"</span><span class="fu">:</span> <span class="st">""</span><span class="fu">,</span></span>
 <span id="cb41-13"><a href="#cb41-13" tabindex="-1"></a>                        <span class="dt">"name"</span><span class="fu">:</span> <span class="st">"ANC HIV prevalence"</span><span class="fu">,</span></span>
 <span id="cb41-14"><a href="#cb41-14" tabindex="-1"></a>                        <span class="dt">"min"</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
-<span id="cb41-15"><a href="#cb41-15" tabindex="-1"></a>                        <span class="dt">"max"</span><span class="fu">:</span> <span class="dv">0</span><span class="er">.</span><span class="dv">5</span><span class="fu">,</span></span>
+<span id="cb41-15"><a href="#cb41-15" tabindex="-1"></a>                        <span class="dt">"max"</span><span class="fu">:</span> <span class="fl">0.5</span><span class="fu">,</span></span>
 <span id="cb41-16"><a href="#cb41-16" tabindex="-1"></a>                        <span class="dt">"colour"</span><span class="fu">:</span> <span class="st">"interpolateOranges"</span><span class="fu">,</span></span>
 <span id="cb41-17"><a href="#cb41-17" tabindex="-1"></a>                        <span class="dt">"invert_scale"</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></span>
 <span id="cb41-18"><a href="#cb41-18" tabindex="-1"></a>                        <span class="dt">"scale"</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
@@ -687,7 +687,7 @@ http://localhost:8888/download/submit/spectrum/d5d08f4783975d8092e049adec43726b<
 </li>
 <li><p>If running all tests, including those that require redis, start a redis docker container <code>docker run --rm -d --network=host --name hintr_redis redis</code></p></li>
 </ol>
-<p>Finally tests can be run with <code><a href="https://devtools.r-lib.org/reference/test.html" class="external-link">devtools::test()</a></code>.</p>
+<p>Finally tests can be run with <code>devtools::test()</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="using-sensitive-data">Using sensitive data<a class="anchor" aria-label="anchor" href="#using-sensitive-data"></a>
@@ -756,7 +756,7 @@ http://localhost:8888/download/submit/spectrum/d5d08f4783975d8092e049adec43726b<
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer>
