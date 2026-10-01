@@ -93,7 +93,13 @@ throttle <- function(f, every) {
 }
 
 no_error <- function(expr) {
-  tryCatch(expr, error = function(e) NULL)
+  tryCatch(expr, error = function(e) {
+    message(sprintf(
+      "Encountered background error, logging and continuing operation: %s",
+      conditionMessage(e)
+    ))
+    NULL
+  })
 }
 
 iso_time_str <- function(time = Sys.time()) {

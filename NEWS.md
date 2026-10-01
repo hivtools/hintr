@@ -1,3 +1,10 @@
+# hintr 1.2.23
+
+* Run rrq worker orphan detection and cleanup more regularly
+   1. Whenever a worker starts up
+   2. On every endpoint (max once every 10 seconds) as part of the API pre-route
+* Ensure that when worker orphan cleanup fails it raises a log message
+
 # hintr 1.2.21
 
 * Add validation check for spectrum_region_code in the shape file. It must:
@@ -389,7 +396,7 @@
 
 # hintr 0.1.14
 
-* Generalize functions `assert_calendar_quarter_column()` and `assert_year_column()` to 
+* Generalize functions `assert_calendar_quarter_column()` and `assert_year_column()` to
   accept argument `col_name=` to check columns of required specification with different name.
 
 # hintr 0.1.13
@@ -402,14 +409,14 @@
 
 # hintr 0.1.11
 
-* Add endpoint `<+calendar_quarter_t1_default+>` to select most recent survey calendar 
+* Add endpoint `<+calendar_quarter_t1_default+>` to select most recent survey calendar
   quarter as default 'time 1' option.
-  
+
 # hintr 0.1.9
 
 * Return helpText from model run
 
-# hintr 0.1.8 
+# hintr 0.1.8
 
 * Revise ART programme data schema to use column `calendar_quarter` instead of `year`.
 
@@ -516,7 +523,7 @@
 * Add model options validate endpoint
 * Update input data structures including
    * Move quarter_id to use calendar_quarter instead in format CY2016Q3 for population and output data
-   * Move quarter_id to use year for ANC, ART, 
+   * Move quarter_id to use year for ANC, ART,
    * Move age_group_id to age_group format e.g. 00-04, 15+, 05-09 etc. in ANC, ART, population, programme, survey and output data
    * Update model run options
    * Update region IDS to be formatted as <ISO3>_<area_level>_<area_number> e.g. MWI_2_1 for first region in level 2. Top level region remains as just ISO3 code e.g. MWI

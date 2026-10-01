@@ -549,10 +549,7 @@ submit_model <- function(queue) {
 }
 
 queue_status <- function(queue) {
-  check_orphan <- throttle(
-    function() rrq::rrq_worker_detect_exited(controller = queue$controller), 10)
   function(id) {
-    no_error(check_orphan())
     tryCatch({
       out <- queue$status(id)
       prepare_status_response(out, id)

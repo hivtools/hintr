@@ -75,6 +75,38 @@ To run tests which use sensitive data you need to clone the private [naomi-data 
 git clone git@github.com:mrc-ide/naomi-data.git tests/testthat/testdata/sensitive
 ```
 
+## Running commands against a deployed environment
+
+Sometimes you need to run R interactively against a live deployment - checking
+configuration, running a one-off maintenance script, or just debugging.
+
+### Getting a shell
+
+```bash
+az containerapp exec -g <resource-group> -n <container-app-name> --command R
+```
+
+This opens an interactive R session inside the running container. Use `--command bash` instead if you want a plain shell rather than R directly.
+
+Resource group and app names are environment-specific - check the relevant
+deploy repo's bicep/parameter files, or list the apps in the resource group
+with `az containerapp list -g <resource-group>`. For the main naomi
+production deployment, the API container app is `nm-hintr` in `nmHint-RG`:
+
+```bash
+az containerapp exec -g nmHint-RG -n nm-hintr --command R
+```
+
+### Running things once you're in
+
+From an R session you can connect to the queue the same way the API itself does:
+
+```r
+queue <- hintr:::Queue$new(workers = 0)
+```
+
+That gives you a live `rrq` controller (`queue$controller`), so you can call any `rrq`/`hintr` function directly, inspect Redis state, or run a one-off script.
+
 ## Adding prerun model results
 
 Details here will depend on the deploy (and that will be the place to look for the running version).

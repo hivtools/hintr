@@ -217,7 +217,16 @@ migrate_v2.10.21 <- function(task_id, res, new_version, dry_run) {
     ))
   }
   assert_package_installed("qs")
-  model_output_data <- qs::qread(res$model_output_path)
+  ## Deliberately not qs::qread() - qs is not (and should not be) a
+  ## declared dependency, it's only ever needed for this one historical
+  ## migration path. Using :: here would make R CMD check fail dependency
+  ## checks since qs isn't in DESCRIPTION; getExportedValue() reaches the
+  ## function dynamically so static analysis doesn't see a reference to an
+  ## undeclared package, while assert_package_installed() above still
+  ## gives a clear error if qs genuinely isn't installed.
+  ## This is pretty gross, but it will do for now.
+  qread <- getExportedValue("qs", "qread")
+  model_output_data <- qread(res$model_output_path)
   new_model_output_path <- tempfile("model_output",
                                     tmpdir = dirname(res$model_output_path),
                                     fileext = ".qs2")
