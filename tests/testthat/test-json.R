@@ -31,6 +31,60 @@ test_that("to_json converts NA values to null", {
   expect_equal(out$test[[2]]$y, NULL)
 })
 
+test_that("to_json unboxes scalars and leaves everything else as arrays", {
+  expect_equal(as.character(to_json(list(a = scalar("x"), b = "y", c = 1:2))),
+               '{"a":"x","b":["y"],"c":[1,2]}')
+  expect_equal(
+    as.character(to_json(recursive_scalar(list(a = "x", b = list(c = 1))))),
+    '{"a":"x","b":{"c":1.0}}')
+  expect_equal(as.character(to_json(list(a = scalar(NA_character_),
+                                         b = scalar(NaN), c = scalar(Inf)))),
+               '{"a":null,"b":null,"c":null}')
+})
+
+test_that("to_json writes verbatim json as is", {
+  expect_equal(as.character(to_json(list(a = json_verbatim("null"),
+                                         b = json_null(),
+                                         c = json_verbatim('{"x":[1,2]}')))),
+               '{"a":null,"b":null,"c":{"x":[1,2]}}')
+  expect_equal(as.character(to_json(json_verbatim('{"a":"x\\\\y"}'))),
+               '{"a":"x\\\\y"}')
+})
+
+test_that("to_json writes existing json as is", {
+  json <- to_json(list(a = scalar("x")))
+  expect_equal(as.character(to_json(json)), '{"a":"x"}')
+  expect_equal(as.character(to_json(list(b = json))), '{"b":{"a":"x"}}')
+  expect_equal(
+    as.character(to_json(list(b = jsonlite::toJSON(list(a = "x"))))),
+    '{"b":{"a":["x"]}}')
+})
+
+test_that("to_json writes NULL as an empty object like jsonlite", {
+  expect_equal(as.character(to_json(NULL)), "{}")
+  expect_equal(as.character(to_json(list(a = NULL, b = scalar(1)))),
+               '{"a":{},"b":1.0}')
+  df <- data.frame(a = 1:2)
+  df$m <- list(NULL, c("p", "q"))
+  expect_equal(as.character(to_json(df)),
+               '[{"a":1,"m":{}},{"a":2,"m":["p","q"]}]')
+  expect_equal(as.character(to_json(list(a = list()))), '{"a":[]}')
+})
+
+test_that("to_json output is the same as jsonlite", {
+  x <- list(
+    status = scalar("success"), errors = json_null(),
+    data = list(
+      data = data.frame(a = c(1.23456789, NA, 3), b = c("x", NA, "z")),
+      filters = json_verbatim("null"),
+      warnings = list(list(text = scalar("w"),
+                           locations = list("model_fit")))),
+    version = list(hintr = scalar("1.0.0")))
+  expected <- jsonlite::toJSON(x, json_verbatim = TRUE, na = "null")
+  expect_equal(jsonlite::fromJSON(to_json(x), simplifyVector = FALSE),
+               jsonlite::fromJSON(expected, simplifyVector = FALSE))
+})
+
 test_that("can recursively convert to scalar", {
   expect_equal(recursive_scalar(2), list(scalar(2)))
   expect_equal(recursive_scalar(c(1, 2)), list(scalar(1), scalar(2)))
