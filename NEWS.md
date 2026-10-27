@@ -1,3 +1,7 @@
+# hintr 1.2.24
+
+* Serialise API responses with `yyjsonr` instead of `jsonlite`. This is 2.5x to 10x faster, particularly for large responses e.g. calibrate result data. Output is the same as before apart from doubles now being written with a trailing `.0` e.g. `3.0` instead of `3`.
+
 # hintr 1.2.23
 
 * Run rrq worker orphan detection and cleanup more regularly
