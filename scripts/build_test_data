@@ -5,8 +5,7 @@ paths <- list(model_output_path = "inst/output/malawi_model_output.qs2",
               calibrate_output_path = "inst/output/malawi_calibrate_output.qs2",
               spectrum_path = "inst/output/malawi_spectrum_download.zip",
               coarse_output_path = "inst/output/malawi_coarse_output_download.zip",
-              summary_report_path = "inst/output/malawi_summary_report.html",
-              agyw_path = "inst/output/malawi_agyw.xlsx")
+              summary_report_path = "inst/output/malawi_summary_report.html")
 
 dir.create("inst/output", showWarnings = FALSE)
 invisible(lapply(paths, function(path) {
@@ -26,8 +25,7 @@ out <- system2("Rscript",
     "--calibrate-plot-path", paths$calibrate_plot_path,
     "--spectrum-path", paths$spectrum_path,
     "--coarse-output-path", paths$coarse_output_path,
-    "--summary-report-path", paths$summary_report_path,
-    "--agyw-path", paths$agyw_path))
+    "--summary-report-path", paths$summary_report_path))
 
 if (out != 0) {
   quit(save = "no", status = 1)

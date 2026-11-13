@@ -106,7 +106,6 @@
     "VALIDATION_MULTIPLE_LEVELS": "Os dados só podem ser relativos a regiões a um único nível de área por ano. Em dados carregados {{detail}}",
     "TABLE_SEX_BY_AREA": "Sexo por área",
     "TABLE_SEX_BY_5_YEAR_AGE_GROUP": "Sexo por faixa etária de 5 anos",
-    "VALIDATION_SHEET_MISSING": "O arquivo Excel carregado está faltando a planilha necessária '{{sheet_name}}'. Verifique o recurso e tente novamente.",
     "ART_CHILDREN": "Crianças (<15)",
     "ART_ADULT_BOTH": "Adultos ambos (15+)",
     "ART_ADULT_MALE": "Homens adultos (15+)",

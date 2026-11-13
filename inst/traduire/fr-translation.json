@@ -107,7 +107,6 @@
     "VALIDATION_MULTIPLE_LEVELS": "Les données ne peuvent concerner que les régions à un seul niveau de zone par an. Dans les données téléchargées {{detail}}",
     "TABLE_SEX_BY_AREA": "Sexe par zone",
     "TABLE_SEX_BY_5_YEAR_AGE_GROUP": "Sexe par tranche d'âge de 5 ans",
-    "VALIDATION_SHEET_MISSING": "Le fichier Excel téléchargé ne contient pas la feuille requise « {{sheet_name}} ». Veuillez vérifier la ressource et réessayer.",
     "ART_CHILDREN": "Enfants (<15)",
     "ART_ADULT_BOTH": "Adult tous les deux (15+)",
     "ART_ADULT_MALE": "Hommes adultes (15+)",
