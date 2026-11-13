@@ -14,7 +14,6 @@ download <- function(model_output, type, path_results, input, language = NULL) {
                      coarse_output = ".zip",
                      summary = ".html",
                      comparison = ".html",
-                     agyw = ".xlsx",
                      datapack = ".xlsx",
                      hintr_error(t_("INVALID_DOWNLOAD_TYPE", list(type = type)),
                                  "INVALID_DOWNLOAD_TYPE"))
@@ -24,14 +23,10 @@ download <- function(model_output, type, path_results, input, language = NULL) {
   if (type == "spectrum") {
     out <- naomi::hintr_prepare_spectrum_download(model_output,
                                                   download_path,
-                                                  input$notes,
-                                                  input$vmmc)
+                                                  input$notes)
     if (file_exists(out$path) && !is.null(input$state)) {
       add_state_json(out$path, input$state)
     }
-  } else if (type == "agyw") {
-    out <- naomi::hintr_prepare_agyw_download(model_output, input$pjnz,
-                                              download_path)
   } else if (type == "datapack") {
     state_json <- jsonlite::fromJSON(input$state, simplifyVector = FALSE)
     model_fit_id <- state_json$model_fit$id
@@ -40,8 +35,7 @@ download <- function(model_output, type, path_results, input, language = NULL) {
                       c(model_fit_id, calibrate_id))
     out <- naomi::hintr_prepare_datapack_download(model_output,
                                                   download_path,
-                                                  input$vmmc,
-                                                  ids)
+                                                  ids = ids)
   } else {
     func <- switch(type,
                    coarse_output = naomi::hintr_prepare_coarse_age_group_download,
