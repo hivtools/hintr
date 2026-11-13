@@ -67,17 +67,52 @@ to_upper_first <- function(x) {
   x
 }
 
+## Verbatim JSON is also tagged "scalar" so that yyjsonr writes it as is,
+## rather than wrapping it in an array. jsonlite dispatches on "json" first.
 json_verbatim <- function(x) {
-  class(x) <- "json"
+  class(x) <- c("json", "scalar")
   x
 }
 
+## Serialise with yyjsonr (much faster than jsonlite on large responses) while
+## keeping the output jsonlite used to give:
+##   * scalar() values are unboxed, everything else stays an array
+##   * NA, NaN and Inf become null
+##   * numbers are rounded to 4 decimal places (jsonlite's default)
+##   * NULL is written as {} (yyjsonr would write null)
 to_json <- function(x) {
-  jsonlite::toJSON(x, json_verbatim = TRUE, na = "null")
+  json <- yyjsonr::write_json_str(prepare_for_yyjson(x), opts = yyjson_opts())
+  class(json) <- "json"
+  json
+}
+
+yyjson_opts <- function() {
+  yyjsonr::opts_write_json(json_verbatim = TRUE, digits = 4L)
+}
+
+## Prepare an object so that yyjsonr serialises it the same way as jsonlite
+prepare_for_yyjson <- function(x) {
+  if (is.null(x)) {
+    structure(list(), names = character(0))
+  } else if (inherits(x, "json")) {
+    ## Any JSON, including from jsonlite::toJSON, must be written as is
+    class(x) <- union(class(x), "scalar")
+    x
+  } else if (is.data.frame(x)) {
+    ## Only list columns can hold NULL
+    is_list_col <- vapply(x, is.list, logical(1))
+    x[is_list_col] <- lapply(x[is_list_col], function(col) {
+      lapply(col, prepare_for_yyjson)
+    })
+    x
+  } else if (is.list(x)) {
+    x[] <- lapply(x, prepare_for_yyjson)
+    x
+  } else {
+    x
+  }
 }
 
 json_null <- function() {
-  null <- "null"
-  class(null) <- "json"
-  null
+  json_verbatim("null")
 }
