@@ -4,7 +4,7 @@
 \alias{do_validate_vmmc}
 \title{Validate VMMC data file.}
 \usage{
-do_validate_vmmc(vmmc, shape, strict = TRUE)
+do_validate_vmmc(vmmc, shape)
 }
 \arguments{
 \item{vmmc}{A file object (path, hash, filename) corresponding to
