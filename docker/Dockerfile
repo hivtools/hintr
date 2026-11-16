@@ -2,7 +2,6 @@ FROM ghcr.io/hivtools/naomi-base:latest AS build
 
 COPY . /src
 COPY docker/bin /usr/local/bin/
-COPY docker/Rprofile.site /usr/local/lib/R/etc/Rprofile.site
 
 ## Remove the large test data not needed for runtime
 RUN install_packages remotes \

@@ -85,6 +85,37 @@ jobs:
             ghcr.io/${{env.TAG_SERVER_GHCR}}:latest
             ghcr.io/${{env.TAG_SERVER_GHCR}}:${{steps.extract_branch.outputs.CI_BRANCH}}
 
+      ## Smoke test: catches runtime problems such as missing shared libraries
+      ## (e.g. sf failing to load libgdal) which only appear when the
+      ## multi-stage build's run image starts up.
+      - name: Test server container starts
+        shell: bash
+        run: |
+          IMAGE=ghcr.io/${{env.TAG_SERVER_GHCR}}:${{steps.extract_branch.outputs.CI_BRANCH}}
+          docker network create hintr_network
+          docker run --rm -d --network=hintr_network --network-alias=redis \
+            --name hintr_redis redis
+          docker run -d --network=hintr_network -p 8888:8888 \
+            -e REDIS_URL=redis://redis:6379 \
+            -e USE_MOCK_MODEL=true \
+            --name hintr_server $IMAGE
+          for attempt in $(seq 30); do
+            RESPONSE=$(curl --silent http://localhost:8888 || true)
+            if [ "$RESPONSE" == '{"status":"success","errors":null,"data":"Welcome to hintr"}' ]; then
+              echo "SUCCESS"
+              exit 0
+            fi
+            if [ "$(docker inspect -f '{{.State.Running}}' hintr_server)" != "true" ]; then
+              echo "Server container exited early"
+              break
+            fi
+            echo "Attempt $attempt failed, retrying"
+            sleep 2
+          done
+          echo "Server failed to start, container logs:"
+          docker logs hintr_server
+          exit 1
+
       - name: Create worker Dockerfile
         run: |
           cat << EOF > ./docker/Dockerfile.worker
