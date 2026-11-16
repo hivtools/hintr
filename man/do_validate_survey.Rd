@@ -4,7 +4,7 @@
 \alias{do_validate_survey}
 \title{Validate survey data file.}
 \usage{
-do_validate_survey(survey, shape, strict = TRUE)
+do_validate_survey(survey, shape)
 }
 \arguments{
 \item{survey}{A file object (path, hash, filename) corresponding to
