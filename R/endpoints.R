@@ -86,7 +86,7 @@ validate_baseline_combined <- function(input) {
   })
 }
 
-validate_survey_programme <- function(input, strict = TRUE) {
+validate_survey_programme <- function(input) {
   input <- jsonlite::fromJSON(input)
   validate_func <- switch(input$type,
                           programme = do_validate_programme,
@@ -98,7 +98,7 @@ validate_survey_programme <- function(input, strict = TRUE) {
     assert_file_exists(input$file$path)
     assert_file_exists(shape$path)
     input_response(
-      validate_func(input$file, shape, strict), input$type, input$file)
+      validate_func(input$file, shape), input$type, input$file)
   },
   error = function(e) {
     hintr_error(api_error_msg(e), "INVALID_FILE")

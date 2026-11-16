@@ -1,3 +1,7 @@
+# hintr 1.2.25
+
+* Remove the `strict` query parameter from `/validate/survey-and-programme`. It has had no effect since the strict ANC validation was removed in 1.2.11. A request that still sends `strict` is now refused by porcelain ("Unconsumed query parameter"), so clients must stop sending it before they use this version
+
 # hintr 1.2.24
 
 * Serialise API responses with `yyjsonr` instead of `jsonlite`. This is 2.5x to 10x faster, particularly for large responses e.g. calibrate result data. Output is the same as before apart from doubles now being written with a trailing `.0` e.g. `3.0` instead of `3`.

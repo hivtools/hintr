@@ -4,7 +4,7 @@
 \alias{do_validate_programme}
 \title{Validate programme ART data file.}
 \usage{
-do_validate_programme(programme, shape, strict = TRUE)
+do_validate_programme(programme, shape)
 }
 \arguments{
 \item{programme}{A file object (path, hash, filename) corresponding to
