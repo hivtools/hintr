@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hintr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.24</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.25</span>
       </span>
     </div>
 
@@ -51,6 +51,12 @@
 
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.2.25" id="hintr-1225">hintr 1.2.25<a class="anchor" aria-label="anchor" href="#hintr-1225"></a></h2>
+<ul><li>Remove the VMMC input file: the <code>vmmc</code> type from input validation and the download requests, and the VMMC data in the spectrum and datapack downloads. Nothing uses it any more</li>
+<li>Remove the AGYW download (<code>/download/submit/agyw</code>) and its <code>pjnz</code> request field. This download has been removed</li>
+<li>Remove the <code>readxl</code> dependency, which only the VMMC validation used</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.2.24" id="hintr-1224">hintr 1.2.24<a class="anchor" aria-label="anchor" href="#hintr-1224"></a></h2>
 <ul><li>Serialise API responses with <code>yyjsonr</code> instead of <code>jsonlite</code>. This is 2.5x to 10x faster, particularly for large responses e.g. calibrate result data. Output is the same as before apart from doubles now being written with a trailing <code>.0</code> e.g. <code>3.0</code> instead of <code>3</code>.</li>
