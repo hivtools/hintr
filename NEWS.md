@@ -1,3 +1,9 @@
+# hintr 1.2.25
+
+* Remove the VMMC input file: the `vmmc` type from input validation and the download requests, and the VMMC data in the spectrum and datapack downloads. Nothing uses it any more
+* Remove the AGYW download (`/download/submit/agyw`) and its `pjnz` request field. This download has been removed
+* Remove the `readxl` dependency, which only the VMMC validation used
+
 # hintr 1.2.24
 
 * Serialise API responses with `yyjsonr` instead of `jsonlite`. This is 2.5x to 10x faster, particularly for large responses e.g. calibrate result data. Output is the same as before apart from doubles now being written with a trailing `.0` e.g. `3.0` instead of `3`.

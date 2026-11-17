@@ -239,38 +239,6 @@ do_validate_survey <- function(survey, shape, strict = TRUE) {
 }
 
 
-#' Validate VMMC data file.
-#'
-#' Check that VMMC data file can be read.
-#'
-#' @param vmmc A file object (path, hash, filename) corresponding to
-#'   the input VMMC file.
-#'
-#' @param shape A file object (path, hash, filename) corresponding to
-#'   the input shape file.
-#'
-#' @param strict If FALSE then run less stringent validation rules, used
-#'   for data exploration mode.
-#'
-#' @return An error if invalid.
-#' @keywords internal
-do_validate_vmmc <- function(vmmc, shape, strict = TRUE) {
-  assert_file_extension(vmmc, "xlsx")
-  assert_sheet_exists(vmmc$path, "Datapack inputs")
-  ## Skip the first header, the file has two rows of headers
-  data <- readxl::read_xlsx(vmmc$path, sheet = "Datapack inputs", skip = 1,
-                            .name_repair = "minimal")
-  assert_single_country(data, "vmmc")
-  assert_column_names(colnames(data), c("area_id", "15-24", "25-34",
-                      "35-49", "50+", "15-24", "25-34", "35-49", "50+"))
-  shape_regions <- read_regions(shape, "shape")
-  assert_consistent_regions(shape_regions$area_id,
-                            unique(data$area_id),
-                            "vmmc")
-  list(data = json_verbatim("null"),
-       warnings = list())
-}
-
 #' Validate collection of baseline data for consistency.
 #'
 #' @param pjnz A file object (path, hash, filename) corresponding to

@@ -54,9 +54,7 @@ setup_payload_calibrate <- function(version = NULL) {
 
 setup_payload_download_request <- function(version = NULL,
                                            include_notes = TRUE,
-                                           include_state = TRUE,
-                                           include_pjnz = FALSE,
-                                           include_vmmc = FALSE) {
+                                           include_state = TRUE) {
   payload <- list('"iso3": "MWI"')
   path <- tempfile()
   if (include_notes) {
@@ -81,18 +79,6 @@ setup_payload_download_request <- function(version = NULL,
     )
     payload <- c(payload,
                  paste('"state":', state_payload))
-  }
-  if (include_pjnz) {
-    pjnz <- jsonlite::read_json(
-      system_file("payload", "model_submit_payload.json"))$data$pjnz
-    payload <- c(payload, paste(
-      '"pjnz": ', jsonlite::toJSON(pjnz, auto_unbox = TRUE, null = "null")))
-  }
-  if (include_vmmc) {
-    path <- testthat::test_path("testdata", "vmmc.xlsx")
-    payload <- c(payload, paste(
-      '"vmmc":',
-      jsonlite::toJSON(file_object(path), auto_unbox = TRUE, null = "null")))
   }
   payload <- paste(payload, collapse = ",\n")
   payload <- paste("{\n", payload, "\n}")

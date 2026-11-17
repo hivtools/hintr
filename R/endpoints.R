@@ -91,8 +91,7 @@ validate_survey_programme <- function(input, strict = TRUE) {
   validate_func <- switch(input$type,
                           programme = do_validate_programme,
                           anc = do_validate_anc,
-                          survey = do_validate_survey,
-                          vmmc = do_validate_vmmc)
+                          survey = do_validate_survey)
   tryCatch({
     shape <- file_object(input$shape)
     assert_file_exists(input$file$path)
@@ -739,12 +738,6 @@ download_submit <- function(queue) {
           "(d) => JSON.stringify(d.state)",
           V8::JS(paste0(input, collapse = "\n")))
       }
-      if (!is.null(parsed_input$pjnz)) {
-        prepared_input$pjnz <- parsed_input$pjnz
-      }
-      if (!is.null(parsed_input$vmmc)) {
-        prepared_input$vmmc <- parsed_input$vmmc
-      }
     }
     withCallingHandlers(
       list(id = scalar(
@@ -775,7 +768,6 @@ download_file_label <- function(type) {
          coarse_output = "coarse-output",
          summary = "summary-report",
          comparison = "comparison-report",
-         agyw = "AGYW",
          datapack = "pepfar-tst-2025")
 }
 
@@ -785,7 +777,6 @@ download_file_extension <- function(type) {
          coarse_output = ".zip",
          summary = ".html",
          comparison = ".html",
-         agyw = ".xlsx",
          datapack = ".xlsx")
 }
 
