@@ -1,3 +1,8 @@
+# hintr 1.2.26
+
+* Add OpenTelemetry tracing of the API. Each request gets a server span with its method, route template and status. If the request has a W3C `traceparent` header, the span joins that trace, so it sits under the span of the hint call that made it. Tracing is off unless `OTEL_TRACES_EXPORTER` is set. The exporters need the `otelsdk` package, which is in the docker image. See "Tracing" in the README
+* The rrq workers (model fits, calibration, downloads) are not traced yet
+
 # hintr 1.2.25
 
 * Remove the VMMC input file: the `vmmc` type from input validation and the download requests, and the VMMC data in the spectrum and datapack downloads. Nothing uses it any more
