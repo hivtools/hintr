@@ -740,6 +740,41 @@ Input data should be written to the shared `upload_volume`. When requesting vali
 To turn on validation of requests and responses you need to set the environmental variable VALIDATE_JSON_SCHEMAS to true. You can do that by writing to a `.Renviron` file, on linux `echo -e "VALIDATE_JSON_SCHEMAS=true" >> .Renviron`.
 
 
+## Tracing (OpenTelemetry)
+
+The API can send an OpenTelemetry trace span for each request. It uses the [otel](https://otel.r-lib.org) and [otelsdk](https://otelsdk.r-lib.org) packages. Tracing is off unless you choose an exporter. When it is off, it costs one check per request.
+
+Each span has:
+
+* the method and the route template, e.g. `GET /model/status/<id>`. A request that matches no route is named by its method only
+* the status code. A 5xx marks the span as an error
+* the trace of the caller, if the request has a W3C `traceparent` header. hint sends one, so hintr's span sits under hint's span in the same trace
+
+Spans do not have the path (it has ids and file names), the query string, the headers or the bodies.
+
+Some packages that hintr uses make spans of their own, e.g. DBI for the duckdb queries. They are children of the request span. DBI's spans have the table and the operation, not the query. To keep only hintr's spans, set `OTEL_R_EMIT_SCOPES=hintr`.
+
+The rrq workers (model fits, calibration, downloads) are not traced. The request that submits a job has its span like any other.
+
+Turn it on with the standard environment variables:
+
+| Variable | Value | What it does |
+|---|---|---|
+| `OTEL_TRACES_EXPORTER` | `otlp` (or `console` to print spans) | Chooses the exporter. Unset: no tracing |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | e.g. `http://localhost:4318` | Where to send. `/v1/traces` is added to it |
+| `OTEL_SERVICE_NAME` | `hintr` | The name of the service. The docker image sets it to `hintr`. Without it, otel uses `R` |
+| `OTEL_RESOURCE_ATTRIBUTES` | e.g. `deployment.environment=production` | Optional |
+
+otelsdk only sends OTLP over HTTP (`http/protobuf`, the default, or `http/json`), not gRPC. So the endpoint must be a collector's OTLP/HTTP port, usually 4318, not its gRPC port 4317. If `OTEL_EXPORTER_OTLP_PROTOCOL` is set to `grpc`, override it with `http/protobuf`.
+
+otelsdk is in Suggests, as it needs C++ to build. The docker image has it. To try it locally, install it with `install.packages("otelsdk")`, then e.g.
+
+```
+OTEL_TRACES_EXPORTER=console OTEL_SERVICE_NAME=hintr Rscript -e 'hintr:::main_api()'
+```
+
+See `?otelsdk::environmentvariables` for the other settings.
+
 ## Running tests
 
 To run tests locally:
