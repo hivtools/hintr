@@ -4,7 +4,7 @@
 \alias{do_validate_survey}
 \title{Validate survey data file.}
 \usage{
-do_validate_survey(survey, shape, strict = TRUE)
+do_validate_survey(survey, shape)
 }
 \arguments{
 \item{survey}{A file object (path, hash, filename) corresponding to
@@ -12,9 +12,6 @@ the input survey file.}
 
 \item{shape}{A file object (path, hash, filename) corresponding to
 the input shape file.}
-
-\item{strict}{If FALSE then run less stringent validation rules, used
-for data exploration mode.}
 }
 \value{
 An error if invalid.

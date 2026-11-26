@@ -1,3 +1,7 @@
+# hintr 1.2.26
+
+* Remove the `strict` query parameter from `/validate/survey-and-programme`. It has had no effect since the strict ANC validation was removed in 1.2.11. A request that still sends `strict` is now refused by porcelain ("Unconsumed query parameter"), so clients must stop sending it before they use this version
+
 # hintr 1.2.25
 
 * Remove the VMMC input file: the `vmmc` type from input validation and the download requests, and the VMMC data in the spectrum and datapack downloads. Nothing uses it any more
