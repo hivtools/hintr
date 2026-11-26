@@ -36,6 +36,7 @@ Imports:
     storr,
     traduire (>= 0.0.5),
     V8,
+    withr,
     yaml,
     yyjsonr,
     zip
@@ -56,8 +57,7 @@ Suggests:
     rmarkdown,
     ssh,
     testthat (>= 2.1.0),
-    tidyselect,
-    withr
+    tidyselect
 Remotes:
     mrc-ide/naomi,
     mrc-ide/naomi.options

@@ -43,7 +43,7 @@ hintr_api <- R6::R6Class(
         return(super$serve(req, res))
       }
       span <- api_span_start(req, tracer)
-      on.exit(api_span_end(span, req, res), add = TRUE)
+      withr::defer(api_span_end(span, req, res))
       otel::local_active_span(span)
       super$serve(req, res)
     }
