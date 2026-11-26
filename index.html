@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">hintr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.26</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.27</span>
       </span>
     </div>
 
@@ -666,6 +666,63 @@ http://localhost:8888/download/submit/spectrum/d5d08f4783975d8092e049adec43726b<
 <p>To turn on validation of requests and responses you need to set the environmental variable VALIDATE_JSON_SCHEMAS to true. You can do that by writing to a <code>.Renviron</code> file, on linux <code>echo -e "VALIDATE_JSON_SCHEMAS=true" &gt;&gt; .Renviron</code>.</p>
 </div>
 <div class="section level2">
+<h2 id="tracing-opentelemetry">Tracing (OpenTelemetry)<a class="anchor" aria-label="anchor" href="#tracing-opentelemetry"></a>
+</h2>
+<p>The API can send an OpenTelemetry trace span for each request. It uses the <a href="https://otel.r-lib.org" class="external-link">otel</a> and <a href="https://otelsdk.r-lib.org" class="external-link">otelsdk</a> packages. Tracing is off unless you choose an exporter. When it is off, it costs one check per request.</p>
+<p>Each span has:</p>
+<ul>
+<li>the method and the route template, e.g. <code>GET /model/status/&lt;id&gt;</code>. A request that matches no route is named by its method only</li>
+<li>the status code. A 5xx marks the span as an error</li>
+<li>the trace of the caller, if the request has a W3C <code>traceparent</code> header. hint sends one, so hintr’s span sits under hint’s span in the same trace</li>
+</ul>
+<p>Spans do not have the path (it has ids and file names), the query string, the headers or the bodies.</p>
+<p>Some packages that hintr uses make spans of their own, e.g. DBI for the duckdb queries. They are children of the request span. DBI’s spans have the table and the operation, not the query. To keep only hintr’s spans, set <code>OTEL_R_EMIT_SCOPES=hintr</code>.</p>
+<p>The rrq workers (model fits, calibration, downloads) are not traced. The request that submits a job has its span like any other.</p>
+<p>Turn it on with the standard environment variables:</p>
+<table class="table">
+<colgroup>
+<col width="33%">
+<col width="33%">
+<col width="33%">
+</colgroup>
+<thead><tr>
+<th>Variable</th>
+<th>Value</th>
+<th>What it does</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code>OTEL_TRACES_EXPORTER</code></td>
+<td>
+<code>otlp</code> (or <code>console</code> to print spans)</td>
+<td>Chooses the exporter. Unset: no tracing</td>
+</tr>
+<tr>
+<td><code>OTEL_EXPORTER_OTLP_ENDPOINT</code></td>
+<td>e.g. <code>http://localhost:4318</code>
+</td>
+<td>Where to send. <code>/v1/traces</code> is added to it</td>
+</tr>
+<tr>
+<td><code>OTEL_SERVICE_NAME</code></td>
+<td><code>hintr</code></td>
+<td>The name of the service. The docker image sets it to <code>hintr</code>. Without it, otel uses <code>R</code>
+</td>
+</tr>
+<tr>
+<td><code>OTEL_RESOURCE_ATTRIBUTES</code></td>
+<td>e.g. <code>deployment.environment=production</code>
+</td>
+<td>Optional</td>
+</tr>
+</tbody>
+</table>
+<p>otelsdk only sends OTLP over HTTP (<code>http/protobuf</code>, the default, or <code>http/json</code>), not gRPC. So the endpoint must be a collector’s OTLP/HTTP port, usually 4318, not its gRPC port 4317. If <code>OTEL_EXPORTER_OTLP_PROTOCOL</code> is set to <code>grpc</code>, override it with <code>http/protobuf</code>.</p>
+<p>otelsdk is in Suggests, as it needs C++ to build. The docker image has it. To try it locally, install it with <code>install.packages("otelsdk")</code>, then e.g.</p>
+<pre><code>OTEL_TRACES_EXPORTER=console OTEL_SERVICE_NAME=hintr Rscript -e 'hintr:::main_api()'</code></pre>
+<p>See <code>?otelsdk::environmentvariables</code> for the other settings.</p>
+</div>
+<div class="section level2">
 <h2 id="running-tests">Running tests<a class="anchor" aria-label="anchor" href="#running-tests"></a>
 </h2>
 <p>To run tests locally:</p>
@@ -701,16 +758,16 @@ http://localhost:8888/download/submit/spectrum/d5d08f4783975d8092e049adec43726b<
 <div class="section level3">
 <h3 id="getting-a-shell">Getting a shell<a class="anchor" aria-label="anchor" href="#getting-a-shell"></a>
 </h3>
-<div class="sourceCode" id="cb50"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb50-1"><a href="#cb50-1" tabindex="-1"></a><span class="ex">az</span> containerapp exec <span class="at">-g</span> <span class="op">&lt;</span>resource-group<span class="op">&gt;</span> -n <span class="op">&lt;</span>container-app-name<span class="op">&gt;</span> --command R</span></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb51-1"><a href="#cb51-1" tabindex="-1"></a><span class="ex">az</span> containerapp exec <span class="at">-g</span> <span class="op">&lt;</span>resource-group<span class="op">&gt;</span> -n <span class="op">&lt;</span>container-app-name<span class="op">&gt;</span> --command R</span></code></pre></div>
 <p>This opens an interactive R session inside the running container. Use <code>--command bash</code> instead if you want a plain shell rather than R directly.</p>
 <p>Resource group and app names are environment-specific - check the relevant deploy repo’s bicep/parameter files, or list the apps in the resource group with <code>az containerapp list -g &lt;resource-group&gt;</code>. For the main naomi production deployment, the API container app is <code>nm-hintr</code> in <code>nmHint-RG</code>:</p>
-<div class="sourceCode" id="cb51"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb51-1"><a href="#cb51-1" tabindex="-1"></a><span class="ex">az</span> containerapp exec <span class="at">-g</span> nmHint-RG <span class="at">-n</span> nm-hintr <span class="at">--command</span> R</span></code></pre></div>
+<div class="sourceCode" id="cb52"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb52-1"><a href="#cb52-1" tabindex="-1"></a><span class="ex">az</span> containerapp exec <span class="at">-g</span> nmHint-RG <span class="at">-n</span> nm-hintr <span class="at">--command</span> R</span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="running-things-once-youre-in">Running things once you’re in<a class="anchor" aria-label="anchor" href="#running-things-once-youre-in"></a>
 </h3>
 <p>From an R session you can connect to the queue the same way the API itself does:</p>
-<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">queue</span> <span class="op">&lt;-</span> <span class="fu">hintr</span><span class="fu">:::</span><span class="va">Queue</span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>workers <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
 <p>That gives you a live <code>rrq</code> controller (<code>queue$controller</code>), so you can call any <code>rrq</code>/<code>hintr</code> function directly, inspect Redis state, or run a one-off script.</p>
 </div>

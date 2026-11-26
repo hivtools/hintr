@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hintr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.26</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.27</span>
       </span>
     </div>
 
@@ -51,6 +51,11 @@
 
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.2.27" id="hintr-1227">hintr 1.2.27<a class="anchor" aria-label="anchor" href="#hintr-1227"></a></h2>
+<ul><li>Add OpenTelemetry tracing of the API. Each request gets a server span with its method, route template and status. If the request has a W3C <code>traceparent</code> header, the span joins that trace, so it sits under the span of the hint call that made it. Tracing is off unless <code>OTEL_TRACES_EXPORTER</code> is set. The exporters need the <code>otelsdk</code> package, which is in the docker image. See “Tracing” in the README</li>
+<li>The rrq workers (model fits, calibration, downloads) are not traced yet</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.2.26" id="hintr-1226">hintr 1.2.26<a class="anchor" aria-label="anchor" href="#hintr-1226"></a></h2>
 <ul><li>Remove the <code>strict</code> query parameter from <code>/validate/survey-and-programme</code>. It has had no effect since the strict ANC validation was removed in 1.2.11. A request that still sends <code>strict</code> is now refused by porcelain (“Unconsumed query parameter”), so clients must stop sending it before they use this version</li>
