@@ -1,3 +1,8 @@
+# hintr 1.2.27
+
+* Add OpenTelemetry tracing of the API. Each request gets a server span with its method, route template and status. If the request has a W3C `traceparent` header, the span joins that trace, so it sits under the span of the hint call that made it. Tracing is off unless `OTEL_TRACES_EXPORTER` is set. The exporters need the `otelsdk` package, which is in the docker image. See "Tracing" in the README
+* The rrq workers (model fits, calibration, downloads) are not traced yet
+
 # hintr 1.2.26
 
 * Remove the `strict` query parameter from `/validate/survey-and-programme`. It has had no effect since the strict ANC validation was removed in 1.2.11. A request that still sends `strict` is now refused by porcelain ("Unconsumed query parameter"), so clients must stop sending it before they use this version
