@@ -1,5 +1,5 @@
 api_build <- function(queue, validate = FALSE, logger = NULL) {
-  api <- porcelain::porcelain$new(validate = validate, logger = logger)
+  api <- hintr_api$new(validate = validate, logger = logger)
   api$handle(endpoint_root())
   api$handle(endpoint_wake_up(queue))
   api$handle(endpoint_baseline_individual())
@@ -82,14 +82,16 @@ api <- function(queue_id = NULL, workers = 2,
                      "  - results_dir: '%s'",
                      "  - inputs_dir: '%s'",
                      "  - log_level: '%s'",
-                     "  - health_check_interval: '%s'")
+                     "  - health_check_interval: '%s'",
+                     "  - tracing: '%s'")
   logger$info(paste(start_api_log, collapse = "\n"),
               queue_id %||% "NULL",
               workers,
               results_dir %||% "NULL",
               inputs_dir %||% "NULL",
               log_level,
-              health_check_interval  %||% "NULL")
+              health_check_interval  %||% "NULL",
+              otel::is_tracing_enabled())
   queue <- Queue$new(queue_id, workers,
                      results_dir = results_dir,
                      inputs_dir = inputs_dir,
