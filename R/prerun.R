@@ -95,8 +95,7 @@ hintr_submit_prerun <- function(inputs, model_output, calibrate_output,
   state <- httr::content(res)$data
 
   message("Creating model output zip")
-  out <- naomi::hintr_prepare_spectrum_download(calibrate_output,
-                                                output_zip_path)
+  out <- download_function("spectrum")(calibrate_output, output_zip_path)
   add_state_json(out$path, jsonlite::toJSON(recursive_scalar(state)))
   out$path
 }

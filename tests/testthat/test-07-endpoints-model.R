@@ -195,6 +195,8 @@ test_that("erroring model run returns useful messages", {
 test_that("model run can be cancelled", {
   test_redis_available()
   test_mock_model_available()
+  ## Worker inherits env, so the mock model runs for long enough to cancel
+  withr::local_envvar(MOCK_MODEL_DURATION = "5")
 
   ## Start the model running
   payload <- setup_payload_submit()
