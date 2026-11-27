@@ -1,0 +1,6 @@
+## Not needed in the image. inst/output is built in the image (only the model
+## output is kept), a local copy may be stale.
+.git
+.github
+naomi
+inst/output

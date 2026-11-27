@@ -19,19 +19,22 @@ jobs:
       - id: extract_branch
         name: Setup Environment
         shell: bash
+        ## Branch names go through env, not ${{ }}, so they can't inject
+        ## shell code
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          REF_NAME: ${{ github.ref_name }}
+          PR_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           if [ "${{github.event_name}}" = "pull_request" ];
           then
-            LONG_SHA=${{ github.event.pull_request.head.sha }}
-            echo "CI_BRANCH=${{ github.head_ref }}" >> $GITHUB_OUTPUT
+            LONG_SHA=$PR_SHA
+            echo "CI_BRANCH=$HEAD_REF" >> $GITHUB_OUTPUT
           else
             LONG_SHA=${GITHUB_SHA}
-            echo "CI_BRANCH=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+            echo "CI_BRANCH=$REF_NAME" >> $GITHUB_OUTPUT
           fi
           echo "CI_SHA=${LONG_SHA:0:7}" >> $GITHUB_OUTPUT
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -53,26 +56,30 @@ jobs:
           token: ${{ secrets.NAOMI_GH_PAT }}
           path: naomi
 
-      - name: Build and push dev containers
-        uses: docker/build-push-action@v5
-        if: github.event_name == 'pull_request'
-        with:
-          context: .
-          file: "./docker/Dockerfile"
-          push: true
-          tags: |
-            ghcr.io/${{env.TAG_SERVER_GHCR}}:${{steps.extract_branch.outputs.CI_BRANCH}}
+      ## Pin naomi to commits so a new naomi commit invalidates the build cache
+      - name: Get naomi commits
+        id: naomi
+        shell: bash
+        run: |
+          echo "naomi=$(git -C naomi rev-parse HEAD)" >> $GITHUB_OUTPUT
+          echo "naomi_options=$(git ls-remote https://github.com/mrc-ide/naomi.options HEAD | cut -f1)" >> $GITHUB_OUTPUT
 
-      - name: Build and push prod containers
+      ## The build stage (naomi install and model fit) is cached in the
+      ## registry, so it only rebuilds when naomi-base or naomi change
+      - name: Build and push server container
         uses: docker/build-push-action@v5
-        if: github.event_name != 'pull_request'
         with:
           context: .
           file: "./docker/Dockerfile"
           push: true
+          build-args: |
+            NAOMI_REF=${{ steps.naomi.outputs.naomi }}
+            NAOMI_OPTIONS_REF=${{ steps.naomi.outputs.naomi_options }}
+          cache-from: type=registry,ref=ghcr.io/${{env.TAG_SERVER_GHCR}}:buildcache
+          cache-to: type=registry,ref=ghcr.io/${{env.TAG_SERVER_GHCR}}:buildcache,mode=max,ignore-error=true
           tags: |
-            ghcr.io/${{env.TAG_SERVER_GHCR}}:latest
             ghcr.io/${{env.TAG_SERVER_GHCR}}:${{steps.extract_branch.outputs.CI_BRANCH}}
+            ${{ github.event_name != 'pull_request' && format('ghcr.io/{0}:latest', env.TAG_SERVER_GHCR) || '' }}
 
       ## Smoke test: catches runtime problems such as missing shared libraries
       ## (e.g. sf failing to load libgdal) which only appear when the
@@ -105,30 +112,19 @@ jobs:
           docker logs hintr_server
           exit 1
 
-      - name: Create worker Dockerfile
-        run: |
-          cat << EOF > ./docker/Dockerfile.worker
-          FROM ghcr.io/${{env.TAG_SERVER_GHCR}}:${{steps.extract_branch.outputs.CI_BRANCH}}
-          ENTRYPOINT ["/usr/local/bin/hintr_worker"]
-          EOF
-
-      - name: Build and push dev worker containers
+      ## Same build as the server with a different entrypoint, so everything
+      ## comes from the builder's cache
+      - name: Build and push worker container
         uses: docker/build-push-action@v5
-        if: github.event_name == 'pull_request'
         with:
           context: .
-          file: "./docker/Dockerfile.worker"
+          file: "./docker/Dockerfile"
+          target: worker
           push: true
+          build-args: |
+            NAOMI_REF=${{ steps.naomi.outputs.naomi }}
+            NAOMI_OPTIONS_REF=${{ steps.naomi.outputs.naomi_options }}
+          cache-from: type=registry,ref=ghcr.io/${{env.TAG_SERVER_GHCR}}:buildcache
           tags: |
             ghcr.io/${{env.TAG_WORKER_GHCR}}:${{steps.extract_branch.outputs.CI_BRANCH}}
-
-      - name: Build and push prod worker containers
-        uses: docker/build-push-action@v5
-        if: github.event_name != 'pull_request'
-        with:
-          context: .
-          file: "./docker/Dockerfile.worker"
-          push: true
-          tags: |
-            ghcr.io/${{env.TAG_WORKER_GHCR}}:latest
-            ghcr.io/${{env.TAG_WORKER_GHCR}}:${{steps.extract_branch.outputs.CI_BRANCH}}
+            ${{ github.event_name != 'pull_request' && format('ghcr.io/{0}:latest', env.TAG_WORKER_GHCR) || '' }}
