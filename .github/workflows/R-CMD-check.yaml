@@ -36,11 +36,13 @@ jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
 
-    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+    name: ${{ matrix.task }} ${{ matrix.config.os }} (${{ matrix.config.r }})
 
     strategy:
       fail-fast: false
       matrix:
+        ## Separate jobs so they run in parallel, setup is quick with caches
+        task: [check, integration]
         config: >-
           ${{ fromJSON(github.event_name == 'pull_request' && '[
             {"os": "ubuntu-latest", "r": "release"}
@@ -77,11 +79,13 @@ jobs:
           cache: ${{ matrix.config.r == 'devel' && 'always' || 'true' }}
 
       - uses: r-lib/actions/check-r-package@v2
+        if: matrix.task == 'check'
         with:
           upload-snapshots: true
           error-on: '"error"'
 
       - name: Integration tests
+        if: matrix.task == 'integration'
         shell: bash
         run: |
           R CMD INSTALL .

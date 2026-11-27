@@ -31,15 +31,23 @@ runs:
     ## R packages come from a binary cache in seconds, but fetching the debs
     ## from the Ubuntu mirror takes 3-4 minutes and sometimes much longer, so
     ## cache the downloaded debs and seed apt's archive with them.
+    ## The runner image env vars aren't in the env context of a composite
+    ## action, so read them from the shell
+    - name: Get runner image
+      if: runner.os == 'Linux'
+      id: image
+      shell: bash
+      run: echo "image=${ImageOS}-${ImageVersion}" >> "$GITHUB_OUTPUT"
+
     - name: Restore apt package cache
       if: runner.os == 'Linux'
       id: apt-cache
       uses: actions/cache/restore@v4
       with:
         path: ~/apt-archives
-        key: apt-${{ env.ImageOS }}-${{ env.ImageVersion }}-${{ hashFiles('DESCRIPTION') }}
+        key: apt-${{ steps.image.outputs.image }}-${{ hashFiles('DESCRIPTION') }}
         restore-keys: |
-          apt-${{ env.ImageOS }}-${{ env.ImageVersion }}-
+          apt-${{ steps.image.outputs.image }}-
 
     - name: Seed apt archive
       if: runner.os == 'Linux'
@@ -87,7 +95,7 @@ runs:
       if: runner.os != 'Windows'
       uses: shogo82148/actions-setup-redis@v1
       with:
-        redis-version: "5.x"
+        redis-version: "7.x"
 
     - name: Start Redis (windows)
       if: runner.os == 'Windows'
