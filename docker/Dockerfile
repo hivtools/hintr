@@ -12,7 +12,7 @@ ARG NAOMI_OPTIONS_REF=HEAD
 
 ## otelsdk sends the OpenTelemetry traces. It is only in Suggests, as it
 ## needs C++ to build from source, so install it here. At run time it needs
-## libprotobuf (see the run stage).
+## libprotobuf, which the runtime stage finds automatically.
 ## Remove the large test data not needed for runtime
 RUN install_packages remotes otelsdk \
     && install_remote mrc-ide/naomi@${NAOMI_REF} \
@@ -34,28 +34,47 @@ RUN cd /usr/local/lib/R/site-library \
     && rm -rf */include */doc */help */html \
     && find . -name "*.so" -exec strip --strip-debug {} +
 
-FROM rocker/r-ver:4 AS runtime
+## List the system packages the runtime image needs: the packages that own
+## the shared libraries which R, the R packages and pandoc link to. This keeps
+## up to date as packages are added, rather than maintaining a list by hand.
+RUN find /usr/local/lib/R /usr/bin/pandoc -type f \
+        \( -name "*.so*" -o -path "*/bin/exec/*" -o -name pandoc \) \
+        -exec env LD_LIBRARY_PATH=/usr/local/lib/R/lib ldd {} + 2>/dev/null \
+    | awk '$2 == "=>" && $3 ~ /^\// {print $3}' | sort -u \
+    | xargs realpath | xargs dpkg -S 2>/dev/null \
+    | cut -d: -f1 | sort -u > /runtime-packages.txt \
+    && cat /runtime-packages.txt
 
-## Install just the runtime-dependencies. Use the GDAL library rather than
-## gdal-bin, which pulls in python and numpy for its command line tools. V8's
-## binary bundles its own engine so doesn't need libnode. libuv is for fs.
-## To check nothing is missing, run in the image:
-##   find /usr/local/lib/R -name "*.so" -exec ldd {} + | grep "not found"
-## (libR, tcltk and RcppParallel's tbbmalloc_proxy are expected)
-RUN apt-get update && apt-get -y install --no-install-recommends \
-        libuv1t64 \
-        libudunits2-0 \
-        libhiredis1.1.0 \
-        libjq1 \
-        libsodium23 \
-        libssl3 \
-        libprotobuf32t64 \
-        libgdal38 \
-        && apt-get clean \
-        && rm -rf /var/lib/apt/lists/* \
-        && rm -rf /tmp/*
+## A plain Ubuntu base rather than rocker/r-ver, which has compilers, a JDK
+## and dev headers for building packages (~700MB we don't need at runtime).
+## R itself is copied from the build stage so it always matches the packages.
+## Must be the same Ubuntu release as naomi-base for the package names.
+FROM ubuntu:26.04 AS runtime
 
-COPY --from=build /usr/local/lib/R/site-library /usr/local/lib/R/site-library
+ENV R_HOME=/usr/local/lib/R \
+    TZ=Etc/UTC \
+    LANG=en_US.UTF-8
+
+## Libraries found above, plus files R uses that aren't linked libraries:
+## certificates for https, timezone data, the locale, zip/unzip (R_ZIPCMD,
+## R_UNZIPCMD) and fonts. The plots in the reports use the default sans font,
+## rocker has Nimbus Sans from fonts-urw-base35 so use it to keep them the same.
+RUN --mount=type=bind,from=build,source=/runtime-packages.txt,target=/tmp/runtime-packages.txt \
+    apt-get update \
+    && apt-get -y install --no-install-recommends \
+        $(cat /tmp/runtime-packages.txt) \
+        ca-certificates \
+        fonts-urw-base35 \
+        locales \
+        tzdata \
+        unzip \
+        zip \
+    && sed -i 's/^# *en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen \
+    && locale-gen \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=build /usr/local/lib/R /usr/local/lib/R
 COPY --from=build /usr/local/bin /usr/local/bin
 COPY --from=build /usr/bin/pandoc /usr/bin/pandoc
 
