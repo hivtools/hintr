@@ -1,73 +1,92 @@
 # Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+#
+# Pull requests run a single fast job (ubuntu, R release) with slow tests
+# skipped. Pushes to main, the nightly schedule and manual runs check the full
+# matrix and include the slow tests (real model fits and real naomi outputs).
+#
+# R-devel runs weekly (or manually with the r_devel box ticked). There are no
+# binary packages for R-devel so every dependency is compiled, which takes
+# over an hour without a cache.
 on:
   push:
     branches: [main, master]
   pull_request:
     branches: [main, master]
+  schedule:
+    - cron: '0 3 * * *'
+    ## Weekly R-devel, must match the matrix expression below
+    - cron: '0 4 * * 1'
+  workflow_dispatch:
+    inputs:
+      r_devel:
+        description: Check against R-devel only (slow, compiles all packages)
+        type: boolean
+        default: false
 
 name: R-CMD-check
+
+## Only pull requests share a group, so a long R-devel run doesn't hold up
+## runs on main
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
 
-    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+    name: ${{ matrix.task }} ${{ matrix.config.os }} (${{ matrix.config.r }})
 
     strategy:
       fail-fast: false
       matrix:
-        config:
-          - {os: windows-latest, r: 'release'}
-          - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
-          - {os: ubuntu-latest,   r: 'release'}
-          - {os: ubuntu-latest,   r: 'oldrel-1'}
+        ## Separate jobs so they run in parallel, setup is quick with caches
+        task: [check, integration]
+        config: >-
+          ${{ fromJSON(github.event_name == 'pull_request' && '[
+            {"os": "ubuntu-latest", "r": "release"}
+          ]' || (github.event.schedule == '0 4 * * 1' || inputs.r_devel) && '[
+            {"os": "ubuntu-latest", "r": "devel", "http-user-agent": "release"}
+          ]' || '[
+            {"os": "windows-latest", "r": "release"},
+            {"os": "ubuntu-latest", "r": "release"},
+            {"os": "ubuntu-latest", "r": "oldrel-1"}
+          ]') }}
 
-    # Shorter timeout to prevent mac builders hanging for 6 hours!
-    timeout-minutes: 90
+    timeout-minutes: ${{ matrix.config.r == 'devel' && 180 || 60 }}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
+      HINTR_TEST_SLOW: ${{ github.event_name != 'pull_request' }}
+      ## Runners have 4 cores, testthat defaults to 2 workers
+      TESTTHAT_CPUS: 4
+      ## Compile in parallel, only matters for R-devel where nothing is binary
+      MAKEFLAGS: -j4
 
     steps:
       - uses: actions/checkout@v4
 
-      - uses: r-lib/actions/setup-pandoc@v2
-
-      - name: Install libssh
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libssh-dev
-
-      - uses: r-lib/actions/setup-r@v2
+      - uses: ./.github/actions/setup-hintr
         with:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
-          use-public-rspm: true
-          extra-repositories: "https://duckdb.r-universe.dev https://mrc-ide.r-universe.dev"
-
-      - uses: r-lib/actions/setup-r-dependencies@v2
-        with:
           extra-packages: any::rcmdcheck
           needs: check
-
-      - name: Start Redis
-        if: runner.os != 'Windows'
-        uses: shogo82148/actions-setup-redis@v1
-        with:
-          redis-version: "5.x"
-
-      - name: Start Redis (windows)
-        if: runner.os == 'Windows'
-        run: |
-          choco install memurai-developer
-
-      - name: Build test data
-        run: Rscript ./scripts/build_test_data
+          ## Keep compiled packages even if the checks fail, otherwise the
+          ## next R-devel run compiles everything again
+          cache: ${{ matrix.config.r == 'devel' && 'always' || 'true' }}
 
       - uses: r-lib/actions/check-r-package@v2
+        if: matrix.task == 'check'
         with:
           upload-snapshots: true
           error-on: '"error"'
+
+      - name: Integration tests
+        if: matrix.task == 'integration'
+        shell: bash
+        run: |
+          R CMD INSTALL .
+          Rscript ./scripts/test_integration

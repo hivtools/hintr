@@ -1,0 +1,124 @@
+name: Set up hintr
+description: >
+  Install R and hintr's dependencies, start Redis and build (or restore) the
+  test data used by the mock model.
+
+inputs:
+  r-version:
+    description: R version to install
+    default: release
+  http-user-agent:
+    description: Passed to r-lib/actions/setup-r
+    default: ''
+  extra-packages:
+    description: Passed to r-lib/actions/setup-r-dependencies
+    default: ''
+  needs:
+    description: Passed to r-lib/actions/setup-r-dependencies
+    default: ''
+  cache:
+    description: >
+      Passed to r-lib/actions/setup-r-dependencies. Use 'always' to save the
+      package cache even when the job fails.
+    default: 'true'
+
+runs:
+  using: composite
+  steps:
+    - uses: r-lib/actions/setup-pandoc@v2
+
+    ## pak installs ~200 system packages (mostly -dev headers) on Linux. The
+    ## R packages come from a binary cache in seconds, but fetching the debs
+    ## from the Ubuntu mirror takes 3-4 minutes and sometimes much longer, so
+    ## cache the downloaded debs and seed apt's archive with them.
+    ## The runner image env vars aren't in the env context of a composite
+    ## action, so read them from the shell
+    - name: Get runner image
+      if: runner.os == 'Linux'
+      id: image
+      shell: bash
+      run: echo "image=${ImageOS}-${ImageVersion}" >> "$GITHUB_OUTPUT"
+
+    - name: Restore apt package cache
+      if: runner.os == 'Linux'
+      id: apt-cache
+      uses: actions/cache/restore@v4
+      with:
+        path: ~/apt-archives
+        key: apt-${{ steps.image.outputs.image }}-${{ hashFiles('DESCRIPTION') }}
+        restore-keys: |
+          apt-${{ steps.image.outputs.image }}-
+
+    - name: Seed apt archive
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        echo 'APT::Keep-Downloaded-Packages "true";' |
+          sudo tee /etc/apt/apt.conf.d/99keep-downloaded-packages
+        sudo rm -f /etc/apt/apt.conf.d/docker-clean
+        if compgen -G "$HOME/apt-archives/*.deb" > /dev/null; then
+          sudo cp "$HOME"/apt-archives/*.deb /var/cache/apt/archives/
+        fi
+
+    - uses: r-lib/actions/setup-r@v2
+      with:
+        r-version: ${{ inputs.r-version }}
+        http-user-agent: ${{ inputs.http-user-agent }}
+        use-public-rspm: true
+        ## duckdb comes from CRAN so it installs as a binary. Its r-universe
+        ## dev version only has source on Linux and takes ~1h to compile.
+        extra-repositories: "https://mrc-ide.r-universe.dev"
+        ## Build packages in parallel when there is no binary (R-devel)
+        Ncpus: 4
+
+    - uses: r-lib/actions/setup-r-dependencies@v2
+      with:
+        extra-packages: ${{ inputs.extra-packages }}
+        needs: ${{ inputs.needs }}
+        cache: ${{ inputs.cache }}
+
+    - name: Collect apt packages
+      if: runner.os == 'Linux' && steps.apt-cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        mkdir -p ~/apt-archives
+        cp /var/cache/apt/archives/*.deb ~/apt-archives/ || true
+
+    - name: Save apt package cache
+      if: runner.os == 'Linux' && steps.apt-cache.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4
+      with:
+        path: ~/apt-archives
+        key: ${{ steps.apt-cache.outputs.cache-primary-key }}
+
+    - name: Start Redis
+      if: runner.os != 'Windows'
+      uses: shogo82148/actions-setup-redis@v1
+      with:
+        redis-version: "7.x"
+
+    - name: Start Redis (windows)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: choco install memurai-developer
+
+    ## Building the test data runs the real model (~2 minutes). It only
+    ## changes when naomi, the file formats or the inputs change.
+    - name: Get test data cache key
+      id: test-data-key
+      shell: bash
+      run: |
+        versions=$(Rscript -e 'cat(vapply(c("naomi", "duckdb", "qs2"), function(p) as.character(packageVersion(p)), ""), sep = "-")')
+        echo "versions=$versions" >> "$GITHUB_OUTPUT"
+
+    - name: Restore test data
+      id: test-data
+      uses: actions/cache@v4
+      with:
+        path: inst/output
+        key: test-data-${{ runner.os }}-${{ steps.test-data-key.outputs.versions }}-${{ hashFiles('scripts/build_test_data', 'scripts/run_model', 'scripts/*_payload.json', 'tests/testthat/testdata/**') }}
+
+    - name: Build test data
+      if: steps.test-data.outputs.cache-hit != 'true'
+      shell: bash
+      run: Rscript ./scripts/build_test_data

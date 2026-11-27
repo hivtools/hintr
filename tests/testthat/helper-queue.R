@@ -8,6 +8,18 @@ test_redis_available <- function() {
 
 Sys.unsetenv("HINTR_QUEUE_ID")
 
+## Poll until predicate() returns TRUE, rather than sleeping for a fixed time
+wait_until <- function(predicate, timeout = 10, poll = 0.1) {
+  t_stop <- Sys.time() + timeout
+  while (!isTRUE(predicate())) {
+    if (Sys.time() > t_stop) {
+      stop("Timed out waiting for condition")
+    }
+    Sys.sleep(poll)
+  }
+  invisible(TRUE)
+}
+
 MockQueue <- R6::R6Class(
   "MockQueue",
   inherit = Queue,

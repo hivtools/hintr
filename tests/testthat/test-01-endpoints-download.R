@@ -190,8 +190,7 @@ test_that("api can call coarse_output download", {
   ## Size of bytes is close to expected
   size <- length(res$body)
   expect_equal(res$headers$`Content-Length`, size)
-  expect_equal(size, file.size(
-    system_file("output", "malawi_coarse_output_download.zip")))
+  expect_gt(size, 0)
 })
 
 test_that("summary report download returns bytes", {
@@ -228,8 +227,8 @@ test_that("summary report download returns bytes", {
     response$headers$`Content-Disposition`,
     'attachment; filename="MWI_summary-report_\\d+-\\d+.html"')
   size <- length(response$data)
-  ## There is some data in the report
-  expect_true(size > 10000)
+  ## Report contents are checked by the slow test in test-download.R
+  expect_gt(size, 0)
   expect_equal(response$headers$`Content-Length`, size)
 })
 
@@ -273,8 +272,8 @@ test_that("api can call summary report download", {
     'attachment; filename="MWI_summary-report_\\d+-\\d+.html"')
   ## Size of bytes is close to expected
   size <- length(res$body)
-  ## There is some data in the report
-  expect_true(size > 10000)
+  ## Report contents are checked by the slow test in test-download.R
+  expect_gt(size, 0)
   expect_equal(res$headers$`Content-Length`, size)
 })
 
@@ -463,8 +462,8 @@ test_that("comparison report download returns bytes", {
     response$headers$`Content-Disposition`,
     'attachment; filename="MWI_comparison-report_\\d+-\\d+.html"')
   size <- length(response$data)
-  ## There is some data in the report
-  expect_true(size > 10000)
+  ## Report contents are checked by the slow test in test-download.R
+  expect_gt(size, 0)
   expect_equal(response$headers$`Content-Length`, size)
 })
 
@@ -508,8 +507,8 @@ test_that("api can call comparison report download", {
     'attachment; filename="MWI_comparison-report_\\d+-\\d+.html"')
   ## Size of bytes is close to expected
   size <- length(res$body)
-  ## There is some data in the report
-  expect_true(size > 10000)
+  ## Report contents are checked by the slow test in test-download.R
+  expect_gt(size, 0)
   expect_equal(res$headers$`Content-Length`, size)
 })
 
@@ -850,7 +849,9 @@ test_that("api: programme and anc files are optional in spectrum download", {
 })
 
 test_that("spectrum download is translated", {
+  skip_unless_slow()
   test_mock_model_available()
+  withr::local_envvar(USE_MOCK_DOWNLOAD = "false")
   q <- test_queue_result()
 
   payload <- setup_payload_download_request(include_notes = FALSE,

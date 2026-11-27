@@ -7,7 +7,7 @@ test_that("endpoint worker status works", {
   expect_equal(unlist(response, FALSE, FALSE), rep("IDLE", 2))
 
   rrq::rrq_worker_stop(timeout = 5, controller = queue$controller)
-  Sys.sleep(5)
+  wait_until(function() all(unlist(status()) == "EXITED"))
   response <- status()
   expect_equal(unlist(response, FALSE, FALSE), rep("EXITED", 2))
 
@@ -47,7 +47,7 @@ test_that("starting API clears any exited workers", {
 
   api <- api(queue_id, workers = 2)
   rrq::rrq_worker_stop(timeout = 5, controller = queue$controller)
-  Sys.sleep(5)
+  wait_until(function() all(unlist(status()) == "EXITED"))
   response <- status()
   expect_equal(unlist(response, FALSE, FALSE), rep("EXITED", 2))
 

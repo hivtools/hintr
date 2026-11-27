@@ -27,6 +27,7 @@ test_that("model without national level results can be processed", {
 })
 
 test_that("real model can be run", {
+  skip_unless_slow()
   data <- list(
     pjnz = file.path("testdata", "Malawi2024.PJNZ"),
     shape = file.path("testdata", "malawi.geojson"),
@@ -82,7 +83,7 @@ test_that("real model can be run", {
 })
 
 test_that("real model can be run with csv2 data", {
-  testthat::skip_on_covr() # slow so don't run over again
+  skip_unless_slow()
   convert_csv <- function(path) {
     dest <- tempfile(fileext = ".csv")
     write.csv2(read_csv(path), dest, row.names = FALSE)

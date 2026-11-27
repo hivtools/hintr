@@ -31,7 +31,7 @@ run_model <- function(data, options, path_results, language = NULL) {
 
     signalCondition(structure(progress_start,
                               class = c("progress", "condition")))
-    Sys.sleep(5)
+    Sys.sleep(mock_model_duration())
     progress_complete <- list(
       started = list(
         started = TRUE,
@@ -99,4 +99,10 @@ process_result <- function(model_output) {
 
 use_mock_model <- function() {
   Sys.getenv("USE_MOCK_MODEL") == "true"
+}
+
+## Seconds the mock model run takes, so it can be seen as running (e.g. to
+## show progress or cancel it). Tests set this to 0 to avoid waiting.
+mock_model_duration <- function() {
+  as.numeric(Sys.getenv("MOCK_MODEL_DURATION", "5"))
 }

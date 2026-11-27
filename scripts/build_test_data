@@ -7,7 +7,7 @@ paths <- list(model_output_path = "inst/output/malawi_model_output.qs2",
               coarse_output_path = "inst/output/malawi_coarse_output_download.zip",
               summary_report_path = "inst/output/malawi_summary_report.html")
 
-dir.create("inst/output", showWarnings = FALSE)
+dir.create("inst/output", showWarnings = FALSE, recursive = TRUE)
 invisible(lapply(paths, function(path) {
   if (file.exists(path)) {
     stop(sprintf("%s already exists - remove file if you want to regenerate test data.", path))

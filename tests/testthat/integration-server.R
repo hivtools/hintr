@@ -1,3 +1,8 @@
+## load_all() sources the test helpers, which mock naomi downloads for the unit
+## tests. The integration tests check the real files, so turn that off before
+## the server starts, it inherits this environment.
+Sys.setenv(USE_MOCK_DOWNLOAD = "false")
+
 results_dir <- tempfile("results")
 dir.create(results_dir)
 
