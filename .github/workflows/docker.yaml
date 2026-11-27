@@ -7,8 +7,6 @@ on:
     branches: [main, master]
 
 env:
-  TAG_SERVER_DH: mrcide/hintr
-  TAG_WORKER_DH: mrcide/hintr-worker
   TAG_SERVER_GHCR: hivtools/hintr
   TAG_WORKER_GHCR: hivtools/hintr-worker
 
@@ -38,12 +36,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
       - name: Login to GHCR (GitHub Packages)
         uses: docker/login-action@v3
         with:
@@ -69,7 +61,6 @@ jobs:
           file: "./docker/Dockerfile"
           push: true
           tags: |
-            ${{env.TAG_SERVER_DH}}:${{steps.extract_branch.outputs.CI_BRANCH}}
             ghcr.io/${{env.TAG_SERVER_GHCR}}:${{steps.extract_branch.outputs.CI_BRANCH}}
 
       - name: Build and push prod containers
@@ -80,8 +71,6 @@ jobs:
           file: "./docker/Dockerfile"
           push: true
           tags: |
-            ${{env.TAG_SERVER_DH}}:latest
-            ${{env.TAG_SERVER_DH}}:${{steps.extract_branch.outputs.CI_BRANCH}}
             ghcr.io/${{env.TAG_SERVER_GHCR}}:latest
             ghcr.io/${{env.TAG_SERVER_GHCR}}:${{steps.extract_branch.outputs.CI_BRANCH}}
 
@@ -131,7 +120,6 @@ jobs:
           file: "./docker/Dockerfile.worker"
           push: true
           tags: |
-            ${{env.TAG_WORKER_DH}}:${{steps.extract_branch.outputs.CI_BRANCH}}
             ghcr.io/${{env.TAG_WORKER_GHCR}}:${{steps.extract_branch.outputs.CI_BRANCH}}
 
       - name: Build and push prod worker containers
@@ -142,7 +130,5 @@ jobs:
           file: "./docker/Dockerfile.worker"
           push: true
           tags: |
-            ${{env.TAG_WORKER_DH}}:latest
-            ${{env.TAG_WORKER_DH}}:${{steps.extract_branch.outputs.CI_BRANCH}}
             ghcr.io/${{env.TAG_WORKER_GHCR}}:latest
             ghcr.io/${{env.TAG_WORKER_GHCR}}:${{steps.extract_branch.outputs.CI_BRANCH}}
